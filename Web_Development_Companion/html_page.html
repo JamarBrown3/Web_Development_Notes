@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Jamar Brown">
+    <meta name="description" content="This is the page that has all the html pages">
+    <title>Html Page</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+</head>
+
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand">Final Companion</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="html_page.html">Html Code</a></li>
+                <li><a href="css_page.html">Css Code</a></li>
+                <li><a href="javaScript.html">JavaScript Code</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <h2>What is HTML</h2>
+
+    <div class="div_p">
+        <p>Web pages are created using HyperText Markup Language (HTML), which is the authoring language used to create
+            documents on the World Wide Web.
+            HTML uses a set of special instructions called tags or markup to define the structure and layout of a Web
+            document and specify how the page is displayed in a browser.
+            every element in an html always has an opening tag and a closing tag. For example:</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;b&gt;</span>
+    </pre>
+
+    <div class="div_p">
+        <p>
+            Not all elements consist of opening and closing tags. Some elements simply receive their content or behavior
+            from attributes within a single tag.
+            for example the &lt;meta&gt; tag has self inclosing tag like &lt;br&gt; and other self enclosing enclosing
+            tags are: &lt;embed&gt;, &lt;hr&gt;, &lt;img&gt;, &lt;input&gt;, &lt;link&gt;, &lt;param&gt;,
+            &lt;source&gt;, &lt;wbr&gt;.
+        </p>
+    </div>
+
+    <h2>Document Structure</h2>
+
+
+    <h3>DOCTYPE Declaration</h3>
+    <div class="div_p">
+        <p> The &lt;!DOCTYPE html&gt; is a modern declaration to tell the browser: "This document uses HTML5".
+            It ensures browsers render the page in standarded mode and it also makes sure that you have it is modern.
+        </p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+    </pre>
+
+    <h3>HTML Root Element</h3>
+
+    <div class="div_p">
+        <p>
+        <p>The &lt;html lang="en"&gt; tag serves as the root container for the entire HTML
+            document. It should be the first element (after the DOCTYPE declaration) and wraps
+            all other content on the page.
+        </p>
+    </div>
+
+
+    <pre class="mycodehtml">
+<span>&lt;html lang="en"&gt;</span>
+<span>  &lt;All content goes here for the page&gt;</span>
+<span>&lt;/html&gt;</span>
+    </pre>
+
+
+    <h3>Head Section</h3>
+
+    <div class="div_p">
+        <p>
+            The &lt;head&gt; section contains invisible page settings and information. It defines the character
+            encoding, viewport for mobile devices, page title, and metadata like author and description. This
+            information helps browsers and search engines understand your page.
+        </p>
+    </div>
+
+
+    <pre class="mycodehtml">
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;meta name="author" content="Your name"&gt;</span>
+<span>  &lt;meta name="description" content="Description of the page"</span>
+<span>  &lt;title&gt;Page Title&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+    </pre>
+
+
+    <h3>Body Section</h3>
+
+    <div class="div_p">
+        <p>
+            The &lt;body&gt; tag contains all the visible content that users see in their browser window. This includes
+            text, images, links, buttons, and any other elements that make up the webpage interface. Everything inside
+            &lt;body&gt; appears on the actual page.
+        </p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- Visible content goes here --&gt;</span>
+<span>&lt;/body&gt;</span>
+    </pre>
+
+
+    <h2>Basic Text Elements</h2>
+
+    <h3>Paragraph</h3>
+
+    <div class="div_p">
+        <p>Any document starts with a heading. You can use different sizes for your headings. HTML provides six headings
+            (h1
+            through h6) for specifying the relative importance of information. Heading element h1 is considered the most
+            significant heading and is rendered in a larger font than the other five headings. Each successive heading
+            element
+            (i.e., h2, h3, etc.) is rendered in a progressively smaller font. While displaying any heading, browser adds
+            one
+            line before and one line after that heading. </p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;p&gt;This is a paragraph of text.&lt;/p&gt;</span>
+    </pre>
+
+
+    <h3>Headings (h1-h6)</h3>
+
+    <div class="div_p">
+        <p>
+            The &lt;h1&gt; through &lt;h6&gt; tags define HTML headings, with &lt;h1&gt; being the highest (most
+            important) level and &lt;h6&gt; being the lowest. They create a visual and structural hierarchy for your
+            content, similar to chapters and subchapters in a book.
+        </p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;h1&gt;Main Title&lt;/h1&gt;</span>
+<span>&lt;h2&gt;Section Title&lt;/h2&gt;</span>
+<span>&lt;h3&gt;Subsection Title&lt;/h3&gt;</span>
+<span>&lt;h4&gt;Subsection Title&lt;/h4&gt;</span>
+<span>&lt;h5&gt;Subsection Title&lt;/h5&gt;</span>
+<span>&lt;h6&gt;Subsection Title&lt;/h6&gt;</span>
+    </pre>
+
+
+    <h3>Bold Text</h3>
+
+    <div class="div_p">
+        <p>
+            The &lt;b&gt; tag makes text appear in bold without giving it any extra importance or semantic meaning. It's
+            purely for visual styling.
+        </p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;b&gt;This text is bold&lt;/b&gt;</span>
+    </pre>
+
+
+    <h3>Strong Text</h3>
+
+    <div class="div_p">
+        The &lt;strong&gt; element indicates that its contents have strong importance, seriousness, or urgency. Browsers
+        typically render this text in bold, but its purpose is semantic rather than purely visual.
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;strong&gt;This text is important!&lt;/strong&gt;</span>
+    </pre>
+
+
+    <h3>Line Break</h3>
+
+    <div class="div_p">
+        <p>
+            The &lt;br&gt; HTML element produces a line break in text (carriage-return). It is a void element, meaning
+            it has no content and no closing tag. Use it within paragraphs or other text containers to force text onto a
+            new line.
+        </p>
+    </div>
+    <pre class="mycodehtml">
+<span>First line&lt;br&gt;Second line</span>
+    </pre>
+
+    <h3>Italic text or Emphasis</h3>
+    <div class="div_p">
+        <p>The &lt;i&gt; tag applies italic styling to text for purely visual purposes, while &lt;em&gt; (emphasis) adds
+            semantic meaning indicating stressed emphasis. Both typically appear italicized, but &lt;em&gt; carries
+            importance for screen readers and search engines, unlike &lt;i&gt; which is purely presentational.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;i&gt;This text is italicized&lt;/i&gt;</span>
+<span>&lt;em&gt;Emphasized text&lt;/em&gt;</span>
+    </pre>
+
+    <h3>strikethrough</h3>
+
+    <div class="div_p">
+        <p>The &lt;s&gt; HTML element renders text with a strikethrough line to indicate content that is no longer
+            accurate or relevant.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;s&gt;This text is no longer accurated for reading or writing&lt;/s&gt;</span>
+    </pre>
+
+    <h3>Underlined Text</h3>
+
+    <div class="div_p">
+        <p>The &lt;u&gt; tag applies underlined styling to text for purely visual emphasis. Unlike semantic elements, it
+            doesn't convey specific meaning—it's simply presentational styling to make text stand out visually.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;u&gt;This is a paragraph&lt;/u&gt;</span>
+    </pre>
+
+
+    <h3>Horizontal Rule</h3>
+
+    <div class="div_p">
+        <p>
+            The &lt;hr&gt; HTML element represents a thematic break between paragraph-level elements, creating a
+            horizontal line to visually separate content sections. It is a void element with no closing tag.
+        </p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;p&gt;Section one content&lt;/p&gt;</span>
+<span>&lt;hr&gt;</span>
+<span>&lt;p&gt;Section two content&lt;/p&gt;</span>
+    </pre>
+
+    <h3>Link with Href Attribute</h3>
+    <div class="div_p">
+        <p>Attributes generally go inside the opening HTML tag, like &lt;a href="value"&gt;. The attribute name is a
+            predefined name from the HTML specification. There are many: href, title, class, src, etc. The attribute
+            value is the data for the attribute, enclosed in quotes.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;a href="http://www.bmcc.cuny.edu"&gt;BMCC&lt;/a&gt;</span>
+    </pre>
+
+    <h2>Block Elements vs Inline elements</h2>
+
+    <div class="div_p">
+        <p>
+            One major concept to grasp in HTML is the difference between block elements and inline elements.<br><br>
+            Block elements are those that take up the full width available on a web page, effectively blocking out any
+            other elements from sitting next to it on the left or right.<br><br>
+            Inline elements are those who only take up as much width as is needed to display the contents of the
+            element, thereby allowing other elements to be in line with the inline element.<br><br>
+            Common block elements: Paragraphs (&lt;p&gt;), Headers (&lt;h1&gt; through &lt;h6&gt;), Divisions
+            (&lt;div&gt;), List and List Items (&lt;ol&gt;, &lt;ul&gt;, &lt;li&gt;), Forms (&lt;form&gt;)<br><br>
+            Common inline elements: Spans (&lt;span&gt;), Images (&lt;img&gt;), Anchors (&lt;a&gt;)<br><br>
+            When you're first getting into positioning and layout with HTML and CSS, it can be confusing as to why some
+            things are placed on the screen the way they are.<br><br>
+        </p>
+    </div>
+
+    <h3>Block Element</h3>
+    <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>    &lt;meta charset="UTF-8"&gt;</span>
+<span>    &lt;title&gt;Block Elements&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>    &lt;div&gt;First&lt;/div&gt;&lt;div&gt;Second&lt;/div&gt;&lt;div&gt;Third&lt;/div&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+    </pre>
+
+    <h3>Inline Element</h3>
+    <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span> &lt;meta charset="UTF-8"&gt;</span>
+<span> &lt;title&gt;Inline Element&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span> &lt;img src="http://placekitten.com/300/450" alt="Kitten 1"&gt;</span>
+<span> &lt;img src="http://placekitten.com/300/500" alt="Kitten 2"&gt;</span>
+<span> &lt;img src="http://placekitten.com/350/600" alt="Kitten 3"&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+    </pre>
+
+    <h2>Container Elements</h2>
+
+    <h3>Division (div)</h3>
+    <div class="div_p">
+        <p>The &lt;div&gt; HTML element is a generic container for flow content that has no inherent semantic meaning.
+            It's commonly used with the class attribute for CSS styling and JavaScript manipulation, allowing you to
+            group and style blocks of content together.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;div class="container"&gt;</span>
+<span>  &lt;p&gt;Content inside a div&lt;/p&gt;</span>
+<span>&lt;/div&gt;</span>
+    </pre>
+
+    <h3>Span</h3>
+    <div class="div_p">
+        <p>The &lt;span&gt; tag is an inline container used to mark up part of a text or document for styling or
+            scripting. Unlike &lt;div&gt; which creates block-level containers, &lt;span&gt; stays within the flow of
+            text, making it ideal for applying CSS classes to specific words or phrases without breaking the content
+            layout.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;p&gt;This is &lt;span class="highlight"&gt;highlighted&lt;/span&gt; text.&lt;/p&gt;</span>
+    </pre>
+
+    <h3>Code Element</h3>
+    <div class="div_p">
+        <p>The &lt;code&gt; HTML element displays its contents styled in a fashion intended to indicate that the text is
+            a short fragment of computer code. By default, browsers render &lt;code&gt; text in a monospace
+            (fixed-width) font like Courier, making it distinct from surrounding content.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>Use &lt;code&gt;console.log()&lt;/code&gt; for debugging.</span>
+    </pre>
+
+    <h3>Preformatted Text</h3>
+    <div class="div_p">
+        <p>The &lt;pre&gt; HTML element represents preformatted text which is to be presented exactly as written in the
+            HTML file. Text within a &lt;pre&gt; element is displayed in a fixed-width font, and both spaces and line
+            breaks are preserved, unlike regular HTML where whitespace is collapsed.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;pre&gt;</span>
+<span>  This text</span>
+<span>  keeps    its</span>
+<span>  formatting.</span>
+<span>&lt;/pre&gt;</span>
+    </pre>
+
+
+    <h2>List Elements</h2>
+
+    <h3>List Item</h3>
+    <div class="div_p">
+        <p>The &lt;li&gt; (list item) element defines an individual item inside parent list containers: &lt;ul&gt; for
+            unordered (bulleted) lists or &lt;ol&gt; for ordered (numbered) lists. Multiple &lt;li&gt; elements create
+            the actual list content, with browsers automatically adding bullets or numbers.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;li&gt;List item content&lt;/li&gt;</span>
+    </pre>
+
+    <h3>Unordered List</h3>
+    <div class="div_p">
+        <p>The &lt;ul&gt; HTML element represents an unordered list of items, typically rendered as a bulleted list. It
+            serves as a container for &lt;li&gt; (list item) elements, grouping related items where the order doesn't
+            matter semantically.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;ul&gt;</span>
+<span>  &lt;li&gt;First item&lt;/li&gt;</span>
+<span>  &lt;li&gt;Second item&lt;/li&gt;</span>
+<span>&lt;/ul&gt;</span>
+    </pre>
+
+
+    <h3>Ordered List</h3>
+    <div class="div_p">
+        <p>The &lt;ol&gt; HTML element represents an ordered list of items, typically rendered as a numbered list. It
+            contains &lt;li&gt; (list item) elements where the sequence matters, such as instructions, rankings, or
+            step-by-step procedures.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;ol&gt;</span>
+<span>  &lt;li&gt;First step&lt;/li&gt;</span>
+<span>  &lt;li&gt;Second step&lt;/li&gt;</span>
+<span>&lt;/ol&gt;</span>
+    </pre>
+
+    <h3>Description List</h3>
+    <div class="div_p">
+        <p>The &lt;dl&gt; HTML element represents a description list, containing groups of terms (&lt;dt&gt;) and
+            descriptions (&lt;dd&gt;). It's commonly used for glossaries, metadata displays, or any name-value pair
+            listings where terms need associated explanations.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;dl&gt;</span>
+<span>  &lt;dt&gt;HTML&lt;/dt&gt;</span>
+<span>  &lt;dd&gt;HyperText Markup Language&lt;/dd&gt;</span>
+<span>&lt;/dl&gt;</span>
+    </pre>
+
+
+    <h2>Links & Navigation</h2>
+
+    <h3>Anchor (Link)</h3>
+    <div class="div_p">
+        <p>The &lt;a&gt; HTML element (anchor) creates hyperlinks to other web pages, files, locations within the same
+            page, email addresses, or any URL. The essential href attribute specifies the link destination, while the
+            link text appears between the opening and closing tags.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;a href="page.html"&gt;Click here&lt;/a&gt;</span>
+    </pre>
+
+    <h3>External Link with Target</h3>
+    <div class="div_p">
+        <p>The target="_blank" attribute in an &lt;a&gt; tag opens the linked document in a new browser tab or window.
+            This keeps your original page open while allowing users to explore external content, improving navigation
+            for external references, documentation, or resources.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;a href="https://example.com" target="_blank"&gt;Visit Example&lt;/a&gt;</span>
+    </pre>
+
+    <h3>Email Link</h3>
+    <div class="div_p">
+        <p>The mailto: protocol in an &lt;a&gt; tag's href attribute creates a link that opens the user's default email
+            client with a new message. When clicked, it pre-fills the recipient address, and can optionally include
+            subject, body, and CC/BCC fields using URL parameters.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;a href="mailto:email@example.com"&gt;Send Email&lt;/a&gt;</span>
+    </pre>
+
+    <h3>Internal Bookmarks</h3>
+    <div class="div_p">
+        <p>Internal bookmarks use fragment identifiers (#) in &lt;a&gt; tags to link to specific sections within the
+            same page. The href="#id" points to an element with a matching id attribute, allowing users to jump directly
+            to that location without scrolling manually.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;a href="#section1"&gt;Go to Section 1&lt;/a&gt;</span>
+<span>...</span>
+<span>&lt;h2 id="section1"&gt;Section 1&lt;/h2&gt;</span>
+    </pre>
+
+
+    <h2>Images & Media</h2>
+
+    <h3>Image Element</h3>
+    <div class="div_p">
+        <p>The &lt;img&gt; HTML element embeds an image into the document. It requires two essential attributes: src
+            (source) specifies the image file path or URL, while alt (alternative text) provides descriptive text for
+            accessibility, screen readers, and when images cannot load.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;img src="image.jpg" alt="Description of image"&gt;</span>
+    </pre>
+
+    <h3>Image as Link</h3>
+    <div class="div_p">
+        <p>Wrapping an &lt;img&gt; element inside an &lt;a&gt; tag creates a clickable image link. The image acts as the
+            link's visual content, with the href attribute determining the destination. Always include descriptive alt
+            text for accessibility since the image serves as interactive content.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;a href="page.html"&gt;&lt;img src="button.jpg" alt="Click me"&gt;&lt;/a&gt;</span>
+    </pre>
+
+
+    <h2>HTML Entities (Special Characters)</h2>
+
+    <h3>Non-breaking Space</h3>
+    <div class="div_p">
+        <p>The &amp;nbsp; HTML entity (non-breaking space) creates a space character that prevents browsers from
+            breaking a line at that position. It ensures that connected words or values (like "$10&nbsp;USD") stay
+            together on the same line, maintaining readability and preventing awkward line breaks.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>Price: $10&nbsp;USD</span>
+    </pre>
+
+    <h3>Less Than & Greater Than</h3>
+    <div class="div_p">
+        <p>The &amp;lt; and &amp;gt; HTML entities allow you to display the literal characters &lt; and &gt; without
+            browsers interpreting them as HTML tags. Use &amp;lt; for "less than" (&lt;) and &amp;gt; for "greater than"
+            (&gt;) when displaying code examples or mathematical expressions.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt; for &lt; and &gt; for &gt;</span>
+    </pre>
+
+    <h3>Ampersand</h3>
+    <div class="div_p">
+        <p>The &amp;amp; HTML entity displays the ampersand symbol (&amp;) without browsers interpreting it as the start
+            of another character entity. Since &amp; begins all HTML entities, you must use &amp;amp; when you want to
+            show a literal ampersand character in your content.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>Company &amp; Co.</span>
+    </pre>
+
+    <h3>Copyright & Trademark</h3>
+    <div class="div_p">
+        <p>The &amp;copy; and &amp;reg; HTML entities display copyright (©) and registered trademark (®) symbols. Use
+            &amp;copy; for copyright notices like "© 2024 Company" and &amp;reg; for registered trademarks, ensuring
+            proper legal symbols appear consistently across all browsers and devices.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&copy; 2024 &amp; &reg; BrandName</span>
+    </pre>
+
+    <h3>Currency Symbols</h3>
+    <div class="div_p">
+        <p>HTML entities like &amp;dollar;, &amp;euro;, and &amp;pound; display currency symbols consistently across
+            different systems. Use &amp;dollar; for dollar ($), &amp;euro; for euro (€), and &amp;pound; for pound
+            sterling (£) to ensure currency symbols render properly regardless of the user's language or font settings.
+        </p>
+    </div>
+    <pre class="mycodehtml">
+<span>Price: &dollar;100 &amp; &euro;90 &amp; &pound;80</span>
+    </pre>
+
+
+    <h2>External Resources</h2>
+
+    <h3>Linking CSS</h3>
+        <div class="div_p">
+        <p>The &lt;link&gt; element with rel="stylesheet" connects an external CSS file to an HTML document, 
+            typically placed inside the &lt;head&gt; section. The href attribute specifies the path to the CSS file, 
+            allowing you to separate styling from HTML structure for cleaner, more maintainable code.</p>
+        </div>
+    <pre class="mycodehtml">
+<span>&lt;link rel="stylesheet" href="styles.css"&gt;</span>
+    </pre>
+
+    <h3>Linking Bootstrap</h3>
+    <div class="div_p">
+        <p>The &lt;link&gt; element connects the Bootstrap CSS framework to your HTML document, providing pre-designed
+            responsive components and layout systems. By linking bootstrap.min.css (the minified version), you enable
+            Bootstrap's grid system, components, and utilities while ensuring faster loading times.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;link rel="stylesheet" href="bootstrap.min.css"&gt;</span>
+    </pre>
+
+    <h3>Script</h3>
+        <div class="div_p">
+            <p>The &lt;script&gt; HTML element is used to embed or reference executable JavaScript code.
+                When including the src attribute like &lt;script src="yourscriptfile.js"&gt;&lt;/script&gt;, 
+                it links to an external JavaScript file, typically placed before the closing &lt;/body&gt; 
+                tag for better page loading performance.</p>
+            </div>
+    <pre class="mycodehtml">
+<span>&lt;script src="yourscriptfile.js"&gt;&lt;/script&gt;</span>
+    </pre>
+
+
+    <h2>HTML 5 Structure elements</h2>
+
+    <div class="div_p">
+        <p>
+            Semantic HTML elements provide meaningful structure to web documents, helping both browsers and developers
+            understand content organization. The &lt;section&gt; element serves as a generic container for thematic
+            groupings of content, often used with heading tags (&lt;h1&gt;-&lt;h6&gt;) to define document hierarchy.
+            Within sections, &lt;article&gt; encapsulates self-contained, independently distributable content like blog
+            posts or news stories. The &lt;aside&gt; element houses supplementary material that's tangentially related
+            to the main content, such as sidebars or pull quotes. Each section typically features a &lt;header&gt; at
+            its beginning for introductory content and navigation, with &lt;nav&gt; specifically designating navigation
+            link collections. For multimedia content, &lt;figure&gt; pairs embedded media like images or videos with
+            captions using &lt;figcaption&gt;. Conversations and dialog interfaces can be marked up using the
+            &lt;dialog&gt; element. Finally, &lt;footer&gt; elements conclude sections with metadata like author
+            information, copyright notices, or related links. Together, these semantic tags create a clearly defined,
+            accessible document structure that improves SEO, screen reader compatibility, and code maintainability
+            compared to generic &lt;div&gt; containers.
+        </p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;section class="main-content"&gt;</span>
+<span>  &lt;header&gt;</span>
+<span>    &lt;h1&gt;My Awesome Blog&lt;/h1&gt;</span>
+<span>    &lt;nav&gt;</span>
+<span>      &lt;a href="#home"&gt;Home&lt;/a&gt;</span>
+<span>      &lt;a href="#about"&gt;About&lt;/a&gt;</span>
+<span>      &lt;a href="#contact"&gt;Contact&lt;/a&gt;</span>
+<span>    &lt;/nav&gt;</span>
+<span>  &lt;/header&gt;</span>
+<span></span>
+<span>  &lt;article&gt;</span>
+<span>    &lt;h2&gt;Understanding Semantic HTML&lt;/h2&gt;</span>
+<span>    &lt;p&gt;Semantic elements clearly describe their meaning...&lt;/p&gt;</span>
+<span>    </span>
+<span>    &lt;figure&gt;</span>
+<span>      &lt;img src="semantic-html.png" alt="Semantic HTML structure"&gt;</span>
+<span>      &lt;figcaption&gt;Figure 1: HTML5 Semantic Layout&lt;/figcaption&gt;</span>
+<span>    &lt;/figure&gt;</span>
+<span>    </span>
+<span>    &lt;aside&gt;</span>
+<span>      &lt;h3&gt;Did You Know?&lt;/h3&gt;</span>
+<span>      &lt;p&gt;HTML5 was published in 2014!&lt;/p&gt;</span>
+<span>    &lt;/aside&gt;</span>
+<span>    </span>
+<span>    &lt;dialog id="commentDialog"&gt;</span>
+<span>      &lt;form method="dialog"&gt;</span>
+<span>        &lt;p&gt;Add your comment below:&lt;/p&gt;</span>
+<span>        &lt;textarea&gt;&lt;/textarea&gt;</span>
+<span>        &lt;button&gt;Submit&lt;/button&gt;</span>
+<span>      &lt;/form&gt;</span>
+<span>    &lt;/dialog&gt;</span>
+<span>  &lt;/article&gt;</span>
+<span></span>
+<span>  &lt;footer&gt;</span>
+<span>    &lt;p&gt;© 2023 My Awesome Blog. All rights reserved.&lt;/p&gt;</span>
+<span>    &lt;p&gt;Author: Jane Smith&lt;/p&gt;</span>
+<span>  &lt;/footer&gt;</span>
+<span>&lt;/section&gt;</span>
+    </pre>
+
+
+    <h2>Advanced Features</h2>
+
+    <h3>Nested Lists</h3>
+    <div class="div_p">
+        <p>Nested lists are created by placing a complete &lt;ul&gt; or &lt;ol&gt; list inside an &lt;li&gt; element of
+            a parent list. This creates hierarchical structures like outlines, menus, or category-subcategory
+            relationships, with each nested level typically displaying different indentation and bullet/number styles.
+        </p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;ul&gt;</span>
+<span>  &lt;li&gt;Category</span>
+<span>    &lt;ul&gt;</span>
+<span>      &lt;li&gt;Sub-item 1&lt;/li&gt;</span>
+<span>      &lt;li&gt;Sub-item 2&lt;/li&gt;</span>
+<span>    &lt;/ul&gt;</span>
+<span>  &lt;/li&gt;</span>
+<span>&lt;/ul&gt;</span>
+    </pre>
+
+    <h3>List Types</h3>
+    <div class="div_p">
+        <p>The type attribute on &lt;ol&gt; and &lt;ul&gt; elements controls list marker styling. For ordered lists,
+            type="A" uses uppercase letters, type="I" uses Roman numerals. For unordered lists, type="square" uses
+            square bullets (though CSS list-style-type is now preferred for styling flexibility).</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;ol type="A"&gt; &lt;A, B, C&gt;</span>
+<span>&lt;ol type="I"&gt; &lt;I, II, III&gt;</span>
+<span>&lt;ul type="square"&gt; &lt;square bullets&gt;</span>
+    </pre>
+
+    <h2>Tables</h2>
+
+    <h3>Regular tables</h3>
+
+    <div class="div_p">
+        <p>HTML tables are created using the &lt;table&gt; element, which contains rows (&lt;tr&gt; for "table row") and
+            cells (&lt;td&gt; for "table data"). Each &lt;tr&gt; creates a horizontal row, and each &lt;td&gt; inside it
+            creates an individual cell where content is placed, forming a grid-like structure for organizing data.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;table&gt;</span>
+<span>  &lt;tr&gt;</span>
+<span>      &lt;td&gt;1&lt;/td&gt;</span> 
+<span>      &lt;td&gt;2&lt;/td&gt;</span> 
+<span>      &lt;td&gt;3&lt;/td&gt;</span> 
+<span>      &lt;td&gt;4&lt;/td&gt;</span> 
+<span>      &lt;td&gt;5&lt;/td&gt;</span> 
+<span>      &lt;/tr&gt;</span> 
+<span>  &lt;tr&gt;</span> 
+<span>      &lt;td&gt;6&lt;/td&gt;</span> 
+<span>      &lt;td&gt;7&lt;/td&gt;</span> 
+<span>      &lt;td&gt;8&lt;/td&gt;</span> 
+<span>      &lt;td&gt;9&lt;/td&gt;</span> 
+<span>      &lt;td&gt;10&lt;/td&gt;</span> 
+<span>  &lt;/tr&gt;</span> 
+<span>&lt;/table&gt;</span>
+    </pre>
+
+
+    <h3>Table with borders</h3>
+
+    <div class="div_p">
+        <p>The border attribute in &lt;table border="1"&gt; adds visible lines around the table and between all cells.
+            The number specifies the border thickness in pixels, though this HTML attribute is deprecated—modern
+            practice uses CSS border properties instead for better styling control.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;table border="1"&gt;</span>
+<span>  &lt;tr&gt;</span>
+<span>      &lt;td&gt;1&lt;/td&gt;</span> 
+<span>      &lt;td&gt;2&lt;/td&gt;</span> 
+<span>      &lt;td&gt;3&lt;/td&gt;</span> 
+<span>      &lt;td&gt;4&lt;/td&gt;</span> 
+<span>      &lt;td&gt;5&lt;/td&gt;</span> 
+<span>  &lt;/tr&gt;</span> 
+<span>  &lt;tr&gt;</span> 
+<span>      &lt;td&gt;6&lt;/td&gt;</span> 
+<span>      &lt;td&gt;7&lt;/td&gt;</span> 
+<span>      &lt;td&gt;8&lt;/td&gt;</span> 
+<span>      &lt;td&gt;9&lt;/td&gt;</span> 
+<span>      &lt;td&gt;10&lt;/td&gt;</span> 
+<span>  &lt;/tr&gt;</span> 
+<span>&lt;/table&gt;</span>
+    </pre>
+
+    <h3>Table with caption</h3>
+    <div class="div_p">
+        <p>The &lt;caption&gt; HTML element provides a title or description for a table, appearing above (by default) or
+            below the table. It should be placed immediately after the opening &lt;table&gt; tag and can contain any
+            inline elements, including &lt;strong&gt; for emphasis, to clearly identify the table's content.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;table border="1"&gt;</span>
+<span>  &lt;caption&gt;&lt;strong&gt;This is a caption with a strong font&lt;/strong&gt;&lt;/caption&gt;</span>
+<span>  &lt;tr&gt;</span>
+<span>      &lt;td&gt;1&lt;/td&gt;</span>
+<span>      &lt;td&gt;2&lt;/td&gt;</span>
+<span>      &lt;td&gt;3&lt;/td&gt;</span>
+<span>      &lt;td&gt;4&lt;/td&gt;</span>
+<span>      &lt;td&gt;5&lt;/td&gt;</span>
+<span>  &lt;/tr&gt;</span>
+<span>  &lt;tr&gt;</span>
+<span>      &lt;td&gt;6&lt;/td&gt;</span>
+<span>      &lt;td&gt;7&lt;/td&gt;</span>
+<span>      &lt;td&gt;8&lt;/td&gt;</span>
+<span>      &lt;td&gt;9&lt;/td&gt;</span>
+<span>      &lt;td&gt;10&lt;/td&gt;</span>
+<span>  &lt;/tr&gt;</span>
+<span>&lt;/table&gt;</span>
+    </pre>
+
+
+    <h3>Table with cellpadding</h3>
+
+    <div class="div_p">
+        <p>The cellpadding attribute in &lt;table cellpadding="10"&gt; adds space (in pixels) between the cell content
+            and its border. While this HTML attribute works, it's deprecated—modern CSS uses the padding property
+            instead for more flexible spacing control.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;table cellpadding="15" border="1"&gt;</span>
+<span>  &lt;caption&gt;&lt;strong&gt;This is a caption with a strong font&lt;/strong&gt;&lt;/caption&gt;</span>
+<span>  &lt;tr&gt;</span>
+<span>      &lt;td&gt;1&lt;/td&gt;</span>
+<span>      &lt;td&gt;2&lt;/td&gt;</span>
+<span>      &lt;td&gt;3&lt;/td&gt;</span>
+<span>      &lt;td&gt;4&lt;/td&gt;</span>
+<span>      &lt;td&gt;5&lt;/td&gt;</span>
+<span>  &lt;/tr&gt;</span>
+<span>  &lt;tr&gt;</span>
+<span>      &lt;td&gt;6&lt;/td&gt;</span>
+<span>      &lt;td&gt;7&lt;/td&gt;</span>
+<span>      &lt;td&gt;8&lt;/td&gt;</span>
+<span>      &lt;td&gt;9&lt;/td&gt;</span>
+<span>      &lt;td&gt;10&lt;/td&gt;</span>
+<span>  &lt;/tr&gt;</span>
+<span>&lt;/table&gt;</span>
+    </pre>
+
+    <h3>Table with cellspacing</h3>
+
+    <div class="div_p">
+        <p>The cellspacing attribute in &lt;table cellspacing="15"&gt; controls the space between table cells (the gaps
+            between borders). While cellpadding adds internal space within cells, cellspacing adds external space
+            between cells. Like cellpadding, this HTML attribute is deprecated in favor of CSS border-spacing property.
+        </p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;table cellspacing="15" border="1"&gt;</span>
+<span>  &lt;caption&gt;&lt;strong&gt;This is a caption with a strong font&lt;/strong&gt;&lt;/caption&gt;</span>
+<span>  &lt;tr&gt;</span>
+<span>      &lt;td&gt;1&lt;/td&gt;</span>
+<span>      &lt;td&gt;2&lt;/td&gt;</span>
+<span>      &lt;td&gt;3&lt;/td&gt;</span>
+<span>      &lt;td&gt;4&lt;/td&gt;</span>
+<span>      &lt;td&gt;5&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
+<span>  &lt;tr&gt;</span>
+<span>      &lt;td&gt;6&lt;/td&gt;</span>
+<span>      &lt;td&gt;7&lt;/td&gt;</span>
+<span>      &lt;td&gt;8&lt;/td&gt;</span>
+<span>      &lt;td&gt;9&lt;/td&gt;</span>
+<span>      &lt;td&gt;10&lt;/td&gt;</span>
+<span>  &lt;/tr&gt;</span>
+<span>&lt;/table&gt;</span>
+    </pre>
+
+
+    <h3>Table with width</h3>
+
+    <div class="div_p">
+        <p>The width attribute in &lt;table width="60%"&gt; sets the horizontal size of the entire table. You can use
+            percentages (like "60%") for responsive sizing relative to its container, or pixels (like "500") for fixed
+            width. This HTML attribute is deprecated—modern CSS uses the width property instead.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;table cellspacing="15" border="1" width="60%"&gt;</span>
+<span>  &lt;caption&gt;&lt;strong&gt;This is a caption with a strong font&lt;/strong&gt;&lt;/caption&gt;</span>
+<span>  &lt;tr&gt;</span>
+<span>      &lt;td&gt;1&lt;/td&gt;</span>
+<span>      &lt;td&gt;2&lt;/td&gt;</span>
+<span>      &lt;td&gt;3&lt;/td&gt;</span>
+<span>      &lt;td&gt;4&lt;/td&gt;</span>
+<span>      &lt;td&gt;5&lt;/td&gt;</span>
+<span>  &lt;/tr&gt;</span>
+<span>  &lt;tr&gt;</span>
+<span>      &lt;td&gt;6&lt;/td&gt;</span>
+<span>      &lt;td&gt;7&lt;/td&gt;</span>
+<span>      &lt;td&gt;8&lt;/td&gt;</span>
+<span>      &lt;td&gt;9&lt;/td&gt;</span>
+<span>      &lt;td&gt;10&lt;/td&gt;</span>
+<span>  &lt;/tr&gt;</span>
+<span>&lt;/table&gt;</span>
+    </pre>
+
+
+    <h3>Table with Images</h3>
+
+    <div class="div_p">
+        <p>Tables can contain images within &lt;td&gt; cells just like text. The &lt;img&gt; element placed inside a
+            cell displays the image as part of the table data. Image attributes like width, height, and alt text work
+            normally, and the table structure helps organize images alongside other content in a grid layout.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;table cellspacing="15" border="1" width="60%"&gt;</span>
+<span>  &lt;caption&gt;&lt;strong&gt;This is a caption with a strong font&lt;/strong&gt;&lt;/caption&gt;</span>
+<span>  &lt;tr&gt;</span>
+<span>      &lt;td&gt;&lt;img src="../Images/giraffe.jpeg" width="107" height="148" alt="3 giraffes" /&gt;&lt;/td&gt;</span>
+<span>      &lt;td&gt;2&lt;/td&gt;</span>
+<span>      &lt;td&gt;3&lt;/td&gt;</span>
+<span>      &lt;td&gt;4&lt;/td&gt;</span>
+<span>      &lt;td&gt;5&lt;/td&gt;</span>
+<span>  &lt;/tr&gt;</span>
+<span>  &lt;tr&gt;</span>
+<span>      &lt;td&gt;6&lt;/td&gt;</span>
+<span>      &lt;td&gt;7&lt;/td&gt;</span>
+<span>      &lt;td&gt;8&lt;/td&gt;</span>
+<span>      &lt;td&gt;9&lt;/td&gt;</span>
+<span>      &lt;td&gt;10&lt;/td&gt;</span>
+<span> &lt;/tr&gt;</span>
+<span>&lt;/table&gt;</span>
+    </pre>
+
+
+    <h3>Table with Rowspan, Colspan and align="bottom"</h3>
+
+    <div class="div_p">
+        <p>This table demonstrates advanced cell merging using colspan (horizontal merging) and rowspan (vertical
+            merging). The align="bottom" attribute positions the caption below the table. Cell 1 uses colspan="3" to
+            span three columns, cell 6 uses rowspan="4" to span four rows, and cell 9 combines both colspan="2"
+            rowspan="3" for multi-directional merging, creating complex table layouts.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;table cellpadding="10" width="500" border="1"&gt;</span>
+<span>    &lt;caption align="bottom"&gt;&lt;strong&gt; Table 2-4:&lt;/strong&gt;&lt;br /&gt;Demonstrating the use of colspan</span>
+<span>    and rowspan attributes &lt;/caption&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>        &lt;td colspan="3"&gt;1 colspan="3"&lt;/td&gt;</span>
+<span>        &lt;td&gt;4&lt;/td&gt;</span>
+<span>        &lt;td&gt;5&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span></span>
+<span>    &lt;tr&gt;</span>
+<span>        &lt;td rowspan="4"&gt;6 &lt;br&gt;rowspan="4"&lt;/td&gt;</span>
+<span>        &lt;td&gt;7&lt;/td&gt;</span>
+<span>        &lt;td&gt;8&lt;/td&gt;</span>
+<span>        &lt;td colspan="2" rowspan="3"&gt;9 &lt;br&gt;colspan=2 and rowspan="3" together&lt;br&gt;</span>
+<span>        merge cells in 2 directions.&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span></span>
+<span>    &lt;tr&gt;</span>
+<span>        &lt;td&gt;12&lt;/td&gt;</span>
+<span>        &lt;td&gt;13&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span></span>
+<span>    &lt;tr&gt;</span>
+<span>        &lt;td&gt;17&lt;/td&gt;</span>
+<span>        &lt;td&gt;18&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span></span>
+<span>    &lt;tr&gt;</span>
+<span>        &lt;td&gt;22&lt;/td&gt;</span>
+<span>        &lt;td&gt;23&lt;/td&gt;</span>
+<span>        &lt;td&gt;24&lt;/td&gt;</span>
+<span>        &lt;td&gt;25&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>&lt;/table&gt;</span>
+    </pre>
+
+    <h3>Complex Table</h3>
+
+    <div class="div_p">
+        <p>This complex table demonstrates real-world HTML table usage for creating invoices. It uses &lt;th&gt; for
+            header cells, multiple colspan attributes to merge cells horizontally, inline CSS for column widths, and
+            semantic CSS classes (highlight_blue, name, qty, etc.) for styling different data types. The table organizes
+            billing information, line items, and calculations into a professional invoice layout.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;table&gt;</span>
+<span>    &lt;caption&gt;A complex table&lt;/caption&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>        &lt;th colspan="3"&gt; Invoice #ABC123XYZ99 &lt;/th&gt;</span>
+<span>        &lt;th colspan="2"&gt; September 17, 2017&lt;/th&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>        &lt;td colspan="2"&gt; &lt;strong&gt;Pay to:&lt;/strong&gt; &lt;br&gt;</span>
+<span>        Acme billing Co. &lt;br&gt;199 Chambers St. &lt;br&gt; Brookyln, NY 12345&lt;/td&gt;</span>
+<span>        &lt;td colspan="2"&gt;&lt;strong&gt;Customer:&lt;/strong&gt;&lt;br&gt; Anna Reksik&lt;br&gt;321 willow Way&lt;br&gt;Somewhere, MA5431&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>        &lt;td class="highlight_blue" style="width: 150px;"&gt;Name / Description&lt;/td&gt;</span>
+<span>        &lt;td class="highlight_blue" style="width: 30px;"&gt;Qty.&lt;/td&gt;</span>
+<span>        &lt;td class="highlight_blue" style="width:100px"&gt;Unit Price&lt;/td&gt;</span>
+<span>        &lt;td class="highlight_blue" style="width:200px"&gt;Cost&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>        &lt;td class="name"&gt;Paperclips&lt;/td&gt;</span>
+<span>        &lt;td class="qty"&gt;1000&lt;/td&gt;</span>
+<span>        &lt;td class="unit_price"&gt;0.01&lt;/td&gt;</span>
+<span>        &lt;td class="cost"&gt;10.00&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>        &lt;td class="name"&gt;Staples (box)&lt;/td&gt;</span>
+<span>        &lt;td class="qty"&gt;100&lt;/td&gt;</span>
+<span>        &lt;td class="unit_price"&gt;1.00&lt;/td&gt;</span>
+<span>        &lt;td class="cost"&gt;100.00&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>        &lt;td colspan="3" class="highlight_blue" style="width: 300px"&gt;Subtotal&lt;/td&gt;</span>
+<span>        &lt;td class="cost"&gt;110.00&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>        &lt;td colspan="2" class="highlight_blue" style="width: 200px"&gt;Tax&lt;/td&gt;</span>
+<span>        &lt;td class="unit_price"&gt;8%&lt;/td&gt;</span>
+<span>        &lt;td class="cost"&gt;8.80&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>        &lt;td colspan="3" class="highlight_blue"&gt;Grand Total&lt;/td&gt;</span>
+<span>        &lt;td class="cost"&gt; $ 118.80&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>&lt;/table&gt;</span>
+    </pre>
+
+    <h3>Table headers and Table body and Table foot</h3>
+
+    <div class="div_p">
+        <p>The &lt;thead&gt; and &lt;tbody&gt; elements semantically structure tables into logical sections. The
+            &lt;thead&gt; contains header rows with &lt;th&gt; cells defining column titles, while &lt;tbody&gt; holds
+            the main data rows with &lt;td&gt; cells. Also we use &lt;tfoot&gt; This element groups the footer content
+            of a table. It typically contains summary information, totals, or notes related to the data in the table
+            body.This separation improves accessibility, styling control, and table
+            organization.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;table border="1"&gt;</span>
+<span>  &lt;thead&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>      &lt;th&gt;Name&lt;/th&gt;</span>
+<span>      &lt;th&gt;Age&lt;/th&gt;</span>
+<span>      &lt;th&gt;City&lt;/th&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>  &lt;/thead&gt;</span>
+<span>  &lt;tbody&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>      &lt;td&gt;Alice&lt;/td&gt;</span>
+<span>      &lt;td&gt;25&lt;/td&gt;</span>
+<span>      &lt;td&gt;New York&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>      &lt;td&gt;Bob&lt;/td&gt;</span>
+<span>      &lt;td&gt;30&lt;/td&gt;</span>
+<span>      &lt;td&gt;Los Angeles&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>      &lt;td&gt;Charlie&lt;/td&gt;</span>
+<span>      &lt;td&gt;28&lt;/td&gt;</span>
+<span>      &lt;td&gt;Chicago&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>  &lt;/tbody&gt;</span>
+<span>  &lt;tfoot&gt;This is a Table footer&lt;/tfoot&gt;</span>
+<span>&lt;/table&gt;</span>
+    </pre>
+
+    <h2>Forms</h2>
+
+    <div class="div_p">
+        <p>HTML Forms enable user interaction by collecting data through elements like text fields, buttons, checkboxes,
+            and dropdowns. This data can be sent to servers or processed on the page itself. Each form element should be
+            paired with descriptive labels for accessibility and clear user guidance. From a user experience (UX) point
+            of view, it's important to remember that the bigger your form, the more you risk losing users. Keep it
+            simple and stay focused: ask only for that data you absolutely need.
+
+        </p>
+    </div>
+
+    <h3>Form Element</h3>
+
+    <div class="div_p">
+        <p>The &lt;form&gt; element defines a container for interactive controls that collect user data. All form
+            elements must be placed inside a &lt;form&gt; tag, but forms cannot be nested within each other. While HTML5
+            allows form elements outside forms using the form attribute, browser support for this feature is currently
+            inconsistent.<br><br> Form elements are different types of input elements, like text fields, checkboxes, radio
+            buttons, select drop-downs, submit buttons and more.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;form action="my-handling-form-page" method="post"&gt;</span>
+<span>  &lt;!-- form elements --&gt;</span>
+<span>&lt;/form&gt;</span>
+    </pre>
+
+    <h3>Form element Attributes</h3>
+
+    <div class="div_p">
+        <p>Form attributes control submission behavior: action specifies where data is sent, target determines where the
+            response opens (new tab/window), and method defines the HTTP method (GET for visible parameters or POST for
+            secure submission). GET: Data appears in URL, limited length, good for bookmarks, never for sensitive data.
+            POST: Data hidden, no length limits, cannot bookmark, use for sensitive information.</p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;form action="action_page.php" target="_blank" method="get"&gt;</span>
+<span>  &lt;input type="text" name="search"&gt;</span>
+<span>  &lt;button type="submit"&gt;Search&lt;/button&gt;</span>
+<span>&lt;/form&gt;</span>
+<span>&lt;form action="action_page.php" target="_blank" method="post"&gt;</span>
+<span>  &lt;input type="text" name="search"&gt;</span>
+<span>  &lt;button type="submit"&gt;Search&lt;/button&gt;</span>
+<span>&lt;/form&gt;</span>
+</pre>
+
+    <h3>Name attribute of input elements</h3>
+
+    <div class="div_p">
+        <p>Input fields require a name attribute for their data to be submitted. Without it, the field's data is ignored
+            and not sent to the server.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;form action="/action_page.php"&gt;</span>
+<span>First name:&lt;br&gt;</span>
+<span>  &lt;input type="text" value="Mickey"&gt;&lt;br&gt;</span>
+<span>Last name:&lt;br&gt;</span>
+<span>  &lt;input type="text" name="lastname" value="Mouse"&gt;</span>
+<span>&lt;br&gt;</span>
+<span>  &lt;input type="submit" value="Submit"&gt;</span>
+<span>&lt;/form&gt;</span>
+    </pre>
+
+    <h3>Fieldset and Legend</h3>
+
+    <div class="div_p">
+        <p>The fieldset element groups related form fields together, while the legend provides a title for that group.
+        </p>
+    </div>
+    <pre class="mycodehtml">
+<span>&lt;form action="action_page.php"&gt;</span>
+<span>  &lt;fieldset&gt;</span>
+<span>    &lt;legend&gt;Personal information:&lt;/legend&gt;</span>
+<span>    First name:&lt;br&gt;</span>
+<span>    &lt;input type="text" name="firstname" value="Mickey"&gt;&lt;br&gt;</span>
+<span>    Last name:&lt;br&gt;</span>
+<span>    &lt;input type="text" name="lastname" value="Mouse"&gt;&lt;br&gt;&lt;br&gt;</span>
+<span>    &lt;input type="submit" value="Submit"&gt;</span>
+<span>  &lt;/fieldset&gt;</span>
+<span>&lt;/form&gt;</span>
+    </pre>
+
+    <h3>Input Form Html Elements</h3>
+
+    <div class="div_p">
+        <p>The input element is the primary form control, with its behavior determined by the type attribute: text for
+            single-line input, radio for single selection, and submit for form submission.</p>
+    </div>
+
+    <h3>Text Input</h3>
+
+    <div class="div_p">
+        <p></p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;form&gt;</span>
+<span>  First Name:&lt;br&gt;</span>
+<span>  &lt;input type="text" name="firstname"&gt;&lt;br&gt;</span>
+<span>  Last Name:&lt;br&gt;</span>
+<span>  &lt;input type="text" name="lastname"&gt;&lt;br&gt;</span>
+<span>&lt;/form&gt;</span>
+    </pre>
+
+    <h3>Input Radio Button Input</h3>
+
+    <div class="div_p">
+        <p>Radio buttons allow single selection from multiple options, with only one choice possible at a time.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;form&gt;</span>
+<span>  &lt;input type="radio" name="gender" value="male" checked&gt; Male&lt;br&gt;</span>
+<span>  &lt;input type="radio" name="gender" value="female"&gt; Female&lt;br&gt;</span>
+<span>  &lt;input type="radio" name="gender" value="other"&gt; Other&lt;br&gt;</span>
+<span>&lt;/form&gt;</span>
+    </pre>
+
+    <h3>Input Type Submit</h3>
+
+    <div class="div_p">
+        <p>The submit button sends form data to the specified form-handler, which is typically a server script defined
+            in the form's action attribute.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;form&gt;</span>
+<span>  First Name: &lt;input type="text" name="firstname"&gt;&lt;br&gt;</span>
+<span>  Last Name: &lt;input type="text" name="lastname"&gt;&lt;br&gt;</span>
+<span>  &lt;input type="submit" value="Submit"&gt;</span>
+<span>&lt;/form&gt;</span>
+    </pre>
+
+    <h3>Input Type Password</h3>
+
+    <div class="div_p">
+        <p>Password fields hide entered text with dots or asterisks for security.</p>
+    </div>
+
+
+    <pre class="mycodehtml">
+<span>&lt;form&gt;</span>
+<span>  User Name:&lt;br&gt;</span>
+<span>  &lt;input type="text" name="username"&gt;&lt;br&gt;</span>
+<span>  User Password:&lt;br&gt;</span>
+<span>  &lt;input type="password" name="psw"&gt;&lt;br&gt;</span>
+<span>&lt;/form&gt;</span>
+    </pre>
+
+    <h3>Input Type Reset</h3>
+
+    <div class="div_p">
+        <p>The reset button clears all form inputs back to their original values.</p>
+    </div>
+
+    `
+    <pre class="mycodehtml">
+<span>&lt;form&gt;</span>
+<span>  First Name: &lt;input type="text" name="firstname"&gt;&lt;br&gt;</span>
+<span>  Last Name: &lt;input type="text" name="lastname"&gt;&lt;br&gt;</span>
+<span>  &lt;input type="submit" value="Submit"&gt;</span>
+<span>  &lt;input type="reset" value="Reset"&gt;</span>
+<span>&lt;/form&gt;</span>
+    </pre>
+
+    <h3>Input Type Checkbox</h3>
+
+    <div class="div_p">
+        <p>Checkboxes allow multiple selections from a list of options.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;form&gt;</span>
+<span>  &lt;input type="checkbox" name="vehicle0" value="Walk"&gt; I like to walk&lt;br&gt;</span>
+<span>  &lt;input type="checkbox" name="vehicle1" value="Bike"&gt; I have a bike&lt;br&gt;</span>
+<span>  &lt;input type="checkbox" name="vehicle2" value="Car"&gt; I have a car&lt;br&gt;</span>
+<span>&lt;/form&gt;</span>
+    </pre>
+
+    <h3>Input Type Button</h3>
+
+    <div class="div_p">
+        <p>Basic button for custom actions.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;input type="button" value="Click Me!" onclick="alert('Hello World!')"&gt;</span>
+    </pre>
+
+    <h3>HTML 5 Input Types</h3>
+
+    <div class="div_p">
+        <p></p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;input type="color" name="favcolor"&gt;</span>
+<span>&lt;input type="date" name="bday"&gt;</span>
+<span>&lt;input type="datetime-local"&gt;</span>
+<span>&lt;input type="month"&gt;</span>
+<span>&lt;input type="email"&gt;</span>
+<span>&lt;input type="number"&gt;</span>
+<span>&lt;input type="range"&gt;</span>
+<span>&lt;input type="tel"&gt;</span>
+<span>&lt;input type="time"&gt;</span>
+    </pre>
+
+    <h3>Select Element</h3>
+
+    <div class="div_p">
+        <p>The &lt;select&gt; element defines a drop-down list:</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;select name="cars"&gt;</span>
+<span>    &lt;option value="volvo"&gt;Volvo&lt;/option&gt;</span>
+<span>    &lt;option value="saab"&gt;Saab&lt;/option&gt;</span>
+<span>    &lt;option value="fiat"&gt;Fiat&lt;/option&gt;</span>
+<span>    &lt;option value="audi"&gt;Audi&lt;/option&gt;</span>
+<span>&lt;/select&gt;</span>     
+    </pre>
+
+    <h3>Option element</h3>
+
+    <div class="div_p">
+        <p>The option tag creates selectable items in dropdowns. The first option is selected by default, or use the
+            selected attribute to preselect any option.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;select name="cars"&gt;</span>
+<span>  &lt;option value="volvo"&gt;Volvo&lt;/option&gt;</span>
+<span>  &lt;option value="saab"&gt;Saab&lt;/option&gt;</span>
+<span>  &lt;option value="fiat" selected&gt;Fiat&lt;/option&gt;</span>
+<span>  &lt;option value="audi"&gt;Audi&lt;/option&gt;</span>
+<span>&lt;/select&gt;</span>
+    </pre>
+
+    <h3>Select 'size' (increasing visible values) </h3>
+
+    <div class="div_p">
+        <p>Use the `size` attribute to specify the number of visible values:</p>
+    </div>
+
+
+    <pre class="mycodehtml">
+<span>&lt;select name="cars" size="2"&gt;</span>
+<span>    &lt;option value="volvo"&gt;Volvo&lt;/option&gt;</span>
+<span>    &lt;option value="saab"&gt;Saab&lt;/option&gt;</span>
+<span>    &lt;option value="fiat"&gt;Fiat&lt;/option&gt;</span>
+<span>    &lt;option value="audi"&gt;Audi&lt;/option&gt;</span>
+<span>&lt;/select&gt;</span>
+    </pre>
+
+    <h3>Textarea</h3>
+
+    <div class="div_p">
+        <p>The &lt;textarea&gt; element defines a multi-line input field (a text area)<br><br>The rows attribute specifies
+            the visible number of lines in a text area. The cols attribute specifies the visible width of a text area.
+        </p>
+    </div>
+
+
+    <pre class="mycodehtml">
+<span>&lt;textarea name="message" rows="10" cols="30"&gt;</span>
+<span>The cat was playing in the garden.</span>
+<span>&lt;/textarea&gt;</span>
+    </pre>
+
+
+    <h3>Button Element</h3>
+
+    <div class="div_p">
+        <p>The &lt;button&gt; element defines a clickable button:</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;button type="button" onclick="alert('Hello World!')"&gt;</span>
+<span>Click Me!</span>
+<span>&lt;/button&gt;</span>
+    </pre>
+
+
+    <h2>New Html 5 elements</h2>
+
+    <div class="div_p">
+        <p>HTML5 added datalist/output elements. Older browsers safely ignore unsupported tags.</p>
+    </div>
+
+    <h3>Datalist Element</h3>
+
+    <div class="div_p">
+        <p>The datalist provides predefined suggestions for input fields through a dropdown, linked via matching id and
+            list attributes.</p>
+    </div>
+
+    <pre class="mycodehtml">
+<span>&lt;form action="result.php"&gt;</span>
+<span>  &lt;input list="browsers"&gt;</span>
+<span>  &lt;datalist id="browsers"&gt;</span>
+<span>    &lt;option value="Internet Explorer"&gt;</span>
+<span>    &lt;option value="Firefox"&gt;</span>
+<span>    &lt;option value="Chrome"&gt;</span>
+<span>    &lt;option value="Opera"&gt;</span>
+<span>    &lt;option value="Safari"&gt;</span>
+<span>  &lt;/datalist&gt;</span>
+<span>&lt;/form&gt;</span>
+    </pre>
+
+
+    <h3>Output Element</h3>
+
+    <div class="div_p">
+        <p>The &lt;output&gt; element represents the result of a calculation (like one performed by a script).
+            Perform a calculation and show the result in an element:</p>
+    </div>
+
+
+    <pre class="mycodehtml">
+<span>&lt;form action="/action_page.php" oninput="x.value=parseInt(a.value)+parseInt(b.value)"&gt;</span>
+<span>0</span>
+<span>&lt;input type="range" id="a" name="a" value="50"&gt;</span>
+<span>100 +</span>
+<span>&lt;input type="number" id="b" name="b" value="50"&gt;</span>
+<span>=</span>
+<span>&lt;output name="x" for="a b"&gt;&lt;/output&gt;</span>
+<span>&lt;br&gt;&lt;br&gt;</span>
+<span>&lt;input type="submit"&gt;</span>
+<span>&lt;/form&gt;</span>
+    </pre>
+
+<br><br><br><br>
+
+
+
+    <footer class="footer"> &copy; By Jamar Brown
+
+        <div class="container">
+            <div id='clock'></div>
+        </div>
+    </footer>
+
+
+    <script src="js/clock.js"></script>
+</body>
+
+</html>

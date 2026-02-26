@@ -1,0 +1,131 @@
+/*
+
+Student ID: 23778313
+
+Student Name: Jamar Brown
+
+File Name: style.css
+*/
+
+
+body {
+    /* Set "my-h3-counter" to 0 */
+    counter-reset: my-h3-counter;
+}
+
+h3::before {
+    /* Increment "my-h3-counter" by 1 */
+    counter-increment: my-h3-counter;
+    content: "Snippet " counter(my-h3-counter) ". ";
+}
+
+.mycodecss {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #c7af6b;
+    background: #1a8468;
+}
+
+.mycodecss:before {
+    content: "CSS Code ";
+    /*content: "Example " counter(exampleno);*/
+    min-width: 7.5em;
+    text-transform: uppercase;
+    display: block;
+    color: #11f6fd;
+    font-family: sans-serif;
+}
+
+.mycodehtml {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #e05915;
+    background: #f250ec;
+    font-size: 14px;
+}
+
+.mycodehtml:before {
+    content: "HTML Code ";
+    /*content: "Example " counter(exampleno);*/
+    min-width: 7.5em;
+    text-transform: uppercase;
+    display: block;
+    color: #e62739;
+    font-family: sans-serif;
+}
+
+.mycodejs {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #845007;
+    background-color: #c9af98;
+    font-size: 14px;
+}
+
+.mycodejs:before {
+    content: "JavaScript Code ";
+    min-width: 7.5em;
+    text-transform: uppercase;
+    display: block;
+    color: rgb(187, 95, 15);
+    font-family: sans-serif;
+}
+
+h3 {
+    border-bottom: 2px solid red;
+    border-top: 2px solid red;
+}
+
+pre {
+    counter-reset: line;
+}
+
+span {
+    counter-increment: line;
+}
+
+span:before {
+    content: counter(line);
+    display: inline-block;
+    border-right: 1px solid #ddd;
+    padding: 0 .5em;
+    margin-right: .5em;
+    color: #888;
+}
+
+.container {
+    width: 960px;
+    margin: auto;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #feda6a;
+    color: #1d1e22;
+    text-align: center;
+    margin: auto;
+    padding: 6px;
+}
+
+.div_p{
+    text-align: center;
+    margin: 0 auto;
+    width: 70%;
+}
+
+h2{
+    text-align: center;
+}
+
+.div_p li{
+    list-style-position: inside;
+}
+
+
+

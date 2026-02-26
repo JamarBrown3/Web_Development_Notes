@@ -1,0 +1,3300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Jamar Brown">
+  <meta name="description" content="This is the page that has all the javaScript pages">
+  <title>javaScript Page</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand">Final Companion</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="html_page.html">Html Code</a></li>
+        <li><a href="css_page.html">Css Code</a></li>
+        <li><a href="javaScript.html">JavaScript Code</a></li>
+      </ul>
+    </div>
+  </nav>
+
+
+  <h2>What is Javascript</h2>
+
+  <div class="div_p">
+    <p>Javascript is a dynamic computer programming language. It is lightweight and most commonly used as a part of web
+      pages, whose implementations allow client-side script to interact with the user and make dynamic pages. It is an
+      interpreted programming language with object-oriented capabilities.Also every javaScript has to be in a script tag
+      at either the buttom of the Page. The top of the page using window load functions or using defer.
+    </p>
+  </div>
+
+  <h3>sample beginning javaScript</h3>
+
+  <pre class="mycodejs">
+<span>&lt;script&gt;</span>
+<span>1 + '2'        // --> '12'</span>
+<span>[] + 4         // --> '4'</span>
+<span>[] - 4         // --> -4</span>
+<span>{} + 4         // --> '[object Object]4'</span>
+<span>var my_variable = "some value";</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+  <h2>Javascript programs</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>A computer program is a list of "instructions" to be "executed" by the computer.</li>
+      <li>In a programming language, these program instructions are called statements.</li>
+      <li>JavaScript is a programming language.</li>
+      <li>JavaScript statements are separated by semicolons:</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>Javascript makeup</h2>
+
+  <div class="div_p">
+    <p>JavaScript applications consist of statements with an appropriate syntax. A single statement may span multiple
+      lines. Multiple statements may occur on a single line if each statement is separated by a semicolon. This isn't a
+      keyword, but a group of keywords. In HTML, JavaScript statements are "instructions" to be "executed" by the web
+      browser.<br><br> Javascript statements is usually made up of: <br><br>
+    <ul>
+      <li>Values</li>
+      <li>Literals</li>
+      <li>Variables</li>
+      <li>Operators</li>
+      <li>Expressions</li>
+      <li>Keywords</li>
+    </ul>
+    </p>
+
+    <p>In JavaScript, values are the pieces of data that the program works with. They can represent anything such as
+      text, numbers, true/false information, or more complex data structures. Everything the program processes, stores,
+      or outputs is considered a value.<br><br>
+    </p>
+
+    <p>Literals are fixed values that are written directly into a program. They do not change unless the programmer
+      edits them. Examples include written text, numbers, and true/false values that appear exactly as they are used in
+      the code.<br><br></p>
+
+    <p>Variables are containers used to store values in a JavaScript program. Unlike literals, the data inside a
+      variable can change while the program is running, allowing JavaScript to work with dynamic and flexible
+      information.<br><br></p>
+
+    <p>Operators are symbols or words that tell JavaScript to perform specific actions on values or variables. They are
+      used for tasks such as performing math, comparing values, or assigning data to variables.<br><br></p>
+
+    <p>Keywords are special reserved words that have specific meanings in JavaScript and cannot be used for anything
+      else. They tell the programming language to perform particular tasks, such as declaring a variable or defining a
+      function.<br><br></p>
+  </div>
+
+  <h2>Javascript comments</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>Not all JavaScript statements are "executed".</li>
+      <li>Code after double slashes // or between / and / is treated as a comment.</li>
+      <li>Comments are ignored, and will not be executed:</li>
+    </ul>
+    </p>
+  </div>
+
+
+  <h3>Javascript comments</h3>
+  <pre class="mycodejs">
+<span>var x = 5; // This statement will be executed</span>
+<span>// var x = 6; This statement will NOT be executed</span>
+<span>/* This is a multi-line</span>
+<span>comment */</span>
+  </pre>
+
+  <h2>Javascript Identifiers</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>In JavaScript, identifiers are names.</li>
+      <li>Identifiers are used to name variables (keywords, functions, and labels). The rules for legal names are much
+        the same in most programming languages.</li>
+      <li>In JavaScript, the first character must be a letter, or an underscore (_), or a dollar sign ($).</li>
+      <li>Subsequent characters may be letters, numbers, underscores, or dollar signs.</li>
+      <li>Numbers are not allowed as the first character.</li>
+    </ul>
+    </p>
+  </div>
+
+
+
+  <h3>What makes JavaScript unique?</h3>
+
+  <div class="div_p">
+    <p>There are at least three great things about JavaScript:<br><br>
+    <ul>
+      <li>Full integration with HTML/CSS.</li>
+      <li>Simple things done simply.</li>
+      <li>Supported by all major browsers and enabled by default.</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>Let's start by looking at the different kinds of values in JS.</h2>
+
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>Number</li>
+      <li>String</li>
+      <li>Boolean</li>
+      <li>Object</li>
+      <li>Array</li>
+      <li>Function</li>
+      <li>Undefined</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>Number</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>Internally, stored as a 64-bit double (like Java double)</li>
+      <li>NaN represents not a number, where a value did not produce a result</li>
+      <li>Infinity represents all numbers greater than (roughly) 1.8e308</li>
+    </ul>
+    </p>
+  </div>
+
+  <h3>Number</h3>
+
+  <pre class="mycodejs">
+<span>&lt;script&gt;</span>
+<span>2 + (4 * -3)  // --> -10</span>
+<span>1.25e4        // --> 12500</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+  <h2>String</h2>
+
+  <div class="div_p">
+    <p>
+      Written with single quotes or double quotes. Use single quotes.
+    <ul>
+      <li>Escape values with backslash "\n \t \\"</li>
+      <li>Insert Unicode character codes with \u</li>
+      <li>Can be compared with &lt;, &gt; (roughly alphabetical)</li>
+      <li>Strings are immutable, but easy to concatenate with +</li>
+      <li>No char type means you must use a single-char string</li>
+      <li>Each character is 16 bits wide</li>
+      <li>Access length with .length property (there are a few other String methods, discussed later)</li>
+    </ul>
+    </p>
+  </div>
+
+  <h3>String</h3>
+
+  <pre class="mycodejs">
+<span>&lt;script&gt;</span>
+<span>"Hello " + "World"    // --> "Hello World"</span>
+<span>4 + " is a number"    // --> "4 is a number"</span>
+<span>"abacus" &lt; "aardvark" // --> false</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+  <h2>Boolean</h2>
+
+  <div class="div_p">
+    <p>All other values, including true, the string 'false', and all objects, are truthy. Control flows like this are
+      common:</p>
+  </div>
+
+  <h3>Boolean</h3>
+
+  <pre class="mycodejs">
+<span>&lt;script&gt;</span>
+<span>var course = {</span>
+<span>  title: 'JavaScript',</span>
+<span>  dept: 'CIS',</span>
+<span>  code: 385</span>
+<span>};</span>
+<span>if (course.instructor) {</span>
+<span>  console.log(course.instructor.name);</span>
+<span>} else {</span>
+<span>  console.error("No instructor found!");</span>
+<span>}</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+  <h2>Object</h2>
+
+  <div class="div_p">
+    <p>Uses curly braces (really convenient literal notation!)<br><br>
+      Under the hood, pretty much everything is represented as an object in JS (more on this later)<br><br>
+    <ul>
+      <li>Lightweight mutable key-value stores</li>
+      <li>Like C structs, Python dicts, associative arrays, etc.</li>
+      <li>Accessed with .propertyName or ['propertyName'] refinement syntax.</li>
+    </ul>
+    </p>
+  </div>
+
+  <h3>Object</h3>
+
+  <pre class="mycodejs">
+<span>&lt;script&gt;</span>
+<span>var obj = {</span>
+<span>  number: 1,</span>
+<span>  string: "abcdef",</span>
+<span>  bool: true,</span>
+<span>  object: { a: 1, b: 2, c: 3 },</span>
+<span>  function: (function () { return 0; })</span>
+<span>}</span>
+<span>obj.string        // --> "abcdef"</span>
+<span>obj['object'].a   // --> 1</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+
+  <h2>Array</h2>
+
+  <div class="div_p">
+    <p>Uses square brackets literal notation.<br><br>
+    <ul>
+      <li>Hash map performance</li>
+      <li>Internally represented as objects with numerical property names: arr[0]</li>
+      <li>Convenience methods like .push, .pop, .join</li>
+    </ul>
+    </p>
+  </div>
+
+
+  <h3>Array</h3>
+
+  <pre class="mycodejs">
+<span>&lt;script&gt;</span>
+<span>var a = [ 'this', 'is', 'an', 'array' ]</span>
+<span>a[0]          // --> 'this'</span>
+<span>a.join(' ')   // --> 'this is an array'</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+  <h2>Function</h2>
+
+  <div class="div_p">
+    <p>function keyword + curly braces that enclose block of statements.<br><br>
+    <ul>
+      <li>First-class JS object (this allows JavaScript to be highly functional)</li>
+      <li>"Piece of a program wrapped in a value"</li>
+      <li>Returns a value provided with return keyword, otherwise undefined</li>
+    </ul>
+    </p>
+  </div>
+
+  <h3>Function</h3>
+
+  <pre class="mycodejs">
+<span>&lt;script&gt;</span>
+<span>var square = function (x) {</span>
+<span>  return x * x;</span>
+<span>}</span>
+<span>Math.square = square;</span>
+<span>console.log("the square of 4 is " + </span>
+<span>Math.square(4));</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+  <h2>Undefined</h2>
+
+  <div class="div_p">
+    <p>void, null, un-assigned-to variables.<br><br>Values are garbage collected by the JS runtime</p>
+  </div>
+
+  <h3>Undefined</h3>
+  <pre class="mycodejs">
+<span>&lt;script&gt;</span>
+<span>var x;                    // --> undefined</span>
+<span>var f = function () { };</span>
+<span>f();                      // --> undefined</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+  <h2>Expressions</h2>
+
+  <div class="div_p">
+    <p>Expressions cannot have side effects, meaning they cannot affect state of the program or the world. They only
+      produce a value.<br><br>Expressions are anything that produces a value:<br><br></p>
+    <p>
+    <ul>
+      <li>Literally written values (string, number, built-in)</li>
+      <li>Expression within parentheses</li>
+      <li>Unary operator applied to one expression (-, !, typeof, ...)</li>
+      <li>Binary operator applied to two expressions (+, *, ===, &&, ...)</li>
+      <li>Ternary operator applied to three expressions (predicate ? valueIfTrue : valueIfFalse)
+      </li>
+      <li>Object refinement (using ['propertyName'] or .propertyName)</li>
+      <li>Invocation</li>
+    </ul>
+    </p>
+  </div>
+
+
+  <h2>Statements</h2>
+
+  <div class="div_p">
+    <p>Programs are executed sequentially statement-by-statement from top to bottom; you can guarantee order of
+      execution.<br><br>
+    <ul>
+      <li>JavaScript programs are built as a list of statements.</li>
+      <li>Each is typically terminated by a semicolon ; (C-style syntax).</li>
+      <li>You can also sequence statements with , but let's not have any of that in this course.</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>Variable Scoping</h2>
+
+  <div class="div_p">
+    <p>JavaScript variables use var without types. Variables declared outside functions are global (accessible
+      everywhere), while those inside functions are local (accessible only within that function). Local variables are
+      created when a function runs and destroyed when it finishes.</p>
+  </div>
+
+
+  <h2>Javascript Tag</h2>
+
+  <h3>Javascript internal</h3>
+
+  <pre class="mycodejs">
+<span>&lt;head&gt;</span>
+<span>  &lt;title&gt;...&lt;/title&gt;</span>
+<span>  &lt;script&gt;</span>
+<span>    alert("Something");</span>
+<span>  &lt;/script&gt;</span>
+<span>&lt;/head&gt;</span>
+  </pre>
+
+  <h3>External Javascript</h3>
+
+  <pre class="mycodejs">
+<span>&lt;head&gt;</span>
+<span>  &lt;title&gt;...&lt;/title&gt;</span>
+<span>  &lt;script src="js/my_file.js"&gt;&lt;/script&gt; // or scripts folder</span>
+<span>&lt;/head&gt;</span>
+  </pre>
+
+  <h3>External Javascript external with link from web</h3>
+
+  <pre class="mycodejs">
+<span>&lt;script src="https://www.somewhere.com/myScript1.js"&gt;&lt;/script&gt;</span>
+  </pre>
+
+  <h3>Event Handler onclick to Dom element</h3>
+  <pre class="mycodejs">
+<span>&lt;button class="submit" onclick="myApp.submitFormAsync();"&gt;</span>
+<span>  Submit</span>
+<span>&lt;/button&gt;</span>
+  </pre>
+
+  <h2>JavaScript Functions and Events</h2>
+
+  <div class="div_p">
+    <p>A JavaScript function is a block of code designed to perform a particular task. A JavaScript function is executed
+      when "something" invokes it (calls it).</p>
+  </div>
+
+  <h3>JavaScript Functions</h3>
+  <pre class="mycodejs">
+<span>function myFunction(p1, p2) {</span>
+<span>   // The function returns the product of p1 and p2</span>
+<span>   return p1 * p2;</span>
+<span>}</span>
+<span>let result = myFunction(4, 5); // result = 20</span>
+  </pre>
+
+  <h2>Javascript function syntax</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>A JavaScript function is defined with the function keyword, followed by a name, followed by parentheses ().
+      </li>
+      <li>Function names can contain letters, digits, underscores, and dollar signs (same rules as variables).</li>
+      <li>The parentheses may include parameter names separated by commas: (parameter1, parameter2, ...)</li>
+      <li>The code to be executed, by the function, is placed inside curly brackets: {}</li>
+    </ul>
+    </p>
+  </div>
+
+  <h3>Javascript function syntax</h3>
+
+  <pre class="mycodejs">
+<span>function name(parameter1, parameter2, parameter3) {</span>
+<span>   // code to be executed</span>
+<span>}</span>
+<span>// Example call: name(value1, value2, value3);</span>
+  </pre>
+
+  <h2>Parameters / Arguments</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>Function parameters are the names listed in the function definition.</li>
+      <li>Function arguments are the real values received by the function when it is invoked.</li>
+      <li>Inside the function, the arguments (the parameters) behave as local variables.</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>The () Operator Invokes the Function</h2>
+
+  <div class="div_p">
+    <p>Using the example above, toCelsius refers to the function object, and toCelsius() refers to the function result.
+      Accessing a function without () will return the function definition instead of the function result:
+    </p>
+  </div>
+
+  <h3>() operator in action</h3>
+
+  <pre class="mycodejs">
+<span>function toCelsius(fahrenheit) {</span>
+<span>    return (5/9) * (fahrenheit - 32); // Conversion formula</span>
+<span>}</span>
+<span>// Calling function and displaying result in HTML element with id "demo"</span>
+<span>document.getElementById("demo").innerHTML = toCelsius(98); // 98°F = 36.67°C</span>
+  </pre>
+
+  <h2>Functions used as variable values</h2>
+
+  <div class="div_p">
+    Functions can be used the same way as you use variables, in all types of formulas, assignments, and calculations.
+  </div>
+
+  <h3>Functions used as variable values</h3>
+  <pre class="mycodejs">
+<span>// Instead of using a variable to store the return value of a function:</span>
+<span>var x = toCelsius(77);</span>
+<span>var text = "The temperature is " + x + " Celsius";</span>
+<span>// Or you can use the function directly, as a variable value:</span>
+<span>var text = "The temperature is " + toCelsius(77) + " Celsius";</span>
+  </pre>
+
+  <h2>Javascript keywords</h2>
+
+  <h3>Break keyword</h3>
+  <pre class="mycodejs">
+<span>for (let i = 0; i &lt; 10; i++) {</span>
+<span>  if (i === 5) break;</span>
+<span>  console.log(i); // Stops at 4</span>
+<span>}</span>
+  </pre>
+
+
+  <h3>Continue keyword</h3>
+  <pre class="mycodejs">
+<span>for (let i = 0; i &lt; 10; i++) {</span>
+<span>  if (i % 2 === 0) continue;</span>
+<span>  console.log(i); // Only logs 1, 3, 5, 7, 9</span>
+<span>}</span>
+  </pre>
+
+  <h3>debbuger keyword</h3>
+  <pre class="mycodejs">
+<span>function test() {</span>
+<span>  debugger; // Execution stops here if dev tools open</span>
+<span>  console.log("paused");</span>
+<span>}</span>
+  </pre>
+
+  <h3>Do while keyword</h3>
+  <pre class="mycodejs">
+<span>let i = 0;</span>
+<span>do {</span>
+<span>  console.log(i); // Logs 0, 1, 2, 3, 4</span>
+<span>  i++;</span>
+<span>} while (i &lt; 5);</span>
+  </pre>
+
+  <h3>for loop keyword</h3>
+
+  <pre class="mycodejs">
+<span>for (let j = 0; j &lt; 3; j++) {</span>
+<span>  console.log(j); // Logs 0, 1, 2</span>
+<span>}</span>
+  </pre>
+
+  <h3>function example</h3>
+  <pre class="mycodejs">
+<span>function greet(name) {</span>
+<span>  return "Hello " + name;</span>
+<span>}</span>
+<span>greet("bro"); // Returns "Hello bro"</span>
+  </pre>
+
+  <h3>if else example</h3>
+  <pre class="mycodejs">
+<span>let x = 15;</span>
+<span>if (x > 10) {</span>
+<span>  console.log("big"); // This runs</span>
+<span>} else {</span>
+<span>  console.log("small");</span>
+<span>}</span>
+  </pre>
+
+  <h3>Return keyword</h3>
+  <pre class="mycodejs">
+<span>function add(a, b) {</span>
+<span>  return a + b; // Exits function with result</span>
+<span>}</span>
+<span>let sum = add(3, 4); // sum = 7</span>
+  </pre>
+
+  <h3>Switch example</h3>
+  <pre class="mycodejs">
+<span>let day = 2;</span>
+<span>switch(day) {</span>
+<span>  case 1: console.log("Monday"); break;</span>
+<span>  case 2: console.log("Tuesday"); break; // This runs</span>
+<span>  default: console.log("Other day");</span>
+<span>}</span>
+  </pre>
+
+  <h3>Try ... catch for error handling</h3>
+  <pre class="mycodejs">
+<span>try {</span>
+<span>  riskyOperation(); // Might throw error</span>
+<span>} catch (error) {</span>
+<span>  console.log("Error:", error); // Catches and handles error</span>
+<span>}</span>
+  </pre>
+
+  <h3> var for declaring a variable</h3>
+  <pre class="mycodejs">
+<span>var message = "Hello bro"; // Function-scoped variable</span>
+<span>console.log(message); // "Hello bro"</span>
+  </pre>
+
+
+  <h2>Arithmetic</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>The basic arithmetic operators ( +, -, *, /, and % ) are binary operators, because they each operate on two
+        operands.</li>
+      <li>Parentheses can be used to group expressions as in algebra.</li>
+      <li>Operators in arithmetic expressions are applied in a precise sequence determined by the rules of operator
+        precedence.</li>
+      <li>When we say that operators are applied from left to right, we are referring to the associativity of the
+        operators. Some operators associate from right to left.</li>
+    </ul>
+    </p>
+  </div>
+
+
+  <h2>Equality and Relational Operators</h2>
+
+  <div class="div_p">
+    <p>
+      JavaScript uses equality and relational operators to compare values and make decisions in a program. The basic
+      equality operators include ==, which checks if two values are equal, and ===, which checks if they are equal and
+      the same type. The operators != and !== are used to check if two values are not equal, with !== also verifying
+      that the type is different. JavaScript also includes relational operators that compare one value to another. The
+      &gt; operator checks if one value is greater than another, while &lt; checks if it is less. The operator &gt;=
+      means “greater than or equal to,” and &lt;= means “less than or equal to.” Together, these operators allow
+      JavaScript to evaluate conditions and control how the program behaves based on comparisons.
+    </p>
+  </div>
+
+
+  <h2>What is DOM in JavaScript?</h2>
+
+  <div class="div_p">
+    JavaScript can access all the elements in a webpage making use of Document Object Model (DOM). In fact, the web
+    browser creates a DOM of the webpage when the page is loaded. The DOM model is created as a tree of objects like
+    this:
+    <p><img src="images/javascript8_1.png" alt="Dom_javascript_photo"></p>
+  </div>
+
+
+  <h2>Selecting the Topmost Elements</h2>
+
+  <div class="div_p">
+    <p>The topmost elements in an HTML document are available directly as document properties. For example, the element
+      can be accessed with document.documentElement property, whereas the element can be accessed with document.head
+      property, and the element can be accessed with document.body property. Here's an example:</p>
+  </div>
+
+  <h3>Selecting the Topmost Elements</h3>
+  <pre class="mycodejs">
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;&lt;meta charset="utf-8"&gt;</span>
+<span>    &lt;title&gt;JS Select Topmost Elements&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>    &lt;script&gt;</span>
+<span>    // Display lang attribute value of html element</span>
+<span>    alert(document.documentElement.getAttribute("lang")); </span>
+<span>    // Outputs: en</span>
+<span>    // Set background color of body element</span>
+<span>    document.body.style.background = "yellow";</span>
+<span>    // Display tag name of the head element's first child</span>
+<span>    alert(document.head.firstElementChild.nodeName); </span>
+<span>    // Outputs: meta</span>
+<span>    &lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h2>Selecting elements by id</h2>
+
+  <div class="div_p">
+    <p>You can select an element based on its unique ID with the getElementById() method. This is the easiest way to
+      find an HTML element in the DOM tree.<br><br>
+      The following example selects and highlight an element having the ID attribute id="mark".<br><br>
+      The getElementById() method will return the element as an object if the matching element was found, or null if no
+      matching element was found in the document.<br><br>
+    </p>
+  </div>
+
+  <h3>Selecting elements by Id</h3>
+
+  <pre class="mycodejs">
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>    &lt;meta charset="utf-8"&gt;</span>
+<span>    &lt;title&gt;JS Select Element by ID&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>    &lt;p id="mark"&gt;This is a paragraph of text.&lt;/p&gt;</span>
+<span>    &lt;p&gt;This is another paragraph of text.&lt;/p&gt;</span>
+<span>    &lt;script&gt;</span>
+<span>    // Selecting element with id mark </span>
+<span>    var match = document.getElementById("mark");</span>
+<span>    // Highlighting element's background</span>
+<span>    match.style.background = "yellow";</span>
+<span>    &lt;/script&gt;</span>
+<span>&lt;/body&gt;  &lt;/html&gt;</span>
+  </pre>
+
+  <h2>Selecting Elements by Class Name</h2>
+
+  <div class="div_p">
+    <p>Similarly, you can use the getElementsByClassName() method to select all the elements having specific class
+      names. This method returns an array-like object of all child elements which have all of the given class names.
+      Let's check out the following example:</p>
+  </div>
+
+
+  <h3>Selecting Elements by Class Name</h3>
+  <pre class="mycodejs">
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>    &lt;meta charset="utf-8"&gt;</span>
+<span>    &lt;title&gt;JS Select Elements by Class Name&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>    &lt;p class="test"&gt;This is a paragraph of text.&lt;/p&gt;</span>
+<span>    &lt;div class="block test"&gt;This is another paragraph of text.&lt;/div&gt;</span>
+<span>    &lt;p&gt;This is one more paragraph of text.&lt;/p&gt;    </span>
+<span>    &lt;script&gt;</span>
+<span>    // Selecting elements with class test</span>
+<span>    var matches = document.getElementsByClassName("test");</span>
+<span>    // Displaying the selected elements count</span>
+<span>    document.write("Number of selected elements: " + </span>
+<span>    matches.length); // Applying bold style to first element in selection</span>
+<span>    matches[0].style.fontWeight = "bold";</span>
+<span>    // Applying italic style to last element in selection</span>
+<span>    matches[matches.length - 1].style.fontStyle = "italic";</span>
+<span>    // Highlighting each element's background through loop</span>
+<span>    for(var elem in matches) {  </span>
+<span>        matches[elem].style.background = "yellow";</span>
+<span>    }</span>
+<span>    &lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+ </pre>
+
+  <h2>Selecting Elements by Tag Name</h2>
+
+  <div class="div_p">
+    <p>You can also select HTML elements by tag name using the getElementsByTagName() method. This method also returns
+      an array-like object of all child elements with the given tag name.</p>
+  </div>
+
+  <h3>Selecting Elements by Tag Name</h3>
+  <pre class="mycodejs">
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>    &lt;meta charset="utf-8"&gt;</span>
+<span>    &lt;title&gt;JS Select Elements by Tag Name&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>    &lt;p&gt;This is a paragraph.&lt;/p&gt;</span>
+<span>    &lt;div class="test"&gt;Another paragraph.&lt;/div&gt;</span>
+<span>    &lt;p&gt;One more paragraph.&lt;/p&gt;</span>
+<span>&lt;script&gt;</span>
+<span>    var matches = document.getElementsByTagName("p");</span>
+<span>    document.write("Selected: " + matches.length);</span>
+<span>    for(var elem in matches) {  </span>
+<span>        matches[elem].style.background = "yellow";</span>
+<span>    }</span>
+<span>&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h2>Selecting Elements with CSS Selectors</h2>
+
+  <div class="div_p">
+    You can use the querySelectorAll() method to select elements that matches the specified CSS selector. CSS selectors
+    provide a very powerful and efficient way of selecting HTML elements in a document.<br><br>
+
+    This method returns a list of all the elements that matches the specified selectors. You can examine it just like
+    any array, as shown in the following example:<br><br>
+  </div>
+
+  <h3>Selecting Elements with CSS Selectors</h3>
+
+  <pre class="mycodejs">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>    &lt;meta charset="utf-8"&gt;</span>
+<span>    &lt;title&gt;JS Select Elements with CSS Selectors&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>    &lt;ul&gt;</span>
+<span>        &lt;li&gt;Bread&lt;/li&gt;</span>
+<span>        &lt;li class="tick"&gt;Coffee&lt;/li&gt;</span>
+<span>        &lt;li&gt;Pineapple Cake&lt;/li&gt;</span>
+<span>    &lt;/ul&gt;&lt;script&gt;</span>
+<span>    // Selecting all li elements</span>
+<span>    var matches = document.querySelectorAll("ul li");</span>
+<span>    // Printing the number of selected li elements</span>
+<span>    document.write("Number of selected elements: " + </span>
+<span>    matches.length + "&lt;hr&gt;")</span>
+<span>    // Printing the content of selected li elements</span>
+<span>    for(var elem of matches) {  </span>
+<span>        document.write(elem.innerHTML + "&lt;br&gt;");</span>
+<span>    }</span>
+<span>    // Applying line through style to first li element </span>
+<span>    // with class tick</span>
+<span>    matches = document.querySelectorAll("ul li.tick");</span>
+<span>    matches[0].style.textDecoration = "line-through";</span>
+<span>    &lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h2>How Do I Access the DOM?</h2>
+
+  <div class="div_p">
+    <p>The DOM (Document Object Model) is automatically available in every web browser, allowing JavaScript to access
+      and interact with web pages. Although different browsers may implement the DOM slightly differently, they all
+      provide a way for JavaScript to work with the page's structure and elements. As soon as a script is added to a
+      webpage—whether written directly in a
+      &lt;script&gt; tag or loaded from an external file—you can immediately use DOM features through the document or
+      window objects.This lets you do basic tasks like showing alert messages or more advanced tasks like creating and
+      modifying elements on the page.<br><br></p>
+  </div>
+
+  <div class="div_p">
+    <p>The following JavaScript will display an alert when the document is loaded (and when the whole DOM is available
+      for use):</p>
+  </div>
+
+  <h3>DOM onload via body</h3>
+  <pre class="mycodejs">
+<span>&lt;body onload="window.alert('Welcome to my home page!');"&gt;&lt;/body&gt;</span>
+  </pre>
+
+  <h3>To create a new DOM element</h3>
+  <pre class="mycodejs">
+<span>&lt;head&gt;</span>
+<span>&lt;script&gt;</span>
+<span>  // run this function when the document is loaded</span>
+<span>  window.onload = function() {</span>
+<span> // create a couple of elements in an otherwise empty HTML page</span>
+<span>    var heading = document.createElement("h1");</span>
+<span>    var heading_text = document.createTextNode("Big Head!");</span>
+<span>    heading.appendChild(heading_text);</span>
+<span>    document.body.appendChild(heading);</span>
+<span>  }</span>
+<span>&lt;/script&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>&lt;/body&gt;</span>
+  </pre>
+
+
+  <h2>Important Data Types</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>document: When a member returns an object of type document (e.g., the ownerDocument property of an element
+        returns the document to which it belongs), this object is the root document object itself.</li>
+      <li>element: element refers to an element or a node of type element returned by a member of the DOM API.<br><br>
+
+        Rather than saying, for example, that the document.createElement() method returns an object reference to a node,
+        we just say that this method returns the element that has just been created in the DOM. element objects
+        implement the DOM Element interface and also the more basic Node interface, both of which are included together
+        in this reference.</li>
+      <li>nodeList: A nodeList is a collection of elements similar to an array, often returned by DOM methods like
+        document.getElementsByTagName(). You can access items in a nodeList using either the item() method or standard
+        array-style indexing. For example, list.item(1) and list[1] both retrieve the second element in the list. These
+        two approaches work the same way and are interchangeable.</li>
+      <li>Attribute: When an attribute is returned in the DOM—for example, through the createAttribute() method—it is
+        treated as an object with its own small interface. In the DOM, attributes are actually considered nodes, similar
+        to elements, although in practice you rarely need to work with them directly as nodes.</li>
+      <li>namedNodeMap: A namedNodeMap is similar to an array, but its items can be accessed by either a name or an
+        index. Accessing by index is mainly for convenience when you need to loop through the items, since the items are
+        not stored in any specific order. A namedNodeMap provides an item() method to access elements, and it also
+        allows you to add or remove items from the collection.</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>Core Interfaces in the DOM</h2>
+
+  <div class="div_p">
+    <p>The following is a brief list of common APIs in web and XML page scripting using the DOM.<br><br></p>
+    <p>
+    <ul>
+      <li>document.getElementById(id)</li>
+      <li>document.getElementsByTagName(name)</li>
+      <li>document.createElement(name)</li>
+      <li>parentNode.appendChild(node)</li>
+      <li>element.innerHTML</li>
+      <li>element.style.left</li>
+      <li>element.setAttribute()</li>
+      <li>element.getAttribute()</li>
+      <li>element.addEventListener()</li>
+      <li>window.content</li>
+      <li>window.onload</li>
+      <li>window.dump()</li>
+      <li>window.scrollTo()</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>JavaScript Output</h2>
+
+  <div class="div_p">
+    <p>JavaScript can "display" data in different ways:</p>
+    <p>
+    <ul>
+      <li>Writing into an HTML element, using innerHTML.</li>
+      <li>Writing into the HTML output using document.write().</li>
+      <li>Writing into an alert box, using window.alert().</li>
+      <li>Writing into the browser console, using console.log().</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>Using innerHTML</h2>
+
+  <div class="div_p">
+    <p>To access an HTML element, JavaScript can use the document.getElementById(id) method. The id attribute defines
+      the HTML element. The innerHTML property defines the HTML content:</p>
+  </div>
+
+  <h3>Using innerHTML</h3>
+  <pre class="mycodejs">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html&gt;</span>
+<span>&lt;body&gt;</span>
+<span>&lt;h1&gt;My First Web Page&lt;/h1&gt;</span>
+<span>&lt;p&gt;My First Paragraph&lt;/p&gt;</span>
+<span>&lt;p id="demo"&gt;&lt;/p&gt;</span>
+<span>&lt;script&gt;</span>
+<span>document.getElementById("demo").innerHTML = 5 + 6;</span>
+<span>&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h2>Using document.write()</h2>
+
+  <div class="div_p">
+    <p>For testing purposes, it is convenient to use document.write().Using document.write() after an HTML document is
+      fully loaded, will delete all existing HTML:</p>
+  </div>
+
+  <h3>Using document.write()</h3>
+  <pre class="mycodejs">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html&gt;</span>
+<span>&lt;body&gt;</span>
+<span>&lt;h1&gt;My First Web Page&lt;/h1&gt;</span>
+<span>&lt;p&gt;My First Paragraph&lt;/p&gt;</span>
+<span>&lt;script&gt;</span>
+<span>document.write(5 + 6);</span>
+<span>&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+    </pre>
+
+  <h3>Using alert()</h3>
+
+  <pre class="mycodejs">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html&gt;</span>
+<span>&lt;body&gt;</span>
+<span>&lt;h1&gt;My First Web Page&lt;/h1&gt;</span>
+<span>&lt;p&gt;My first paragraph.&lt;/p&gt;</span>
+<span>&lt;script&gt;</span>
+<span>alert(5 + 6);</span>
+<span>&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+    </pre>
+
+  <h2>Using console.log()</h2>
+
+  <div class="div_p">
+    <p>For debugging purposes, you can use the console.log() method to display data.</p>
+  </div>
+
+
+  <h3>Using console.log()</h3>
+
+  <pre class="mycodejs">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html&gt;</span>
+<span>&lt;body&gt;</span>
+<span>&lt;script&gt;</span>
+<span>  console.log(5 + 6);</span>
+<span>&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+    </pre>
+
+  <h2>Obtaining User Input</h2>
+
+  <div class="div_p">
+    <p>JavaScript has a few window objects that you can use to interact with users.<br><br>
+
+      JavaScript has three kind of popup boxes:<br><br>
+    </p>
+    <p>
+    <ul>
+      <li>Alert box</li>
+      <li>Confirm box</li>
+      <li>Prompt box</li>
+    </ul>
+    </p>
+  </div>
+
+
+  <h2>Javascript alert box</h2>
+
+  <div class="div_p">
+    <p>An alert box is often used if you want to make sure information comes through to the user. When an alert box pops
+      up, the user will have to click "OK" to proceed.
+    </p>
+  </div>
+
+  <h3>Javascript alert box syntax</h3>
+
+  <pre class="mycodejs">
+<span>window.alert("sometext");</span>
+<span>// or just </span>
+<span>alert("sometext");</span>
+  </pre>
+
+
+  <h3>Javascript alert box example</h3>
+
+  <pre class="mycodejs">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html&gt;</span>
+<span>&lt;body&gt;</span>
+<span>&lt;h2&gt;JavaScript Alert&lt;/h2&gt;</span>
+<span>&lt;button onclick="myFunction()"&gt;Try it&lt;/button&gt;</span>
+<span>&lt;script&gt;</span>
+<span>function myFunction() {</span>
+<span>    alert("I am an alert box!");</span>
+<span>}</span>
+<span>&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h2>JavaScript Confirm Box</h2>
+
+  <div class="div_p">
+    <p>A confirm box is often used if you want the user to verify or accept something. When a confirm box pops up, the
+      user will have to click either "OK" or "Cancel" to proceed. If the user clicks "OK", the box returns true. If the
+      user clicks "Cancel", the box returns false.</p>
+  </div>
+
+  <h3>JavaScript Confirm Box Syntax</h3>
+
+  <pre class="mycodejs">
+<span>window.confirm("Do you really want to leave?");</span>
+<span>// or just </span>
+<span>confirm("Do you really want to leave?");</span>
+  </pre>
+
+
+  <h3>JavaScript Confirm Box example</h3>
+
+  <pre class="mycodejs">
+<span>&lt;body&gt;</span>
+<span>&lt;h2&gt;JavaScript Confirm Box&lt;/h2&gt;</span>
+<span>&lt;button onclick="myFunction()"&gt;Try it&lt;/button&gt;</span>
+<span>&lt;p id="demo"&gt;&lt;/p&gt;</span>
+<span>&lt;script&gt;</span>
+<span>function myFunction() {</span>
+<span>    var txt;</span>
+<span>    if (confirm("Press a button!") == true) {</span>
+<span>        txt = "You pressed OK!";</span>
+<span>    } else {</span>
+<span>        txt = "You pressed Cancel!";</span>
+<span>    }</span>
+<span>    document.getElementById("demo").innerHTML = txt;</span>
+<span>}</span>
+<span>&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+  </pre>
+
+  <h2>Prompt Box</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>A prompt box is often used if you want the user to input a value before entering a page.</li>
+      <li>When a prompt box pops up, the user will have to click either "OK" or "Cancel" to proceed after entering an
+        input value.</li>
+      <li>If the user clicks "OK" the box returns the input value. If the user clicks "Cancel" the box returns null.
+      </li>
+    </ul>
+    </p>
+  </div>
+
+
+  <h3>Prompt Box Example</h3>
+
+  <pre class="mycodejs">
+<span>window.prompt("sometext","defaultText");</span>
+<span>//or just</span>
+<span>prompt("What's your sign?","defaultText");</span>
+  </pre>
+
+  <h3>Prompt Box Example</h3>
+
+  <pre class="mycodejs">
+<span>&lt;html&gt;</span>
+<span>&lt;body&gt;</span>
+<span>&lt;h2&gt;JavaScript Prompt&lt;/h2&gt;</span>
+<span>&lt;button onclick="myFunction()"&gt;Try it&lt;/button&gt;</span>
+<span>&lt;p id="demo"&gt;&lt;/p&gt;</span>
+<span>&lt;script&gt;</span>
+<span>function myFunction() {</span>
+<span>   var txt;</span>
+<span>   var person = prompt("Please enter your name:", "Enter Name");</span>
+<span>   if (person == null || person == "") {</span>
+<span>       txt = "User cancelled the prompt.";</span>
+<span>   } else {</span>
+<span>       txt = "Hello " + person + "! How are you today?";</span>
+<span>   }</span>
+<span>   document.getElementById("demo").innerHTML = txt;</span>
+<span>}</span>
+<span>&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h2>JavaScript Strings and Functions</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>JavaScript strings are used for storing and manipulating text.</li>
+      <li>A JavaScript string stores a series of characters like "John Doe".</li>
+      <li>A String can be any text inside double or single quotes:</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>Javascript Strings anf Functions example</h2>
+
+  <pre class="mycodejs">
+<span>var car_name = "Volvo XC60";</span>
+<span>var car_name = 'Volvo XC60';</span>
+  </pre>
+
+  <h2>Quotes</h2>
+
+  <div class="div_p">
+    <p>You can use quotes inside a string as long as they don't match the quotes surrounding the string:</p>
+  </div>
+
+  <h3>Quotes</h3>
+
+  <pre class="mycodejs">
+<span>var answer = "It's alright";</span>
+<span>var answer = "He is called 'Johnny'";</span>
+<span>var answer = "'He is called "Johnny"';</span>
+  </pre>
+
+  <h2>Special Characters</h2>
+
+  <div class="div_p">
+    <p>
+    <p>In JavaScript, the backslash (\) is used as an escape character to insert special characters inside strings.
+      Common escapes include \' for a single quote, \" for a double quote, and \\ for a literal backslash. JavaScript
+      also supports additional escape sequences such as \b for backspace, \r for carriage return, \f for form feed, \t
+      for a horizontal tab, and \v for a vertical tab. These escapes allow you to include characters in a string that
+      would otherwise be difficult to type or represent directly.</p>
+    </p>
+  </div>
+
+  <h3>Special Characters</h3>
+  <pre class="mycodejs">
+<span>var x = 'It\'s alright';</span>
+<span>var y = "We are the so-called \"Vikings\" " +</span>
+<span>"from the North.";</span>
+  </pre>
+
+  <h2>Strings can be Objects</h2>
+
+  <div class="div_p">
+    <p>Strings can also be defined as objects with the keyword new :</p>
+  </div>
+
+  <h3>Strings as objects example</h3>
+
+  <pre class="mycodejs">
+<span>var x = "John";</span>
+<span>var y = new String("John");</span>
+<span>// typeof x will return string</span>
+<span>// typeof y will return object</span>
+  </pre>
+
+
+  <h2>Javascript String Methods</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>charAt()</li>
+      <li>charCodeAt()</li>
+      <li>concat()</li>
+      <li>endsWith()</li>
+      <li>fromCharCode()</li>
+      <li>includes()</li>
+      <li>indexOf()</li>
+      <li>lastIndexOf()</li>
+      <li>localeCompare()</li>
+      <li>match()</li>
+      <li>repeat()</li>
+      <li>replace()</li>
+      <li>search()</li>
+      <li>slice()</li>
+      <li>split()</li>
+      <li>startsWith()</li>
+      <li>substr()</li>
+      <li>substring()</li>
+      <li>toLocaleLowerCase()</li>
+      <li>toLocaleUpperCase()</li>
+      <li>toLowerCase()</li>
+      <li>toString()</li>
+      <li>toUpperCase()</li>
+      <li>trim()</li>
+      <li>valueOf()</li>
+    </ul>
+    </p>
+  </div>
+
+
+
+  <h2>Converting a String to an Array syntax</h2>
+
+  <div class="div_p">
+    <p>A string can be converted to an array with the split() method:</p>
+  </div>
+
+  <h3>Converting a String to an Array syntax</h3>
+
+  <pre class="mycodejs">
+<span>var txt = "a,b,c,d,e";   // String</span>
+<span>txt.split(",");      // Split on commas</span>
+<span>txt.split(" ");      // Split on spaces</span>
+<span>txt.split("|");      // Split on pipe</span>
+  </pre>
+
+  <h3>Converting a String to an Array syntax example</h3>
+
+  <pre class="mycodejs">
+<span>&lt;p&gt;Click "Try it" to display the first array </span>
+<span>element, after a string split.&lt;/p&gt;</span>
+<span>&lt;button onclick="myFunction()"&gt;Try it&lt;/button&gt;</span>
+<span>&lt;p id="demo"&gt;&lt;/p&gt;</span>
+<span>&lt;script&gt;</span>
+<span>function myFunction() {</span>
+<span>   var str = "a,b,c,d,e,f";</span>
+<span>   var arr = str.split(",");</span>
+<span> document.getElementById("demo").innerHTML = arr[0];</span>
+<span>   // prints a</span>
+<span>}</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+  <h2>String HTML Wrapper Methods</h2>
+
+  <div class="div_p">
+    <p>
+      <li>anchor()</li>
+      <li>big()</li>
+      <li>blink()</li>
+      <li>bold()</li>
+      <li>fixed()</li>
+      <li>fontcolor()</li>
+      <li>fontsize()</li>
+      <li>italics()</li>
+      <li>link()</li>
+      <li>small()</li>
+      <li>strike()</li>
+      <li>sub()</li>
+      <li>sup()</li>
+    </p>
+  </div>
+
+  <h2>Concatenate Arrays</h2>
+
+  <h3>Using the concat method:</h3>
+
+  <pre class="mycodejs">
+<span>var array1 = ['a', 'b', 'c'];</span>
+<span>var array2 = ['d', 'e', 'f'];</span>
+<span>console.log(array1.concat(array2));</span>
+<span>// expected output: Array ["a", "b", "c", "d", "e", "f"]</span>
+  </pre>
+
+  <div class="div_p">
+    <p>The spread operator provides a more concise and modern syntax for concatenating arrays. It allows you to expand
+      an iterable (like an array) into individual elements.
+    </p>
+  </div>
+
+  <h3>Using the Spread Operator (...):</h3>
+
+  <pre class="mycodejs">
+<span>const arrayA = ['a', 'b'];</span>
+<span>const arrayB = ['c', 'd'];</span>
+<span>const mergedArray = [...arrayA, ...arrayB];</span>
+<span>console.log(mergedArray); </span>
+<span>// Output: ["a", "b", "c", "d"]</span>
+<span>// You can also easily add individual elements </span>
+<span>// or combine multiple arrays</span>
+<span>const arrayC = ['e', 'f'];</span>
+<span>const finalMerged = [...arrayA, 'x', ...arrayB, ...arrayC, 'y'];</span>
+<span>console.log(finalMerged); </span>
+<span>// Output: ["a", "b", "x", "c", "d", "e", "f", "y"]</span>
+  </pre>
+
+  <div class="div_p">
+    <p>If you need to append the elements of one array to another in-place (modifying the original array), you can use
+      the push() method combined with the spread operator.</p>
+  </div>
+
+  <h3>Using push() with the Spread Operator (for in-place modification):</h3>
+
+  <pre class="mycodejs">
+<span>const list1 = [1, 2];</span>
+<span>const list2 = [3, 4];</span>
+<span>list1.push(...list2);</span>
+<span>console.log(list1); // Output: [1, 2, 3, 4] (list1 is modified)</span>
+<span>console.log(list2); // Output: [3, 4] (list2 remains unchanged)</span>
+  </pre>
+
+  <h3>Concatenate strings in array</h3>
+
+  <pre class="mycodejs">
+<span>&lt;body onload="getGreeting();"&gt;</span>
+<span>&lt;p id="greet"&gt;&lt;/p&gt;</span>
+<span>&lt;script&gt;</span>
+<span>   function getGreeting() {</span>
+<span>      var greetList = ['Hello', ' ', 'John', '!'];</span>
+<span>      var text2 = "".concat(...greetList); </span>
+<span>      // "Hello John!"</span>
+<span>document.getElementById("greet").innerHTML = text2;</span>
+<span>   }</span>
+<span>&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+  </pre>
+
+
+
+
+
+  <h2>JavaScript Control Statements</h2>
+
+  <h3>Break keyword</h3>
+  <pre class="mycodejs">
+<span>for (let i = 0; i &lt; 10; i++) {</span>
+<span>  if (i === 5) break;</span>
+<span>  console.log(i); // Stops at 4</span>
+<span>}</span>
+  </pre>
+
+  <span>let count = 0;</span>
+  <span>while (count &lt; 3) {</span>
+  <span> console.log(count);</span>
+  <span> count++;</span>
+  <span>}</span>
+  <span>// Output: 0, 1, 2</span>
+
+  <h3>Do while keyword</h3>
+  <pre class="mycodejs">
+<span>let i = 0;</span>
+<span>do {</span>
+<span>  console.log(i); // Logs 0, 1, 2, 3, 4</span>
+<span>  i++;</span>
+<span>} while (i &lt; 5);</span>
+  </pre>
+
+  <h3>for loop keyword</h3>
+
+  <pre class="mycodejs">
+<span>for (let j = 0; j &lt; 3; j++) {</span>
+<span>  console.log(j); // Logs 0, 1, 2</span>
+<span>}</span>
+  </pre>
+
+  <h3>if else example</h3>
+  <pre class="mycodejs">
+<span>let x = 15;</span>
+<span>if (x > 10) {</span>
+<span>  console.log("big"); // This runs</span>
+<span>} else {</span>
+<span>  console.log("small");</span>
+<span>}</span>
+  </pre>
+
+  <h3>Switch example</h3>
+  <pre class="mycodejs">
+<span>let day = 2;</span>
+<span>switch(day) {</span>
+<span>  case 1: console.log("Monday"); break;</span>
+<span>  case 2: console.log("Tuesday"); break; // This runs</span>
+<span>  default: console.log("Other day");</span>
+<span>}</span>
+  </pre>
+
+
+  <div class="div_p">
+    <p>The default keyword specifies the code to run if there is no case match:<br><br>
+      For Example: The getDay() method returns the weekday as a number between 0 and 6. If today is neither Saturday (6)
+      nor Sunday (0), write a default message:<br><br>
+    </p>
+  </div>
+
+  <h3>Default keyword</h3>
+  <pre class="mycodejs">
+<span>switch(new Date().getDay()) {</span>
+<span>   case 6:</span>
+<span>      day = "Today is Saturday";</span>
+<span>      break;</span>
+<span>   case 0:</span>
+<span>      day = "Today is Sunday";</span>
+<span>      break;</span>
+<span>   default:</span>
+<span>      day = "Looking forward to the weekend";</span>
+<span>}</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>Conditional (Ternary) Operator</h4>
+    <p>JavaScript also contains a conditional operator that assigns a value to a variable based on some condition.</p>
+  </div>
+
+  <h3>Conditional (Ternary) Operator syntax:</h3>
+
+  <pre class="mycodejs">
+<span>variablename = (condition) ? value1_if_true:value2_if_false;</span>
+  </pre>
+
+  <div class="div_p">
+    <p>If the variable age is a value below 18, the value of the variable voteable will be "Too young", otherwise the
+      value of voteable will be "Old enough".</p>
+  </div>
+
+
+  <h3>Conditional (Ternary) Operator syntax:</h3>
+
+  <pre class="mycodejs">
+<span>var voteable = (age &lt; 18) ? "Too young":"Old enough";</span>
+  </pre>
+
+
+  <h3>For...in syntax</h3>
+
+  <pre class="mycodejs">
+<span>for (variablename in object){</span>
+<span>statement or block to execute</span>
+<span>}</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>for...in Example</h4>
+    <p>Try the following example to implement 'for-in' loop. It prints the web browser's Navigator object.</p>
+  </div>
+
+  <h3>For...in example</h3>
+
+  <pre class="mycodejs">
+<span>&lt;html&gt;</span>
+<span>   &lt;body&gt;</span>
+<span>  &lt;script type="text/javascript"&gt;</span>
+<span>        var aProperty;</span>
+<span>        document.write("Navigator Object Properties&lt;br /&gt; ");</span>
+<span>        for (aProperty in navigator) {</span>
+<span>           document.write(aProperty);</span>
+<span>           document.write("&lt;br /&gt;");</span>
+<span>        }</span>
+<span>        document.write ("Exiting from the loop!");</span>
+<span>  &lt;/script&gt;</span>
+<span>   &lt;p&gt;Set the variable to different object and then try...&lt;/p&gt;</span>
+<span>   &lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>forEach</h4>
+    <p>forEach is a method on the Array prototype. In other words, you can call it on any array. For loop accepts 3
+      arguments. However forEach only works on arrays.</p>
+    <p>
+    <ul>
+      <li>element value</li>
+      <li>element index</li>
+      <li>array being traversed (I have never used this)</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>JavaScript Arrays</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>JavaScript arrays are used to store multiple values in a single variable.</li>
+      <li>You should consider using an array whenever you are working with a list or a set of values that are related to
+        each other.</li>
+      <li>An array is a special variable that can hold more than one value at a time.</li>
+      <li>If you have a list of items (a list of car names, for example), storing the cars in single variables could
+        look like this:</li>
+    </ul>
+    </p>
+  </div>
+
+  <div class="div_p">
+    <h4>Creating an Array</h4>
+  </div>
+
+
+  <h3>Creating an Array syntax</h3>
+
+  <pre class="mycodejs">
+<span>var array-name = [item1, item2, ... item];</span>
+  </pre>
+
+  <h2>Arrays vs Objects</h2>
+
+  <div class="div_p">
+    <ul>
+      <li>Objects allow you to store keyed collections of values.</li>
+      <li>But quite often we find that we need an ordered collection, where we have a 1st, a 2nd, a 3rd element and so
+        on. For example, we need that to store a list of something: users, goods, HTML elements etc.</li>
+      <li>It is not convenient to use an object here, because it provides no methods to manage the order of elements. We
+        can’t insert a new property “between” the existing ones. Objects are just not meant for such use.</li>
+      <li>That is why we use the special data structure named Array, to store ordered collections.</li>
+    </ul>
+  </div>
+
+  <h3>Array Declaration</h3>
+
+  <pre class="mycodejs">
+<span>var arr = new Array();</span>
+<span>var arr = [];</span>
+  </pre>
+
+  <h2>An array can store elements of any type</h2>
+
+  <h3>An array can store elements of any type example</h3>
+
+  <pre class="mycodejs">
+<span>let arr = [ 'Apple',</span>
+<span>           { name: 'John' },</span>
+<span>             true,</span>
+<span>           function() { alert('hello'); }</span>
+<span>           ];</span>
+<span>// get the object at index 1 and then show its name</span>
+<span>alert( arr[1].name ); // John</span>
+<span>// get the function at index 3 and run it</span>
+<span>arr[3](); // hello</span>
+  </pre>
+
+  <h2>Trailing comma (use with caution)</h2>
+
+  <div class="div_p">
+    <p>An array, just like an object, may end with a comma:</p>
+    <p>The “trailing comma” style makes it easier to insert/remove items, because all lines become alike.</p>
+  </div>
+
+  <h3>Trailing comma (use with caution)</h3>
+
+  <pre class="mycodejs">
+<span>    var fruits = [</span>
+<span>    "Apple",</span>
+<span>    "Orange",</span>
+<span>    "Plum",</span>
+<span>];</span>
+  </pre>
+
+  <h2>Methods pop/push, shift/unshift</h2>
+
+  <div class="div_p">
+    <p>A JavaScript array can act like a queue or a stack depending on the methods used. As a queue (FIFO), you use
+      push() to add elements to the end and shift() to remove elements from the beginning, making the next item move
+      forward. As a stack (LIFO), you use push() to add elements to the end and pop() to remove elements from that same
+      end—like adding or removing cards from the top of a stack.</p>
+  </div>
+
+
+  <div class="div_p">
+    <h4>Methods that work with the end of the array: pop</h4>
+    <p>Extracts the last element of the array and returns it:</p>
+  </div>
+
+  <h3>Method pop example:</h3>
+  <pre class="mycodejs">
+<span>var fruits = ["Apple", "Orange", "Pear"];</span>
+<span>alert( fruits.pop() ); // remove "Pear" and alert it</span>
+<span>alert( fruits ); // Apple, Orange</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>Methods that work with the end of the array: push</h4>
+    <p>Append the element to the end of the array:</p>
+  </div>
+
+  <h3>Method push example:</h3>
+  <pre class="mycodejs">
+<span>var fruits = ["Apple", "Orange"];</span>
+<span>fruits.push("Pear");</span>
+<span>alert( fruits ); // Apple, Orange, Pear</span>
+  </pre>
+
+
+  <div class="div_p">
+    <h4>Methods that work with the beginning of the array: shift</h4>
+    <p>Extracts the first element of the array and returns it:</p>
+  </div>
+
+  <h3>Methods shift example:</h3>
+
+  <pre class="mycodejs">
+<span>var fruits = ["Apple", "Orange", "Pear"];</span>
+<span>alert( fruits.shift() ); // remove Apple and alert it</span>
+<span>alert( fruits ); // Orange, Pear</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>Methods that work with the beginning of the array: unshift</h4>
+    <p>Add the element to the beginning of the array:</p>
+  </div>
+
+  <h3>Method unshift example:</h3>
+
+  <pre class="mycodejs">
+<span>var fruits = ["Orange", "Pear"];</span>
+<span>fruits.unshift('Apple');</span>
+<span>alert( fruits ); // Apple, Orange, Pear</span>
+  </pre>
+
+  <h2>Access the Elements of an Array</h2>
+
+  <div class="div_p">
+    <p>In JavaScript, each item in an array is assigned an index, which is a number used to access or modify that item.
+      Array indexes always start at 0, meaning the first element is at index 0, the second at 1, and so on. By using
+      these index numbers, you can read or change specific values in the array—for example, accessing the first element
+      with [0] or updating it using the same index.</p>
+  </div>
+
+  <h3>Access the Elements of an Array Examples:</h3>
+
+  <pre class="mycodejs">
+<span>var name = cars[0];</span>
+<span>var cars = ["Saab", "Volvo", "BMW"];</span>
+<span>cars[0] = "Opel";</span>
+<span>document.getElementById("demo").innerHTML = cars[0];</span>
+  </pre>
+
+
+
+  <h2>Arrays are Objects</h2>
+
+  <div class="div_p">
+    <p>Arrays are a special type of objects. The typeof operator in JavaScript returns "object" for arrays.<br><br>
+      But, JavaScript arrays are best described as arrays.<br><br>
+
+      Arrays use numbers to access its "elements". In this example, person[0] returns John:</p>
+  </div>
+
+  <h3>Arrays example</h3>
+
+  <pre class="mycodejs">
+<span>//Array:</span>
+<span>var person = ["John", "Doe", 46];</span>
+  </pre>
+
+  <div class="div_p">
+    <p>Objects use names to access its "members". In this example, person.firstName returns John:</p>
+  </div>
+
+  <h3>Objects example</h3>
+
+  <pre class="mycodejs">
+<span>//Object:</span>
+<span>var person = {firstName:"John", lastName:"Doe", age:46};</span>
+  </pre>
+
+  <h2>Array Elements Can Be Objects</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>JavaScript variables can be objects. Arrays are special kinds of objects.</li>
+      <li>Because of this, you can have variables of different types in the same Array.</li>
+      <li>You can have objects in an Array. You can have functions in an Array. You can have arrays in an Array:</li>
+    </ul>
+    </p>
+  </div>
+
+  <h3>Array Elements Can Be Objects</h3>
+
+  <pre class="mycodejs">
+<span>myArray[0] = Date.now;</span>
+<span>myArray[1] = myFunction;</span>
+<span>myArray[2] = myCars;</span>
+  </pre>
+
+  <h2>Array Elements Can Be Objects cont…</h2>
+
+  <div class="div_p">
+    <p>JavaScript Arrays can contain objects;</p>
+  </div>
+
+  <h3>Array Elements Can Be Objects cont… examples</h3>
+
+  <pre class="mycodejs">
+<span>var items = [</span>
+<span>    {type:"fruit", name:"orange", color: "orange"},</span>
+<span>    {type:"fruit", name:"apple", color: "red"},</span>
+<span>    {type:"vegetable", name:"celery", color: "green"}</span>
+<span>];</span>
+<span>for(var i = 0; i &lt; items.length; i++) {</span>
+<span>    var this_item = items[i];</span>
+<span>    document.getElementByID("arraydemo1").innerHTML =</span>
+<span>    this_item.type + " " + this_item.name + " " +</span>
+<span>    this_item.color;</span>
+<span>}</span>
+  </pre>
+
+
+  <h2>Array Properties and Methods</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>sort(): The sort() method sorts arrays</li>
+      <li>length(): The length property returns the number of elements</li>
+      <li>concat(): Joins two or more arrays, and returns a copy of the joined arrays</li>
+      <li>copyWithin(): Copies array elements within the array, to and from specified positions</li>
+      <li>every(): Checks if every element in an array pass a test</li>
+      <li>fill(): Fill the elements in an array with a static value</li>
+      <li>filter(): Creates a new array with every element in an array that pass a test</li>
+      <li>find(): Returns the value of the first element in an array that pass a test</li>
+      <li>findIndex(): Returns the index of the first element in an array that pass a test</li>
+      <li>forEach(): Calls a function for each array element</li>
+      <li>indexOf(): Search the array for an element and returns its position</li>
+      <li>isArray(): Checks whether an object is an array</li>
+      <li>join(): Joins all elements of an array into a string</li>
+      <li>lastIndexOf(): Search the array for an element, starting at the end, and returns its position</li>
+      <li>map(): Creates a new array with the result of calling a function for each array element</li>
+      <li>pop(): Removes the last element of an array, and returns that element</li>
+      <li>push(): Adds new elements to the end of an array, and returns the new length</li>
+      <li>reduce(): Reduce the values of an array to a single value (going left-to-right)</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>The length Property</h2>
+
+  <div class="div_p">
+    <p>The length property of an array returns the length of an array (the number of array elements).<br><br>
+      The length property is always one more than the highest array index.</p>
+  </div>
+
+  <h3>The length Property Example:</h3>
+  <pre class="mycodejs">
+<span>var fruits = ["Banana", "Orange", "Apple", "Mango"];</span>
+<span>fruits.length; // the length of fruits is 4</span>
+  </pre>
+
+  <h2>Looping Array Elements</h2>
+
+  <div class="div_p">
+    <p>The best way to loop through an array, is using a "for" loop:</p>
+  </div>
+
+  <h3>Looping Array Elements Example:</h3>
+
+  <pre class="mycodejs">
+<span>var fruits, text, i;</span>
+<span>fruits = ["Banana", "Orange", "Apple", "Mango"];</span>
+<span>text = "<ul>";</span>
+<span>for (i = 0; i &lt; fruits.length; i++) {</span>
+<span>    text += "<li>" + fruits[i] + "</li>";</span>
+<span>}</span>
+<span>text += "</ul>";</span>
+  </pre>
+
+  <div class="div_p">
+    <p>For arrays there is another form of loop, for...of:</p>
+    <p>The for..of doesn't give access to the number of the current element, just its value, but in most cases that's
+      enough. And it's shorter.</p>
+  </div>
+
+  <h3>for..of</h3>
+
+  <pre class="mycodejs">
+<span>let fruits = ["Apple", "Orange", "Plum"];</span>
+<span>// iterates over array elements</span>
+<span>for (var fruit of fruits) {<span>
+<span>    alert( fruit );</span>
+<span>}</span>
+  </pre>
+
+  <div class="div_p">
+    <p>Technically, because arrays are objects, it is also possible to use for..in:</p>
+  </div>
+
+  <h3>for...in</h3>
+
+  <pre class="mycodejs">
+<span>let arr = ["Apple", "Orange", "Pear"];</span>
+<span>for (let key in arr) {</span>
+<span>  alert( arr[key] ); // Apple, Orange, Pear</span>
+<span>}</span>
+  </pre>
+
+  <h2>JavaScript Cookies</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>Cookies were originally invented by Netscape to give 'memory' to web servers and browsers.</li>
+      <li>The HTTP protocol is state-less, which means that once the server has sent a page to a browser requesting it,
+        it doesn't remember a thing about it.
+      </li>
+      <li>So if you come to the same web page a second, third, hundredth or millionth time, the server once again
+        considers it the very first time you ever came there.</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>What are cookies?</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>Small text data (&lt;4 KB) stored on the user's computer cookies that exceed this length are trimmed to fit.
+      </li>
+      <li>Remember information about the user across visits (e.g., username).</li>
+      <li>Default: deleted when browser closes; can set expiration to keep longer.</li>
+      <li>Accessed via document.cookie.</li>
+      <li>Stored as name=value pairs. Only the site that set the cookie can read it.</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>Why use cookies?</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>User Recognition: Identify returning visitors</li>
+      <li>Session Managemen: Remember login sessions, passwords (encrypted)</li>
+      <li>Personalization: Save user preferences (themes, settings)</li>
+      <li>Tracking: Monitor site navigation, page views, ad relevance</li>
+      <li>E-commerce: Maintain shopping cart items between visits</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>How it works?</h2>
+
+  <div class="div_p">
+    <p>
+    <ol>
+      <li>Your server sends some data to the visitor's browser in the form of a cookie.</li>
+      <li>The browser may accept the cookie. If it does, it is stored as a plain text record on the visitor's hard
+        drive.</li>
+      <li>Now, when the visitor arrives at another page on your site, the browser sends the same cookie to the server
+        for retrieval.</li>
+      <li>Once retrieved, your server knows/remembers what was stored earlier.</li>
+    </ol>
+    </p>
+    <p>During the browsing session browser stores the cookies in memory, at the time of quitting they goto the file
+      called cookies.txt. Different browser store cookies files in a different location in the disk.</p>
+  </div>
+
+  <h2>Attributes of a Cookie</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>Name: Alphanumeric string, no spaces or commas (underscores allowed). Case-insensitive. Must be a single
+        string with no commas, semicolons, or whitespace.</li>
+      <li>Value: Data to store; cannot be undefined or null, but can be empty.</li>
+      <li>Expires: Sets when the cookie expires (default = end of session). Format: DD-Mon-YY HH:MM:SS UTC.</li>
+      <li>Path: Limits cookie to a specific site path (default = path where created).</li>
+      <li>Domain: Restricts cookie to a particular domain (default = current domain).</li>
+      <li>Secure: true = cookie sent only over HTTPS (default = false).</li>
+      <li>Accessed via document.cookie.</li>
+      <li>Can read, create, modify, and delete cookies for the current webpage.</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>JavaScript and Cookies and storing cookies</h2>
+  <div class="div_p">
+    <p>JavaScript and Cookies: To use cookies in JavaScript, you need to set a cookie and retrieve (read) a
+      cookie.<br><br>Encoding/Decoding Cookies: Use escape() to encode cookie values when setting them, and unescape()
+      to
+      decode them when reading.<br><br>Storing Cookies: The simplest method is assigning a string directly to
+      document.cookie.<br><br>Here the expires attribute is optional. If you provide this attribute with a valid date or
+      time, then the cookie will expire on a given date or time and thereafter, the cookies' value will not be
+      accessible.</p>
+  </div>
+
+  <h3>JavaScript cookie example</h3>
+  <pre class="mycodejs">
+<span>document.cookie = "key1=value1;key2=value2;expires=date";</span>
+  </pre>
+
+  <h2>Creating a Cookie in JavaScript </h2>
+  <div class="div_p">
+    <p>In JavaScript, you can create, read, and delete cookies with the document.cookie property. This property
+      represents all the cookies associated with a document.<br><br>
+
+      To create or store a new cookie, assign a name=value string to this property, like this:</p>
+  </div>
+
+  <h3>creating a cookie in javascript</h3>
+
+  <pre class="mycodejs">
+<span>document.cookie = "firstName=Christopher";</span>
+  </pre>
+
+  <h2>Encoding and decoding cookies</h2>
+
+  <div class="div_p">
+    <p>A cookie value cannot contain semicolons, commas, or spaces.<br><br>To store values with these characters, use
+      JavaScript's encodeURIComponent() function to encode them before saving in the cookie.<br><br>When reading the
+      cookie,
+      use decodeURIComponent() to get the original value.</p>
+  </div>
+
+  <h3>Encoding and decoding cookies</h3>
+
+  <pre class="mycodejs">
+<span>document.cookie = "name=" + encodeURIComponent("Christopher Columbus");</span>
+  </pre>
+
+  <h2>Cookie lifetime</h2>
+
+  <div class="div_p">
+    <p>By default, the lifetime of a cookie is the current browser session, which means it is lost when the user exits
+      the browser.<br><br>
+      For a cookie to persist beyond the current browser session, you will need to specify its lifetime (in seconds)
+      with a max-age attribute. This attribute determine how long a cookie can be remain on the user's system before it
+      is deleted, e.g., the following cookie will live for 30 days.</p>
+  </div>
+
+  <h3>Cookie lifetime</h3>
+
+  <pre class="mycodejs">
+<span>document.cookie = "firstName=Christopher; max-age=" + 30*24*60*60;</span>
+  </pre>
+
+  <h2>Reading Cookies</h2>
+
+  <div class="div_p">
+    <p>Reading a cookie is just as simple as writing one, because the value of the document.cookie object is the cookie.
+      So you can use this string whenever you want to access the cookie. The document.cookie string will keep a list of
+      name=value pairs separated by semicolons, where name is the name of a cookie and value is its string
+      value.<br><br>
+      You can use the string's split() function to break a string into key and values as follows:</p>
+  </div>
+
+  <h3>Reading Cookies</h3>
+
+  <pre class="mycodejs">
+<span>&lt;script&gt;</span>
+<span>function ReadCookie() {</span>
+<span>  var allcookies = document.cookie;</span>
+<span>  document.write ("All Cookies : " + allcookies );</span>
+<span>  // Get all the cookies pairs in an array</span>
+<span>  cookiearray = allcookies.split(';');</span>
+<span>// Now take key value pair out of this array</span>
+<span>for(var i=0; i &lt; cookiearray.length; i++){</span>
+<span>    name = cookiearray[i].split('=')[0];</span>
+<span>    value = cookiearray[i].split('=')[1];</span>
+<span>document.write ("Key is : " + name + " and Value is : " + value);</span>
+<span>    }</span>
+<span>}</span>
+<span>&lt;/script&gt;</span>
+<span>&lt;body&gt;</span>
+<span>&lt;form name="myform" action=""&gt;</span>
+<span>&lt;p&gt; click the button below and see the result:&lt;/p&gt;</span>
+<span>   &lt;input type="button" </span>
+<span>         value="Get Cookie"</span>
+<span>       onclick="ReadCookie()"/&gt;</span>
+<span>&lt;/form&gt;</span>
+<span>&lt;/body&gt;</span>
+  </pre>
+
+  <h2>Setting Cookies Expiry Date</h2>
+
+  <div class="div_p">
+    <p>You can extend the life of a cookie beyond the current browser session by setting an expiration date and saving
+      the expiry date within the cookie. This can be done by setting the 'expires' attribute to a date and time.</p>
+  </div>
+
+  <h3>Setting Cookies Expiry Date example</h3>
+
+  <pre class="mycodejs">
+<span>function WriteCookie() {</span>
+<span>  var now = new Date();</span>
+<span>  now.setMonth( now.getMonth() + 1 );</span>
+<span>  cookievalue = escape(document.myform.customer.value)+";"</span>
+<span>  document.cookie="name=" + cookievalue;</span>
+<span>  document.cookie = "expires=" + now.toUTCString() + ";"</span>
+<span>  document.write ("Setting Cookies : " + "name=" + </span>
+<span>                   cookievalue );</span>
+<span>}</span>
+  </pre>
+
+  <h2>Deleting a Cookie</h2>
+
+  <div class="div_p">
+    <p>Sometimes you will want to delete a cookie so that subsequent attempts to read the cookie return nothing. To do
+      this, you just need to set the expiry date to a time in the past.<br><br>Try the following example. It illustrates
+      how
+      to delete a cookie by setting its expiry date to one month behind the current date.</p>
+  </div>
+
+  <h3>Deleting a Cookie</h3>
+
+  <pre class="mycodejs">
+<span>function WriteCookie() {</span>
+<span>   var now = new Date();</span>
+<span>   now.setMonth( now.getMonth() - 1 );</span>
+<span>   cookievalue = escape(document.myform.customer.value) + ";"</span>
+<span>  document.cookie="name=" + cookievalue;</span>
+<span>  document.cookie="expires=" + now.toUTCString() + ";"</span>
+<span>  document.write("Setting Cookies : " + "name=" + cookievalue );</span>
+<span>}</span>
+  </pre>
+
+  <h2>Web Storage</h2>
+
+  <div class="div_p">
+    <p>Web Storage (also called DOM storage or localStorage) allows web applications to store data locally in the user's
+      browser. It provides persistent storage similar to cookies but with much larger capacity and better performance.
+      Standardized by the W3C and originally part of HTML5, web storage lets applications store data without sending it
+      to the server on every request. Unlike cookies, it supports at least 5MB of storage, is more secure, and keeps
+      data limited to the same origin (domain and protocol), allowing all pages from that origin to access the stored
+      data.</p>
+
+    <p>
+    <ul>
+      <li>window.localStorage: stores data with no expiration date. It persists even when the browser is closed and
+        reopened.</li>
+      <li>window.sessionStorage: stores data for one session (data is lost when the browser tab is closed). maintains a
+        separate storage area for each given origin that's available for the duration of the page session (as long as
+        the browser is open, including page reloads and restores)
+      </li>
+    </ul>
+    </p>
+  </div>
+
+  <h3>Checking if a browser can do localStorage</h3>
+
+  <pre class="mycodejs">
+<span>if (typeof(Storage) !== "undefined") {</span>
+<span>    // Code for localStorage/sessionStorage.</span>
+<span>} else {</span>
+<span>    // Sorry! No Web Storage support..</span>
+<span>}</span>
+  </pre>
+
+  <h2>The localStorage Object</h2>
+
+  <div class="div_p">
+    <p>The localStorage object stores the data with no expiration date. The data will not be deleted when the browser is
+      closed, and will be available the next day, week, or year.</p>
+  </div>
+
+
+  <h3>The localStorage Object Example</h3>
+
+  <pre class="mycodejs">
+<span>// Store</span>
+<span>localStorage.setItem("lastname", "Smith");</span>
+<span>// Retrieve</span>
+<span>document.getElementById("result").innerHTML = </span>
+<span>localStorage.getItem("lastname");</span>
+  </pre>
+
+  <h3>localStorage Object Second Example</h3>
+
+  <pre class="mycodejs">
+<span>// Store</span>
+<span>localStorage.lastname = "Smith";</span>
+<span>// Retrieve</span>
+<span>document.getElementById("result").innerHTML = </span>
+<span>localStorage.lastname;</span>
+  </pre>
+
+  <h3>Removing an item from localStorage</h3>
+
+  <pre class="mycodejs">
+<span>localStorage.removeItem("lastname");</span>
+  </pre>
+
+  <h2>The sessionStorage Object</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>The sessionStorage object is equal to the localStorage object, except that it stores the data for only one
+        session. The data is deleted when the user closes the specific browser tab.</li>
+      <li>The following example counts the number of times a user has clicked a button, in the current session:</li>
+    </ul>
+    </p>
+  </div>
+
+  <h3>The sessionStorage Object</h3>
+
+  <pre class="mycodejs">
+<span>if (sessionStorage.clickcount) {</span>
+<span>    sessionStorage.clickcount = </span>
+<span>    Number(sessionStorage.clickcount) + 1;</span>
+<span>} else {</span>
+<span>    sessionStorage.clickcount = 1;</span>
+<span>}</span>
+<span>document.getElementById("result").innerHTML = </span>
+<span>"You have clicked the button " +</span>
+<span>sessionStorage.clickcount + </span>
+<span>" time(s) in this session.";</span>
+  </pre>
+
+  <h2>Objects</h2>
+
+  <div class="div_p">
+    <p>In JavaScript, objects are variables that can store multiple values. JavaScript follows an object-based paradigm
+      where an object is a collection of properties, each consisting of a name (key) and a value. When a property’s
+      value is a function, it is called a method. In addition to built-in browser objects, developers can create their
+      own objects using object literals, and formatting such as spaces and line breaks does not affect how the object is
+      defined.</p>
+  </div>
+
+  <h3>Object example</h3>
+
+  <pre class="mycodejs">
+<span>var person = {</span>
+<span>    firstName:"John",</span>
+<span>    lastName:"Doe",</span> 
+<span>    age:50,</span> 
+<span>    eyeColor:"blue"</span>
+<span>};
+  </pre>
+
+  <h2>Javascript objects</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>Booleans can be objects (if defined with the new keyword)</li>
+      <li>Numbers can be objects (if defined with the new keyword)</li>
+      <li>Strings can be objects (if defined with the new keyword)</li>
+      <li>Dates are always objects</li>
+      <li>Maths are always objects</li>
+      <li>Regular expressions are always objects</li>
+      <li>Functions are always objects</li>
+      <li>Objects are always objects</li>
+    </ul>
+    </p>
+  </div>
+
+  <h3>Javascript object example</h3>
+
+  <pre class="mycodejs">
+<span>var car = {type:"Fiat", model:"500", color:"white"};</span>
+  </pre>
+
+  <h2>JavaScript Properties</h2>
+
+  <div class="div_p">
+    <p>The named values, in JavaScript objects, are called properties. Object properties can be both primitive values,
+      other objects, and functions.</p>
+  </div>
+
+  <h2>Access Objects Properties</h2>
+
+  <div class="div_p">
+    <p>You can access object properties in two ways:</p>
+  </div>
+
+  <h3>Access Objects first example</h3>
+
+  <pre class="mycodejs">
+<span>objectName.propertyName</span>
+  </pre>
+
+  <h3>Access Objects first example</h3>
+
+  <pre class="mycodejs">
+<span>objectName["propertyName"]</span>
+  </pre>
+
+  <h2>Object Methods</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>Objects can also have methods.</li>
+      <li>Methods are actions that can be performed on objects.</li>
+      <li>Methods are stored in properties as function definitions.</li>
+    </ul>
+    </p>
+  </div>
+
+  <h3>Object Methods</h3>
+
+  <pre class="mycodejs">
+<span>var person = {</span>
+<span>    firstName: "John",</span>
+<span>    lastName : "Doe",</span>
+<span>    id       : 5566,</span>
+<span>    fullName : function() {</span>
+<span>        return this.firstName + " " + this.lastName;</span>
+<span>    }</span>
+<span>};</span>
+  </pre>
+
+  <h2>Creating a JavaScript Object</h2>
+
+  <div class="div_p">
+    <p>In JavaScript, you can define and create your own objects.<br><br>
+      There are different ways to create new objects:<br><br></p>
+    <p>
+    <ol>
+      <li>Define and create a single object, using an object literal.</li>
+      <li>Define and create a single object, with the keyword new.</li>
+      <li>Define an object constructor, and then create objects of the constructed type.</li>
+    </ol>
+    </p>
+  </div>
+
+  <div class="div_p">
+    <h4>Using an Object Literal</h4>
+    <p>
+    <ul>
+      <li>This is the easiest way to create a JavaScript Object.</li>
+      <li>Using an object literal, you both define and create an object in one statement.</li>
+      <li>An object literal is a list of name:value pairs (like age:50) inside curly braces {}.</li>
+    </ul>
+    </p>
+  </div>
+
+  <h3>Using an Object Literal example</h3>
+
+  <pre class="mycodejs">
+<span>var person = {firstName:"John", lastName:"Doe", age:50, eyeColor:"blue"};</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>Using the JavaScript Keyword new</h4>
+    <p>The following example also creates a new JavaScript object with four properties:</p>
+  </div>
+
+  <h3>Using the JavaScript Keyword new</h3>
+
+  <pre class="mycodejs">
+<span>var person = new Object();</span>
+<span>person.firstName = "John";</span>
+<span>person.lastName = "Doe";</span>
+<span>person.age = 50;</span>
+<span>person.eyeColor = "blue";</span>
+  </pre>
+
+  <h2>JavaScript Getter (The get Keyword)</h2>
+  <div class="div_p">
+    <p>This example uses a lang property to get the value of the language property.</p>
+  </div>
+
+  <h3>Javascript Getter example</h3>
+
+  <pre class="mycodejs">
+<span>// Create an object:</span>
+<span>var person = {</span>
+<span>    firstName: "John",</span>
+<span>    lastName : "Doe",</span>
+<span>    language : "en",</span>
+<span>    get lang() {</span>
+<span>        return this.language;</span>
+<span>    }</span>
+<span>};</span>
+<span>// Display data from the object using a getter:</span>
+<span>document.getElementById("demo").innerHTML = person.lang;</span>
+  </pre>
+
+  <h2>JavaScript Setter (The set Keyword)</h2>
+
+  <div class="div_p">
+    <p>This example uses a lang property to set the value of the language property.</p>
+  </div>
+
+  <h3>Javascript Setter example</h3>
+
+  <pre class="mycodejs">
+<span>var person = {</span>
+<span>    firstName: "John",</span>
+<span>    lastName : "Doe",</span>
+<span>    language : "",</span>
+<span>    set lang(lang) {</span>
+<span>        this.language = lang;</span>
+<span>   }</span>
+<span>};</span>
+<span>// Set an object property using a setter:</span>
+<span>person.lang = "en";</span>
+<span>// Display data from the object:</span>
+<span>document.getElementById("demo").innerHTML = person.language;</span>
+  </pre>
+
+  <h2>Javascript using the keyword this</h2>
+
+  <div class="div_p">
+    <p>In a function definition, this refers to the "owner" of the function.<br><br>In the example above, this is the
+      person
+      object that "owns" the fullName function.<br><br>In other words, this.firstName means the firstName property of
+      this
+      object.</p>
+  </div>
+
+  <h3>Javascript using the keyword this</h3>
+
+  <pre class="mycodejs">
+<span>var person = { // Example 2</span>
+<span>    firstName: "John",</span>
+<span>    lastName : "Doe",</span>
+<span>    get fullName() {</span>
+<span>        return this.firstName + " " + this.lastName;</span>
+<span>    }</span>
+<span>};</span>
+<span>// Display data from the object using a getter:</span>
+<span>document.getElementById("demo").innerHTML = person.fullName;</span>
+  </pre>
+
+  <h3>Accessing Object methods syntax</h3>
+
+  <pre class="mycodejs">
+<span>objectName.methodName()</span>
+  </pre>
+
+  <h3>Accessing Object Methods example</h3>
+
+  <pre class="mycodejs">
+<span>name = person.fullName();</span>
+  </pre>
+
+  <h2>Accesing Object Methods getting their defintion</h2>
+
+  <div class="div_p">
+    <p>If you access a method without the () parentheses, it will return the function definition:</p>
+  </div>
+
+  <h3>Accesing Object Methods getting their defintion</h3>
+
+  <pre class="mycodejs">
+<span>name = person.fullName;</span>
+  </pre>
+
+  <h2>Javascript Events</h2>
+
+  <div class="div_p">
+    <p>JavaScript interacts with HTML through events, which occur when the user or the browser performs an action, such
+      as loading a page, clicking a button, pressing a key, or resizing a window. Developers use these events to trigger
+      JavaScript code that responds to user actions, such as displaying messages, validating data, or controlling page
+      behavior. Events are part of the Document Object Model (DOM), and every HTML element supports a set of events that
+      can activate JavaScript. When an event occurs, an event handler or event listener is used to detect it and execute
+      specific tasks, with handler names conventionally starting with “on,” such as onclick, onload, or
+      onblur.<br><br>to
+      keep the JavaScript seperate from HTML, you can set up the event handler in an external JavaScript file or within
+      the &lt;script&gt; and &lt;/script&gt; tags, like this:</p>
+  </div>
+
+  <h3>Javascript events via Id:</h3>
+
+  <pre class="mycodejs">
+<span>&lt;button type="button" id="myBtn"&gt;Click Me&lt;/button&gt;</span>
+<span>&lt;script&gt;</span>
+<span>    function sayHello() {</span>
+<span>        alert('Hello World!');</span>
+<span>    }</span>
+<span>    document.getElementById("myBtn").onclick = sayHello;</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+  <h2>Mouse Events</h2>
+
+  <div class="div_p">
+    <p>A mouse event is triggered when the user click some element, move the mouse pointer over an element, etc. Here're
+      some important mouse events and their event handler.</p>
+  </div>
+
+  <div class="div_p">
+    <h4>The Click Event (onclick)</h4>
+    <p>The click event occurs when a user clicks on an element on a web page. Often, these are form elements and links.
+      You can handle a click event with an onclick event handler.</p>
+  </div>
+
+  <h3>The Click Event (onclick)</h3>
+
+  <pre class="mycodejs">
+<span>&lt;button type="button" </span>
+<span>        onclick="alert('You have clicked a button!');"&gt;</span>
+<span>Click Me&lt;/button&gt;</span>
+<span>&lt;a href="#" </span>
+<span>   onclick="alert('You have clicked a link!');"&gt;</span>
+<span>Click Me&lt;/a&gt;</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>The Contextmenu Event (oncontextmenu)</h4>
+
+    <p>The contextmenu event occurs when a user clicks the right mouse button on an element to open a context menu. You
+      can handle a contextmenu event with an oncontextmenu event handler.</p>
+  </div>
+
+  <h3>The Contextmenu Event (oncontextmenu)</h3>
+
+  <pre class="mycodejs">
+<span>&lt;button type="button" </span>
+<span>   oncontextmenu="alert('You have right-clicked a button!');"&gt;</span>
+<span>Right Click on Me&lt;/button&gt;</span>
+<span>&lt;a href="#" </span>
+<span>   oncontextmenu="alert('You have right-clicked a link!');"&gt;</span>
+<span>Right Click on Me&lt;/a&gt;</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>The Mouseover Event (onmouseover)</h4>
+
+    <p>The mouseover event occurs when a user moves the mouse pointer over an element.</p>
+  </div>
+
+  <h3>The Mouseover Event (onmouseover)</h3>
+
+  <pre class="mycodejs">
+<span>&lt;button type="button" </span>
+<span>onmouseover="alert('You placed mouse pointer over a button!');"&gt;</span>
+<span>Place Mouse Over Me&lt;/button&gt;</span>
+<span>&lt;a href="#" </span>
+<span>onmouseover="alert('You placed mouse pointer over a link!');"&gt;</span>
+<span>Place Mouse Over Me&lt;/a&gt;</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>The Mouseout Event (onmouseout)</h4>
+
+    <p>The mouseout event occurs when a user moves the mouse pointer outside of an element.</p>
+  </div>
+
+  <h3>The Mouseout Event (onmouseout)</h3>
+
+  <pre class="mycodejs">
+<span>&lt;button type="button" </span>
+<span> onmouseout="alert('You have moved out of the button!');"&gt;</span>
+<span>Place Mouse Inside Me and Move Out&lt;/button&gt;</span>
+<span>&lt;a href="#" </span>
+<span> onmouseout="alert('You have moved out of the link!');"&gt;</span>
+<span>Place Mouse Inside Me and Move Out&lt;/a&gt;</span>
+  </pre>
+
+  <h2>Keyboard Events</h2>
+
+  <div class="div_p">
+    <p>A keyboard event is fired when the user press or release a key on the keyboard. Here're some important keyboard
+      events and their event handler.</p>
+  </div>
+
+  <div class="div_p">
+    <h4>The Keydown Event (onkeydown)</h4>
+    <p>The keydown event occurs when the user presses down a key on the keyboard.</p>
+  </div>
+
+  <h3>The Keydown Event (onkeydown)</h3>
+
+  <pre class="mycodejs">
+<span>&lt;input type="text" </span>
+<span>  onkeydown="alert('You pressed a key inside text input!')"&gt;</span>
+<span>&lt;textarea </span>
+<span>  onkeydown="alert('You pressed a key inside textarea!')"&gt;</span>
+<span>&lt;/textarea&gt;</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>The Keyup Event (onkeyup)</h4>
+
+    <p>The keyup event occurs when the user releases a key on the keyboard.</p>
+  </div>
+
+  <h3>The Keyup Event (onkeyup)</h3>
+
+  <pre class="mycodejs">
+<span>&lt;input type="text" </span>
+<span>onkeyup="alert('You released a key inside text input!')"&gt;</span>
+<span>&lt;textarea </span>
+<span>onkeyup="alert('You released a key inside textarea!')"&gt;</span>
+<span>&lt;/textarea&gt;</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>The Keypress Event (onkeypress)</h4>
+
+    <p>The keypress event occurs when a user presses down a key on the keyboard that has a character value associated
+      with it. For example, keys like Ctrl, Shift, Alt, Esc, Arrow keys, etc. will not generate a keypress event, but
+      will generate a keydown and keyup event.</p>
+  </div>
+
+  <h3>The Keypress Event (onkeypress)</h3>
+
+  <pre class="mycodejs">
+<span>&lt;input type="text" </span>
+<span>onkeypress="alert('You have pressed a key inside text input!')"&gt;</span>
+<span>&lt;textarea </span>
+<span>onkeypress="alert('You have pressed a key inside textarea!')"&gt;</span>
+<span>&lt;/textarea&gt;</span>
+  </pre>
+
+  <h2>Form Events</h2>
+
+  <div class="div_p">
+
+    <p>A form event is fired when a form control receive or loses focus or when the user modify a form control value
+      such as by typing text in a text input, select any option in a select box etc. Here're some important form events
+      and their event handler.</p>
+  </div>
+
+  <div class="div_p">
+    <h4>The Focus Event (onfocus)</h4>
+
+    <p>The focus event occurs when the user gives focus to an element on a web page.</p>
+  </div>
+
+  <h3>The Focus Event (onfocus)</h3>
+
+  <pre class="mycodejs">
+<span>&lt;script&gt;</span>
+<span>    function highlightInput(elm){</span>
+<span>        elm.style.background = "yellow";</span>
+<span>    }    </span>
+<span>&lt;/script&gt;</span>
+<span>&lt;input type="text" onfocus="highlightInput(this)"&gt;</span>
+<span>&lt;button type="button"&gt;Button&lt;/button&gt;</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>The Blur Event (onblur)</h4>
+
+    <p>The blur event occurs when the user takes the focus away from a form element or a window.</p>
+  </div>
+
+  <h3>The Blur Event (onblur)</h3>
+
+  <pre class="mycodejs">
+<span>&lt;input type="text" onblur="alert('Text input loses focus!')"&gt;</span>
+<span>&lt;button type="button"&gt;Submit&lt;/button&gt;</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>The Change Event (onchange)</h4>
+
+    <p>The change event occurs when a user changes the value of a form element.</p>
+  </div>
+
+  <h3>The Change Event (onchange)</h3>
+
+  <pre class="mycodejs">
+<span>&lt;select onchange="alert('You have changed the selection!');"&gt;</span>
+<span>    &lt;option&gt;Select&lt;/option&gt;</span>
+<span>    &lt;option&gt;Male&lt;/option&gt;</span>
+<span>    &lt;option&gt;Female&lt;/option&gt;</span>
+<span>&lt;/select&gt;</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>The Submit Event (onsubmit)</h4>
+
+    <p>The submit event only occurs when the user submits a form on a web page.</p>
+  </div>
+
+  <h3>The Submit Event (onsubmit)</h3>
+
+  <pre class="mycodejs">
+<span>&lt;form action="action.php" method="post" </span>
+<span>   onsubmit="alert('Form data will be submitted to the server!');"&gt;</span>
+<span>    &lt;label&gt;First Name:&lt;/label&gt;</span>
+<span>    &lt;input type="text" name="first-name" required&gt;</span>
+<span>    &lt;input type="submit" value="Submit"&gt;</span>
+<span>&lt;/form&gt;</span>
+  </pre>
+
+  <h2>Document/Window Events</h2>
+
+  <div class="div_p">
+    <p>Events are also triggered in situations when the page has loaded or when user resize the browser window, etc.
+      Here're some important document/window events and their event handler.</p>
+  </div>
+
+  <div class="div_p">
+    <h4>The Load Event (onload)</h4>
+
+    <p>The load event occurs when a web page has finished loading in the web browser.</p>
+  </div>
+
+  <h3>The Load Event (onload)</h3>
+
+  <pre class="mycodejs">
+<span>&lt;body onload="window.alert('Page is loaded successfully!');"&gt;</span>
+<span>    &lt;h1&gt;This is a heading&lt;/h1&gt;</span>
+<span>    &lt;p&gt;This is paragraph of text.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>The Unload Event (onunload)</h4>
+
+    <p>The unload event occurs when a user leaves the current web page.</p>
+  </div>
+
+  <h3>The Unload Event (onunload)</h3>
+  <pre class="mycodejs">
+  <span>&lt;body </span>
+  <span> onunload="alert('Are you sure you want to leave this page?');"&gt;</span>
+  <span> &lt;h1&gt;This is a heading&lt;/h1&gt;</span>
+  <span> &lt;p&gt;This is paragraph of text.&lt;/p&gt;</span>
+  <span>&lt;/body&gt;</span>
+  </pre>
+
+  <div class="div_p">
+    <h4>The Resize Event (onresize)</h4>
+
+    <p>The resize event occurs when a user resizes the browser window. The resize event also occurs in situations when
+      the browser window is minimized or maximized.</p>
+  </div>
+
+  <h3>The Resize Event (onresize)</h3>
+
+  <pre class="mycodejs">
+<span>&lt;p id="my_paragraph"&gt;&lt;/p&gt;</span>
+<span>&lt;script&gt;</span>
+<span>    function displayWindowSize() {</span>
+<span>        var w = window.outerWidth;</span>
+<span>        var h = window.outerHeight;</span>
+<span>        var txt = "Window size: width=" + w + ", height=" + h;</span>
+<span>        document.getElementById("my_paragraph").innerHTML = txt;</span>
+<span>    }</span>
+<span>    window.onresize = displayWindowSize;</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+  <h2>Event handlers</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>To react on events we can assign a handler (a function that runs in case of an event).</li>
+      <li>Handlers are a way to run JavaScript code in case of user actions.</li>
+      <li>There are several ways to assign a handler. Let's see them, starting from the simplest one.</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>Event handlers on HTML-attributes</h2>
+
+  <div class="div_p">
+
+    <p>A handler can be set in HTML with an attribute named on&lt;event&gt;.<br><br>
+
+      For instance, to assign a click handler for an input, we can use onclick.<br><br>On mouse click, the code inside
+      onclick runs below.<br><br></p>
+  </div>
+
+  <h3>Event handlers on HTML-attributes</h3>
+
+  <pre class="mycodejs">
+<span>&lt;input value="Click me" onclick="alert('Click!')" type="button"&gt;</span>
+  </pre>
+
+  <h2>DOM property</h2>
+
+  <div class="div_p">
+    <p>We can assign a handler using a DOM property on&lt;event&gt;.</p>
+  </div>
+
+  <h3>DOM property</h3>
+
+  <pre class="mycodejs">
+<span>&lt;input id="elem" type="button" value="Click me"&gt;</span>
+<span>&lt;script&gt;</span>
+<span>  elem.onclick = function() {</span>
+<span>    alert('Thank you');</span>
+<span>  };</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+  <h2>addEventListener</h2>
+
+  <div class="div_p">
+
+    <p>The main limitation of assigning event handlers directly in HTML or using single handler properties is that only
+      one handler can be attached to an event at a time. This becomes a problem when multiple actions are needed for the
+      same event, such as highlighting a button and displaying a message. To solve this, web standards introduced
+      addEventListener and removeEventListener, which allow multiple event handlers to be attached to a single event
+      without conflicts.<br><br>An event listener consists of an event name (such as "click"), a handler function that
+      runs
+      when the event occurs, and an optional phase parameter that controls when the handler executes during event
+      propagation. The phase argument is usually not used and is not covered in this course.</p>
+  </div>
+
+  <h3>addEventListener syntax</h3>
+
+  <pre class="mycodejs">
+<span>element.addEventListener(event, handler[, phase]);</span>
+  </pre>
+
+  <h2>Remove the eventlistener handler:</h2>
+
+  <div class="div_p">
+    <p>To remove the handler, use removeEventListener:</p>
+  </div>
+
+  <h3>Remove the eventlistener handler:</h3>
+
+  <pre class="mycodejs">
+<span>// exactly the same arguments as addEventListener</span>
+<span>element.removeEventListener(event, handler[, phase]);</span>
+  </pre>
+
+  <h2>Event object</h2>
+
+  <div class="div_p">
+
+    <p>To properly handle an event we'd want to know more about what's happened. Not just a “click” or a “keypress”, but
+      what were the pointer coordinates? Which key was pressed? And so on.<br><br>
+      When an event happens, the browser creates an event object, puts details into it and passes it as an argument to
+      the handler.</p>
+    <p>
+    <ul>
+      <li>event.type: The type of the event, e.g., "click".</li>
+      <li>event.currentTarget: The element that triggered the event (similar to this unless explicitly bound to
+        something else).</li>
+      <li>event.clientX / event.clientY: The mouse cursor's position relative to the window (useful for mouse events
+        like click or mousemove).</li>
+    </ul>
+    </p>
+  </div>
+
+  <h3>Event object</h3>
+
+  <pre class="mycodejs">
+<span>&lt;input type="button" value="Click me" id="elem"&gt;</span>
+<span>&lt;script&gt;</span>
+<span>  elem.onclick = function(event) {</span>
+<span>    // show event type, element and coordinates of the click</span>
+<span>    alert(event.type + " at " + event.currentTarget);</span>
+<span>    alert("Coordinates: " + event.clientX + ":" + </span>
+<span>           event.clientY);</span>
+<span>  };</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+  <h2>Object handlers: handleEvent</h2>
+
+  <div class="div_p">
+
+    <p>We can assign an object as an event handler using addEventListener. When an event occurs, its handleEvent method
+      is called with it.</p>
+  </div>
+
+
+  <h3>Object handlers: handleEvent</h3>
+
+  <pre class="mycodejs">
+<span>&lt;button id="elem"&gt;Click me&lt;/button&gt;</span>
+<span>&lt;script&gt;</span>
+<span>  elem.addEventListener('click', {</span>
+<span>    handleEvent(event) {</span>
+<span>      alert(event.type + " at " + event.currentTarget);</span>
+<span>    }</span>
+<span>  });</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+  <h2>Getting Form Values using JavaScript</h2>
+
+  <div class="div_p">
+    <p>
+    <ul>
+      <li>Get values from input texboxes</li>
+      <li>Get values form selects</li>
+      <li>Get values form radio buttons</li>
+      <li>Get values form checkboxes</li>
+    </ul>
+    </p>
+  </div>
+
+  <h2>JavaScript Get Input Values</h2>
+
+  <div class="div_p">
+    To retrieve a value from an HTML input field using JavaScript, first select the input element using a DOM method
+    such as document.getElementById() or document.querySelector(). Once the element is selected, access its current
+    value using the .value property.
+  </div>
+
+  <h3>Javascript Get Input Value Example</h3>
+
+  <pre class="mycodejs">
+<span>&lt;input type="text" id="myInputField" value="Initial Value"&gt;</span>
+<span>&lt;button onclick="getInputValue()"&gt;Get Value&lt;/button&gt;&lt;br&gt;</span>
+<span>&lt;p id="output"&gt;&lt;/p&gt;</span>
+<span>&lt;script&gt;function getInputValue() {</span>
+<span>   const inputElement = document.getElementById('myInputField');</span>
+<span>   const inputValue = inputElement.value;</span>
+<span>   document.getElementById('output').innerText =</span>
+<span>   "Input value: " + inputValue;</span>
+<span>}</span>
+<span> &lt;/script&gt;</span>
+  </pre>
+
+  <h2>JavaScript Get Select Values</h2>
+
+  <div class="div_p">
+    <p>To retrieve the selected value(s) from an HTML &lt;select&gt; element using JavaScript, different approaches are
+      used
+      depending on whether the select box allows single or multiple selections.</p>
+  </div>
+
+  <div class="div_p">
+    <h4>For Single-Selection:</h4>
+  </div>
+
+  <h3>Single Selection</h3>
+
+  <pre class="mycodejs">
+<span>const selectElement = document.getElementById("yourSelectId");</span>
+<span>const selectedValue = selectElement.value;</span>
+</pre>
+
+  <div class="div_p">
+    <h4>For Multiple-Selection:</h4>
+    <p>Get the &lt;select&gt; element.<br><br>Access the selectedOptions property: This returns an HTMLCollection of all
+      selectedelements.<br><br>Extract values from selectedOptions.<br><br>This converts the HTMLCollection into an
+      array and
+      then maps over it to extract the value property from each selected option.</p>
+  </div>
+
+  <h3>Multiple Selection</h3>
+
+  <pre class="mycodejs">
+<span>const multiSelectElement = </span>
+<span>document.getElementById("yourMultiSelectId");</span>
+<span>const selectedOptions = multiSelectElement.selectedOptions;</span>
+<span>const selectedValues = </span>
+<span>Array.from(selectedOptions).map(option => option.value);</span>
+  </pre>
+
+  <h3>Multiple Selection and Single Selection Example:</h3>
+
+  <pre class="mycodejs">
+<span>&lt;select id="singleSelect"&gt;</span>
+<span>    &lt;option value="apple"&gt;Apple&lt;/option&gt;</span>
+<span>    &lt;option value="banana"&gt;Banana&lt;/option&gt;</span>
+<span>    &lt;option value="orange"&gt;Orange&lt;/option&gt;</span>
+<span>&lt;/select&gt;</span>
+<span>&lt;select id="multiSelect" multiple&gt;</span>
+<span>    &lt;option value="red"&gt;Red&lt;/option&gt;</span>
+<span>    &lt;option value="green"&gt;Green&lt;/option&gt;</span>
+<span>    &lt;option value="blue"&gt;Blue&lt;/option&gt;</span>
+<span>&lt;/select&gt;</span>
+<span>&lt;button onclick="getValues()"&gt;Get Values&lt;/button&gt;</span>
+<span>&lt;script&gt;</span>
+<span>function getValues() {</span>
+<span>    // Get single select value</span>
+<span>    const singleSelectElement = </span>
+<span>          document.getElementById("singleSelect");</span>
+<span>    const singleSelectedValue = </span>
+<span>          singleSelectElement.value;</span>
+<span>    console.log("Single selected value:", singleSelectedValue);</span>
+<span>    // Get multiple select values</span>
+<span>    const multiSelectElement = </span>
+<span>          document.getElementById("multiSelect");</span>
+<span>    const multiSelectedValues = </span>
+<span>Array.from(multiSelectElement.selectedOptions)</span>
+<span>.map(option =&gt; option.value);</span>
+<span>    console.log("Multiple selected values:", </span>
+<span>    multiSelectedValues);</span>
+<span>}</span>
+</span>  &lt;/script&gt;</span>
+  </pre>
+
+  <h2>JavaScript Get Radio Buttons Values</h2>
+
+  <div class="div_p">
+    <p>To get the value of a selected radio button in JavaScript, first obtain the group of radio buttons using
+      document.getElementsByName(). Then, loop through the group and check which radio button has its checked property
+      set to true. Once found, access its .value property to retrieve the selected value.</p>
+  </div>
+
+  <h3>Reference to the radio button group using the name syntax:</h3>
+
+  <pre class="mycodejs">
+<span>const radioButtons = </span>
+<span>document.getElementsByName('yourRadioGroupName');</span>
+<span>// Replace 'yourRadioGroupName' with the actual name</span>
+  </pre>
+
+  <h3>Iterate and check for the checked property syntax:</h3>
+
+  <pre class="mycodejs">
+<span>let selectedValue;</span>
+<span>for (let i = 0; i &lt; radioButtons.length; i++) {</span>
+<span>  if (radioButtons[i].checked) {</span>
+<span>    selectedValue = radioButtons[i].value;</span>
+<span>    break;</span>
+<span>    //Exit the loop once the checked radio button is found</span>
+<span>   }</span>
+<span>}</span>
+  </pre>
+
+  <h3>Radio buttons javascript example</h3>
+
+  <pre class="mycodejs">
+<span>&lt;body&gt;</span>
+<span>&lt;input type="radio" name="gender" value="male"&gt; Male&lt;br&gt;</span>
+<span>&lt;input type="radio" name="gender" value="female"&gt; Female&lt;br&gt;</span>
+<span>&lt;input type="radio" name="gender" value="other"&gt; Other&lt;br&gt;</span>
+<span>&lt;button type="button" </span>
+<span>        onclick="getGenderValue()"&gt;Get Value&lt;/button&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;script&gt;</span>
+<span>`function getGenderValue() {</span>
+<span>    const genderRadios = document.getElementsByName('gender');</span>
+<span>    let selectedGender;</span>
+<span>    for (let i = 0; i &lt; genderRadios.length; i++) {</span>
+<span>      if (genderRadios[i].checked) {</span>
+<span>        selectedGender = genderRadios[i].value;</span>
+<span>        break;</span>
+<span>      }</span>
+<span>    }</span>
+<span>    if (selectedGender) {</span>
+<span>      console.log('Selected Gender:', selectedGender);</span>
+<span>      alert('Selected Gender: ' + selectedGender);</span>
+<span>    } else {</span>
+<span>      console.log('No gender selected.');</span>
+<span>      alert('No gender selected.');</span>
+<span>    }</span>
+<span>}</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+
+  <h2>JavaScript Get Checkboxes Values</h2>
+
+  <div class="div_p">
+    <p>To retrieve values from checked checkboxes in JavaScript, select the checkbox elements using
+      document.querySelectorAll() or document.getElementsByName(). Then iterate through the selected elements and
+      identify those with the checked property set to true. Once identified, access each checkbox's .value property to
+      collect the selected values.</p>
+  </div>
+
+  <h3>Javascript Get Checkboxes Syntax</h3>
+
+  <pre class="mycodejs">
+<span>&lt;script&gt;</span>
+<span>const checkedCheckboxes = </span>
+<span>  document.querySelectorAll('input[type="checkbox"]:checked');`</span>
+<span>const checkboxesByName =</span>
+<span>  document.getElementsByName('myCheckboxName');</span>
+<span>const selectedValues = </span>
+<span>  Array.from(checkedCheckboxes).map(checkbox => checkbox.value);</span>
+<span>const selectedValues = [];</span>
+<span>for (let i = 0; i &lt; checkboxesByName.length; i++) {</span>
+<span>  if (checkboxesByName[i].checked) {</span>
+<span>    selectedValues.push(checkboxesByName[i].value);</span>
+<span>   }</span>
+<span>}</span>
+<span>&lt;/script&gt;</span>
+  </pre>
+
+  <h3>Javascript get check </h3>
+
+  <pre class="mycodejs">
+<span>&lt;body&gt;</span>
+<span>&lt;input type="checkbox" name="fruit" value="apple"&gt; Apple&lt;br&gt;</span>
+<span>&lt;input type="checkbox" name="fruit" value="banana" checked&gt; Banana&lt;br&gt;</span>
+<span>&lt;input type="checkbox" name="fruit" value="orange"&gt; Orange&lt;br&gt;</span>
+<span>&lt;button onclick="getCheckedFruitValues()"&gt;Get Selected Fruits&lt;/button&gt;</span>
+<span>&lt;script&gt;</span>
+<span>function getCheckedFruitValues() {</span>
+<span>    const checkedFruits = document.querySelectorAll('input[name="fruit"]:checked');</span>
+<span>    const selectedValues = Array.from(checkedFruits).map(checkbox =&gt; checkbox.value);</span>
+<span>    console.log("Selected Fruits:", selectedValues);</span>
+<span>    alert("Selected Fruits: " + selectedValues.join(", "));</span>
+<span>}</span>
+<span>&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+  </pre>
+
+  <h2>Working with Array of Objects</h2>
+
+  <div class="div_p">
+    <p>An array of objects is a data structure where each element in the array is an object containing related
+      properties. This is commonly used to store structured data such as users, products, or records. Individual objects
+      are accessed using their array index, and their properties can be accessed using dot notation or bracket notation.
+    </p>
+  </div>
+
+  <h2>Creating an array of objects</h2>
+
+  <div class="div_p">
+    <p>Array of objects usually [] brackets with objects in the brackets and an array objects can have array within
+      those array objects.</p>
+  </div>
+
+  <h3>Creating an array of objects example</h3>
+
+  <pre class="mycodejs">
+<span>var users = [</span>
+<span>    { id: 1, name: 'Alice', age: 30 },</span>
+<span>    { id: 2, name: 'Bob', age: 24 },</span>
+<span>    { id: 3, name: 'Charlie', age: 35 }</span>
+<span>];</span>
+  </pre>
+
+
+  <h2>Accessing Elements</h2>
+
+  <div class="div_p">
+
+    <p>Access individual objects by their index, and then access properties of those objects using dot notation or
+      bracket notation:</p>
+  </div>
+
+  <h3>Accessing Elements example</h3>
+
+  <pre class="mycodejs">
+<span>console.log(users[0].name);   // Output: Alice</span>
+<span>console.log(users[1]['age']); // Output: 24</span>
+  </pre>
+
+  <h2>Iterating and Manipulating</h2>
+
+  <div class="div_p">
+    <p>JavaScript provides powerful array methods for iterating and transforming arrays of objects such as: for loop,
+      forEach, sort, map, and filter we will be focusing on forEach and forloop</p>
+  </div>
+
+  <h3>Iterating and Manipulating forEach</h3>
+
+  <pre class="mycodejs">
+<span>users.forEach(user => {</span>
+<span>  console.log(`${user.name} is ${user.age} years old.`);</span>
+<span>});</span>
+  </pre>
+
+  <h3>Iterating and Manipulating forLoop</h3>
+
+  <pre class="mycodejs">
+<span>// A for loop</span>
+<span>for(var i = 0; i &lt; users.length; i++){</span>
+<span>  tblrow += `&lt;tr&gt;</span>
+<span>    &lt;td&gt;${users[i].id}&lt;/td&gt;</span>
+<span>    &lt;td&gt;${users[i].name}&lt;/td&gt;</span>
+<span>    &lt;td&gt;${users[i].age}&lt;/td&gt;</span>
+<span>  &lt;/tr&gt;`;</span>
+<span>}</span>
+<span>// Load the dynamic content to html element</span>
+<span>document.getElementById("users_table").innerHTML = tblrow;</span>
+  </pre>
+
+  <h2>JSON JavaScript Object Notation</h2>
+
+  <div class="div_p">
+    <p>JSON (JavaScript Object Notation) is a lightweight, language-independent data format used for storing and
+      exchanging data. It is easy for humans to read and write and easy for machines to parse and generate. In
+      JavaScript, JSON is handled using the built-in JSON object. The JSON.parse() method converts a JSON string into a
+      JavaScript object, which is commonly used when receiving data from a server. The JSON.stringify() method converts
+      a JavaScript object or array into a JSON string, making it suitable for storage or data transmission.</p>
+  </div>
+
+  <h3>JSON.parse</h3>
+
+  <pre class="mycodejs">
+<span>const jsonString = '{</span>
+<span>  "name": "John Doe", "age": 30, "isStudent": false</span>
+<span>}';</span>
+<span>const jsObject = JSON.parse(jsonString);</span>
+<span>console.log(jsObject.name); // Output: John Doe</span>
+<span>console.log(jsObject.age);  // Output: 30</span>
+  </pre>
+
+  <h3>JSON.stringify</h3>
+
+  <pre class="mycodejs">
+<span>// Basic stringification</span>
+<span>const jsonString1 = JSON.stringify(myObject);</span>
+<span>console.log(jsonString1);</span>
+  </pre>
+
+  <h2>JavaScript Map Object</h2>
+
+  <div class="div_p">
+    <p>The Map object is a built-in JavaScript feature introduced in ES6 that stores key-value pairs and preserves the
+      order in which elements are added. Unlike regular JavaScript objects, a Map allows keys of any data type,
+      including objects and primitive values. It provides methods such as set() to add values, get() to retrieve values,
+      has() to check for keys, delete() and clear() to remove entries, and the size property to return the number of
+      elements. Maps also support iteration using forEach() and iterator methods like keys(), values(), and
+      entries().<br><br>The Array.prototype.map() method is different from the Map object. It is an array method that
+      creates a new array by applying a function to each element of an existing array, without modifying the original
+      array.</p>
+  </div>
+
+  <h3>Javascript Creating a Map Object</h3>
+
+  <pre class="mycodejs">
+<span>const myMap = new Map();</span>
+  </pre>
+
+  <h3>Javascript Map Syntax</h3>
+
+  <pre class="mycodejs">
+<span>const newArray = originalArray.map((currentValue, </span>
+<span>  index, array) => {</span>
+<span>  // return transformed value</span>
+<span>});</span>
+  </pre>
+
+  <h3>Example of a Map Object</h3>
+
+  <pre class="mycodejs">
+<span>const userRoles = new Map();</span>
+<span>userRoles.set('alice', 'admin');</span>
+<span>userRoles.set('bob', 'editor');</span>
+<span>console.log(userRoles.get('alice')); // Output: admin</span>
+<span>console.log(userRoles.size); // Output: 2</span>
+  </pre>
+
+  <h3>Array.prototype.map() example</h3>
+
+  <pre class="mycodejs">
+<span>const numbers = [1, 2, 3];</span>
+<span>const doubledNumbers = numbers.map(num => num * 2);</span>
+<span>console.log(doubledNumbers); // Output: [2, 4, 6]</span>
+<span>console.log(numbers);</span>
+<span>// Output: [1, 2, 3] (original array unchanged)</span>
+  </pre>
+
+  <h2>Using JS Map with localStorage and Storing a Map in localStorage</h2>
+
+  <div class="div_p">
+    <p>To store a JavaScript Map in localStorage, it must first be converted into a string because localStorage only
+      supports string key-value pairs. This is done by converting the Map into an array of key-value pairs using
+      Array.from(map.entries()) or the spread syntax, then converting that array into a JSON string with
+      JSON.stringify(). The resulting string can then be saved using localStorage.setItem(). When retrieving the data,
+      the process is reversed to reconstruct the Map.</p>
+  </div>
+
+  <h3>Javascript map and local storage example</h3>
+
+  <pre class="mycodejs">
+<span>const myMap = new Map();</span>
+<span>myMap.set('name', 'Alice');</span>
+<span>myMap.set('age', 30);</span>
+<span>myMap.set('city', 'New York');</span>
+<span></span>
+<span>// Convert Map to an array of key-value pairs</span>
+<span>// and then to a JSON string</span>
+<span>const mapAsString =</span>
+<span>  JSON.stringify(Array.from(myMap.entries()));</span>
+<span>// Store the JSON string in localStorage</span>
+<span>localStorage.setItem('userData', mapAsString);</span>
+  </pre>
+
+  <h2>Retrieving a Map from localStorage</h2>
+
+  <div class="div_p">
+    <p>To retrieve a Map from localStorage, first use localStorage.getItem() to get the stored JSON string. Then convert
+      the string back into an array of key-value pairs using JSON.parse(). Finally, pass the array into the Map
+      constructor to recreate the original Map object.</p>
+  </div>
+
+  <h3>Retrieving a Map from localStorage</h3>
+
+  <pre class="mycodejs">
+<span>// Retrieve the JSON string from localStorage</span>
+<span>const storedMapString = localStorage.getItem('userData');</span>
+<span>// Parse the JSON string back to an array and</span>
+<span>// then create a new Map</span>
+<span>if (storedMapString) {</span>
+<span>  const retrievedMap = new Map(JSON.parse(storedMapString));</span>
+<span>  console.log(retrievedMap); </span>
+<span>// Output: Map(3) { </span>
+<span>// 'name' => 'Alice', 'age' => 30, 'city' => 'New York' }</span>
+<span>}</span>
+  </pre>
+
+  <h2>JavaScript API Call</h2>
+
+  <div class="div_p">
+    <p>The fetch() function initiates a request by taking the URL of the resource and returns a Promise that resolves to
+      a Response object. The .then() method is used to handle this response.<br><br>
+
+      After receiving the response, it is important to check whether the request was successful using the response.ok
+      property, which is true for HTTP status codes in the 200-299 range. If the response is not successful, an error
+      should be thrown.<br><br>
+
+      The response body must be parsed to access the actual data. Common parsing methods include response.json() for
+      JSON data, response.text() for plain text, and response.blob() for binary data. These methods return Promises that
+      resolve to usable JavaScript values.<br><br>
+
+      Once the data is parsed, another .then() block is used to work with the returned data inside the
+      application.<br><br>
+
+      To handle network errors, invalid URLs, or processing issues, the .catch() method is used to capture and manage
+      errors that occur during the fetch process.</p>
+  </div>
+
+  <h3>Basic GET request using fetch():</h3>
+
+  <pre class="mycodejs">
+<span>fetch('https://api.example.com/data') </span>
+<span>            // Replace with your API endpoint</span>
+<span>  .then(response =&gt; {</span>
+<span>    if (!response.ok) {</span>
+<span>      throw new Error(`HTTP error! status: ${response.status}`);</span>
+<span>    }</span>
+<span>    return response.json(); </span>
+<span>    // Or .text() for plain text, .blob() for binary data, etc.</span>
+<span>  })</span>
+<span>  .then(data =&gt; {</span>
+<span>    console.log('API Response:', data);</span>
+<span>    // Process the data here</span>
+<span>  })</span>
+<span>  .catch(error =&gt; {</span>
+<span>    console.error('Error fetching data:', error);</span>
+<span>  });</span>
+  </pre>
+
+  <h3>Making a POST Request using fetch();</h3>
+
+  <pre class="mycodejs">
+<span>fetch('https://api.example.com/submit-data', {</span>
+<span>    method: 'POST',</span>
+<span>    headers: {</span>
+<span>        'Content-Type': 'application/json',</span>
+<span>    },</span>
+<span>    body: JSON.stringify({</span>
+<span>        name: 'John Doe',</span>
+<span>        email: 'john.doe@example.com'</span>
+<span>    }),</span>
+<span>})</span>
+<span>  .then(response =&gt; response.json())</span>
+<span>  .then(data =&gt; {</span>
+<span>    console.log('Success:', data);</span>
+<span>  })</span>
+<span>  .catch(error =&gt; {</span>
+<span>    console.error('Error:', error);</span>
+<span>  });</span>
+  </pre>
+
+  <h2>AJAX and XMLHttpRequest</h2>
+
+  <div class="div_p">
+    <p>AJAX (Asynchronous JavaScript and XML) is a technique that allows web pages to send and receive data from a
+      server without reloading the entire page. It enables dynamic updates and smoother user experiences.<br><br>
+
+      XMLHttpRequest (XHR) is the JavaScript object traditionally used to implement AJAX. It allows JavaScript to make
+      HTTP requests to a server and handle responses asynchronously.<br><br>
+
+      With XMLHttpRequest, a request is created, configured with a request method and URL, sent to the server, and
+      monitored for state changes. When the response is received, JavaScript can process the returned data and update
+      the web page dynamically.<br><br>
+
+      Although AJAX originally focused on XML, it is now commonly used with JSON data. Modern JavaScript applications
+      often use the Fetch API instead of XMLHttpRequest, but both serve the same purpose of retrieving data
+      asynchronously from a server.</p>
+  </div>
+
+  <h3>AJAX XMLHttpRequest</h3>
+
+  <pre class="mycodejs">
+<span>function loadDoc() {</span>
+<span>  const xhttp = new XMLHttpRequest();</span>
+<span>  xhttp.onload = function() {</span>
+<span>    document.getElementById("demo").innerHTML = this.responseText;</span>
+<span>  }</span>
+<span>  xhttp.open("GET", "ajax_info.txt");</span>
+<span>  xhttp.send();</span>
+<span>}</span>
+  </pre>
+
+   <br><br><br><br>
+
+
+
+
+  <footer class="footer"> &copy; By Jamar Brown
+
+    <div class="container">
+      <div id='clock'></div>
+    </div>
+  </footer>
+
+  <script src="js/clock.js"></script>
+</body>
+
+</html>
