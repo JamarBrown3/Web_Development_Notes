@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Jamar Brown">
+  <meta name="description" content="This is the page for moving a web app from MongoDB to PostgreSQL and from PostgreSQL to MongoDB">
+  <title>Switch Databases</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand">Final Companion</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="html_page.html">Html Code</a></li>
+        <li><a href="css_page.html">Css Code</a></li>
+        <li><a href="javaScript.html">JavaScript Code</a></li>
+        <li><a href="setup_page.html">Setup &amp; .env</a></li>
+        <li><a href="react_page.html">React Code</a></li>
+        <li><a href="node_page.html">Node Code</a></li>
+        <li><a href="mongodb_page.html">MongoDB Code</a></li>
+        <li><a href="postgres_page.html">Postgres Code</a></li>
+        <li><a href="security_page.html">Security Code</a></li>
+        <li><a href="migration_page.html">Switch Databases</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <h2>On This Page</h2>
+
+  <div class="div_p">
+    <ul>
+      <li><a href="#what-changes-when-you-switch">What Changes When You Switch</a></li>
+      <li><a href="#steps-for-either-direction">Steps For Either Direction</a></li>
+      <li><a href="#mongodb-to-postgresql">MongoDB To PostgreSQL</a></li>
+      <li><a href="#postgresql-to-mongodb">PostgreSQL To MongoDB</a></li>
+      <li><a href="#swap-the-server-code">Swap The Server Code</a></li>
+      <li><a href="#login-and-security-after-switching">Login And Security After Switching</a></li>
+    </ul>
+  </div>
+
+  <h2 id="what-changes-when-you-switch">What Changes When You Switch</h2>
+
+  <div class="div_p">
+    <p>Switching databases has two jobs: moving the data, and rewriting the server code that talks to the database. If your API keeps sending the same JSON, React does not change at all. The examples use a users collection and a posts collection, where each post has an author.</p>
+  </div>
+
+  <h3>What maps to what</h3>
+
+  <pre class="mycodefile">
+<span>MongoDB                         PostgreSQL</span>
+<span>collection                      table</span>
+<span>document                        row</span>
+<span>_id (ObjectId, 24 characters)   id SERIAL (1, 2, 3...)</span>
+<span>ref: "User"                     REFERENCES users(id)</span>
+<span>[String] array                  TEXT[] column</span>
+<span>list of objects inside a doc    a separate child table</span>
+<span>object inside a doc             flat columns, or JSONB</span>
+<span>missing field                   NULL, or a DEFAULT</span>
+<span>createdAt (camelCase)           created_at (snake_case)</span>
+<span>populate()                      JOIN</span>
+<span>pre("validate") rule            CHECK constraint, or validate in code</span>
+  </pre>
+
+  <h2 id="steps-for-either-direction">Steps For Either Direction</h2>
+
+  <div class="div_p">
+    <ul>
+      <li>Back up the database you are moving away from.</li>
+      <li>Turn off saving on the live site, or pick a quiet time, so nothing new is missed.</li>
+      <li>Build the new tables or models.</li>
+      <li>Add both sets of values to server/.env so the script can reach both databases.</li>
+      <li>Run the migration script. It is safe to run again if it stops partway.</li>
+      <li>Compare the counts, then try some real records.</li>
+      <li>Swap the controllers and test every route.</li>
+      <li>Deploy with the new settings. Keep the old database untouched for a few weeks. Going back only means putting the old settings back.</li>
+    </ul>
+  </div>
+
+  <h3>server/.env during the move</h3>
+
+  <div class="div_p">
+    <p>Run the script against a test copy first, then against the real database.</p>
+  </div>
+
+  <pre class="mycodeenv">
+<span># Old and new databases, both set while migrating</span>
+<span>MONGODB_URI=mongodb+srv://your_user:your_password@your_cluster.mongodb.net/?retryWrites=true&amp;w=majority</span>
+<span>MONGODB_DB_NAME=my_project</span>
+<span></span>
+<span>PGUSER=your_database_user</span>
+<span>PGPASSWORD=your_database_password</span>
+<span>PGHOST=your_database_host</span>
+<span>PGPORT=5432</span>
+<span>PGDATABASE=your_database_name</span>
+  </pre>
+
+  <h3>Install both packages from the server folder</h3>
+
+  <pre class="mycodecli">
+<span>npm install pg mongoose</span>
+<span>mkdir scripts</span>
+  </pre>
+
+  <h2 id="mongodb-to-postgresql">MongoDB To PostgreSQL</h2>
+
+  <h3>Back up MongoDB</h3>
+
+  <div class="div_p">
+    <p>These tools come with mongodb-database-tools. The folder holds your real data, so keep it out of Git.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>mongodump --uri="mongodb+srv://your_user:your_password@your_cluster.mongodb.net/my_project" --out=backup-mongo</span>
+  </pre>
+
+  <h3>Restore the MongoDB backup if needed</h3>
+
+  <pre class="mycodecli">
+<span>mongorestore --uri="mongodb+srv://your_user:your_password@your_cluster.mongodb.net" backup-mongo</span>
+  </pre>
+
+  <h3>Create the Postgres tables</h3>
+
+  <div class="div_p">
+    <p>Save this as server/config/schema.sql. The mongo_id column remembers which document each row came from, which is what makes the script safe to run twice. You can drop it after the move.</p>
+  </div>
+
+  <pre class="mycodepg">
+<span>CREATE TABLE IF NOT EXISTS users (</span>
+<span>  id SERIAL PRIMARY KEY,</span>
+<span>  mongo_id CHAR(24) UNIQUE,</span>
+<span>  username VARCHAR(35) NOT NULL UNIQUE,</span>
+<span>  email VARCHAR(254) NOT NULL UNIQUE,</span>
+<span>  password_hash TEXT NOT NULL,</span>
+<span>  role VARCHAR(20) NOT NULL DEFAULT 'user',</span>
+<span>  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),</span>
+<span>  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()</span>
+<span>);</span>
+<span></span>
+<span>CREATE TABLE IF NOT EXISTS posts (</span>
+<span>  id SERIAL PRIMARY KEY,</span>
+<span>  mongo_id CHAR(24) UNIQUE,</span>
+<span>  author_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,</span>
+<span>  title VARCHAR(400) NOT NULL,</span>
+<span>  body TEXT NOT NULL,</span>
+<span>  tags TEXT[] NOT NULL DEFAULT '{}',</span>
+<span>  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),</span>
+<span>  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()</span>
+<span>);</span>
+<span></span>
+<span>CREATE INDEX IF NOT EXISTS posts_author_index ON posts (author_id);</span>
+  </pre>
+
+  <h3>Run the schema file</h3>
+
+  <pre class="mycodecli">
+<span>psql "postgresql://your_user:your_password@your_host/your_database" -f config/schema.sql</span>
+  </pre>
+
+  <h3>server/scripts/mongoToPostgres.js</h3>
+
+  <div class="div_p">
+    <ul>
+      <li>It reads the raw collections, so schema rules like select: false cannot hide the password hashes.</li>
+      <li>Password hashes move as plain text, so users keep their passwords.</li>
+      <li>Users go first so each post can look up its new author id in the Map.</li>
+      <li>MongoDB never checks that a ref is real, so a post with a deleted author gets skipped and reported.</li>
+      <li>Everything runs in one transaction. If one row fails, nothing is saved.</li>
+      <li>ON CONFLICT updates the row that is already there, so running it again does not duplicate anything.</li>
+    </ul>
+  </div>
+
+  <pre class="mycodepg">
+<span>import "dotenv/config";</span>
+<span>import mongoose from "mongoose";</span>
+<span>import pg from "pg";</span>
+<span></span>
+<span>const isLocal = ["localhost", "127.0.0.1"].includes(process.env.PGHOST);</span>
+<span></span>
+<span>const pool = new pg.Pool({</span>
+<span>  user: process.env.PGUSER,</span>
+<span>  password: process.env.PGPASSWORD,</span>
+<span>  host: process.env.PGHOST,</span>
+<span>  port: process.env.PGPORT,</span>
+<span>  database: process.env.PGDATABASE,</span>
+<span>  ssl: isLocal ? false : { rejectUnauthorized: false },</span>
+<span>});</span>
+<span></span>
+<span>const copyUsers = async (mongo, client) =&gt; {</span>
+<span>  const newIds = new Map(); // Mongo _id text -&gt; new Postgres id</span>
+<span></span>
+<span>  for await (const user of mongo.collection("users").find()) {</span>
+<span>    const results = await client.query(</span>
+<span>      `INSERT INTO users (mongo_id, username, email, password_hash, role, created_at, updated_at)</span>
+<span>      VALUES ($1, $2, $3, $4, $5, $6, $7)</span>
+<span>      ON CONFLICT (mongo_id) DO UPDATE SET</span>
+<span>        username = EXCLUDED.username,</span>
+<span>        email = EXCLUDED.email,</span>
+<span>        password_hash = EXCLUDED.password_hash,</span>
+<span>        role = EXCLUDED.role,</span>
+<span>        updated_at = EXCLUDED.updated_at</span>
+<span>      RETURNING id`,</span>
+<span>      [</span>
+<span>        user._id.toString(),</span>
+<span>        user.username,</span>
+<span>        user.email,</span>
+<span>        user.passwordHash,</span>
+<span>        user.role ?? "user",</span>
+<span>        user.createdAt ?? new Date(),</span>
+<span>        user.updatedAt ?? new Date(),</span>
+<span>      ],</span>
+<span>    );</span>
+<span></span>
+<span>    newIds.set(user._id.toString(), results.rows[0].id);</span>
+<span>  }</span>
+<span></span>
+<span>  return newIds;</span>
+<span>};</span>
+<span></span>
+<span>const copyPosts = async (mongo, client, userIds) =&gt; {</span>
+<span>  let saved = 0;</span>
+<span>  let skipped = 0;</span>
+<span></span>
+<span>  for await (const post of mongo.collection("posts").find()) {</span>
+<span>    const authorId = userIds.get(post.authorId?.toString());</span>
+<span></span>
+<span>    if (!authorId) {</span>
+<span>      console.warn(`⚠️ Skipped post ${post._id}: its author does not exist.`);</span>
+<span>      skipped += 1;</span>
+<span>      continue;</span>
+<span>    }</span>
+<span></span>
+<span>    await client.query(</span>
+<span>      `INSERT INTO posts (mongo_id, author_id, title, body, tags, created_at, updated_at)</span>
+<span>      VALUES ($1, $2, $3, $4, $5, $6, $7)</span>
+<span>      ON CONFLICT (mongo_id) DO UPDATE SET</span>
+<span>        author_id = EXCLUDED.author_id,</span>
+<span>        title = EXCLUDED.title,</span>
+<span>        body = EXCLUDED.body,</span>
+<span>        tags = EXCLUDED.tags,</span>
+<span>        updated_at = EXCLUDED.updated_at`,</span>
+<span>      [</span>
+<span>        post._id.toString(),</span>
+<span>        authorId,</span>
+<span>        post.title,</span>
+<span>        post.body,</span>
+<span>        post.tags ?? [],</span>
+<span>        post.createdAt ?? new Date(),</span>
+<span>        post.updatedAt ?? new Date(),</span>
+<span>      ],</span>
+<span>    );</span>
+<span></span>
+<span>    saved += 1;</span>
+<span>  }</span>
+<span></span>
+<span>  return { saved, skipped };</span>
+<span>};</span>
+<span></span>
+<span>const client = await pool.connect();</span>
+<span></span>
+<span>try {</span>
+<span>  await mongoose.connect(process.env.MONGODB_URI, { dbName: process.env.MONGODB_DB_NAME });</span>
+<span>  const mongo = mongoose.connection.db;</span>
+<span></span>
+<span>  await client.query("BEGIN");</span>
+<span></span>
+<span>  const userIds = await copyUsers(mongo, client);</span>
+<span>  const posts = await copyPosts(mongo, client, userIds);</span>
+<span></span>
+<span>  await client.query("COMMIT");</span>
+<span></span>
+<span>  console.log(`✅ Copied ${userIds.size} users and ${posts.saved} posts. Skipped ${posts.skipped} posts.`);</span>
+<span>} catch (error) {</span>
+<span>  await client.query("ROLLBACK");</span>
+<span>  console.error("⚠️ Nothing was saved. Migration failed:", error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>} finally {</span>
+<span>  client.release();</span>
+<span>  await pool.end();</span>
+<span>  await mongoose.disconnect();</span>
+<span>}</span>
+  </pre>
+
+  <h3>Run it</h3>
+
+  <pre class="mycodecli">
+<span>node scripts/mongoToPostgres.js</span>
+  </pre>
+
+  <h3>Check the counts in Postgres</h3>
+
+  <div class="div_p">
+    <p>Compare these with countDocuments in mongosh. Any difference should match the number of skipped posts.</p>
+  </div>
+
+  <pre class="mycodepg">
+<span>SELECT COUNT(*) FROM users;</span>
+<span>SELECT COUNT(*) FROM posts;</span>
+<span></span>
+<span>SELECT p.title, u.username</span>
+<span>FROM posts AS p</span>
+<span>JOIN users AS u ON u.id = p.author_id</span>
+<span>ORDER BY p.created_at DESC</span>
+<span>LIMIT 5;</span>
+  </pre>
+
+  <h3>Remove the old ids once everything works</h3>
+
+  <pre class="mycodepg">
+<span>ALTER TABLE posts DROP COLUMN mongo_id;</span>
+<span>ALTER TABLE users DROP COLUMN mongo_id;</span>
+  </pre>
+
+  <h3>Remove the old package when you are done</h3>
+
+  <pre class="mycodecli">
+<span>npm uninstall mongoose</span>
+  </pre>
+
+  <h2 id="postgresql-to-mongodb">PostgreSQL To MongoDB</h2>
+
+  <h3>Back up Postgres</h3>
+
+  <div class="div_p">
+    <p>The file holds your real data, so keep it out of Git.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>pg_dump "postgresql://your_user:your_password@your_host/your_database" -f backup-postgres.sql</span>
+  </pre>
+
+  <h3>Restore the Postgres backup if needed</h3>
+
+  <pre class="mycodecli">
+<span>psql "postgresql://your_user:your_password@your_host/your_database" -f backup-postgres.sql</span>
+  </pre>
+
+  <h3>Add the models</h3>
+
+  <div class="div_p">
+    <p>Use the schema examples on the MongoDB page. The Rev User model needs fields like status and sessionVersion, so set those in the script too. Add this field to each model. It remembers which row each document came from.</p>
+  </div>
+
+  <pre class="mycodemongo">
+<span>legacyId: { type: Number, unique: true, sparse: true },</span>
+  </pre>
+
+  <h3>server/scripts/postgresToMongo.js</h3>
+
+  <div class="div_p">
+    <ul>
+      <li>It writes through the raw collection, so it can keep the original dates and password hashes. That also skips schema rules and defaults, so the script sets the defaults itself.</li>
+      <li>Users go first. MongoDB makes each new _id, and the Map gives each post its new author id.</li>
+      <li>Postgres sends NUMERIC, BIGINT, and COUNT values as text. Wrap those in Number() if you add them.</li>
+      <li>upsert updates a document that is already there, so running it again does not duplicate anything.</li>
+      <li>There is no transaction. If it stops partway, fix the problem and run it again.</li>
+    </ul>
+  </div>
+
+  <pre class="mycodemongo">
+<span>import "dotenv/config";</span>
+<span>import mongoose from "mongoose";</span>
+<span>import pg from "pg";</span>
+<span></span>
+<span>const isLocal = ["localhost", "127.0.0.1"].includes(process.env.PGHOST);</span>
+<span></span>
+<span>const pool = new pg.Pool({</span>
+<span>  user: process.env.PGUSER,</span>
+<span>  password: process.env.PGPASSWORD,</span>
+<span>  host: process.env.PGHOST,</span>
+<span>  port: process.env.PGPORT,</span>
+<span>  database: process.env.PGDATABASE,</span>
+<span>  ssl: isLocal ? false : { rejectUnauthorized: false },</span>
+<span>});</span>
+<span></span>
+<span>// Add or update every document in one request. Mongo rejects an empty list.</span>
+<span>const saveAll = async (collection, documents) =&gt; {</span>
+<span>  if (documents.length === 0) return;</span>
+<span></span>
+<span>  await collection.bulkWrite(</span>
+<span>    documents.map((document) =&gt; ({</span>
+<span>      updateOne: {</span>
+<span>        filter: { legacyId: document.legacyId },</span>
+<span>        update: { $set: document },</span>
+<span>        upsert: true,</span>
+<span>      },</span>
+<span>    })),</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>// Postgres id -&gt; new Mongo _id</span>
+<span>const readNewIds = async (collection) =&gt; {</span>
+<span>  const saved = await collection.find({}, { projection: { legacyId: 1 } }).toArray();</span>
+<span></span>
+<span>  return new Map(saved.map((document) =&gt; [document.legacyId, document._id]));</span>
+<span>};</span>
+<span></span>
+<span>const copyUsers = async (mongo) =&gt; {</span>
+<span>  const collection = mongo.collection("users");</span>
+<span>  const { rows } = await pool.query("SELECT * FROM users ORDER BY id");</span>
+<span></span>
+<span>  await collection.createIndex({ legacyId: 1 }, { unique: true, sparse: true });</span>
+<span></span>
+<span>  await saveAll(</span>
+<span>    collection,</span>
+<span>    rows.map((row) =&gt; ({</span>
+<span>      legacyId: row.id,</span>
+<span>      username: row.username,</span>
+<span>      email: row.email,</span>
+<span>      passwordHash: row.password_hash,</span>
+<span>      role: row.role,</span>
+<span>      status: "active",</span>
+<span>      sessionVersion: 0,</span>
+<span>      createdAt: row.created_at,</span>
+<span>      updatedAt: row.updated_at,</span>
+<span>    })),</span>
+<span>  );</span>
+<span></span>
+<span>  return readNewIds(collection);</span>
+<span>};</span>
+<span></span>
+<span>const copyPosts = async (mongo, userIds) =&gt; {</span>
+<span>  const collection = mongo.collection("posts");</span>
+<span>  const { rows } = await pool.query("SELECT * FROM posts ORDER BY id");</span>
+<span></span>
+<span>  await collection.createIndex({ legacyId: 1 }, { unique: true, sparse: true });</span>
+<span></span>
+<span>  await saveAll(</span>
+<span>    collection,</span>
+<span>    rows.map((row) =&gt; ({</span>
+<span>      legacyId: row.id,</span>
+<span>      authorId: userIds.get(row.author_id),</span>
+<span>      title: row.title,</span>
+<span>      body: row.body,</span>
+<span>      tags: row.tags,</span>
+<span>      createdAt: row.created_at,</span>
+<span>      updatedAt: row.updated_at,</span>
+<span>    })),</span>
+<span>  );</span>
+<span></span>
+<span>  return rows.length;</span>
+<span>};</span>
+<span></span>
+<span>try {</span>
+<span>  await mongoose.connect(process.env.MONGODB_URI, { dbName: process.env.MONGODB_DB_NAME });</span>
+<span>  const mongo = mongoose.connection.db;</span>
+<span></span>
+<span>  const userIds = await copyUsers(mongo);</span>
+<span>  const postCount = await copyPosts(mongo, userIds);</span>
+<span></span>
+<span>  console.log(`✅ Copied ${userIds.size} users and ${postCount} posts.`);</span>
+<span>} catch (error) {</span>
+<span>  console.error("⚠️ Migration failed. Fix the problem and run it again:", error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>} finally {</span>
+<span>  await pool.end();</span>
+<span>  await mongoose.disconnect();</span>
+<span>}</span>
+  </pre>
+
+  <h3>Run it</h3>
+
+  <pre class="mycodecli">
+<span>node scripts/postgresToMongo.js</span>
+  </pre>
+
+  <h3>Check the counts in mongosh</h3>
+
+  <div class="div_p">
+    <p>Compare these with SELECT COUNT(*) in psql.</p>
+  </div>
+
+  <pre class="mycodefile">
+<span>db.users.countDocuments()</span>
+<span>db.posts.countDocuments()</span>
+<span>db.posts.findOne()</span>
+  </pre>
+
+  <h3>Remove the old package when you are done</h3>
+
+  <pre class="mycodecli">
+<span>npm uninstall pg</span>
+  </pre>
+
+  <h2 id="swap-the-server-code">Swap The Server Code</h2>
+
+  <div class="div_p">
+    <p>Only the controllers and database config change. Keep the JSON the same in both versions and the routes and React stay as they are. The id in each URL does change, so old saved links stop working.</p>
+  </div>
+
+  <h3>The same function in Postgres</h3>
+
+  <div class="div_p">
+    <p>AS "createdAt" and AS "authorName" keep the JSON the same as the Mongo version.</p>
+  </div>
+
+  <pre class="mycodepg">
+<span>import { pool } from "../config/database.js";</span>
+<span></span>
+<span>const getPosts = async (req, res) =&gt; {</span>
+<span>  const results = await pool.query(</span>
+<span>    `SELECT p.id, p.title, p.body, p.tags,</span>
+<span>            p.created_at AS "createdAt",</span>
+<span>            u.username AS "authorName"</span>
+<span>     FROM posts AS p</span>
+<span>     JOIN users AS u ON u.id = p.author_id</span>
+<span>     ORDER BY p.created_at DESC, p.id DESC</span>
+<span>     LIMIT 20`,</span>
+<span>  );</span>
+<span></span>
+<span>  res.status(200).json(results.rows);</span>
+<span>};</span>
+<span></span>
+<span>export default { getPosts };</span>
+  </pre>
+
+  <h3>The same function in MongoDB</h3>
+
+  <pre class="mycodemongo">
+<span>import Post from "../models/Post.js";</span>
+<span></span>
+<span>const getPosts = async (req, res) =&gt; {</span>
+<span>  const posts = await Post.find({})</span>
+<span>    .sort({ createdAt: -1, _id: -1 })</span>
+<span>    .limit(20)</span>
+<span>    .populate("authorId", "username");</span>
+<span></span>
+<span>  res.status(200).json(</span>
+<span>    posts.map((post) =&gt; ({</span>
+<span>      id: post._id,</span>
+<span>      title: post.title,</span>
+<span>      body: post.body,</span>
+<span>      tags: post.tags,</span>
+<span>      createdAt: post.createdAt,</span>
+<span>      authorName: post.authorId?.username,</span>
+<span>    })),</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default { getPosts };</span>
+  </pre>
+
+  <h3>Each operation side by side</h3>
+
+  <pre class="mycodefile">
+<span>Job          PostgreSQL                                  MongoDB</span>
+<span>Find all     pool.query("SELECT * FROM items")           Item.find({})</span>
+<span>Find one     pool.query("... WHERE id = $1", [id])       Item.findById(id)</span>
+<span>Result       results.rows, results.rows[0]               the documents themselves</span>
+<span>Not found    results.rows.length === 0                   item === null</span>
+<span>Create       INSERT ... RETURNING *                      Item.create(fields)</span>
+<span>Update       UPDATE ... WHERE id = $1 RETURNING *        load it, change it, item.save()</span>
+<span>Delete       DELETE ... WHERE id = $1 RETURNING *        item.deleteOne()</span>
+<span>Check id     readId, on the Postgres page                readObjectId, on the MongoDB page</span>
+<span>Bad input    validate in the controller, CHECK           schema rules and validate in code</span>
+<span>Duplicate    error.code === "23505"                      error.code === 11000</span>
+<span>Join         JOIN                                        populate()</span>
+<span>Transaction  client BEGIN, COMMIT, ROLLBACK              session.withTransaction()</span>
+  </pre>
+
+  <h3>Handle a duplicate value after switching</h3>
+
+  <div class="div_p">
+    <p>The error code changes between databases, so check every place you catch a duplicate.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>// Postgres</span>
+<span>if (error.code === "23505") {</span>
+<span>  return res.status(409).json({ error: "That value is already taken." });</span>
+<span>}</span>
+<span></span>
+<span>// MongoDB</span>
+<span>if (error.code === 11000) {</span>
+<span>  return res.status(409).json({ error: "That value is already taken." });</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="login-and-security-after-switching">Login And Security After Switching</h2>
+
+  <div class="div_p">
+    <ul>
+      <li>Argon2id password hashes move as text, so passwords keep working. passwords.js does not change.</li>
+      <li>Sessions do not move. Everyone signs in again after the switch.</li>
+      <li>Change these Rev files for Postgres: models, config/database.js, databaseAccess.js, authService.js, accountLoginLimit.js, and the session store in auth.js. In the other direction, use the Rev files as they are.</li>
+      <li>mongooseSecurity.js protects MongoDB queries only. In Postgres, the $1 placeholders do that job, so never build SQL from strings.</li>
+      <li>Give the new database user the least power it needs, the same as the readWrite rule on the Security page.</li>
+    </ul>
+  </div>
+
+  <h3>Store sessions in Postgres instead of MongoDB</h3>
+
+  <pre class="mycodecli">
+<span>npm install connect-pg-simple</span>
+  </pre>
+
+  <h3>Replace the MongoStore lines in security/auth.js</h3>
+
+  <pre class="mycodesecurity">
+<span>import session from "express-session";</span>
+<span>import connectPgSimple from "connect-pg-simple";</span>
+<span>import { pool } from "../config/database.js";</span>
+<span></span>
+<span>const PgStore = connectPgSimple(session);</span>
+<span></span>
+<span>export const store = new PgStore({</span>
+<span>  pool,</span>
+<span>  tableName: "sessions",</span>
+<span>  createTableIfMissing: true,</span>
+<span>  ttl: 1800,</span>
+<span>});</span>
+  </pre>
+
+  <br><br><br><br>
+
+  <footer class="footer"> &copy; By Jamar Brown
+
+    <div class="container">
+      <div id='clock'></div>
+    </div>
+  </footer>
+
+  <script src="js/clock.js"></script>
+  <script src="js/copy.js"></script>
+</body>
+
+</html>

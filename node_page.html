@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Jamar Brown">
+  <meta name="description" content="This is the page that has all the reusable Node.js and Express code">
+  <title>Node Page</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand">Final Companion</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="html_page.html">Html Code</a></li>
+        <li><a href="css_page.html">Css Code</a></li>
+        <li><a href="javaScript.html">JavaScript Code</a></li>
+        <li><a href="setup_page.html">Setup &amp; .env</a></li>
+        <li><a href="react_page.html">React Code</a></li>
+        <li><a href="node_page.html">Node Code</a></li>
+        <li><a href="mongodb_page.html">MongoDB Code</a></li>
+        <li><a href="postgres_page.html">Postgres Code</a></li>
+        <li><a href="security_page.html">Security Code</a></li>
+        <li><a href="migration_page.html">Switch Databases</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <h2>On This Page</h2>
+
+  <div class="div_p">
+    <ul>
+      <li><a href="#what-is-node-and-express">What Is Node And Express</a></li>
+      <li><a href="#server-files">Server Files</a></li>
+      <li><a href="#reading-a-request">Reading A Request</a></li>
+      <li><a href="#middleware">Middleware</a></li>
+      <li><a href="#errors-in-express-4-and-5">Errors In Express 4 And 5</a></li>
+      <li><a href="#serve-react-from-express">Serve React From Express</a></li>
+      <li><a href="#split-app-and-server-for-testing">Split App And Server For Testing</a></li>
+      <li><a href="#try-routes-from-the-terminal">Try Routes From The Terminal</a></li>
+      <li><a href="#node-built-in-tools">Node Built In Tools</a></li>
+    </ul>
+  </div>
+
+  <h2 id="what-is-node-and-express">What Is Node And Express</h2>
+
+  <div class="div_p">
+    <p>Node runs JavaScript outside of the browser. Express is a package that turns Node into a web server. A request comes in, goes down the list of app.use and route lines in order, and the first one that sends a response ends it. Terminal setup is on the Setup page.</p>
+  </div>
+
+  <h2 id="server-files">Server Files</h2>
+
+  <div class="div_p">
+    <ul>
+      <li>server.js starts the server and lists the routes.</li>
+      <li>routes/ says which URL goes to which function.</li>
+      <li>controllers/ holds the function that does the work.</li>
+      <li>config/ holds the database connection and setup scripts.</li>
+    </ul>
+  </div>
+
+  <h3>server/server.js</h3>
+
+  <div class="div_p">
+    <p>This is the full starter. It works on its own with the routes and controller below. The two error handlers at the bottom have to stay after every route.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>import "dotenv/config";</span>
+<span>import express from "express";</span>
+<span>import itemsRouter from "./routes/items.js";</span>
+<span>import { HttpError } from "./utils/HttpError.js";</span>
+<span></span>
+<span>const PORT = process.env.PORT || 3000;</span>
+<span></span>
+<span>const app = express();</span>
+<span></span>
+<span>app.use(express.json());</span>
+<span></span>
+<span>app.get("/api/health", (req, res) =&gt; {</span>
+<span>  res.status(200).json({ status: "ok" });</span>
+<span>});</span>
+<span></span>
+<span>app.use("/api/items", itemsRouter);</span>
+<span></span>
+<span>// No route above matched.</span>
+<span>app.use((req, res) =&gt; {</span>
+<span>  res.status(404).json({ error: "Route not found." });</span>
+<span>});</span>
+<span></span>
+<span>// Express knows this is the error handler because it has four parameters.</span>
+<span>app.use((error, req, res, next) =&gt; {</span>
+<span>  if (error instanceof HttpError) {</span>
+<span>    return res.status(error.status).json({ error: error.message });</span>
+<span>  }</span>
+<span></span>
+<span>  console.error(error);</span>
+<span>  res.status(500).json({ error: "An unexpected server error occurred." });</span>
+<span>});</span>
+<span></span>
+<span>app.listen(PORT, () =&gt; {</span>
+<span>  console.log(`🚀 Server listening on http://localhost:${PORT}`);</span>
+<span>});</span>
+  </pre>
+
+  <h3>server/utils/HttpError.js</h3>
+
+  <div class="div_p">
+    <p>Throw this from a controller to send an error with a status code, such as throw new HttpError(404, "Item not found.").</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>export class HttpError extends Error {</span>
+<span>  constructor(status, message) {</span>
+<span>    super(message);</span>
+<span>    this.status = status;</span>
+<span>  }</span>
+<span>}</span>
+  </pre>
+
+  <h3>server/routes/items.js</h3>
+
+  <pre class="mycodenode">
+<span>import express from "express";</span>
+<span>import ItemsController from "../controllers/items.js";</span>
+<span></span>
+<span>const router = express.Router();</span>
+<span></span>
+<span>router.get("/", ItemsController.getItems);</span>
+<span>router.get("/:id", ItemsController.getItemById);</span>
+<span>router.post("/", ItemsController.createItem);</span>
+<span>router.patch("/:id", ItemsController.updateItem);</span>
+<span>router.delete("/:id", ItemsController.deleteItem);</span>
+<span></span>
+<span>export default router;</span>
+  </pre>
+
+  <h3>server/controllers/items.js with no database</h3>
+
+  <div class="div_p">
+    <p>This keeps the items in an array so you can test your routes before adding a database. The list empties when the server restarts. The Postgres and MongoDB pages each have a version with the same function names, so the routes file does not change.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>import { HttpError } from "../utils/HttpError.js";</span>
+<span></span>
+<span>let items = [{ id: 1, title: "First item", description: "Hello" }];</span>
+<span>let nextId = 2;</span>
+<span></span>
+<span>// Only copy the fields you expect. Never save the whole req.body.</span>
+<span>const pickFields = (body) =&gt; {</span>
+<span>  if (typeof body?.title !== "string" || !body.title.trim()) {</span>
+<span>    throw new HttpError(400, "Title is required.");</span>
+<span>  }</span>
+<span></span>
+<span>  return { title: body.title.trim(), description: String(body.description ?? "") };</span>
+<span>};</span>
+<span></span>
+<span>const findItem = (id) =&gt; {</span>
+<span>  const item = items.find((other) =&gt; other.id === Number(id));</span>
+<span></span>
+<span>  if (!item) throw new HttpError(404, "Item not found.");</span>
+<span>  return item;</span>
+<span>};</span>
+<span></span>
+<span>const getItems = (req, res) =&gt; {</span>
+<span>  res.status(200).json(items);</span>
+<span>};</span>
+<span></span>
+<span>const getItemById = (req, res) =&gt; {</span>
+<span>  res.status(200).json(findItem(req.params.id));</span>
+<span>};</span>
+<span></span>
+<span>const createItem = (req, res) =&gt; {</span>
+<span>  const item = { id: nextId, ...pickFields(req.body) };</span>
+<span></span>
+<span>  nextId += 1;</span>
+<span>  items.push(item);</span>
+<span>  res.status(201).json(item);</span>
+<span>};</span>
+<span></span>
+<span>const updateItem = (req, res) =&gt; {</span>
+<span>  const item = findItem(req.params.id);</span>
+<span></span>
+<span>  Object.assign(item, pickFields(req.body));</span>
+<span>  res.status(200).json(item);</span>
+<span>};</span>
+<span></span>
+<span>const deleteItem = (req, res) =&gt; {</span>
+<span>  const item = findItem(req.params.id);</span>
+<span></span>
+<span>  items = items.filter((other) =&gt; other.id !== item.id);</span>
+<span>  res.status(200).json(item);</span>
+<span>};</span>
+<span></span>
+<span>export default { getItems, getItemById, createItem, updateItem, deleteItem };</span>
+  </pre>
+
+  <h2 id="reading-a-request">Reading A Request</h2>
+
+  <h3>The four places data comes from</h3>
+
+  <pre class="mycodenode">
+<span>app.post("/api/items/:id", (req, res) =&gt; {</span>
+<span>  req.params.id;            // /api/items/5           gives "5"</span>
+<span>  req.query.page;           // /api/items?page=2      gives "2"</span>
+<span>  req.body.title;           // JSON sent by fetch     needs express.json()</span>
+<span>  req.get("Authorization"); // a request header</span>
+<span>});</span>
+  </pre>
+
+  <h3>Sending a response</h3>
+
+  <pre class="mycodenode">
+<span>res.status(200).json(data);                      // send JSON</span>
+<span>res.status(201).json(newItem);                   // something was created</span>
+<span>res.status(204).end();                           // worked, nothing to send back</span>
+<span>res.status(400).json({ error: "Bad input." });   // the request was wrong</span>
+<span>res.status(404).json({ error: "Not found." });   // no such record</span>
+<span>res.status(500).json({ error: "Server error." }); // our code failed</span>
+  </pre>
+
+  <h3>Status codes</h3>
+
+  <pre class="mycodefile">
+<span>200 OK                   It worked</span>
+<span>201 Created              POST made a new record</span>
+<span>204 No Content           It worked and there is nothing to send back</span>
+<span>400 Bad Request          The data sent was invalid</span>
+<span>401 Unauthorized         Not signed in</span>
+<span>403 Forbidden            Signed in, but not allowed</span>
+<span>404 Not Found            No such route or record</span>
+<span>409 Conflict             Duplicate, or blocked by related records</span>
+<span>413 Content Too Large    The request body is too big</span>
+<span>429 Too Many Requests    Rate limit reached</span>
+<span>500 Server Error         Something broke in our code</span>
+<span>503 Service Unavailable  The database or a service is down</span>
+  </pre>
+
+  <h3>Page number from the query string</h3>
+
+  <div class="div_p">
+    <p>Everything in req.query is text or missing, so check it before using it. This came from the Rev games controller.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>const limit = 24;</span>
+<span>const raw = req.query.page ?? "1";</span>
+<span></span>
+<span>if (typeof raw !== "string" || !/^\d{1,4}$/.test(raw)) {</span>
+<span>  throw new HttpError(400, "Page must be a whole number between 1 and 1000.");</span>
+<span>}</span>
+<span></span>
+<span>const page = Number(raw);</span>
+<span>const skip = (page - 1) * limit;</span>
+  </pre>
+
+  <h2 id="middleware">Middleware</h2>
+
+  <div class="div_p">
+    <p>Middleware is a function that runs between the request coming in and the response going out. It either sends a response or calls next() to pass the request along. Order matters, because Express runs them from top to bottom.</p>
+  </div>
+
+  <h3>Log every request</h3>
+
+  <pre class="mycodenode">
+<span>app.use((req, res, next) =&gt; {</span>
+<span>  console.log(`${req.method} ${req.path}`);</span>
+<span>  next();</span>
+<span>});</span>
+  </pre>
+
+  <h3>Protect one route</h3>
+
+  <div class="div_p">
+    <p>Put the middleware between the path and the controller. The Security page has the real version.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>const requireKey = (req, res, next) =&gt; {</span>
+<span>  if (req.get("X-Api-Key") !== process.env.API_KEY) {</span>
+<span>    return res.status(401).json({ error: "Missing or wrong key." });</span>
+<span>  }</span>
+<span>  next();</span>
+<span>};</span>
+<span></span>
+<span>router.post("/", requireKey, ItemsController.createItem);</span>
+  </pre>
+
+  <h3>Allow a frontend on another address with CORS</h3>
+
+  <div class="div_p">
+    <p>You only need this when React and Express are on different addresses and you are not using the Vite proxy. Name your frontend instead of leaving it open to every site.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>import cors from "cors";</span>
+<span></span>
+<span>app.use(cors({ origin: process.env.CLIENT_ORIGIN }));</span>
+  </pre>
+
+  <h3>Limit the body size</h3>
+
+  <pre class="mycodenode">
+<span>app.use(express.json({ limit: "100kb" }));</span>
+  </pre>
+
+  <h2 id="errors-in-express-4-and-5">Errors In Express 4 And 5</h2>
+
+  <div class="div_p">
+    <p>New projects install Express 5. xenoblade1_Locations and video_gameStore use Express 4, and unearthed and Rev use Express 5. Check the version in package.json before you reuse old code.</p>
+  </div>
+
+  <h3>Express 5: a thrown error reaches the error handler</h3>
+
+  <pre class="mycodenode">
+<span>const getItem = async (req, res) =&gt; {</span>
+<span>  const item = await Item.findById(req.params.id);</span>
+<span></span>
+<span>  if (!item) throw new HttpError(404, "Item not found.");</span>
+<span>  res.status(200).json(item);</span>
+<span>};</span>
+  </pre>
+
+  <h3>Express 4: async functions need try and catch</h3>
+
+  <pre class="mycodenode">
+<span>const getItem = async (req, res, next) =&gt; {</span>
+<span>  try {</span>
+<span>    const item = await Item.findById(req.params.id);</span>
+<span></span>
+<span>    if (!item) throw new HttpError(404, "Item not found.");</span>
+<span>    res.status(200).json(item);</span>
+<span>  } catch (error) {</span>
+<span>    next(error);</span>
+<span>  }</span>
+<span>};</span>
+  </pre>
+
+  <h2 id="serve-react-from-express">Serve React From Express</h2>
+
+  <div class="div_p">
+    <p>This is for going live, when Express serves the finished React site. Run npm run build first, which puts the site in server/public because of the outDir in vite.config.js. The old app.get("/*") line from my class projects crashes on Express 5, so this version uses app.use instead.</p>
+  </div>
+
+  <h3>Add to server.js after the API routes</h3>
+
+  <pre class="mycodenode">
+<span>import path from "path";</span>
+<span></span>
+<span>if (process.env.NODE_ENV === "production") {</span>
+<span>  app.use(express.static("public"));</span>
+<span></span>
+<span>  // Unknown /api paths still get a JSON 404 from the handler below this block.</span>
+<span>  app.use((req, res, next) =&gt; {</span>
+<span>    if (req.path.startsWith("/api")) return next();</span>
+<span>    res.sendFile(path.resolve("public", "index.html"));</span>
+<span>  });</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="split-app-and-server-for-testing">Split App And Server For Testing</h2>
+
+  <div class="div_p">
+    <p>This is how Rev is built. app.js builds the app and server.js starts it, so a test can use the app without opening a real port or a database.</p>
+  </div>
+
+  <h3>server/app.js</h3>
+
+  <pre class="mycodenode">
+<span>import express from "express";</span>
+<span></span>
+<span>export function createApp() {</span>
+<span>  const app = express();</span>
+<span></span>
+<span>  app.use(express.json());</span>
+<span></span>
+<span>  app.get("/api/health", (req, res) =&gt; {</span>
+<span>    res.status(200).json({ status: "ok" });</span>
+<span>  });</span>
+<span></span>
+<span>  app.use((req, res) =&gt; {</span>
+<span>    res.status(404).json({ error: "Route not found." });</span>
+<span>  });</span>
+<span></span>
+<span>  return app;</span>
+<span>}</span>
+  </pre>
+
+  <h3>server/test/health.test.js</h3>
+
+  <pre class="mycodenode">
+<span>import test from "node:test";</span>
+<span>import assert from "node:assert/strict";</span>
+<span>import { createApp } from "../app.js";</span>
+<span></span>
+<span>test("GET /api/health answers ok", async () =&gt; {</span>
+<span>  const server = createApp().listen(0);</span>
+<span>  const { port } = server.address();</span>
+<span></span>
+<span>  try {</span>
+<span>    const response = await fetch(`http://127.0.0.1:${port}/api/health`);</span>
+<span></span>
+<span>    assert.equal(response.status, 200);</span>
+<span>    assert.deepEqual(await response.json(), { status: "ok" });</span>
+<span>  } finally {</span>
+<span>    server.close();</span>
+<span>  }</span>
+<span>});</span>
+  </pre>
+
+  <h3>Run the tests</h3>
+
+  <pre class="mycodecli">
+<span>npm pkg set scripts.test="node --test"</span>
+<span>npm test</span>
+  </pre>
+
+  <h2 id="try-routes-from-the-terminal">Try Routes From The Terminal</h2>
+
+  <h3>curl for each request type</h3>
+
+  <div class="div_p">
+    <p>Keep the server running in one terminal and use a second terminal for these.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>curl http://localhost:3000/api/items</span>
+<span>curl http://localhost:3000/api/items/1</span>
+<span>curl -X POST http://localhost:3000/api/items -H "Content-Type: application/json" -d '{"title":"New item","description":"Hi"}'</span>
+<span>curl -X PATCH http://localhost:3000/api/items/1 -H "Content-Type: application/json" -d '{"title":"Changed","description":"Hi"}'</span>
+<span>curl -X DELETE http://localhost:3000/api/items/1</span>
+  </pre>
+
+  <h3>A port is already in use</h3>
+
+  <div class="div_p">
+    <p>This finds what is running on port 3000 and stops it.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>lsof -ti :3000 | xargs kill</span>
+  </pre>
+
+  <h2 id="node-built-in-tools">Node Built In Tools</h2>
+
+  <h3>Random values and IDs</h3>
+
+  <pre class="mycodenode">
+<span>import { randomBytes, randomUUID } from "node:crypto";</span>
+<span></span>
+<span>randomUUID();                       // a unique ID</span>
+<span>randomBytes(32).toString("hex");    // a 64 character secret</span>
+  </pre>
+
+  <h3>Get a file path relative to the current file</h3>
+
+  <pre class="mycodenode">
+<span>import { fileURLToPath } from "node:url";</span>
+<span></span>
+<span>const envPath = fileURLToPath(new URL("../.env", import.meta.url));</span>
+  </pre>
+
+  <h3>Read a file</h3>
+
+  <pre class="mycodenode">
+<span>import { readFile } from "node:fs/promises";</span>
+<span></span>
+<span>const text = await readFile("notes.txt", "utf8");</span>
+  </pre>
+
+  <h3>Shut down cleanly</h3>
+
+  <div class="div_p">
+    <p>Lets running requests finish and closes the database before the process stops.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>const server = app.listen(PORT);</span>
+<span></span>
+<span>const shutdown = () =&gt; {</span>
+<span>  server.close(async () =&gt; {</span>
+<span>    await pool.end(); // or await mongoose.disconnect();</span>
+<span>    process.exit(0);</span>
+<span>  });</span>
+<span>};</span>
+<span></span>
+<span>process.once("SIGINT", shutdown);</span>
+<span>process.once("SIGTERM", shutdown);</span>
+  </pre>
+
+  <br><br><br><br>
+
+  <footer class="footer"> &copy; By Jamar Brown
+
+    <div class="container">
+      <div id='clock'></div>
+    </div>
+  </footer>
+
+  <script src="js/clock.js"></script>
+  <script src="js/copy.js"></script>
+</body>
+
+</html>

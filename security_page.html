@@ -1,0 +1,3592 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Jamar Brown">
+  <meta name="description" content="This is the page that has the security and login code from Rev">
+  <title>Security Page</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand">Final Companion</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="html_page.html">Html Code</a></li>
+        <li><a href="css_page.html">Css Code</a></li>
+        <li><a href="javaScript.html">JavaScript Code</a></li>
+        <li><a href="setup_page.html">Setup &amp; .env</a></li>
+        <li><a href="react_page.html">React Code</a></li>
+        <li><a href="node_page.html">Node Code</a></li>
+        <li><a href="mongodb_page.html">MongoDB Code</a></li>
+        <li><a href="postgres_page.html">Postgres Code</a></li>
+        <li><a href="security_page.html">Security Code</a></li>
+        <li><a href="migration_page.html">Switch Databases</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <h2>On This Page</h2>
+
+  <div class="div_p">
+    <ul>
+      <li><a href="#how-the-rev-login-works">How The Rev Login Works</a></li>
+      <li><a href="#what-each-layer-stops">What Each Layer Stops</a></li>
+      <li><a href="#step-1-install-and-env">Step 1 Install And Env</a></li>
+      <li><a href="#step-2-database-and-models">Step 2 Database And Models</a></li>
+      <li><a href="#step-3-check-all-input">Step 3 Check All Input</a></li>
+      <li><a href="#step-4-password-hashing">Step 4 Password Hashing</a></li>
+      <li><a href="#step-5-two-step-codes-and-login-limits">Step 5 Two Step Codes And Login Limits</a></li>
+      <li><a href="#step-6-register-and-login-logic">Step 6 Register And Login Logic</a></li>
+      <li><a href="#step-7-sessions-routes-and-guards">Step 7 Sessions Routes And Guards</a></li>
+      <li><a href="#step-8-put-the-server-together">Step 8 Put The Server Together</a></li>
+      <li><a href="#step-9-protect-your-own-routes">Step 9 Protect Your Own Routes</a></li>
+      <li><a href="#step-10-create-the-admin">Step 10 Create The Admin</a></li>
+      <li><a href="#step-11-the-react-login">Step 11 The React Login</a></li>
+      <li><a href="#step-12-try-it-from-the-terminal">Step 12 Try It From The Terminal</a></li>
+      <li><a href="#before-going-live">Before Going Live</a></li>
+    </ul>
+  </div>
+
+  <h2 id="how-the-rev-login-works">How The Rev Login Works</h2>
+
+  <div class="div_p">
+    <p>Rev signs people in with a server session, not a token saved in the browser. The password never gets stored, and the browser only holds a cookie that JavaScript cannot read. These files work together, so copy them in the order shown.</p>
+  </div>
+
+  <div class="div_p">
+    <ul>
+      <li>The browser asks GET /api/auth/csrf and gets a session cookie plus a CSRF token.</li>
+      <li>The login form sends the email, password, and token to POST /api/auth/login.</li>
+      <li>The server checks the rate limits, the token, and the input format.</li>
+      <li>It finds the user and checks the password against the saved Argon2id hash.</li>
+      <li>An admin must also send a 6-digit code from an authenticator app.</li>
+      <li>The server replaces the session id, saves who signed in, and sends back a new CSRF token.</li>
+      <li>On every later request, requireAuth loads the account again and checks that it is still active.</li>
+      <li>When React loads, it asks GET /api/auth/me who is signed in. React only decides what to show. The server is what actually protects the data.</li>
+    </ul>
+  </div>
+
+  <h2 id="what-each-layer-stops">What Each Layer Stops</h2>
+
+  <h3>Attack and the code that stops it</h3>
+
+  <pre class="mycodefile">
+<span>Stolen password database   Argon2id hashing                   security/passwords.js</span>
+<span>Password guessing          IP and per-account rate limits     security/auth.js, accountLoginLimit.js</span>
+<span>Stolen admin password      Authenticator code (TOTP)          security/totp.js</span>
+<span>Finding who has an account Same message and same timing       services/authService.js, passwords.js</span>
+<span>Cookie theft through XSS   httpOnly cookie                    security/auth.js</span>
+<span>Forged form from a site    CSRF token and Origin check        security/auth.js</span>
+<span>Session fixation           New session id on login            security/auth.js</span>
+<span>Old sessions still working sessionVersion, 8 hour limit       security/auth.js</span>
+<span>Making yourself an admin   Allowed field lists, role on       security/input.js</span>
+<span>                           the server only</span>
+<span>NoSQL injection            Input checks, sanitizeFilter       security/input.js, mongooseSecurity.js</span>
+<span>Reading another user's     Owner inside the database query    security/access.js</span>
+<span>records by changing an ID</span>
+<span>Bad links in saved data    https only link check              models/validators.js</span>
+<span>Too many requests          Global rate limit, body limit      app.js</span>
+<span>Slow connection attacks    Request time limits                server.js</span>
+<span>Too much database power    readWrite only startup check       security/databaseAccess.js</span>
+<span>Secrets in error messages  Generic errors, request ID         app.js</span>
+  </pre>
+
+  <h2 id="step-1-install-and-env">Step 1 Install And Env</h2>
+
+  <div class="div_p">
+    <p>The .env for this is on the Setup page under server/.env for the Rev login and security. Also copy server/config/env.js from there.</p>
+  </div>
+
+  <h3>Install from the server folder</h3>
+
+  <pre class="mycodecli">
+<span>npm install express cors dotenv mongoose helmet express-rate-limit express-session connect-mongo argon2</span>
+<span>npm pkg set type=module</span>
+<span>npm pkg set scripts.dev="node --watch server.js" scripts.start="node server.js"</span>
+<span>npm pkg set scripts.admin:create="node scripts/create-admin.js"</span>
+<span>mkdir config models security services scripts</span>
+  </pre>
+
+  <h2 id="step-2-database-and-models">Step 2 Database And Models</h2>
+
+  <div class="div_p">
+    <p>Copy server/config/mongooseSecurity.js and server/models/validators.js from the MongoDB page first. The models need both.</p>
+  </div>
+
+  <h3>server/security/databaseAccess.js</h3>
+
+  <div class="div_p">
+    <p>Stops the server from starting with a database user that has more power than it needs. If someone breaks into the app, they cannot touch your other databases. This check needs an Atlas user with only readWrite on your database.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>// Check database infrastructure permissions,</span>
+<span>// not the website's user/admin roles.</span>
+<span>export function assertApplicationRoles(authInfo, dbName) {</span>
+<span>  const roles = authInfo?.authenticatedUserRoles;</span>
+<span></span>
+<span>  // allowed is true if the connection has exactly one role, readWrite, on the configured database.</span>
+<span>  const allowed =</span>
+<span>    Array.isArray(roles) &amp;&amp;</span>
+<span>    roles.length === 1 &amp;&amp;</span>
+<span>    roles[0].role === "readWrite" &amp;&amp;</span>
+<span>    roles[0].db === dbName;</span>
+<span></span>
+<span>  // If the connection has any other roles, throw an error to prevent excessive privileges.</span>
+<span>  if (!allowed) {</span>
+<span>    const error = new Error(</span>
+<span>      "Application database privileges are not restricted.",</span>
+<span>    );</span>
+<span></span>
+<span>    error.code = "EXCESS_DATABASE_PRIVILEGES";</span>
+<span>    throw error;</span>
+<span>  }</span>
+<span>}</span>
+  </pre>
+
+  <h3>server/config/database.js</h3>
+
+  <div class="div_p">
+    <p>explainDatabaseError turns driver errors into safe messages, so your connection string never lands in a log.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>import mongoose from "mongoose";</span>
+<span>import { getDatabaseConfig } from "./env.js";</span>
+<span>import { assertApplicationRoles } from "../security/databaseAccess.js";</span>
+<span></span>
+<span>// Establish a connection and check its database permissions.</span>
+<span>export async function connectDatabase() {</span>
+<span>  const { uri, dbName } = getDatabaseConfig();</span>
+<span></span>
+<span>  // Wait for MongoDB before continuing application startup.</span>
+<span>  await mongoose.connect(uri, {</span>
+<span>    dbName,</span>
+<span>    serverSelectionTimeoutMS: 10000, // 10 seconds</span>
+<span>    connectTimeoutMS: 10000, // 10 seconds</span>
+<span>    socketTimeoutMS: 10000, // 10 seconds</span>
+<span>    maxPoolSize: 10, // Limit the number of concurrent connections</span>
+<span>  });</span>
+<span></span>
+<span>  // Ask MongoDB which roles this connection authenticated with.</span>
+<span>  const status = await mongoose.connection.db</span>
+<span>    .admin()</span>
+<span>    .command({ connectionStatus: 1 });</span>
+<span></span>
+<span>  // Refuse credentials that do not match the app's intended policy.</span>
+<span>  assertApplicationRoles(status.authInfo, dbName);</span>
+<span>}</span>
+<span></span>
+<span>// Check that MongoDB can respond to a small command.</span>
+<span>export async function pingDatabase() {</span>
+<span>  if (mongoose.connection.readyState !== 1) {</span>
+<span>    throw new Error("Database is unavailable.");</span>
+<span>  }</span>
+<span></span>
+<span>  // Ping the database to ensure it's responsive.</span>
+<span>  const result = await mongoose.connection.db.command(</span>
+<span>    { ping: 1 },</span>
+<span>    { maxTimeMS: 3000 },</span>
+<span>  );</span>
+<span></span>
+<span>  // If result is not ok then the database is not responding correctly.</span>
+<span>  if (result.ok !== 1) {</span>
+<span>    throw new Error("Database ping failed.");</span>
+<span>  }</span>
+<span>  return true;</span>
+<span>}</span>
+<span></span>
+<span>// Close Mongoose connections when the process shuts down.</span>
+<span>export async function disconnectDatabase() {</span>
+<span>  await mongoose.disconnect();</span>
+<span>}</span>
+<span></span>
+<span>// Translate database errors into messages that do not expose</span>
+<span>// connection strings, credentials, or raw driver errors to the user.</span>
+<span>export function explainDatabaseError(error) {</span>
+<span>  if (error?.code === "EXCESS_DATABASE_PRIVILEGES") {</span>
+<span>    return `Use a database account with only readWrite on the configured applications</span>
+<span>    database; broad administrator credentials are refused.`;</span>
+<span>  }</span>
+<span></span>
+<span>  // MongoDB authentication errors can be caused by incorrect credentials, expired passwords, or misconfigured database settings.</span>
+<span>  if (error?.code === 18 || error?.codeName === "AuthenticationFailed") {</span>
+<span>    return "MongoDB authentication failed. Check the database user's credentials locally.";</span>
+<span>  }</span>
+<span></span>
+<span>  // MongoDB connection errors can be caused by network issues, incorrect credentials, or misconfigured database settings.</span>
+<span>  if (error?.code === 13 || error?.codeName === "Unauthorized") {</span>
+<span>    return "MongoDB denied this operation. Check the database user's permissions.";</span>
+<span>  }</span>
+<span></span>
+<span>  // MongoDB connection errors can be caused by network issues, incorrect credentials, or misconfigured database settings.</span>
+<span>  if (error?.name === "MongooseServerSelectionError") {</span>
+<span>    return `MongoDB is unreachable. Check Atlas status, your IP access list, DNS, and connection</span>
+<span>    settings.`;</span>
+<span>  }</span>
+<span></span>
+<span>  // If the error is not recognized, return a generic message.</span>
+<span>  if (!process.env.MONGODB_URI?.trim()) {</span>
+<span>    return `MONGODB_URI is missing. Enter it privately in server/.env.`;</span>
+<span>  }</span>
+<span>  return "MongoDB connection failed. Check the database server, credentials, and connection settings.";</span>
+<span>}</span>
+  </pre>
+
+  <h3>server/models/User.js</h3>
+
+  <div class="div_p">
+    <p>passwordHash and email use select: false, so a normal query cannot leak them. Trusted code asks for them with .select("+passwordHash"). sessionVersion goes up when a password changes, which signs out every old session.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>// information on the users table in the database</span>
+<span></span>
+<span>import mongoose from "mongoose";</span>
+<span>// database-wide safety settings; must load before the schema below.</span>
+<span>import "../config/mongooseSecurity.js";</span>
+<span>// the same username/email rules the API uses.</span>
+<span>import {</span>
+<span>  EMAIL_PATTERN,</span>
+<span>  USERNAME_COLLATION,</span>
+<span>  USERNAME_PATTERN,</span>
+<span>} from "./validators.js";</span>
+<span></span>
+<span>const userSchema = new mongoose.Schema(</span>
+<span>  {</span>
+<span>    // username of the user</span>
+<span>    username: {</span>
+<span>      type: String,</span>
+<span>      required: true,</span>
+<span>      trim: true,</span>
+<span>      minlength: 3,</span>
+<span>      maxlength: 35,</span>
+<span>      // letters, digits, "_", "-", "." only (no look-alike Unicode).</span>
+<span>      match: USERNAME_PATTERN,</span>
+<span>      // uniqueness now ignores capital letters. It is enforced</span>
+<span>      // by the "username_case_insensitive_unique" index declared below,</span>
+<span>      // so "Sam" and "sam" can no longer both exist.</span>
+<span>    },</span>
+<span></span>
+<span>    // email of the user</span>
+<span>    email: {</span>
+<span>      type: String,</span>
+<span>      required: true,</span>
+<span>      trim: true,</span>
+<span>      lowercase: true,</span>
+<span>      maxlength: 254,</span>
+<span>      // A format check is not proof that the person owns this mailbox.</span>
+<span>      // the shared pattern also refuses control/invisible characters.</span>
+<span>      match: EMAIL_PATTERN,</span>
+<span>      unique: true,</span>
+<span>      // hide email from ordinary queries.</span>
+<span>      // Before this, Post.find().populate("authorId") or res.json(user) in</span>
+<span>      // a future route would have sent every author's email to the browser</span>
+<span>      // (confirmed in testing). Trusted code that truly needs the address</span>
+<span>      // (password-reset email delivery) asks for it with .select("+email").</span>
+<span>      select: false,</span>
+<span>    },</span>
+<span>    // password hash of the user</span>
+<span>    passwordHash: {</span>
+<span>      type: String,</span>
+<span>      required: true,</span>
+<span>      select: false,</span>
+<span>    },</span>
+<span></span>
+<span>    // role of the user, can be either "user" or "admin"</span>
+<span>    role: {</span>
+<span>      type: String,</span>
+<span>      enum: ["user", "admin"],</span>
+<span>      default: "user",</span>
+<span>    },</span>
+<span></span>
+<span>    // status of the user, can be either "active" or "banned"</span>
+<span>    status: {</span>
+<span>      type: String,</span>
+<span>      enum: ["active", "banned"],</span>
+<span>      default: "active",</span>
+<span>    },</span>
+<span></span>
+<span>    // session version of the user, used for invalidating sessions</span>
+<span>    sessionVersion: {</span>
+<span>      type: Number,</span>
+<span>      default: 0,</span>
+<span>      min: 0,</span>
+<span>      validate: {</span>
+<span>        validator: Number.isSafeInteger,</span>
+<span>        message: "Session version must be a nonnegative safe integer.",</span>
+<span>      },</span>
+<span>    },</span>
+<span></span>
+<span>    // two-step sign-in for the owner's admin</span>
+<span>    // account. These fields are written ONLY by scripts/create-admin.js on</span>
+<span>    // your own computer; no website route can set them.</span>
+<span>    mfa: {</span>
+<span>      // The authenticator secret, encrypted with ADMIN_MFA_KEY (security/totp.js).</span>
+<span>      secretEnc: { type: String, select: false, maxlength: 300 },</span>
+<span>      // When two-step sign-in was turned on (null = off).</span>
+<span>      enabledAt: { type: Date, default: null },</span>
+<span>      // Time window of the last accepted code, so a code can't be reused.</span>
+<span>      lastUsedStep: { type: Number, select: false, default: -1 },</span>
+<span>    },</span>
+<span>  },</span>
+<span>  // timestamps and collection name for the schema</span>
+<span>  {</span>
+<span>    timestamps: true,</span>
+<span>    collection: "users",</span>
+<span>    toJSON: {</span>
+<span>      transform(document, result) {</span>
+<span>        delete result.passwordHash;</span>
+<span>        delete result.sessionVersion;</span>
+<span>        delete result.__v;</span>
+<span>        // never send email or two-step data to a browser by accident.</span>
+<span>        delete result.email;</span>
+<span>        delete result.mfa;</span>
+<span>        return result;</span>
+<span>      },</span>
+<span>    },</span>
+<span>  },</span>
+<span>);</span>
+<span></span>
+<span>// case-insensitive unique usernames. A NEW index name is used on</span>
+<span>// purpose: an existing database keeps its old case-sensitive "username_1"</span>
+<span>// index, and MongoDB refuses two different indexes with the same name.</span>
+<span>// Keeping both is harmless; the stricter one below is what matters.</span>
+<span>userSchema.index(</span>
+<span>  { username: 1 },</span>
+<span>  {</span>
+<span>    unique: true,</span>
+<span>    name: "username_case_insensitive_unique",</span>
+<span>    collation: USERNAME_COLLATION,</span>
+<span>  },</span>
+<span>);</span>
+<span></span>
+<span>const User = mongoose.model("User", userSchema);</span>
+<span>export default User;</span>
+  </pre>
+
+  <h3>server/models/PasswordResetToken.js</h3>
+
+  <div class="div_p">
+    <p>Only a SHA-256 hash of the reset token gets saved, so a copy of the database cannot be used to reset a password.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>import mongoose from "mongoose";</span>
+<span>// database-wide safety settings; must load before the schema below.</span>
+<span>import "../config/mongooseSecurity.js";</span>
+<span></span>
+<span>const passwordResetTokenSchema = new mongoose.Schema(</span>
+<span>  {</span>
+<span>    // The account this password-reset request belongs to.</span>
+<span>    // A reference does not automatically verify that the user exists.</span>
+<span>    userId: {</span>
+<span>      type: mongoose.Schema.Types.ObjectId,</span>
+<span>      ref: "User",</span>
+<span>      required: true,</span>
+<span>      index: true,</span>
+<span>    },</span>
+<span>    // Snapshot from the account when this request was issued. Old requests</span>
+<span>    // cannot reset an account after another password change advances its version.</span>
+<span>    sessionVersion: {</span>
+<span>      type: Number,</span>
+<span>      required: true,</span>
+<span>      min: 0,</span>
+<span>      validate: { validator: Number.isSafeInteger, message: "Invalid session version." },</span>
+<span>    },</span>
+<span></span>
+<span>    // Store ONLY the SHA-256 hash of a cryptographically random token.</span>
+<span>    //</span>
+<span>    // IMPORTANT: This schema does NOT generate or hash tokens for us.</span>
+<span>    // The future controller must do that before creating this document.</span>
+<span>    //</span>
+<span>    // Never store the original reset token or a password here.</span>
+<span></span>
+<span>    // Uniqueness prevents duplicate hashes, not multiple requests per account.</span>
+<span>    // The recovery service invalidates other requests after a successful reset.</span>
+<span>    tokenHash: {</span>
+<span>      type: String,</span>
+<span>      required: true,</span>
+<span>      unique: true,</span>
+<span>      select: false,</span>
+<span>      match: /^[a-f0-9]{64}$/, // SHA-256 hash format validation</span>
+<span>    },</span>
+<span></span>
+<span>    // The expiration date of the token. After this date, the token is no longer valid.</span>
+<span>    expiresAt: {</span>
+<span>      type: Date,</span>
+<span>      required: true,</span>
+<span>    },</span>
+<span></span>
+<span>    // The date and time when the token was used. If null, the token has not been used yet.</span>
+<span>    usedAt: {</span>
+<span>      type: Date,</span>
+<span>      default: null,</span>
+<span>    },</span>
+<span>  },</span>
+<span>  {</span>
+<span>    timestamps: {</span>
+<span>      createdAt: true,</span>
+<span>      updatedAt: false,</span>
+<span>    },</span>
+<span></span>
+<span>    collection: "passwordResetTokens",</span>
+<span>    toJSON: {</span>
+<span>      transform(document, result) {</span>
+<span>        delete result.tokenHash;</span>
+<span>        delete result.__v;</span>
+<span>        return result;</span>
+<span>      },</span>
+<span>    },</span>
+<span>  },</span>
+<span>);</span>
+<span>// TTL means "time to live."</span>
+<span>// expireAfterSeconds: 0 tells MongoDB to use the expiresAt date.</span>
+<span>//</span>
+<span>// Cleanup happens in the background, NOT immediately at expiration.</span>
+<span>// The controller MUST still reject tokens whose expiresAt has passed.</span>
+<span></span>
+<span>// Cleanup can take longer than 60 seconds. Never use deletion timing as the</span>
+<span>// security check: the recovery service must check expiration atomically.</span>
+<span>passwordResetTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });</span>
+<span></span>
+<span>const PasswordResetToken = mongoose.model(</span>
+<span>  "PasswordResetToken",</span>
+<span>  passwordResetTokenSchema,</span>
+<span>);</span>
+<span></span>
+<span>export default PasswordResetToken;</span>
+<span></span>
+<span>/*</span>
+<span>FUTURE FEATURE — CHANGING AN ACCOUNT'S EMAIL ADDRESS</span>
+<span></span>
+<span>This is intentionally NOT implemented here.</span>
+<span></span>
+<span>A separate email-change workflow will need to:</span>
+<span>- Require an authenticated session and current-password verification.</span>
+<span>- Keep the proposed address pending until verification succeeds.</span>
+<span>- Confirm the change through both existing and proposed addresses</span>
+<span>  for our planned password-only authentication.</span>
+<span>- Use separate, expiring, single-use email-change tokens.</span>
+<span>- Invalidate outstanding password-reset requests after the change.</span>
+<span></span>
+<span>Do not reuse password-reset tokens to change email addresses.</span>
+<span>*/</span>
+  </pre>
+
+  <h2 id="step-3-check-all-input">Step 3 Check All Input</h2>
+
+  <h3>server/security/input.js</h3>
+
+  <div class="div_p">
+    <p>Treat everything from the browser as untrusted. Each parse function allows a list of fields and rejects anything else, so a request cannot add role: "admin". publicUser is the only account data that goes back to the browser.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>// shared username and email rules (also used by models/User.js).</span>
+<span>import { EMAIL_PATTERN, USERNAME_PATTERN } from "../models/validators.js";</span>
+<span></span>
+<span>// Carry an intentional HTTP status to app.js's error handler, which will be used to set the response status code.</span>
+<span>export class HttpError extends Error {</span>
+<span>  constructor(status, message) {</span>
+<span>    super(message);</span>
+<span>    this.status = status;</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>/* Inspect nested input without treating it as executable instructions</span>
+<span> or allowing it to become an arbitrary MongoDB query. */</span>
+<span></span>
+<span>export function assertSafeObject(value, depth = 0) {</span>
+<span>  // Limit recursive inspection depth; body-size and traffic limits are separate.</span>
+<span>  if (depth &gt; 10) {</span>
+<span>    throw new HttpError(400, "Request body is too deeply nested.");</span>
+<span>  }</span>
+<span>  // Primitives have no nested keys to inspect here.</span>
+<span>  // Field-specific helpers must still validate their types and values.</span>
+<span>  if (value === null || typeof value !== "object") {</span>
+<span>    return;</span>
+<span>  }</span>
+<span></span>
+<span>  for (const key of Object.keys(value)) {</span>
+<span>    if (</span>
+<span>      key.startsWith("$") ||</span>
+<span>      key.includes(".") ||</span>
+<span>      ["__proto__", "constructor", "prototype"].includes(key)</span>
+<span>    ) {</span>
+<span>      throw new HttpError(400, "Request body contains an unsupported field.");</span>
+<span>    }</span>
+<span></span>
+<span>    assertSafeObject(value[key], depth + 1);</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>// Express middleware: inspect parsed JSON before routes use it.</span>
+<span>export function rejectUnsafeJson(req, res, next) {</span>
+<span>  // No parsed body means this middleware has no object to inspect.</span>
+<span>  try {</span>
+<span>    if (req.body !== undefined) {</span>
+<span>      assertSafeObject(req.body);</span>
+<span>    }</span>
+<span>    next();</span>
+<span>    // Validation errors below are forwarded to the application's error handler.</span>
+<span>  } catch (error) {</span>
+<span>    next(error);</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>// the URL query string (?page=2&amp;sort=new) is</span>
+<span>// untrusted input too. Express 5's "simple" parser turns it into strings or</span>
+<span>// arrays of strings, but a future route could still be fooled, for example by</span>
+<span>// ?email=a&amp;email=b (an array) or by keys that look like Mongo operators.</span>
+<span>// This global check rejects operator-like keys, too many parameters, and</span>
+<span>// oversized values before any route sees them. Routes must STILL validate</span>
+<span>// the specific parameters they use (type, allowed values, number ranges).</span>
+<span>const MAX_QUERY_KEYS = 30;</span>
+<span>const MAX_QUERY_VALUES_PER_KEY = 20;</span>
+<span>const MAX_QUERY_VALUE_LENGTH = 2000;</span>
+<span></span>
+<span>export function rejectUnsafeQuery(req, res, next) {</span>
+<span>  const query = req.query ?? {};</span>
+<span>  const keys = Object.keys(query);</span>
+<span>  const unsupported = () =&gt;</span>
+<span>    next(new HttpError(400, "Request contains an unsupported query parameter."));</span>
+<span></span>
+<span>  if (keys.length &gt; MAX_QUERY_KEYS) return unsupported();</span>
+<span></span>
+<span>  for (const key of keys) {</span>
+<span>    if (</span>
+<span>      key.length &gt; 100 ||</span>
+<span>      key.startsWith("$") ||</span>
+<span>      /[.[\]]/.test(key) ||</span>
+<span>      ["__proto__", "constructor", "prototype"].includes(key)</span>
+<span>    ) {</span>
+<span>      return unsupported();</span>
+<span>    }</span>
+<span>    const values = Array.isArray(query[key]) ? query[key] : [query[key]];</span>
+<span>    if (</span>
+<span>      values.length &gt; MAX_QUERY_VALUES_PER_KEY ||</span>
+<span>      values.some(</span>
+<span>        (value) =&gt; typeof value !== "string" || value.length &gt; MAX_QUERY_VALUE_LENGTH,</span>
+<span>      )</span>
+<span>    ) {</span>
+<span>      return unsupported();</span>
+<span>    }</span>
+<span>  }</span>
+<span>  next();</span>
+<span>}</span>
+<span></span>
+<span>// Accept only a plain object containing allowed fields.</span>
+<span>function fields(body, allowed) {</span>
+<span>  // If the request body is not a plain object, throw an error to indicate that the request is invalid.</span>
+<span>  if (</span>
+<span>    !body ||</span>
+<span>    Array.isArray(body) ||</span>
+<span>    Object.getPrototypeOf(body) !== Object.prototype</span>
+<span>  ) {</span>
+<span>    throw new HttpError(400, "Send a JSON object.");</span>
+<span>  }</span>
+<span></span>
+<span>  // Reject unsafe key patterns; the allowlist below rejects unexpected fields.</span>
+<span>  assertSafeObject(body);</span>
+<span></span>
+<span>  // If the request body contains any keys that are not in the allowed list, throw an error to indicate that the request is invalid.</span>
+<span>  if (Object.keys(body).some((key) =&gt; !allowed.includes(key))) {</span>
+<span>    throw new HttpError(400, "Request body contains unsupported fields.");</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>// Reusable text validation.</span>
+<span>function string(value, label, min, max, trim = false) {</span>
+<span>  // If the value is not a string, throw an error to indicate that the input is invalid.</span>
+<span>  if (typeof value !== "string") {</span>
+<span>    throw new HttpError(400, `${label} must be text.`);</span>
+<span>  }</span>
+<span></span>
+<span>  /*  result trim or return the value as is, depending on the trim parameter.</span>
+<span>  //  If trim is true, the value will be trimmed of whitespace from both ends;</span>
+<span>    otherwise, it will be returned as is.</span>
+<span>  */</span>
+<span>  const result = trim ? value.trim() : value;</span>
+<span></span>
+<span>  if (result.length &lt; min || result.length &gt; max) {</span>
+<span>    throw new HttpError(</span>
+<span>      400,</span>
+<span>      `${label} must be between ${min} and ${max} characters.`,</span>
+<span>    );</span>
+<span>  }</span>
+<span>  return result;</span>
+<span>}</span>
+<span>// readEmail function: validate and normalize an email address.</span>
+<span>export function readEmail(value) {</span>
+<span>  const email = string(value, "Email", 3, 254, true).toLowerCase();</span>
+<span></span>
+<span>  // Basic format validation does not prove email ownership.</span>
+<span>  // EMAIL_PATTERN also refuses control and invisible characters.</span>
+<span>  if (!EMAIL_PATTERN.test(email)) {</span>
+<span>    throw new HttpError(</span>
+<span>      400,</span>
+<span>      "Email format is invalid. Enter a valid email address.",</span>
+<span>    );</span>
+<span>  }</span>
+<span>  return email;</span>
+<span>}</span>
+<span></span>
+<span>// Validate a new password's type and length without changing its contents.</span>
+<span>export function readNewPassword(value) {</span>
+<span>  // Do not trim or silently truncate passwords.</span>
+<span>  return string(value, "Password", 15, 128);</span>
+<span>}</span>
+<span></span>
+<span>// names nobody can register, so no visitor can</span>
+<span>// pose as site staff. Comparison ignores capital letters and the separators</span>
+<span>// "_", ".", and "-", so "Ad_Min" counts as "admin". Add your own names (for</span>
+<span>// example your real username) in the RESERVED_USERNAMES environment setting:</span>
+<span>//   RESERVED_USERNAMES=yourname,othername</span>
+<span>// Reserved names only block NEW registrations; existing accounts keep theirs.</span>
+<span>const RESERVED_USERNAMES = [</span>
+<span>  "admin", "administrator", "root", "system", "support", "moderator", "mod",</span>
+<span>  "staff", "owner", "official", "security", "help", "api", "null",</span>
+<span>  "undefined",</span>
+<span>];</span>
+<span></span>
+<span>export function isReservedUsername(</span>
+<span>  username,</span>
+<span>  extra = process.env.RESERVED_USERNAMES,</span>
+<span>) {</span>
+<span>  const squash = (name) =&gt; name.trim().toLowerCase().replace(/[_.-]/g, "");</span>
+<span>  const reserved = new Set(</span>
+<span>    [...RESERVED_USERNAMES, ...String(extra ?? "").split(",")]</span>
+<span>      .map(squash)</span>
+<span>      .filter(Boolean),</span>
+<span>  );</span>
+<span>  return reserved.has(squash(username));</span>
+<span>}</span>
+<span></span>
+<span>// Validate registration fields and return only accepted values.</span>
+<span>export function parseRegistration(body) {</span>
+<span>  fields(body, ["username", "email", "password"]);</span>
+<span></span>
+<span>  // Username validation: must be between 3 and 35 characters, and cannot contain control characters.</span>
+<span>  const username = string(body.username, "Username", 3, 35, true);</span>
+<span></span>
+<span>  //  If the username contains any control characters (ASCII codes 0-31 and 127), throw an error to indicate that the username is invalid.</span>
+<span>  if (/[\u0000-\u001f\u007f]/.test(username)) {</span>
+<span>    throw new HttpError(400, "Username contains an unsupported character.");</span>
+<span>  }</span>
+<span></span>
+<span>  // letters, digits, "_", "-", and "." only, starting and ending</span>
+<span>  // with a letter or digit. This blocks look-alike Unicode names.</span>
+<span>  if (!USERNAME_PATTERN.test(username)) {</span>
+<span>    throw new HttpError(</span>
+<span>      400,</span>
+<span>      "Usernames may use letters, numbers, _, -, and . and must start and end with a letter or number.",</span>
+<span>    );</span>
+<span>  }</span>
+<span></span>
+<span>  // staff-like names are not available to the public.</span>
+<span>  if (isReservedUsername(username)) {</span>
+<span>    throw new HttpError(409, "That username is not available.");</span>
+<span>  }</span>
+<span>  // Return the validated username, normalized email, and unchanged password.</span>
+<span>  return {</span>
+<span>    username,</span>
+<span>    email: readEmail(body.email),</span>
+<span>    password: readNewPassword(body.password),</span>
+<span>  };</span>
+<span>}</span>
+<span></span>
+<span>// the optional 6-digit two-step code that the</span>
+<span>// owner's admin account must send when signing in. Spaces are removed so</span>
+<span>// "123 456" (how many authenticator apps display codes) also works.</span>
+<span>export function readTotpCode(value) {</span>
+<span>  if (value === undefined) return undefined;</span>
+<span>  const code = typeof value === "string" ? value.replace(/\s/g, "") : value;</span>
+<span>  if (typeof code !== "string" || !/^[0-9]{6}$/.test(code)) {</span>
+<span>    throw new HttpError(400, "Enter the 6-digit code from your authenticator app.");</span>
+<span>  }</span>
+<span>  return code;</span>
+<span>}</span>
+<span></span>
+<span>// Validate login fields; normalize email but preserve the password.</span>
+<span>export function parseLogin(body) {</span>
+<span>  // "code" is optional and only matters for the admin account.</span>
+<span>  fields(body, ["email", "password", "code"]);</span>
+<span></span>
+<span>  return {</span>
+<span>    email: readEmail(body.email),</span>
+<span></span>
+<span>    /* Check an existing credential without apply the new-password minimym to every login attempt.</span>
+<span>     */</span>
+<span>    password: string(body.password, "Password", 1, 128),</span>
+<span></span>
+<span>    code: readTotpCode(body.code),</span>
+<span>  };</span>
+<span>}</span>
+<span></span>
+<span>// Validate the email supplied when requesting password-recovery instructions.</span>
+<span>export function parseRecovery(body) {</span>
+<span>  fields(body, ["email"]);</span>
+<span></span>
+<span>  return {</span>
+<span>    email: readEmail(body.email),</span>
+<span>  };</span>
+<span>}</span>
+<span></span>
+<span>// Check token format only; the service checks expiry and single use.</span>
+<span>export function readResetToken(value) {</span>
+<span>  if (typeof value !== "string" || !/^[a-f0-9]{64}$/.test(value)) {</span>
+<span>    throw new HttpError(400, "Reset link is invalid or expired.");</span>
+<span>  }</span>
+<span>  return value;</span>
+<span>}</span>
+<span></span>
+<span>// Validate the reset token and new password; this request does not take an email.</span>
+<span>export function parseReset(body) {</span>
+<span>  fields(body, ["token", "newPassword"]);</span>
+<span></span>
+<span>  return {</span>
+<span>    token: readResetToken(body.token),</span>
+<span>    newPassword: readNewPassword(body.newPassword),</span>
+<span>  };</span>
+<span>}</span>
+<span></span>
+<span>// Return only intentionally public account information.</span>
+<span>export function publicUser(user) {</span>
+<span>  // Exclude password hashes and internal session-version information.</span>
+<span>  return {</span>
+<span>    id: user._id.toString(),</span>
+<span>    username: user.username,</span>
+<span>    role: user.role,</span>
+<span>  };</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="step-4-password-hashing">Step 4 Password Hashing</h2>
+
+  <h3>server/security/passwords.js</h3>
+
+  <div class="div_p">
+    <p>Argon2id is a slow hash made for passwords, and it adds a random salt for you. An unknown email still does the same work against a dummy hash, so a bot cannot find real accounts by timing the response. This is the Rev file with the old scrypt support removed, since a new project has no old passwords to keep working.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>import * as argon2 from "argon2";</span>
+<span>import { randomBytes } from "node:crypto";</span>
+<span>import { HttpError, readNewPassword } from "./input.js";</span>
+<span></span>
+<span>// memoryCost is measured in KiB: 19456 KiB = 19 MiB.</span>
+<span>// OWASP's minimum recommended Argon2id setting.</span>
+<span>const ARGON_OPTIONS = {</span>
+<span>  type: argon2.argon2id,</span>
+<span>  memoryCost: 19456,</span>
+<span>  timeCost: 2,</span>
+<span>  parallelism: 1,</span>
+<span>  hashLength: 32,</span>
+<span>};</span>
+<span></span>
+<span>// Every Argon2id cost setting this app has ever used. Add the old values here</span>
+<span>// if you raise the costs, so existing users are not locked out. The first</span>
+<span>// entry must always match ARGON_OPTIONS above.</span>
+<span>const SUPPORTED_ARGON_PARAMETERS = [{ m: 19456, t: 2, p: 1 }];</span>
+<span></span>
+<span>function readArgonParameters(encoded) {</span>
+<span>  if (typeof encoded !== "string" || encoded.length &gt; 200) {</span>
+<span>    return null;</span>
+<span>  }</span>
+<span></span>
+<span>  // The three cost parameters may appear in different orders.</span>
+<span>  const match =</span>
+<span>    /^\$argon2id\$v=19\$((?:[mtp]=[0-9]{1,6},){2}[mtp]=[0-9]{1,6})\$[A-Za-z0-9+/]{22}\$[A-Za-z0-9+/]{43}$/.exec(</span>
+<span>      encoded,</span>
+<span>    );</span>
+<span></span>
+<span>  if (!match) {</span>
+<span>    return null;</span>
+<span>  }</span>
+<span></span>
+<span>  // Check that the three parameters are exactly m, t, and p, with no duplicates.</span>
+<span>  const parameters = Object.fromEntries(</span>
+<span>    match[1].split(",").map((pair) =&gt; {</span>
+<span>      const [name, value] = pair.split("=");</span>
+<span>      return [name, Number(value)];</span>
+<span>    }),</span>
+<span>  );</span>
+<span>  return Object.keys(parameters).length === 3 ? parameters : null;</span>
+<span>}</span>
+<span></span>
+<span>// Do not let a malformed stored hash request unlimited memory or work.</span>
+<span>function isSupportedArgonHash(encoded) {</span>
+<span>  const parameters = readArgonParameters(encoded);</span>
+<span>  return Boolean(</span>
+<span>    parameters &amp;&amp;</span>
+<span>      SUPPORTED_ARGON_PARAMETERS.some(</span>
+<span>        ({ m, t, p }) =&gt; parameters.m === m &amp;&amp; parameters.t === t &amp;&amp; parameters.p === p,</span>
+<span>      ),</span>
+<span>  );</span>
+<span>}</span>
+<span></span>
+<span>// A small waiting line for password work. Up to 4 hashes run at once and 32</span>
+<span>// more requests wait. A request that waits over 10 seconds gets a 503.</span>
+<span>// Memory stays bounded: 4 x 19 MiB = about 76 MiB at the very worst.</span>
+<span>const MAX_CONCURRENT_HASHES = 4;</span>
+<span>const MAX_WAITING_HASHES = 32;</span>
+<span>const HASH_WAIT_TIMEOUT_MS = 10_000;</span>
+<span></span>
+<span>let active = 0;</span>
+<span>const waiting = [];</span>
+<span>let dummyHashPromise;</span>
+<span></span>
+<span>function busy() {</span>
+<span>  return new HttpError(503, "Authentication is temporarily busy. Please try again.");</span>
+<span>}</span>
+<span></span>
+<span>// Wait for a free hashing slot (or fail if the line is too long or too slow).</span>
+<span>function acquireSlot() {</span>
+<span>  if (active &lt; MAX_CONCURRENT_HASHES) {</span>
+<span>    active += 1;</span>
+<span>    return Promise.resolve();</span>
+<span>  }</span>
+<span>  if (waiting.length &gt;= MAX_WAITING_HASHES) {</span>
+<span>    return Promise.reject(busy());</span>
+<span>  }</span>
+<span>  return new Promise((resolve, reject) =&gt; {</span>
+<span>    const entry = { resolve, timer: null };</span>
+<span>    entry.timer = setTimeout(() =&gt; {</span>
+<span>      const index = waiting.indexOf(entry);</span>
+<span>      if (index !== -1) waiting.splice(index, 1);</span>
+<span>      reject(busy());</span>
+<span>    }, HASH_WAIT_TIMEOUT_MS);</span>
+<span>    entry.timer.unref?.();</span>
+<span>    waiting.push(entry);</span>
+<span>  });</span>
+<span>}</span>
+<span></span>
+<span>// Hand the slot straight to the next waiting request, or free it.</span>
+<span>function releaseSlot() {</span>
+<span>  const next = waiting.shift();</span>
+<span>  if (next) {</span>
+<span>    clearTimeout(next.timer);</span>
+<span>    next.resolve(); // the slot passes to the next request; "active" is unchanged</span>
+<span>  } else {</span>
+<span>    active -= 1;</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>async function withPasswordSlot(work) {</span>
+<span>  await acquireSlot();</span>
+<span></span>
+<span>  try {</span>
+<span>    return await work();</span>
+<span>  } finally {</span>
+<span>    // Release the slot even if hashing throws an error.</span>
+<span>    releaseSlot();</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>// An unknown account still performs password-verification work.</span>
+<span>function getDummyHash() {</span>
+<span>  if (!dummyHashPromise) {</span>
+<span>    dummyHashPromise = argon2</span>
+<span>      .hash(randomBytes(32).toString("hex"), ARGON_OPTIONS)</span>
+<span>      .catch((error) =&gt; {</span>
+<span>        // Allow a later attempt to retry after a library failure.</span>
+<span>        dummyHashPromise = undefined;</span>
+<span>        throw error;</span>
+<span>      });</span>
+<span>  }</span>
+<span>  return dummyHashPromise;</span>
+<span>}</span>
+<span></span>
+<span>// Used when registering or choosing a NEW password.</span>
+<span>export async function hashNewPassword(password) {</span>
+<span>  readNewPassword(password);</span>
+<span></span>
+<span>  // Argon2 generates the random salt for us.</span>
+<span>  return withPasswordSlot(() =&gt; argon2.hash(password, ARGON_OPTIONS));</span>
+<span>}</span>
+<span></span>
+<span>// Used when checking an EXISTING password.</span>
+<span>export async function verifyPassword(password, encoded) {</span>
+<span>  if (typeof password !== "string" || password.length &lt; 1 || password.length &gt; 128) {</span>
+<span>    return false;</span>
+<span>  }</span>
+<span></span>
+<span>  // A missing hash means the email has no account. It still falls through to</span>
+<span>  // the dummy check, so known and unknown emails take the same amount of time.</span>
+<span>  return withPasswordSlot(async () =&gt; {</span>
+<span>    if (isSupportedArgonHash(encoded)) {</span>
+<span>      return argon2.verify(encoded, password);</span>
+<span>    }</span>
+<span></span>
+<span>    // Do the verification work, but NEVER accept the password.</span>
+<span>    const dummyHash = await getDummyHash();</span>
+<span>    await argon2.verify(dummyHash, password);</span>
+<span></span>
+<span>    return false;</span>
+<span>  });</span>
+<span>}</span>
+<span></span>
+<span>// True when a stored hash uses older settings. After a successful sign-in the</span>
+<span>// login service re-hashes the password, so old records upgrade themselves.</span>
+<span>export function needsRehash(encoded) {</span>
+<span>  const parameters = readArgonParameters(encoded);</span>
+<span>  if (!parameters) return true;</span>
+<span>  return !(</span>
+<span>    parameters.m === ARGON_OPTIONS.memoryCost &amp;&amp;</span>
+<span>    parameters.t === ARGON_OPTIONS.timeCost &amp;&amp;</span>
+<span>    parameters.p === ARGON_OPTIONS.parallelism</span>
+<span>  );</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="step-5-two-step-codes-and-login-limits">Step 5 Two Step Codes And Login Limits</h2>
+
+  <h3>server/security/totp.js</h3>
+
+  <div class="div_p">
+    <p>The 6-digit codes from Google Authenticator and similar apps, using only Node's built-in crypto. The secret is stored encrypted, so a copy of the database cannot create codes without ADMIN_MFA_KEY.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>// two-step sign-in codes for the owner's</span>
+<span>// administrator account.</span>
+<span>//</span>
+<span>// This implements standard time-based one-time passwords (TOTP, RFC 6238),</span>
+<span>// the same 6-digit codes shown by Google Authenticator, Microsoft</span>
+<span>// Authenticator, Authy, 1Password, and similar apps. Even if someone steals</span>
+<span>// or guesses the admin password, they still cannot open admin routes without</span>
+<span>// the code from your phone.</span>
+<span>//</span>
+<span>// Only Node's built-in crypto module is used, so no extra package is needed.</span>
+<span></span>
+<span>import {</span>
+<span>  createCipheriv,</span>
+<span>  createDecipheriv,</span>
+<span>  createHmac,</span>
+<span>  randomBytes,</span>
+<span>  timingSafeEqual,</span>
+<span>} from "node:crypto";</span>
+<span></span>
+<span>export const TOTP_STEP_SECONDS = 30;</span>
+<span>export const TOTP_DIGITS = 6;</span>
+<span></span>
+<span>const BASE32_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";</span>
+<span></span>
+<span>// A new random 160-bit secret, the size recommended for SHA-1 TOTP.</span>
+<span>export function generateTotpSecret() {</span>
+<span>  return randomBytes(20);</span>
+<span>}</span>
+<span></span>
+<span>// Authenticator apps expect the secret written in Base32 (RFC 4648).</span>
+<span>export function base32Encode(buffer) {</span>
+<span>  let bits = 0;</span>
+<span>  let value = 0;</span>
+<span>  let output = "";</span>
+<span>  for (const byte of buffer) {</span>
+<span>    value = (value &lt;&lt; 8) | byte;</span>
+<span>    bits += 8;</span>
+<span>    while (bits &gt;= 5) {</span>
+<span>      output += BASE32_ALPHABET[(value &gt;&gt;&gt; (bits - 5)) &amp; 31];</span>
+<span>      bits -= 5;</span>
+<span>    }</span>
+<span>  }</span>
+<span>  if (bits &gt; 0) output += BASE32_ALPHABET[(value &lt;&lt; (5 - bits)) &amp; 31];</span>
+<span>  return output;</span>
+<span>}</span>
+<span></span>
+<span>// HOTP (RFC 4226): the 6-digit code for one specific counter value.</span>
+<span>export function hotp(secret, counter, digits = TOTP_DIGITS) {</span>
+<span>  const message = Buffer.alloc(8);</span>
+<span>  message.writeBigUInt64BE(BigInt(counter));</span>
+<span>  const hmac = createHmac("sha1", secret).update(message).digest();</span>
+<span>  const offset = hmac[hmac.length - 1] &amp; 0x0f;</span>
+<span>  const binary =</span>
+<span>    ((hmac[offset] &amp; 0x7f) &lt;&lt; 24) |</span>
+<span>    (hmac[offset + 1] &lt;&lt; 16) |</span>
+<span>    (hmac[offset + 2] &lt;&lt; 8) |</span>
+<span>    hmac[offset + 3];</span>
+<span>  return String(binary % 10 ** digits).padStart(digits, "0");</span>
+<span>}</span>
+<span></span>
+<span>// Which 30-second time window ("step") a moment belongs to.</span>
+<span>export function totpStep(now = Date.now()) {</span>
+<span>  return Math.floor(now / 1000 / TOTP_STEP_SECONDS);</span>
+<span>}</span>
+<span></span>
+<span>// Check a submitted code. It is accepted in the current 30-second window or</span>
+<span>// one window either side (phone clocks drift). lastUsedStep blocks REPLAY:</span>
+<span>// a code that was already used, or any older code, is refused.</span>
+<span>// Returns the matching step number, or null when the code is not valid.</span>
+<span>export function verifyTotp(</span>
+<span>  secret,</span>
+<span>  code,</span>
+<span>  { now = Date.now(), window = 1, lastUsedStep = -1 } = {},</span>
+<span>) {</span>
+<span>  if (typeof code !== "string" || !/^[0-9]{6}$/.test(code)) return null;</span>
+<span>  const current = totpStep(now);</span>
+<span>  const submitted = Buffer.from(code);</span>
+<span>  let matched = null;</span>
+<span>  // Check every candidate window without stopping early, so the response</span>
+<span>  // time does not reveal which window matched.</span>
+<span>  for (let step = current - window; step &lt;= current + window; step += 1) {</span>
+<span>    const expected = Buffer.from(hotp(secret, step));</span>
+<span>    if (timingSafeEqual(expected, submitted) &amp;&amp; step &gt; lastUsedStep) {</span>
+<span>      matched = step;</span>
+<span>    }</span>
+<span>  }</span>
+<span>  return matched;</span>
+<span>}</span>
+<span></span>
+<span>// The link an authenticator app reads (it can be pasted, or turned into a QR code).</span>
+<span>export function otpauthUri({ secret, account, issuer = "MyApp" }) {</span>
+<span>  const label = `${encodeURIComponent(issuer)}:${encodeURIComponent(account)}`;</span>
+<span>  const params = new URLSearchParams({</span>
+<span>    secret: base32Encode(secret),</span>
+<span>    issuer,</span>
+<span>    algorithm: "SHA1",</span>
+<span>    digits: String(TOTP_DIGITS),</span>
+<span>    period: String(TOTP_STEP_SECONDS),</span>
+<span>  });</span>
+<span>  return `otpauth://totp/${label}?${params}`;</span>
+<span>}</span>
+<span></span>
+<span>// --- Encryption of the stored secret -------------------------------------</span>
+<span>// The TOTP secret is stored ENCRYPTED (AES-256-GCM) in MongoDB. Someone who</span>
+<span>// obtains a copy of the database still cannot generate your codes without</span>
+<span>// ADMIN_MFA_KEY, which lives only in the server environment.</span>
+<span>// The account ID is bound into the encryption, so a secret copied onto a</span>
+<span>// different account does not decrypt.</span>
+<span></span>
+<span>export function readMfaKey(value = process.env.ADMIN_MFA_KEY) {</span>
+<span>  const text = value?.trim();</span>
+<span>  if (!text) return null;</span>
+<span>  if (!/^[a-fA-F0-9]{64}$/.test(text)) {</span>
+<span>    throw new Error(</span>
+<span>      "ADMIN_MFA_KEY must be 64 hexadecimal characters (32 random bytes).",</span>
+<span>    );</span>
+<span>  }</span>
+<span>  return Buffer.from(text, "hex");</span>
+<span>}</span>
+<span></span>
+<span>export function encryptTotpSecret(secret, key, accountId) {</span>
+<span>  const iv = randomBytes(12);</span>
+<span>  const cipher = createCipheriv("aes-256-gcm", key, iv);</span>
+<span>  cipher.setAAD(Buffer.from(String(accountId)));</span>
+<span>  const ciphertext = Buffer.concat([cipher.update(secret), cipher.final()]);</span>
+<span>  const tag = cipher.getAuthTag();</span>
+<span>  return ["v1", iv, tag, ciphertext]</span>
+<span>    .map((part) =&gt; (typeof part === "string" ? part : part.toString("base64url")))</span>
+<span>    .join(".");</span>
+<span>}</span>
+<span></span>
+<span>export function decryptTotpSecret(stored, key, accountId) {</span>
+<span>  const [version, iv, tag, ciphertext] = String(stored).split(".");</span>
+<span>  if (version !== "v1" || !iv || !tag || !ciphertext) {</span>
+<span>    throw new Error("Unsupported two-step secret format.");</span>
+<span>  }</span>
+<span>  const decipher = createDecipheriv(</span>
+<span>    "aes-256-gcm",</span>
+<span>    key,</span>
+<span>    Buffer.from(iv, "base64url"),</span>
+<span>  );</span>
+<span>  decipher.setAAD(Buffer.from(String(accountId)));</span>
+<span>  decipher.setAuthTag(Buffer.from(tag, "base64url"));</span>
+<span>  return Buffer.concat([</span>
+<span>    decipher.update(Buffer.from(ciphertext, "base64url")),</span>
+<span>    decipher.final(),</span>
+<span>  ]);</span>
+<span>}</span>
+  </pre>
+
+  <h3>server/security/accountLoginLimit.js</h3>
+
+  <div class="div_p">
+    <p>One login budget for each email, saved in MongoDB. The IP limit alone can be dodged by using many addresses, and it resets on a restart.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>// one login budget per normalized email, across IPs and workers.</span>
+<span>// The MongoDB counter is separate from sessions and password-reset tokens.</span>
+<span>import { createHmac } from "node:crypto";</span>
+<span>import { HttpError } from "./input.js";</span>
+<span></span>
+<span>export function createAccountLoginLimiter({</span>
+<span>  collection,</span>
+<span>  secret,</span>
+<span>  limit = 20,</span>
+<span>  windowMs = 15 * 60 * 1000,</span>
+<span>  now = () =&gt; Date.now(),</span>
+<span>} = {}) {</span>
+<span>  if (!Number.isSafeInteger(limit) || limit &lt; 1 || limit &gt; 10000 ||</span>
+<span>      !Number.isSafeInteger(windowMs) || windowMs &lt; 1000 ||</span>
+<span>      typeof secret !== "string" || Buffer.byteLength(secret) &lt; 32) {</span>
+<span>    throw new Error("Invalid per-account login-limit configuration.");</span>
+<span>  }</span>
+<span></span>
+<span>  let indexReady;</span>
+<span>  function ready() {</span>
+<span>    // Missing/unavailable shared storage must never silently disable the limit.</span>
+<span>    if (!collection) {</span>
+<span>      return Promise.reject(new HttpError(503, "Login protection is temporarily unavailable."));</span>
+<span>    }</span>
+<span>    indexReady ||= Promise.resolve().then(() =&gt; collection.createIndex(</span>
+<span>      { expiresAt: 1 },</span>
+<span>      { expireAfterSeconds: 0, name: "login_limit_expiry", maxTimeMS: 5000 },</span>
+<span>    )).catch(() =&gt; {</span>
+<span>      indexReady = undefined;</span>
+<span>      throw new HttpError(503, "Login protection is temporarily unavailable.");</span>
+<span>    });</span>
+<span>    return indexReady;</span>
+<span>  }</span>
+<span></span>
+<span>  async function consume(email) {</span>
+<span>    await ready();</span>
+<span>    const time = now();</span>
+<span>    const start = Math.floor(time / windowMs) * windowMs;</span>
+<span>    const resetAt = start + windowMs;</span>
+<span>    // A keyed digest, not a raw email or an easily guessed unkeyed hash.</span>
+<span>    // Every server instance must use the same stable SESSION_SECRET.</span>
+<span>    const digest = createHmac("sha256", secret).update("app-login:").update(email).digest("hex");</span>
+<span>    const id = `${start}:${digest}`;</span>
+<span>    let record;</span>
+<span></span>
+<span>    for (let attempt = 0; attempt &lt; 2; attempt += 1) {</span>
+<span>      try {</span>
+<span>        // One atomic increment: simultaneous requests receive different counts.</span>
+<span>        // Expiration only cleans up; the bucket ID enforces the time window.</span>
+<span>        record = await collection.findOneAndUpdate(</span>
+<span>          { _id: id },</span>
+<span>          { $inc: { count: 1 }, $setOnInsert: { expiresAt: new Date(resetAt) } },</span>
+<span>          { upsert: true, returnDocument: "after", includeResultMetadata: false, maxTimeMS: 5000 },</span>
+<span>        );</span>
+<span>        break;</span>
+<span>      } catch (error) {</span>
+<span>        // A first-insert race can hit the unique _id index. Retry that case only.</span>
+<span>        if (error.code === 11000 &amp;&amp; attempt === 0) continue;</span>
+<span>        throw new HttpError(503, "Login protection is temporarily unavailable.");</span>
+<span>      }</span>
+<span>    }</span>
+<span>    if (!Number.isSafeInteger(record?.count) || record.count &lt; 1) {</span>
+<span>      throw new HttpError(503, "Login protection is temporarily unavailable.");</span>
+<span>    }</span>
+<span>    return {</span>
+<span>      allowed: record.count &lt;= limit,</span>
+<span>      retryAfter: Math.max(1, Math.ceil((resetAt - time) / 1000)),</span>
+<span>    };</span>
+<span>  }</span>
+<span></span>
+<span>  return { consume, ready };</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="step-6-register-and-login-logic">Step 6 Register And Login Logic</h2>
+
+  <h3>server/services/authService.js</h3>
+
+  <div class="div_p">
+    <p>This is where the account work happens. A duplicate email gets the same answer as a new one, and every failed login gets the same Invalid credentials message. Password reset needs an email service passed in as deliverResetEmail. Until then those routes answer 503. Resets use a MongoDB transaction, which works on Atlas.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>import { createHash, randomBytes } from "node:crypto";</span>
+<span>import User from "../models/User.js";</span>
+<span>import PasswordResetToken from "../models/PasswordResetToken.js";</span>
+<span></span>
+<span>import {</span>
+<span>  HttpError,</span>
+<span>  parseRegistration,</span>
+<span>  parseLogin,</span>
+<span>  parseRecovery,</span>
+<span>  parseReset,</span>
+<span>} from "../security/input.js";</span>
+<span></span>
+<span>// passwords.js exports hashNewPassword, not</span>
+<span>// hashPassword. Importing a name that does not exist is a SyntaxError in ES</span>
+<span>// modules, so this line stopped the entire server from starting.</span>
+<span>import {</span>
+<span>  hashNewPassword,</span>
+<span>  needsRehash,</span>
+<span>  verifyPassword,</span>
+<span>} from "../security/passwords.js";</span>
+<span></span>
+<span>// marks operators written by THIS server code as safe (see config/mongooseSecurity.js).</span>
+<span>import { trusted } from "../config/mongooseSecurity.js";</span>
+<span>// case-insensitive username comparison rule.</span>
+<span>import { USERNAME_COLLATION } from "../models/validators.js";</span>
+<span>// two-step codes for the owner's admin account.</span>
+<span>import { decryptTotpSecret, readMfaKey, verifyTotp } from "../security/totp.js";</span>
+<span></span>
+<span>export const RESET_LIFETIME_MS = 15 * 60 * 1000;</span>
+<span></span>
+<span>// limits on reset emails, stored in MongoDB.</span>
+<span>// The in-memory rate limiters in auth.js reset whenever the server restarts.</span>
+<span>// A free Render server sleeps and restarts often, and in testing 3 restarts</span>
+<span>// allowed 9 reset emails to the same inbox. These limits are checked against</span>
+<span>// the saved reset records, so they survive restarts:</span>
+<span>//   - at most 3 reset emails per account per hour, and</span>
+<span>//   - at most 1 reset email per account per minute.</span>
+<span>// Requests over the limit are silently skipped; the person still sees the</span>
+<span>// same generic "If an account exists..." message, so nothing is revealed.</span>
+<span>// (Both numbers can be changed per service with the options below.)</span>
+<span>export const RESET_EMAILS_PER_HOUR = 3;</span>
+<span>export const RESET_EMAIL_MIN_GAP_MS = 60 * 1000;</span>
+<span></span>
+<span>// Reset tokens are cryptographically random, unlike human passwords.</span>
+<span>// Store their digest, not the usable token itself.</span>
+<span>export const tokenDigest = (token) =&gt;</span>
+<span>  createHash("sha256").update(token).digest("hex");</span>
+<span></span>
+<span>export function createAuthService({</span>
+<span>  UserModel = User,</span>
+<span>  TokenModel = PasswordResetToken,</span>
+<span>  connection = UserModel.db,</span>
+<span>  deliverResetEmail = null,</span>
+<span>  resetOrigin = "http://localhost:5173",</span>
+<span>  // key that decrypts the admin's two-step secret (ADMIN_MFA_KEY).</span>
+<span>  mfaKey = readMfaKey(),</span>
+<span>  // database-backed reset-email limits (see the top of this file).</span>
+<span>  resetEmailsPerHour = RESET_EMAILS_PER_HOUR,</span>
+<span>  resetEmailMinGapMs = RESET_EMAIL_MIN_GAP_MS,</span>
+<span>} = {}) {</span>
+<span>  // Use a server-configured frontend origin when building reset links.</span>
+<span>  // Never build these links from a client-supplied Host header.</span>
+<span>  const origin = new URL(resetOrigin);</span>
+<span></span>
+<span>  if (</span>
+<span>    !["https:", "http:"].includes(origin.protocol) ||</span>
+<span>    origin.username ||</span>
+<span>    origin.password ||</span>
+<span>    origin.pathname !== "/" ||</span>
+<span>    origin.search ||</span>
+<span>    origin.hash</span>
+<span>  ) {</span>
+<span>    throw new Error(</span>
+<span>      "Configure a trusted frontend origin for password recovery.",</span>
+<span>    );</span>
+<span>  }</span>
+<span></span>
+<span>  // REGISTER: validate, hash, then save explicitly allowed fields.</span>
+<span>  async function register(body) {</span>
+<span>    const { username, email, password } = parseRegistration(body);</span>
+<span></span>
+<span>    // usernames are public (they appear on</span>
+<span>    // posts), so it is safe and friendlier to say when one is taken. The</span>
+<span>    // check ignores capital letters: "Sam" blocks "sam". It happens BEFORE</span>
+<span>    // anything involving the email, so the answer never depends on whether</span>
+<span>    // the email is registered. Duplicate EMAILS still get the generic 202.</span>
+<span>    const usernameTaken = await UserModel.exists({ username }).collation(</span>
+<span>      USERNAME_COLLATION,</span>
+<span>    );</span>
+<span>    if (usernameTaken) {</span>
+<span>      throw new HttpError(409, "That username is not available.");</span>
+<span>    }</span>
+<span></span>
+<span>    const passwordHash = await hashNewPassword(password);</span>
+<span></span>
+<span>    try {</span>
+<span>      await UserModel.create({</span>
+<span>        username,</span>
+<span>        email,</span>
+<span>        passwordHash,</span>
+<span>        role: "user",</span>
+<span>        status: "active",</span>
+<span>        sessionVersion: 0,</span>
+<span>      });</span>
+<span>    } catch (error) {</span>
+<span>      // Duplicate email/username gets the same public response.</span>
+<span>      // Other database failures must still reach the error handler.</span>
+<span>      if (error.code !== 11000) {</span>
+<span>        throw error;</span>
+<span>      }</span>
+<span>    }</span>
+<span>  }</span>
+<span></span>
+<span>  // LOGIN: validate input and check the stored password hash.</span>
+<span>  async function authenticate(body) {</span>
+<span>    const { email, password, code } = parseLogin(body);</span>
+<span></span>
+<span>    // passwordHash is normally excluded by the User schema.</span>
+<span>    // This trusted authentication operation explicitly requests it.</span>
+<span>    // the encrypted two-step fields are hidden the same way.</span>
+<span>    const user = await UserModel.findOne({ email }).select(</span>
+<span>      "+passwordHash +mfa.secretEnc +mfa.lastUsedStep",</span>
+<span>    );</span>
+<span></span>
+<span>    const matches = await verifyPassword(password, user?.passwordHash);</span>
+<span></span>
+<span>    if (</span>
+<span>      !matches ||</span>
+<span>      !user ||</span>
+<span>      user.status !== "active" ||</span>
+<span>      !Number.isSafeInteger(user.sessionVersion)</span>
+<span>    ) {</span>
+<span>      throw new HttpError(401, "Invalid credentials.");</span>
+<span>    }</span>
+<span></span>
+<span>    // an account with two-step sign-in turned on (the owner's</span>
+<span>    // admin account, set up with scripts/create-admin.js) must also send the</span>
+<span>    // current 6-digit code. A wrong, missing, or reused code gets the SAME</span>
+<span>    // "Invalid credentials" answer as a wrong password. Because this check</span>
+<span>    // happens before any session exists, every session on that account has</span>
+<span>    // passed the code check.</span>
+<span>    // an admin without an enrolled second factor cannot sign in.</span>
+<span>    // Merely changing the stored role must not create an admin login path.</span>
+<span>    const mfaEnabled = Boolean(user.mfa?.enabledAt &amp;&amp; user.mfa?.secretEnc);</span>
+<span>    if (user.role === "admin" &amp;&amp; !mfaEnabled) {</span>
+<span>      throw new HttpError(401, "Invalid credentials.");</span>
+<span>    }</span>
+<span>    let mfaVerified = false;</span>
+<span>    if (mfaEnabled) {</span>
+<span>      const codeAccepted = await checkTwoStepCode(user, code);</span>
+<span>      if (!codeAccepted) {</span>
+<span>        throw new HttpError(401, "Invalid credentials.");</span>
+<span>      }</span>
+<span>      mfaVerified = true;</span>
+<span>    }</span>
+<span></span>
+<span>    // quietly upgrade old password hashes (legacy scrypt or older</span>
+<span>    // Argon2 costs) now that we know the password is correct. Best effort: a</span>
+<span>    // failure here must never block a valid sign-in.</span>
+<span>    if (needsRehash(user.passwordHash)) {</span>
+<span>      try {</span>
+<span>        const upgraded = await hashNewPassword(password);</span>
+<span>        await UserModel.updateOne(</span>
+<span>          { _id: user._id, passwordHash: user.passwordHash },</span>
+<span>          { $set: { passwordHash: upgraded } },</span>
+<span>        );</span>
+<span>      } catch {</span>
+<span>        // Keep the old (still valid) hash; the next sign-in will try again.</span>
+<span>      }</span>
+<span>    }</span>
+<span></span>
+<span>    // return explicit, server-generated authentication assurance.</span>
+<span>    return {</span>
+<span>      user,</span>
+<span>      mfaVerified,</span>
+<span>      mfaEnabledAt: mfaVerified ? new Date(user.mfa.enabledAt).getTime() : null,</span>
+<span>    };</span>
+<span>  }</span>
+<span></span>
+<span>  // Preserve the existing service helper for callers that only need the user.</span>
+<span>  async function login(body) {</span>
+<span>    return (await authenticate(body)).user;</span>
+<span>  }</span>
+<span></span>
+<span>  // verify the 6-digit code and claim it so it can't be reused.</span>
+<span>  async function checkTwoStepCode(user, code) {</span>
+<span>    if (!mfaKey || !code) return false;</span>
+<span></span>
+<span>    let secret;</span>
+<span>    try {</span>
+<span>      secret = decryptTotpSecret(user.mfa.secretEnc, mfaKey, user._id.toString());</span>
+<span>    } catch {</span>
+<span>      return false; // wrong ADMIN_MFA_KEY or a damaged record: fail closed</span>
+<span>    }</span>
+<span></span>
+<span>    const step = verifyTotp(secret, code, {</span>
+<span>      lastUsedStep: user.mfa.lastUsedStep ?? -1,</span>
+<span>    });</span>
+<span>    if (step === null) return false;</span>
+<span></span>
+<span>    // Record the code's time window in the database in ONE atomic update.</span>
+<span>    // If two requests race with the same code, only one can win.</span>
+<span>    const claim = await UserModel.updateOne(</span>
+<span>      {</span>
+<span>        _id: user._id,</span>
+<span>        $or: [</span>
+<span>          { "mfa.lastUsedStep": trusted({ $lt: step }) },</span>
+<span>          { "mfa.lastUsedStep": trusted({ $exists: false }) },</span>
+<span>        ],</span>
+<span>      },</span>
+<span>      { $set: { "mfa.lastUsedStep": step } },</span>
+<span>    );</span>
+<span>    return claim.matchedCount === 1;</span>
+<span>  }</span>
+<span></span>
+<span>  // REQUEST RESET: create a temporary token and deliver its link.</span>
+<span>  async function requestReset(body) {</span>
+<span>    const { email } = parseRecovery(body);</span>
+<span></span>
+<span>    if (!deliverResetEmail) {</span>
+<span>      throw new HttpError(503, "Password recovery is not configured yet.");</span>
+<span>    }</span>
+<span></span>
+<span>    // email is hidden from normal queries now, so this trusted</span>
+<span>    // recovery operation asks for it explicitly.</span>
+<span>    const user = await UserModel.findOne({</span>
+<span>      email,</span>
+<span>      status: "active",</span>
+<span>    }).select("+email");</span>
+<span></span>
+<span>    // The HTTP route gives generic feedback either way.</span>
+<span>    if (!user) {</span>
+<span>      return;</span>
+<span>    }</span>
+<span></span>
+<span>    // database-backed limits that survive server restarts.</span>
+<span>    const now = Date.now();</span>
+<span>    const recent = await TokenModel.find({</span>
+<span>      userId: user._id,</span>
+<span>      createdAt: trusted({ $gt: new Date(now - 60 * 60 * 1000) }),</span>
+<span>    })</span>
+<span>      .select("createdAt")</span>
+<span>      .lean();</span>
+<span>    const tooMany = recent.length &gt;= resetEmailsPerHour;</span>
+<span>    const tooSoon = recent.some(</span>
+<span>      (record) =&gt; now - new Date(record.createdAt).getTime() &lt; resetEmailMinGapMs,</span>
+<span>    );</span>
+<span>    if (tooMany || tooSoon) {</span>
+<span>      return; // silently skip: same public response, no new email</span>
+<span>    }</span>
+<span></span>
+<span>    const rawToken = randomBytes(32).toString("hex");</span>
+<span></span>
+<span>    const record = await TokenModel.create({</span>
+<span>      userId: user._id,</span>
+<span>      sessionVersion: user.sessionVersion,</span>
+<span>      tokenHash: tokenDigest(rawToken),</span>
+<span>      expiresAt: new Date(Date.now() + RESET_LIFETIME_MS),</span>
+<span>    });</span>
+<span></span>
+<span>    // the token now goes in the URL FRAGMENT (#token=...) instead</span>
+<span>    // of the query string (?token=...). Browsers never send the part after</span>
+<span>    // "#" to any server, so the secret stays out of Netlify/Render access</span>
+<span>    // logs and out of Referer headers. The future reset page reads it with:</span>
+<span>    //   new URLSearchParams(window.location.hash.slice(1)).get("token")</span>
+<span>    const resetUrl = new URL("/reset-password", origin);</span>
+<span>    resetUrl.hash = new URLSearchParams({ token: rawToken }).toString();</span>
+<span></span>
+<span>    try {</span>
+<span>      // Only a trusted, server-supplied email adapter receives this.</span>
+<span>      // Never return or log this URL in the public API.</span>
+<span>      await deliverResetEmail({</span>
+<span>        to: user.email,</span>
+<span>        resetUrl: resetUrl.toString(),</span>
+<span>      });</span>
+<span>    } catch {</span>
+<span>      // Remove the token record if delivery reports failure.</span>
+<span>      await TokenModel.deleteOne({ _id: record._id });</span>
+<span></span>
+<span>      throw new HttpError(503, "Password recovery is temporarily unavailable.");</span>
+<span>    }</span>
+<span>  }</span>
+<span></span>
+<span>  // RESET PASSWORD: consume the token and change the password together.</span>
+<span>  async function resetPassword(body) {</span>
+<span>    const { token, newPassword } = parseReset(body);</span>
+<span></span>
+<span>    if (!deliverResetEmail) {</span>
+<span>      throw new HttpError(503, "Password recovery is not configured yet.");</span>
+<span>    }</span>
+<span></span>
+<span>    const tokenHash = tokenDigest(token);</span>
+<span></span>
+<span>    // make sure the link is real BEFORE doing</span>
+<span>    // the expensive Argon2 hash. Otherwise a bot could post random tokens</span>
+<span>    // and make the server burn CPU on hashes that are thrown away. The</span>
+<span>    // transaction below still re-checks everything atomically.</span>
+<span>    const looksValid = await TokenModel.exists({</span>
+<span>      tokenHash,</span>
+<span>      usedAt: null,</span>
+<span>      expiresAt: trusted({ $gt: new Date() }),</span>
+<span>    });</span>
+<span>    if (!looksValid) {</span>
+<span>      throw new HttpError(400, "Reset link is invalid or expired.");</span>
+<span>    }</span>
+<span></span>
+<span>    const passwordHash = await hashNewPassword(newPassword);</span>
+<span></span>
+<span>    const session = await connection.startSession();</span>
+<span></span>
+<span>    try {</span>
+<span>      await session.withTransaction(async () =&gt; {</span>
+<span>        const now = new Date();</span>
+<span></span>
+<span>        // Require the exact digest, unused token, and future expiry.</span>
+<span>        // Claim the token within this transaction.</span>
+<span>        const record = await TokenModel.findOneAndUpdate(</span>
+<span>          {</span>
+<span>            tokenHash,</span>
+<span>            usedAt: null,</span>
+<span>            // trusted() marks this server-written operator as safe.</span>
+<span>            expiresAt: trusted({ $gt: now }),</span>
+<span>          },</span>
+<span>          {</span>
+<span>            $set: { usedAt: now },</span>
+<span>          },</span>
+<span>          {</span>
+<span>            session,</span>
+<span>            returnDocument: "after",</span>
+<span>            runValidators: true,</span>
+<span>          },</span>
+<span>        );</span>
+<span></span>
+<span>        if (</span>
+<span>          !record ||</span>
+<span>          !Number.isSafeInteger(record.sessionVersion) ||</span>
+<span>          record.sessionVersion &lt; 0 ||</span>
+<span>          record.sessionVersion &gt;= Number.MAX_SAFE_INTEGER</span>
+<span>        ) {</span>
+<span>          throw new HttpError(400, "Reset link is invalid or expired.");</span>
+<span>        }</span>
+<span></span>
+<span>        // Change only the active account with the expected version.</span>
+<span>        // Incrementing the version invalidates its existing logins.</span>
+<span>        const result = await UserModel.updateOne(</span>
+<span>          {</span>
+<span>            _id: record.userId,</span>
+<span>            status: "active",</span>
+<span>            sessionVersion: record.sessionVersion,</span>
+<span>          },</span>
+<span>          {</span>
+<span>            $set: { passwordHash },</span>
+<span>            $inc: { sessionVersion: 1 },</span>
+<span>          },</span>
+<span>          {</span>
+<span>            session,</span>
+<span>            runValidators: true,</span>
+<span>          },</span>
+<span>        );</span>
+<span></span>
+<span>        if (result.matchedCount !== 1) {</span>
+<span>          throw new HttpError(400, "Reset link is invalid or expired.");</span>
+<span>        }</span>
+<span></span>
+<span>        // Invalidate all outstanding reset links for this account.</span>
+<span>        await TokenModel.deleteMany({ userId: record.userId }, { session });</span>
+<span>      });</span>
+<span>    } finally {</span>
+<span>      await session.endSession();</span>
+<span>    }</span>
+<span>  }</span>
+<span></span>
+<span>  return {</span>
+<span>    register,</span>
+<span>    login,</span>
+<span>    authenticate,</span>
+<span>    requestReset,</span>
+<span>    resetPassword,</span>
+<span>    recoveryEnabled: Boolean(deliverResetEmail),</span>
+<span>    // lets startup warn when admin two-step codes can't be checked.</span>
+<span>    mfaConfigured: Boolean(mfaKey),</span>
+<span>    UserModel,</span>
+<span>  };</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="step-7-sessions-routes-and-guards">Step 7 Sessions Routes And Guards</h2>
+
+  <h3>server/security/auth.js</h3>
+
+  <div class="div_p">
+    <p>This builds the session cookie, the rate limits, the CSRF check, requireAuth, requireAdmin, and the routes under /api/auth. The cookie is httpOnly so JavaScript cannot read it, secure in production so it only travels over HTTPS, and sameSite so other sites cannot send it.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>import { Router } from "express";</span>
+<span>import session from "express-session";</span>
+<span>import MongoStore from "connect-mongo";</span>
+<span>import { rateLimit } from "express-rate-limit";</span>
+<span></span>
+<span>import { createHash, randomBytes, timingSafeEqual } from "node:crypto";</span>
+<span></span>
+<span>import { createAuthService } from "../services/authService.js";</span>
+<span></span>
+<span>import { HttpError, publicUser, parseLogin, parseRecovery } from "./input.js";</span>
+<span>import { createAccountLoginLimiter } from "./accountLoginLimit.js";</span>
+<span></span>
+<span>// server.js supplies the real MongoDB connection and service.</span>
+<span>// Test can supply isolated substitutes.</span>
+<span></span>
+<span>// Return a router, session middleware, access checks, and cookie settings.</span>
+<span>export function createAuth({</span>
+<span>  connection,</span>
+<span>  service = createAuthService(),</span>
+<span>  store,</span>
+<span>  secret = process.env.SESSION_SECRET,</span>
+<span>  production = process.env.NODE_ENV === "production",</span>
+<span>  clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173",</span>
+<span>  sameSite = process.env.SESSION_SAME_SITE || "strict",</span>
+<span>  rateLimitMax = 20,</span>
+<span>  // Server-injected alternatives are for isolated tests, never request input.</span>
+<span>  accountLoginLimiter,</span>
+<span>  loginAccountCollection = connection?.db?.collection("loginAccountLimits"),</span>
+<span>  accountLoginLimit = 20,</span>
+<span>} = {}) {</span>
+<span>  /* SECTION 1: Validate configuration parameters to ensure they meet</span>
+<span>   security and operational requirements. */</span>
+<span>  // Development fallback only for now.</span>
+<span>  // Restarting changes this temporary key.</span>
+<span></span>
+<span>  // Generate a temporary signing key only when it is missing in development.</span>
+<span>  // The separate check below rejects a missing production key.</span>
+<span>  if (!secret &amp;&amp; !production) {</span>
+<span>    secret = randomBytes(32).toString("hex");</span>
+<span>    console.warn(</span>
+<span>      "Warning: Using a temporary session secret. Restarting the server will invalidate all sessions.",</span>
+<span>    );</span>
+<span>  }</span>
+<span></span>
+<span>  // Reject a missing, non-text, or too-short signing key.</span>
+<span>  // Length alone does not prove randomness; generate production secrets securely.</span>
+<span>  if (typeof secret !== "string" || Buffer.byteLength(secret) &lt; 32) {</span>
+<span>    throw new Error(</span>
+<span>      "Set a strong SESSION_SECRET before deploying authentication.",</span>
+<span>    );</span>
+<span>  }</span>
+<span></span>
+<span>  // Validate the SameSite configuration for session cookies.</span>
+<span>  if (</span>
+<span>    !["strict", "lax", "none"].includes(sameSite) ||</span>
+<span>    (sameSite === "none" &amp;&amp; !production)</span>
+<span>  ) {</span>
+<span>    throw new Error("Invalid sessions SameSite configuration.");</span>
+<span>  }</span>
+<span></span>
+<span>  // Normalize the configured frontend URL for Origin comparisons.</span>
+<span>  const allowedOrigin = new URL(clientOrigin).origin;</span>
+<span></span>
+<span>  // Production authentication requires and must use an HTTPS frontend origin.</span>
+<span>  if (production &amp;&amp; !allowedOrigin.startsWith("https://")) {</span>
+<span>    throw new Error(</span>
+<span>      "Production authentication requires a HTTPS frontend origin.",</span>
+<span>    );</span>
+<span>  }</span>
+<span>  // Require a supplied store or a connection from which to create a store.</span>
+<span>  // A supplied test store may be in memory; production uses MongoDB here.</span>
+<span>  if (!store &amp;&amp; !connection) {</span>
+<span>    throw new Error("Authentication requires a persistent session store.");</span>
+<span>  }</span>
+<span></span>
+<span>  // SECTION 2: Configure persistent sessions.</span>
+<span></span>
+<span>  // Reuse the already-connected MongoDB client.</span>
+<span>  store ||= MongoStore.create({</span>
+<span>    client: connection.getClient(),</span>
+<span>    dbName: connection.name,</span>
+<span>    collectionName: "sessions",</span>
+<span>    ttl: 1800,</span>
+<span>    touchAfter: 60,</span>
+<span>  });</span>
+<span></span>
+<span>  // Set the session cookie name based on the environment.</span>
+<span>  // name the cookie with the "__Host-" prefix to enforce secure cookie attributes in production.</span>
+<span>  const name = production ? "__Host-app.sid" : "app.sid";</span>
+<span></span>
+<span>  // Configure the session cookie with security settings.</span>
+<span>  const cookie = {</span>
+<span>    httpOnly: true,</span>
+<span>    secure: production,</span>
+<span>    sameSite,</span>
+<span>    path: "/",</span>
+<span>    maxAge: 30 * 60 * 1000,</span>
+<span>  };</span>
+<span></span>
+<span>  // Create the session middleware with the configured options.</span>
+<span>  const sessionMiddleware = session({</span>
+<span>    name,</span>
+<span>    secret,</span>
+<span>    store,</span>
+<span>    resave: false,</span>
+<span>    saveUninitialized: false,</span>
+<span>    rolling: true,</span>
+<span>    cookie,</span>
+<span>  });</span>
+<span></span>
+<span>  const router = Router();</span>
+<span></span>
+<span>  // count known and unknown addresses identically, before hashing.</span>
+<span>  accountLoginLimiter ||= createAccountLoginLimiter({</span>
+<span>    collection: loginAccountCollection,</span>
+<span>    secret,</span>
+<span>    limit: accountLoginLimit,</span>
+<span>  });</span>
+<span></span>
+<span>  async function limitAccountLogin(req, res, next) {</span>
+<span>    try {</span>
+<span>      req.loginInput = parseLogin(req.body);</span>
+<span>      const result = await accountLoginLimiter.consume(req.loginInput.email);</span>
+<span>      if (!result.allowed) {</span>
+<span>        res.set("Retry-After", String(result.retryAfter));</span>
+<span>        throw new HttpError(429, "Too many attempts. Please try again later.");</span>
+<span>      }</span>
+<span>      next();</span>
+<span>    } catch (error) {</span>
+<span>      next(error);</span>
+<span>    }</span>
+<span>  }</span>
+<span></span>
+<span>  // SECTION 3: Limit repeated authentication requests.</span>
+<span></span>
+<span>  // Separate instances create separate endpoint counters.</span>
+<span></span>
+<span>  // Limit repeated requests per IP; this reduces abuse but does not stop all bots.</span>
+<span>  const makeLimit = () =&gt;</span>
+<span>    rateLimit({</span>
+<span>      windowMs: 15 * 60 * 1000,</span>
+<span>      limit: rateLimitMax,</span>
+<span>      standardHeaders: "draft-8",</span>
+<span>      legacyHeaders: false,</span>
+<span>      message: {</span>
+<span>        error: "Too many attempts. Please try again later.",</span>
+<span>      },</span>
+<span>    });</span>
+<span></span>
+<span>  // Create separate rate limiters for login, registration, and password reset endpoints to prevent abuse.</span>
+<span>  const loginLimit = makeLimit();</span>
+<span>  const registerLimit = makeLimit();</span>
+<span>  const resetLimit = makeLimit();</span>
+<span></span>
+<span>  // Create a rate limiter for CSRF token requests to prevent abuse.</span>
+<span>  const csrfLimit = rateLimit({</span>
+<span>    windowMs: 15 * 60 * 1000,</span>
+<span>    limit: 60,</span>
+<span>    standardHeaders: "draft-8",</span>
+<span>    legacyHeaders: false,</span>
+<span>    message: {</span>
+<span>      error: "Too many attempts. Please try again later.",</span>
+<span>    },</span>
+<span>  });</span>
+<span></span>
+<span>  const recoveryAccountLimit = rateLimit({</span>
+<span>    windowMs: 60 * 60 * 1000, // 1 hour</span>
+<span>    limit: 3,</span>
+<span></span>
+<span>    // avoid using raw email addresses as counter keys.</span>
+<span>    keyGenerator: (req) =&gt; {</span>
+<span>      return createHash("sha256").update(req.recoveryInput.email).digest("hex");</span>
+<span>    },</span>
+<span></span>
+<span>    standardHeaders: "draft-8",</span>
+<span>    legacyHeaders: false,</span>
+<span>    message: {</span>
+<span>      error: "Too many attempts. Please try again later.",</span>
+<span>    },</span>
+<span>  });</span>
+<span></span>
+<span>  // SECTION 4: KEEP recovery work bounded.</span>
+<span></span>
+<span>  // This queue is local to one running Node process.</span>
+<span>  // A scaled deployment needs a durable worker and shared limits.</span>
+<span>  const recoveryQueue = [];</span>
+<span>  let recoveryWorking = false;</span>
+<span></span>
+<span>  // Process queued password-recovery requests one at a time to avoid overwhelming the email service.</span>
+<span>  async function drainRecovery() {</span>
+<span>    if (recoveryWorking) return;</span>
+<span></span>
+<span>    recoveryWorking = true;</span>
+<span>    // try to process all queued recovery requests, handling any errors that occur during processing.</span>
+<span>    try {</span>
+<span>      while (recoveryQueue.length) {</span>
+<span>        const input = recoveryQueue.shift();</span>
+<span>        // Attempt to process the password recovery request using the provided input.</span>
+<span>        try {</span>
+<span>          await service.requestReset(input);</span>
+<span>        } catch {</span>
+<span>          console.warn("A queued password-recovery could not be completed.");</span>
+<span>        }</span>
+<span>      }</span>
+<span>      // Always release the worker flag, including after an error.</span>
+<span>    } finally {</span>
+<span>      recoveryWorking = false;</span>
+<span>    }</span>
+<span>  }</span>
+<span></span>
+<span>  // SECTION 5: Apply authentication-response protections.</span>
+<span></span>
+<span>  // Prevent caching of sensitive authentication responses and enforce a strict referrer policy to enhance security.</span>
+<span>  router.use((req, res, next) =&gt; {</span>
+<span>    res.set("Cache-Control", "no-store");</span>
+<span>    res.set("Referrer-Policy", "no-referrer");</span>
+<span>    next();</span>
+<span>  });</span>
+<span></span>
+<span>  // Reject a supplied Origin that differs from the configured frontend origin.</span>
+<span>  // Requests without Origin are not rejected here; this is not authentication.</span>
+<span>  router.use((req, res, next) =&gt; {</span>
+<span>    const origin = req.get("Origin");</span>
+<span></span>
+<span>    if (origin &amp;&amp; origin !== allowedOrigin) {</span>
+<span>      return next(new HttpError(403, "Request origin is not allowed."));</span>
+<span>    }</span>
+<span>    next();</span>
+<span>  });</span>
+<span></span>
+<span>  // SECTION 6: Validate CSRF tokens.</span>
+<span></span>
+<span>  // Express middleware: inspect CSRF token before routes use it.</span>
+<span>  function csrf(req, res, next) {</span>
+<span>    const supplied = req.get("X-CSRF-Token");</span>
+<span>    const expected = req.session?.csrfToken;</span>
+<span></span>
+<span>    // Reject missing, malformed, or mismatched CSRF tokens.</span>
+<span>    // A valid token is not proof that the requester is human.</span>
+<span>    if (</span>
+<span>      typeof supplied !== "string" ||</span>
+<span>      typeof expected !== "string" ||</span>
+<span>      !/^[a-f0-9]{64}$/.test(supplied) ||</span>
+<span>      !/^[a-f0-9]{64}$/.test(expected) ||</span>
+<span>      supplied.length !== expected.length ||</span>
+<span>      !timingSafeEqual(Buffer.from(supplied), Buffer.from(expected))</span>
+<span>    ) {</span>
+<span>      return next(new HttpError(403, "Refresh the form and try again."));</span>
+<span>    }</span>
+<span>    next();</span>
+<span>  }</span>
+<span></span>
+<span>  // future API mutations are protected even if their router forgets</span>
+<span>  // to add csrf itself. GET/HEAD/OPTIONS must remain read-only in route code.</span>
+<span>  function csrfForMutations(req, res, next) {</span>
+<span>    if (["GET", "HEAD", "OPTIONS"].includes(req.method)) return next();</span>
+<span>    const origin = req.get("Origin");</span>
+<span>    if (origin &amp;&amp; origin !== allowedOrigin) {</span>
+<span>      return next(new HttpError(403, "Request origin is not allowed."));</span>
+<span>    }</span>
+<span>    return csrf(req, res, next);</span>
+<span>  }</span>
+<span></span>
+<span>  // SECTION 7: Authenticate the current request.</span>
+<span></span>
+<span>  // Express middleware: inspect session before routes use it.</span>
+<span>  async function requireAuth(req, res, next) {</span>
+<span>    try {</span>
+<span>      const auth = req.session?.auth;</span>
+<span>      if (</span>
+<span>        !auth ||</span>
+<span>        typeof auth.userId !== "string" ||</span>
+<span>        !/^[a-f0-9]{24}$/.test(auth.userId) ||</span>
+<span>        !Number.isSafeInteger(auth.sessionVersion) ||</span>
+<span>        !Number.isFinite(auth.authenticatedAt) ||</span>
+<span>        Date.now() - auth.authenticatedAt &gt; 8 * 60 * 60 * 1000</span>
+<span>      ) {</span>
+<span>        throw new HttpError(401, "Please sign in.");</span>
+<span>      }</span>
+<span></span>
+<span>      // Re-check the actual account, not a browser-supplied role.</span>
+<span>      const user = await service.UserModel.findById(auth.userId);</span>
+<span>      // If the user is not found, inactive, or has a different session version than the one stored in the session, destroy the session and clear the cookie to force re-authentication.</span>
+<span>      if (</span>
+<span>        !user ||</span>
+<span>        user.status !== "active" ||</span>
+<span>        user.sessionVersion !== auth.sessionVersion</span>
+<span>      ) {</span>
+<span>        await new Promise((resolve, reject) =&gt; {</span>
+<span>          req.session.destroy((error) =&gt; (error ? reject(error) : resolve()));</span>
+<span>        });</span>
+<span></span>
+<span>        // Remove this matching browser cookie after invalidating the server session.</span>
+<span>        // Cookie removal does not erase logs or remove every trace of a session.</span>
+<span>        res.clearCookie(name, {</span>
+<span>          httpOnly: true,</span>
+<span>          secure: production,</span>
+<span>          sameSite,</span>
+<span>          path: "/",</span>
+<span>        });</span>
+<span>        throw new HttpError(401, "Please sign in.");</span>
+<span>      }</span>
+<span>      // If the user is found and valid, attach the user object to the request</span>
+<span>      // for use in subsequent middleware or route handlers, and call next() to proceed.</span>
+<span>      req.authUser = user;</span>
+<span>      next();</span>
+<span>    } catch (error) {</span>
+<span>      next(error);</span>
+<span>    }</span>
+<span>  }</span>
+<span></span>
+<span>  // Authenticate first, then check administrative privileges.</span>
+<span>  // Check the administrator role only after the session/account is authenticated.</span>
+<span>  async function requireAdmin(req, res, next) {</span>
+<span>    return requireAuth(req, res, (error) =&gt; {</span>
+<span>      if (error) return next(error);</span>
+<span></span>
+<span>      // request authorized user and sees if they have the "admin" role.</span>
+<span>      //  If not, return a 403 error to indicate that administrative access is required.</span>
+<span>      // database role alone is insufficient. This exact session</span>
+<span>      // must have signed in AS an administrator and passed the MFA check.</span>
+<span>      // Bind proof to enrollment so disabling/re-enrolling invalidates it.</span>
+<span>      const auth = req.session.auth;</span>
+<span>      const enabledAt = new Date(req.authUser.mfa?.enabledAt ?? 0).getTime();</span>
+<span>      if (</span>
+<span>        req.authUser.role !== "admin" ||</span>
+<span>        auth.roleAtLogin !== "admin" ||</span>
+<span>        auth.mfaVerified !== true ||</span>
+<span>        !Number.isFinite(enabledAt) || enabledAt &lt;= 0 ||</span>
+<span>        auth.mfaEnabledAt !== enabledAt</span>
+<span>      ) {</span>
+<span>        return next(new HttpError(403, "Administrative access is required."));</span>
+<span>      }</span>
+<span>      next();</span>
+<span>    });</span>
+<span>  }</span>
+<span></span>
+<span>  // SECTION 8: Authentication routes.</span>
+<span></span>
+<span>  // Provide a CSRF token for forms that require it, generating one if it doesn't already exist in the session.</span>
+<span>  router.get("/csrf", csrfLimit, (req, res) =&gt; {</span>
+<span>    req.session.csrfToken ||= randomBytes(32).toString("hex");</span>
+<span></span>
+<span>    res.json({</span>
+<span>      csrfToken: req.session.csrfToken,</span>
+<span>    });</span>
+<span>  });</span>
+<span></span>
+<span>  // Return the currently authenticated user's public information, if any, or an error if the user is not authenticated.</span>
+<span>  router.get("/me", requireAuth, (req, res) =&gt; {</span>
+<span>    res.json({</span>
+<span>      user: publicUser(req.authUser),</span>
+<span>    });</span>
+<span>  });</span>
+<span></span>
+<span>  // Delegate registration to the service and return generic feedback.</span>
+<span>  // A 202 response does not prove that a new account was created.</span>
+<span>  router.post("/register", registerLimit, csrf, async (req, res) =&gt; {</span>
+<span>    await service.register(req.body);</span>
+<span></span>
+<span>    res.status(202).json({</span>
+<span>      message: "Registration request received. You can try signing in.",</span>
+<span>    });</span>
+<span>  });</span>
+<span></span>
+<span>  // Accept a login request, validate it, and create a new session if the credentials are correct. Rate-limited to prevent brute-force attacks.</span>
+<span>  router.post("/login", loginLimit, csrf, limitAccountLogin, async (req, res) =&gt; {</span>
+<span>    // The service creates assurance only after actually verifying the code.</span>
+<span>    // It is never copied from req.body or a role/MFA flag in the database.</span>
+<span>    const { user, mfaVerified, mfaEnabledAt } = await service.authenticate(req.loginInput);</span>
+<span></span>
+<span>    // Replace the pre-login session identifier.</span>
+<span>    await new Promise((resolve, reject) =&gt; {</span>
+<span>      req.session.regenerate((error) =&gt; (error ? reject(error) : resolve()));</span>
+<span>    });</span>
+<span></span>
+<span>    req.session.auth = {</span>
+<span>      userId: user._id.toString(),</span>
+<span>      sessionVersion: user.sessionVersion,</span>
+<span>      authenticatedAt: Date.now(),</span>
+<span>      roleAtLogin: user.role,</span>
+<span>      mfaVerified: mfaVerified === true,</span>
+<span>      mfaEnabledAt,</span>
+<span>    };</span>
+<span></span>
+<span>    // The old session's CSRF token is no longer used.</span>
+<span>    req.session.csrfToken = randomBytes(32).toString("hex");</span>
+<span></span>
+<span>    // Finish saving before the next request uses the session.</span>
+<span>    await new Promise((resolve, reject) =&gt; {</span>
+<span>      req.session.save((error) =&gt; (error ? reject(error) : resolve()));</span>
+<span>    });</span>
+<span></span>
+<span>    // Return the authenticated user's public information and a new CSRF token for subsequent requests.</span>
+<span>    res.json({</span>
+<span>      user: publicUser(user),</span>
+<span>      csrfToken: req.session.csrfToken,</span>
+<span>    });</span>
+<span>  });</span>
+<span></span>
+<span>  // Accept a logout request, destroy the session, and clear the session cookie to log the user out.</span>
+<span>  router.post("/logout", csrf, async (req, res) =&gt; {</span>
+<span>    await new Promise((resolve, reject) =&gt; {</span>
+<span>      req.session.destroy((error) =&gt; (error ? reject(error) : resolve()));</span>
+<span>    });</span>
+<span></span>
+<span>    res.clearCookie(name, {</span>
+<span>      httpOnly: true,</span>
+<span>      secure: production,</span>
+<span>      sameSite,</span>
+<span>      path: "/",</span>
+<span>    });</span>
+<span></span>
+<span>    res.json({</span>
+<span>      message: "Signed out.",</span>
+<span>    });</span>
+<span>  });</span>
+<span></span>
+<span>  // Validate and enqueue recovery input when delivery is configured.</span>
+<span>  // The worker must also be scheduled for queued requests to be processed.</span>
+<span></span>
+<span>  router.post(</span>
+<span>    "/forgot-password",</span>
+<span>    resetLimit,</span>
+<span>    csrf,</span>
+<span></span>
+<span>    // Validate the body before the account-based limiter uses it.</span>
+<span>    (req, res, next) =&gt; {</span>
+<span>      try {</span>
+<span>        req.recoveryInput = parseRecovery(req.body);</span>
+<span>        next();</span>
+<span>      } catch (error) {</span>
+<span>        next(error);</span>
+<span>      }</span>
+<span>    },</span>
+<span>    recoveryAccountLimit,</span>
+<span>    (req, res) =&gt; {</span>
+<span>      if (!service.recoveryEnabled) {</span>
+<span>        throw new HttpError(503, "Password recovery is not configured yet.");</span>
+<span>      }</span>
+<span></span>
+<span>      // Keep the process-local queue bounded.</span>
+<span>      if (recoveryQueue.length &gt;= 20) {</span>
+<span>        throw new HttpError(429, "Too many attempts. Please try again later.");</span>
+<span>      }</span>
+<span>      recoveryQueue.push(req.recoveryInput);</span>
+<span></span>
+<span>      // Do not reveal whether this email belongs to an account.</span>
+<span>      res.status(202).json({</span>
+<span>        message: "If an account exists, a recovery email will be sent.",</span>
+<span>      });</span>
+<span></span>
+<span>      // Start processing the queue after sending the response.</span>
+<span>      setImmediate(() =&gt; {</span>
+<span>        void drainRecovery();</span>
+<span>      });</span>
+<span>    },</span>
+<span>  );</span>
+<span></span>
+<span>  // Accept a password reset request, validate it, and reset the user's password if the token is valid. Rate-limited to prevent abuse.</span>
+<span>  router.post("/reset-password", resetLimit, csrf, async (req, res) =&gt; {</span>
+<span>    await service.resetPassword(req.body);</span>
+<span>    await new Promise((resolve, reject) =&gt; {</span>
+<span>      req.session.destroy((error) =&gt; (error ? reject(error) : resolve()));</span>
+<span>    });</span>
+<span></span>
+<span>    // Remove the matching browser cookie after the server session is destroyed.</span>
+<span>    res.clearCookie(name, {</span>
+<span>      httpOnly: true,</span>
+<span>      secure: production,</span>
+<span>      sameSite,</span>
+<span>      path: "/",</span>
+<span>    });</span>
+<span></span>
+<span>    // Return a message indicating that the password has been changed and the user needs to sign in again.</span>
+<span>    res.json({</span>
+<span>      message: "Password changed. Please sign in again.",</span>
+<span>    });</span>
+<span>  });</span>
+<span></span>
+<span>  // SECTION 9: Return the router and middleware for use in the main application.</span>
+<span>  return {</span>
+<span>    router,</span>
+<span>    sessionMiddleware,</span>
+<span>    requireAuth,</span>
+<span>    requireAdmin,</span>
+<span>    csrf,</span>
+<span>    csrfForMutations,</span>
+<span>    ready: () =&gt; accountLoginLimiter.ready?.(),</span>
+<span>    cookieOptions: {</span>
+<span>      name,</span>
+<span>      ...cookie,</span>
+<span>    },</span>
+<span>  };</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="step-8-put-the-server-together">Step 8 Put The Server Together</h2>
+
+  <h3>server/app.js</h3>
+
+  <div class="div_p">
+    <p>The order here matters. Security headers and the rate limit run first, so a bad request gets turned away before it costs any work. New routers go in through mountRoutes, so they always sit behind every protection.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>import express from "express";</span>
+<span>import cors from "cors";</span>
+<span>import helmet from "helmet";</span>
+<span>import { randomUUID } from "node:crypto";</span>
+<span>import { rateLimit } from "express-rate-limit";</span>
+<span>import { pingDatabase } from "./config/database.js";</span>
+<span>// rejectUnsafeQuery checks the URL query string the way</span>
+<span>// rejectUnsafeJson already checks JSON bodies.</span>
+<span>import { HttpError, rejectUnsafeJson, rejectUnsafeQuery } from "./security/input.js";</span>
+<span></span>
+<span>// Separating app creation from app.listen makes HTTP behavior testable</span>
+<span>// without needing a live Atlas cluster for every unit test.</span>
+<span>export function createApp({</span>
+<span>  checkDatabase = pingDatabase,</span>
+<span>  clientOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173",</span>
+<span>  auth = null,</span>
+<span>  trustProxy = false,</span>
+<span>  // requests allowed per visitor IP per 5 minutes, across the whole API.</span>
+<span>  globalRateLimitMax = 300,</span>
+<span>  // a function that adds your future routers, e.g.</span>
+<span>  //   mountRoutes: (app) =&gt; { app.use("/api/posts", postRoutes); }</span>
+<span>  // It runs AFTER all the security middleware below and BEFORE the 404 handler.</span>
+<span>  mountRoutes = null,</span>
+<span>} = {}) {</span>
+<span>  const app = express();</span>
+<span>  app.disable("x-powered-by");</span>
+<span>  // Configure proxy trust explicitly in deployment; never trust arbitrary</span>
+<span>  // X-Forwarded-* headers merely because the client sends them.</span>
+<span>  app.set("trust proxy", trustProxy);</span>
+<span>  // lock in Express 5's "simple" query parser. It never builds</span>
+<span>  // nested objects, so ?email[$ne]=x stays a harmless literal key. (The</span>
+<span>  // "extended" parser would turn it into { email: { $ne: "x" } }.)</span>
+<span>  app.set("query parser", "simple");</span>
+<span></span>
+<span>  // give every request a random ID. It is sent</span>
+<span>  // back in the X-Request-Id header and printed with any server error, so you</span>
+<span>  // can match a user's "something went wrong" to the right log line. An ID</span>
+<span>  // supplied by the client is ignored (it could be used to fake log entries).</span>
+<span>  app.use((req, res, next) =&gt; {</span>
+<span>    req.id = randomUUID();</span>
+<span>    res.set("X-Request-Id", req.id);</span>
+<span>    next();</span>
+<span>  });</span>
+<span></span>
+<span>  app.use(helmet());</span>
+<span></span>
+<span>  // compare against the normalized origin (scheme://host:port),</span>
+<span>  // matching what security/auth.js does. Before, a CLIENT_ORIGIN written with</span>
+<span>  // a trailing slash ("https://site.netlify.app/") silently blocked the real</span>
+<span>  // frontend, because browsers never send that slash in the Origin header.</span>
+<span>  const allowedOrigin = new URL(clientOrigin).origin;</span>
+<span></span>
+<span>  // Only the configured frontend gets credentialed CORS response headers.</span>
+<span>  // CORS is a browser policy, NOT a replacement for authentication or CSRF checks.</span>
+<span>  app.use(cors({</span>
+<span>    origin(origin, callback) {</span>
+<span>      callback(null, origin === allowedOrigin);</span>
+<span>    },</span>
+<span>    credentials: true,</span>
+<span>  }));</span>
+<span></span>
+<span>  // one overall speed limit for every visitor IP,</span>
+<span>  // in addition to the stricter login/register/reset limits in auth.js. It</span>
+<span>  // runs before the body is read or the database is touched, so a flooding</span>
+<span>  // bot is turned away cheaply. It comes AFTER cors() so the website can</span>
+<span>  // still read the 429 response. /api/health is skipped so the hosting</span>
+<span>  // provider's health checks never get the server marked as "down".</span>
+<span>  // This limit lives in this server's memory: it resets on restart and is</span>
+<span>  // per server instance. Large floods (DDoS) must be stopped before they</span>
+<span>  // reach Render, for example by Cloudflare. See the security report.</span>
+<span>  app.use(rateLimit({</span>
+<span>    windowMs: 5 * 60 * 1000,</span>
+<span>    limit: globalRateLimitMax,</span>
+<span>    standardHeaders: "draft-8",</span>
+<span>    legacyHeaders: false,</span>
+<span>    skip: (req) =&gt; req.path === "/api/health",</span>
+<span>    message: { error: "Too many requests. Please slow down and try again shortly." },</span>
+<span>  }));</span>
+<span></span>
+<span>  // API answers may contain private data, so browsers, proxies,</span>
+<span>  // and CDNs must never store them. (Auth routes already did this; now every</span>
+<span>  // /api route does.) A future PUBLIC, cacheable route can override it.</span>
+<span>  app.use("/api", (req, res, next) =&gt; {</span>
+<span>    res.set("Cache-Control", "no-store");</span>
+<span>    next();</span>
+<span>  });</span>
+<span></span>
+<span>  app.use(express.json({ limit: "100kb" }));</span>
+<span>  app.use(rejectUnsafeJson);</span>
+<span>  // operator-looking or oversized query parameters are refused.</span>
+<span>  app.use(rejectUnsafeQuery);</span>
+<span></span>
+<span>  if (auth) {</span>
+<span>    app.use(auth.sessionMiddleware);</span>
+<span>    // protect every unsafe API method BEFORE auth or future routers.</span>
+<span>    app.use("/api", auth.csrfForMutations);</span>
+<span>    app.use("/api/auth", auth.router);</span>
+<span>    // Dashboard/content routes are still a future feature, but their prefixes</span>
+<span>    // cannot accidentally become public when added later.</span>
+<span>    app.use(["/api/admin", "/api/dashboard"], auth.requireAdmin);</span>
+<span>    // areas for ANY signed-in account.</span>
+<span>    //   /api/account : a member's own profile, posts, settings</span>
+<span>    //   /api/demo    : the visitor "try my dashboard + AI summary + PDF" demo.</span>
+<span>    // Put each future router under the right prefix and it is protected</span>
+<span>    // automatically.</span>
+<span>    app.use(["/api/account", "/api/demo"], auth.requireAuth);</span>
+<span>  }</span>
+<span></span>
+<span>  app.get("/", (req, res) =&gt; {</span>
+<span>    res.json({ message: "API is running." });</span>
+<span>  });</span>
+<span></span>
+<span>  // Liveness checks Express. Readiness below also checks MongoDB.</span>
+<span>  app.get("/api/health", (req, res) =&gt; {</span>
+<span>    res.set("Cache-Control", "no-store");</span>
+<span>    res.json({ status: "ok", service: "api" });</span>
+<span>  });</span>
+<span></span>
+<span>  app.get("/api/health/database", async (req, res) =&gt; {</span>
+<span>    res.set("Cache-Control", "no-store");</span>
+<span>    try {</span>
+<span>      await checkDatabase();</span>
+<span>      res.json({ status: "ok", database: "connected" });</span>
+<span>    } catch {</span>
+<span>      // Never expose the URI, password, server address, or driver stack.</span>
+<span>      res.status(503).json({ status: "error", database: "unavailable" });</span>
+<span>    }</span>
+<span>  });</span>
+<span></span>
+<span>  // future routers plug in here, behind every protection above.</span>
+<span>  // Routes are refused without authentication middleware, so a test or a</span>
+<span>  // mistake can never run them with the admin/account guards missing.</span>
+<span>  if (mountRoutes) {</span>
+<span>    if (!auth) throw new Error("mountRoutes requires authentication middleware (auth).");</span>
+<span>    mountRoutes(app, { auth });</span>
+<span>  }</span>
+<span></span>
+<span>  app.use((req, res) =&gt; {</span>
+<span>    res.status(404).json({ error: "Route not found." });</span>
+<span>  });</span>
+<span></span>
+<span>  app.use((error, req, res, next) =&gt; {</span>
+<span>    if (res.headersSent) return next(error);</span>
+<span>    if (error instanceof HttpError) return res.status(error.status).json({ error: error.message });</span>
+<span>    if (error.type === "entity.too.large") {</span>
+<span>      return res.status(413).json({ error: "Request body is too large." });</span>
+<span>    }</span>
+<span>    if (error.type === "entity.parse.failed") {</span>
+<span>      return res.status(400).json({ error: "Invalid JSON request body." });</span>
+<span>    }</span>
+<span>    // other problems with the REQUEST itself (unsupported charset</span>
+<span>    // or compression, an aborted upload) are the client's mistake: 4xx, not</span>
+<span>    // 500. Their messages come from body-parser and are marked safe to show.</span>
+<span>    if (error.expose === true &amp;&amp; Number.isInteger(error.status) &amp;&amp; error.status &gt;= 400 &amp;&amp; error.status &lt; 500) {</span>
+<span>      return res.status(error.status).json({ error: "The request could not be processed." });</span>
+<span>    }</span>
+<span>    // database validation/cast errors mean the submitted data was</span>
+<span>    // invalid. Answer 400 without echoing field values or schema details.</span>
+<span>    if (["ValidationError", "CastError", "StrictModeError"].includes(error.name)) {</span>
+<span>      return res.status(400).json({ error: "The request contains invalid data." });</span>
+<span>    }</span>
+<span>    // log unexpected errors on the server WITHOUT the request body</span>
+<span>    // (it may contain passwords) and without the message in production</span>
+<span>    // (MongoDB messages can include emails, e.g. duplicate-key errors).</span>
+<span>    console.error(JSON.stringify({</span>
+<span>      level: "error",</span>
+<span>      requestId: req.id,</span>
+<span>      method: req.method,</span>
+<span>      path: req.path,</span>
+<span>      name: error?.name,</span>
+<span>      code: error?.code,</span>
+<span>      ...(process.env.NODE_ENV === "production" ? {} : { stack: error?.stack }),</span>
+<span>    }));</span>
+<span>    res.status(500).json({ error: "An unexpected server error occurred.", requestId: req.id });</span>
+<span>  });</span>
+<span></span>
+<span>  return app;</span>
+<span>}</span>
+  </pre>
+
+  <h3>server/server.js</h3>
+
+  <div class="div_p">
+    <p>Startup checks the settings, connects to the database, builds the unique indexes, and only then opens the port. HTTP_LIMITS cuts off clients that send a request a few bytes at a time.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>import http from "node:http";</span>
+<span>import mongoose from "mongoose";</span>
+<span>import { createApp } from "./app.js";</span>
+<span>import { getPort, getTrustProxy } from "./config/env.js";</span>
+<span>import {</span>
+<span>  connectDatabase,</span>
+<span>  pingDatabase,</span>
+<span>  disconnectDatabase,</span>
+<span>  explainDatabaseError,</span>
+<span>} from "./config/database.js";</span>
+<span>import { createAuth } from "./security/auth.js";</span>
+<span>import { createAuthService } from "./services/authService.js";</span>
+<span></span>
+<span>let server;</span>
+<span>let stopping = false;</span>
+<span></span>
+<span>// Limits for slow or stalled clients (a "Slowloris" attack).</span>
+<span>const HTTP_LIMITS = {</span>
+<span>  headersTimeout: 20_000, // the request headers must arrive within 20 s</span>
+<span>  requestTimeout: 30_000, // the whole request must arrive within 30 s</span>
+<span>  connectionsCheckingInterval: 5_000, // how often Node checks those deadlines</span>
+<span>};</span>
+<span>// Render's proxy keeps idle connections open for up to 120 s. Node must keep</span>
+<span>// them slightly longer, or visitors see a random 502 error.</span>
+<span>const PRODUCTION_KEEP_ALIVE_MS = 121_000;</span>
+<span></span>
+<span>async function shutdown() {</span>
+<span>  if (stopping) return;</span>
+<span>  stopping = true;</span>
+<span>  // Bound shutdown if a client holds an HTTP connection open.</span>
+<span>  const timer = setTimeout(() =&gt; process.exit(1), 10000);</span>
+<span>  timer.unref();</span>
+<span>  try {</span>
+<span>    if (server) await new Promise((resolve) =&gt; server.close(resolve));</span>
+<span>    await disconnectDatabase();</span>
+<span>  } finally {</span>
+<span>    clearTimeout(timer);</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>process.once("SIGINT", () =&gt; {</span>
+<span>  void shutdown();</span>
+<span>});</span>
+<span>process.once("SIGTERM", () =&gt; {</span>
+<span>  void shutdown();</span>
+<span>});</span>
+<span></span>
+<span>// Remember which startup step failed, so the error points at the real cause.</span>
+<span>let stage = "configuration";</span>
+<span></span>
+<span>try {</span>
+<span>  const port = getPort();</span>
+<span>  const trustProxy = getTrustProxy();</span>
+<span></span>
+<span>  stage = "database";</span>
+<span>  await connectDatabase();</span>
+<span>  await pingDatabase();</span>
+<span>  // Do not accept registrations before unique account/token indexes exist.</span>
+<span>  await Promise.all([</span>
+<span>    mongoose.model("User").init(),</span>
+<span>    mongoose.model("PasswordResetToken").init(),</span>
+<span>  ]);</span>
+<span>  console.log("MongoDB connection and ping succeeded.");</span>
+<span></span>
+<span>  stage = "authentication setup";</span>
+<span>  const service = createAuthService({</span>
+<span>    resetOrigin: process.env.CLIENT_ORIGIN || "http://localhost:5173",</span>
+<span>  });</span>
+<span>  const auth = createAuth({ connection: mongoose.connection, service });</span>
+<span>  await auth.ready();</span>
+<span></span>
+<span>  stage = "HTTP server";</span>
+<span>  server = http.createServer(</span>
+<span>    HTTP_LIMITS,</span>
+<span>    createApp({</span>
+<span>      auth,</span>
+<span>      trustProxy,</span>
+<span>      // Add your routers here so they sit behind every protection.</span>
+<span>      mountRoutes: (app, { auth }) =&gt; {</span>
+<span>        // app.use("/api/items", itemRoutes(auth));</span>
+<span>      },</span>
+<span>    }),</span>
+<span>  );</span>
+<span>  if (process.env.NODE_ENV === "production") {</span>
+<span>    server.keepAliveTimeout = PRODUCTION_KEEP_ALIVE_MS;</span>
+<span>  }</span>
+<span>  server.listen(</span>
+<span>    port,</span>
+<span>    process.env.NODE_ENV === "production" ? "0.0.0.0" : "127.0.0.1",</span>
+<span>    () =&gt; {</span>
+<span>      console.log(`API listening on port ${port}.`);</span>
+<span>    },</span>
+<span>  );</span>
+<span>  server.on("error", async (error) =&gt; {</span>
+<span>    console.error(</span>
+<span>      error.code === "EADDRINUSE"</span>
+<span>        ? "Port is already in use. Choose another PORT in server/.env."</span>
+<span>        : "HTTP server failed to start.",</span>
+<span>    );</span>
+<span>    process.exitCode = 1;</span>
+<span>    await shutdown();</span>
+<span>  });</span>
+<span>} catch (error) {</span>
+<span>  // Database errors go through explainDatabaseError so connection strings are never printed.</span>
+<span>  console.error(</span>
+<span>    `Startup failed during ${stage}:`,</span>
+<span>    stage === "database" ? explainDatabaseError(error) : error.message,</span>
+<span>  );</span>
+<span>  process.exitCode = 1;</span>
+<span>  await disconnectDatabase();</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="step-9-protect-your-own-routes">Step 9 Protect Your Own Routes</h2>
+
+  <h3>server/routes/items.js</h3>
+
+  <div class="div_p">
+    <p>Anyone can read, members can write, and only the admin can delete. Pass in auth from server.js through mountRoutes.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>import express from "express";</span>
+<span>import ItemsController from "../controllers/items.js";</span>
+<span></span>
+<span>export default function itemRoutes(auth) {</span>
+<span>  const router = express.Router();</span>
+<span></span>
+<span>  router.get("/", ItemsController.getItems);</span>
+<span>  router.get("/:id", ItemsController.getItemById);</span>
+<span>  router.post("/", auth.requireAuth, ItemsController.createItem);</span>
+<span>  router.patch("/:id", auth.requireAuth, ItemsController.updateItem);</span>
+<span>  router.delete("/:id", auth.requireAdmin, ItemsController.deleteItem);</span>
+<span></span>
+<span>  return router;</span>
+<span>}</span>
+  </pre>
+
+  <h3>server/security/access.js</h3>
+
+  <div class="div_p">
+    <p>Stops one user from reaching another user's record by changing an id in the URL. The owner is part of the database query, so someone else's record never loads.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>// helpers that keep one account from reading</span>
+<span>// or changing another account's records.</span>
+<span>//</span>
+<span>// The most common way people reach someone else's data is by changing an ID in</span>
+<span>// a URL, for example /api/demo/reports/&lt;someone-else's-id&gt;. This is called an</span>
+<span>// IDOR (insecure direct object reference). These helpers make the safe pattern</span>
+<span>// the easy pattern for the routes and controllers you write later:</span>
+<span>//</span>
+<span>//   const id = readObjectId(req.params.id);</span>
+<span>//   const report = await findOwned(Report, { id, ownerId: req.authUser._id });</span>
+<span>//   if (!report) throw notFound();</span>
+<span>//</span>
+<span>// The owner condition is part of the database query itself, so a record</span>
+<span>// belonging to someone else is never loaded. Both "doesn't exist" and</span>
+<span>// "belongs to someone else" return the same 404, so an attacker cannot even</span>
+<span>// tell which IDs exist.</span>
+<span></span>
+<span>import { HttpError } from "./input.js";</span>
+<span></span>
+<span>export function notFound() {</span>
+<span>  return new HttpError(404, "Not found.");</span>
+<span>}</span>
+<span></span>
+<span>// Accept only a 24-character hexadecimal MongoDB ID string from the URL.</span>
+<span>// Anything else (objects, arrays, operators, other formats) is a 404.</span>
+<span>export function readObjectId(value) {</span>
+<span>  if (typeof value !== "string" || !/^[a-f0-9]{24}$/i.test(value)) {</span>
+<span>    throw notFound();</span>
+<span>  }</span>
+<span>  return value.toLowerCase();</span>
+<span>}</span>
+<span></span>
+<span>// Load a document ONLY if it belongs to ownerId. Returns null otherwise.</span>
+<span>export async function findOwned(</span>
+<span>  Model,</span>
+<span>  { id, ownerId, ownerField = "ownerId", select } = {},</span>
+<span>) {</span>
+<span>  if (!ownerId) throw new Error("findOwned requires the signed-in owner's ID.");</span>
+<span>  const query = Model.findOne({ _id: readObjectId(String(id)), [ownerField]: ownerId });</span>
+<span>  if (select) query.select(select);</span>
+<span>  return query;</span>
+<span>}</span>
+<span></span>
+<span>// For records already loaded some other way: throw 404 unless owned.</span>
+<span>export function assertOwner(document, ownerId, ownerField = "ownerId") {</span>
+<span>  if (!document || String(document[ownerField]) !== String(ownerId)) {</span>
+<span>    throw notFound();</span>
+<span>  }</span>
+<span>  return document;</span>
+<span>}</span>
+  </pre>
+
+  <h3>Only let the owner change a record</h3>
+
+  <div class="div_p">
+    <p>The author always comes from the session, never from what the browser sends.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>// Create: the signed-in user is the author.</span>
+<span>const newPost = await Post.create({ ...fields, authorId: req.authUser._id });</span>
+<span></span>
+<span>// Update and delete: find it only if it belongs to this user.</span>
+<span>const post = await findOwned(Post, {</span>
+<span>  id: req.params.id,</span>
+<span>  ownerId: req.authUser._id,</span>
+<span>  ownerField: "authorId",</span>
+<span>});</span>
+<span></span>
+<span>if (!post) throw notFound();</span>
+  </pre>
+
+  <h3>Postgres version of the same owner check</h3>
+
+  <pre class="mycodesecurity">
+<span>const results = await pool.query(</span>
+<span>  "UPDATE posts SET title = $1 WHERE id = $2 AND author_id = $3 RETURNING *",</span>
+<span>  [title, id, req.authUser.id],</span>
+<span>);</span>
+<span></span>
+<span>if (results.rows.length === 0) {</span>
+<span>  return res.status(404).json({ error: "Not found." });</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="step-10-create-the-admin">Step 10 Create The Admin</h2>
+
+  <div class="div_p">
+    <p>There is no website route that can make an admin. The only way is to run this script on your own computer. Do this before the site goes public, so nobody registers your email first.</p>
+  </div>
+
+  <h3>server/scripts/create-admin.js</h3>
+
+  <pre class="mycodesecurity">
+<span>// create or manage the owner's admin account</span>
+<span>// from YOUR OWN computer. There is deliberately no website route that can make</span>
+<span>// an administrator, so the only way to become admin is to run this script with</span>
+<span>// the database password from server/.env.</span>
+<span>//</span>
+<span>// Run inside the server folder:</span>
+<span>//</span>
+<span>//   npm run admin:create -- --email you@example.com --username YourName</span>
+<span>//       Creates a brand-new admin account. Do this BEFORE the site is public,</span>
+<span>//       so nobody else can register your email address first.</span>
+<span>//</span>
+<span>//   npm run admin:create -- --email you@example.com --promote</span>
+<span>//       Makes an account you ALREADY registered on the site the admin.</span>
+<span>//</span>
+<span>//   npm run admin:create -- --email you@example.com --reset-mfa</span>
+<span>//       Lost your phone? Sets up a new authenticator app for the admin account.</span>
+<span>//</span>
+<span>// Every option also turns on two-step sign-in: after typing your password on</span>
+<span>// the login form, you must also type the 6-digit code from an authenticator</span>
+<span>// app (Google Authenticator, Microsoft Authenticator, Authy, 1Password, ...).</span>
+<span>//</span>
+<span>// Needs ADMIN_MFA_KEY in server/.env (or the hosting settings). Create one with:</span>
+<span>//   node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"</span>
+<span>// Use the SAME value on your computer and on the server, and keep it secret.</span>
+<span></span>
+<span>import readline from "node:readline";</span>
+<span>import mongoose from "mongoose";</span>
+<span>import {</span>
+<span>  connectDatabase,</span>
+<span>  disconnectDatabase,</span>
+<span>  explainDatabaseError,</span>
+<span>} from "../config/database.js";</span>
+<span>import User from "../models/User.js";</span>
+<span>import { USERNAME_PATTERN } from "../models/validators.js";</span>
+<span>import { readEmail, readNewPassword } from "../security/input.js";</span>
+<span>import { hashNewPassword } from "../security/passwords.js";</span>
+<span>import {</span>
+<span>  base32Encode,</span>
+<span>  encryptTotpSecret,</span>
+<span>  generateTotpSecret,</span>
+<span>  otpauthUri,</span>
+<span>  readMfaKey,</span>
+<span>  verifyTotp,</span>
+<span>} from "../security/totp.js";</span>
+<span></span>
+<span>// ---- small terminal helpers ------------------------------------------------</span>
+<span>const interactive = Boolean(process.stdin.isTTY);</span>
+<span>const rl = readline.createInterface({</span>
+<span>  input: process.stdin,</span>
+<span>  output: process.stdout,</span>
+<span>  terminal: interactive,</span>
+<span>});</span>
+<span>let muted = false;</span>
+<span>if (interactive) {</span>
+<span>  // Hide what you type while entering a password.</span>
+<span>  const write = rl._writeToOutput.bind(rl);</span>
+<span>  rl._writeToOutput = (text) =&gt; {</span>
+<span>    if (!muted || text === "\n" || text === "\r\n") write(text);</span>
+<span>  };</span>
+<span>}</span>
+<span>const queued = [];</span>
+<span>const waiting = [];</span>
+<span>let inputClosed = false;</span>
+<span>rl.on("line", (line) =&gt; {</span>
+<span>  const next = waiting.shift();</span>
+<span>  if (next) next.resolve(line);</span>
+<span>  else queued.push(line);</span>
+<span>});</span>
+<span>rl.on("close", () =&gt; {</span>
+<span>  inputClosed = true;</span>
+<span>  while (waiting.length) waiting.shift().reject(new Error("Input ended."));</span>
+<span>});</span>
+<span></span>
+<span>function ask(prompt, { hidden = false } = {}) {</span>
+<span>  process.stdout.write(prompt);</span>
+<span>  muted = hidden;</span>
+<span>  return new Promise((resolve, reject) =&gt; {</span>
+<span>    const finish = (line) =&gt; {</span>
+<span>      muted = false;</span>
+<span>      if (hidden &amp;&amp; interactive) process.stdout.write("\n");</span>
+<span>      resolve(line); // kept exactly as typed (passwords may contain spaces)</span>
+<span>    };</span>
+<span>    if (queued.length) return finish(queued.shift());</span>
+<span>    if (inputClosed) return reject(new Error("Input ended."));</span>
+<span>    waiting.push({ resolve: finish, reject });</span>
+<span>  });</span>
+<span>}</span>
+<span></span>
+<span>function fail(message) {</span>
+<span>  const error = new Error(message);</span>
+<span>  error.safe = true;</span>
+<span>  throw error;</span>
+<span>}</span>
+<span></span>
+<span>function readArguments(argv) {</span>
+<span>  const options = { email: null, username: null, mode: "create" };</span>
+<span>  for (let index = 0; index &lt; argv.length; index += 1) {</span>
+<span>    const argument = argv[index];</span>
+<span>    if (argument === "--email") options.email = argv[++index];</span>
+<span>    else if (argument === "--username") options.username = argv[++index];</span>
+<span>    else if (argument === "--promote") options.mode = "promote";</span>
+<span>    else if (argument === "--reset-mfa") options.mode = "reset-mfa";</span>
+<span>    else fail(`Unknown option: ${argument}`);</span>
+<span>  }</span>
+<span>  if (!options.email) fail("Add --email you@example.com");</span>
+<span>  if (options.mode === "create" &amp;&amp; !options.username) fail("Add --username YourName for a new account.");</span>
+<span>  return options;</span>
+<span>}</span>
+<span></span>
+<span>// Walk through authenticator setup; returns the encrypted secret + used step.</span>
+<span>async function enrollAuthenticator({ accountId, label, key }) {</span>
+<span>  const secret = generateTotpSecret();</span>
+<span>  const setupKey = base32Encode(secret).match(/.{1,4}/g).join(" ");</span>
+<span></span>
+<span>  console.log("\nTwo-step sign-in setup");</span>
+<span>  console.log("1. Open your authenticator app and choose 'Add account' &gt; 'Enter a setup key'.");</span>
+<span>  console.log(`2. Account name: ${label}`);</span>
+<span>  console.log(`   Setup key:    ${setupKey}`);</span>
+<span>  console.log("   Type: Time based, 6 digits");</span>
+<span>  console.log("   (Or turn this link into a QR code with an app you trust:)");</span>
+<span>  console.log(`   ${otpauthUri({ secret, account: label })}`);</span>
+<span>  console.log("Do not screenshot or share the setup key; anyone with it can create your codes.\n");</span>
+<span></span>
+<span>  for (let attempt = 1; attempt &lt;= 3; attempt += 1) {</span>
+<span>    const code = (await ask("3. Enter the 6-digit code your app shows now: ")).replace(/\s/g, "");</span>
+<span>    const step = verifyTotp(secret, code);</span>
+<span>    if (step !== null) {</span>
+<span>      return {</span>
+<span>        secretEnc: encryptTotpSecret(secret, key, accountId),</span>
+<span>        enabledAt: new Date(),</span>
+<span>        // The code you just typed counts as used; sign in with the next one.</span>
+<span>        lastUsedStep: step,</span>
+<span>      };</span>
+<span>    }</span>
+<span>    console.log("That code did not match. Check that your phone's clock is set automatically.");</span>
+<span>  }</span>
+<span>  fail("Two-step setup was not confirmed, so nothing was changed.");</span>
+<span>}</span>
+<span></span>
+<span>async function main() {</span>
+<span>  const options = readArguments(process.argv.slice(2));</span>
+<span>  const email = readEmail(options.email);</span>
+<span></span>
+<span>  const key = readMfaKey();</span>
+<span>  if (!key) {</span>
+<span>    fail(</span>
+<span>      "ADMIN_MFA_KEY is not set. Create one with\n" +</span>
+<span>        "  node -e \"console.log(require('node:crypto').randomBytes(32).toString('hex'))\"\n" +</span>
+<span>        "and add ADMIN_MFA_KEY=&lt;that value&gt; to server/.env and to your hosting settings.",</span>
+<span>    );</span>
+<span>  }</span>
+<span></span>
+<span>  await connectDatabase(); // also refuses over-privileged database accounts</span>
+<span>  await User.init(); // make sure the unique email/username indexes exist</span>
+<span></span>
+<span>  const existing = await User.findOne({ email }).select("+email");</span>
+<span></span>
+<span>  if (options.mode === "create") {</span>
+<span>    if (existing) {</span>
+<span>      fail(</span>
+<span>        `An account with that email already exists (username "${existing.username}", created ${existing.createdAt?.toISOString()}).\n` +</span>
+<span>          "If it is yours, run the same command with --promote instead of --username.\n" +</span>
+<span>          "If you did NOT create it, someone registered your email first: use a different email for your admin account.",</span>
+<span>      );</span>
+<span>    }</span>
+<span></span>
+<span>    const username = options.username.trim();</span>
+<span>    if (username.length &lt; 3 || username.length &gt; 35 || !USERNAME_PATTERN.test(username)) {</span>
+<span>      fail("Username must be 3-35 letters, numbers, _, -, or . and start/end with a letter or number.");</span>
+<span>    }</span>
+<span></span>
+<span>    const password = await ask("Choose a password (15-128 characters, input is hidden): ", { hidden: true });</span>
+<span>    readNewPassword(password);</span>
+<span>    const again = await ask("Type the password again: ", { hidden: true });</span>
+<span>    if (again !== password) fail("The passwords did not match. Nothing was changed.");</span>
+<span></span>
+<span>    const accountId = new mongoose.Types.ObjectId();</span>
+<span>    const passwordHash = await hashNewPassword(password);</span>
+<span>    const mfa = await enrollAuthenticator({ accountId, label: email, key });</span>
+<span></span>
+<span>    await User.create({</span>
+<span>      _id: accountId,</span>
+<span>      username,</span>
+<span>      email,</span>
+<span>      passwordHash,</span>
+<span>      role: "admin",</span>
+<span>      status: "active",</span>
+<span>      sessionVersion: 0,</span>
+<span>      mfa,</span>
+<span>    });</span>
+<span></span>
+<span>    console.log(`\nDone. Admin account created: ${username} (account ID ${accountId}).`);</span>
+<span>  } else {</span>
+<span>    if (!existing) fail("No account uses that email. Check the spelling, or create one without --promote.");</span>
+<span></span>
+<span>    if (options.mode === "promote") {</span>
+<span>      console.log(`Found "${existing.username}", created ${existing.createdAt?.toISOString()}, role ${existing.role}.`);</span>
+<span>      const confirm = await ask("Type PROMOTE to make this account the admin: ");</span>
+<span>      if (confirm.trim() !== "PROMOTE") fail("Cancelled. Nothing was changed.");</span>
+<span>    } else if (existing.role !== "admin") {</span>
+<span>      fail("--reset-mfa is only for the admin account.");</span>
+<span>    }</span>
+<span></span>
+<span>    const mfa = await enrollAuthenticator({ accountId: existing._id, label: email, key });</span>
+<span></span>
+<span>    // Raising sessionVersion signs this account out everywhere, so any session</span>
+<span>    // that existed before this change has to sign in again with the code.</span>
+<span>    await User.updateOne(</span>
+<span>      { _id: existing._id },</span>
+<span>      {</span>
+<span>        $set: {</span>
+<span>          role: "admin",</span>
+<span>          status: "active",</span>
+<span>          "mfa.secretEnc": mfa.secretEnc,</span>
+<span>          "mfa.enabledAt": mfa.enabledAt,</span>
+<span>          "mfa.lastUsedStep": mfa.lastUsedStep,</span>
+<span>        },</span>
+<span>        $inc: { sessionVersion: 1 },</span>
+<span>      },</span>
+<span>    );</span>
+<span></span>
+<span>    console.log(`\nDone. "${existing.username}" (account ID ${existing._id}) is the admin with two-step sign-in on.`);</span>
+<span>  }</span>
+<span></span>
+<span>  console.log("Next steps:");</span>
+<span>  console.log("- Sign in on the site with your email, password, AND the current 6-digit code.");</span>
+<span>  console.log("- Add your username to RESERVED_USERNAMES so look-alike names can't be registered.");</span>
+<span>  console.log("- Never commit ADMIN_MFA_KEY or server/.env to Git.");</span>
+<span>}</span>
+<span></span>
+<span>try {</span>
+<span>  await main();</span>
+<span>} catch (error) {</span>
+<span>  process.exitCode = 1;</span>
+<span>  // Our own messages (and input-check messages) are safe to show; driver</span>
+<span>  // errors go through explainDatabaseError so no connection string is printed.</span>
+<span>  const message = error.safe || error.status ? error.message : explainDatabaseError(error);</span>
+<span>  console.error(`\nAdmin setup stopped: ${message}`);</span>
+<span>} finally {</span>
+<span>  rl.close();</span>
+<span>  await disconnectDatabase();</span>
+<span>}</span>
+  </pre>
+
+  <h3>Create the admin account</h3>
+
+  <pre class="mycodecli">
+<span>npm run admin:create -- --email you@example.com --username YourName</span>
+  </pre>
+
+  <h3>Make an account you already registered the admin</h3>
+
+  <pre class="mycodecli">
+<span>npm run admin:create -- --email you@example.com --promote</span>
+  </pre>
+
+  <h3>Lost your phone</h3>
+
+  <pre class="mycodecli">
+<span>npm run admin:create -- --email you@example.com --reset-mfa</span>
+  </pre>
+
+  <h2 id="step-11-the-react-login">Step 11 The React Login</h2>
+
+  <h3>client/vite.config.js</h3>
+
+  <div class="div_p">
+    <p>The proxy makes React and the API look like one site to the browser, so the login cookie and CSRF token just work. Use 127.0.0.1 because the server only listens there in development.</p>
+  </div>
+
+  <pre class="mycodesecurity">
+<span>import { defineConfig } from "vite";</span>
+<span>import react from "@vitejs/plugin-react";</span>
+<span></span>
+<span>export default defineConfig({</span>
+<span>  plugins: [react()],</span>
+<span>  server: {</span>
+<span>    port: 5173,</span>
+<span>    strictPort: true,</span>
+<span>    proxy: {</span>
+<span>      "/api": { target: "http://127.0.0.1:3002" },</span>
+<span>    },</span>
+<span>  },</span>
+<span>});</span>
+  </pre>
+
+  <h3>client/src/api.js</h3>
+
+  <div class="div_p">
+    <p>Every call to the server goes through this helper. It sends the cookie, adds the CSRF token to each POST, PATCH, and DELETE, and swaps in the new token after login.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// One helper for every call to the backend.</span>
+<span>// It handles the two things that made Postman painful:</span>
+<span>//   1. The session cookie: the browser stores and sends it automatically</span>
+<span>//      (credentials: "same-origin").</span>
+<span>//   2. The CSRF token: fetched once, sent as X-CSRF-Token on every</span>
+<span>//      POST/PATCH/DELETE, and swapped for the new one the server returns at login.</span>
+<span>// Pages don't call this directly; they use the small files in src/services/.</span>
+<span></span>
+<span>let csrfToken = null;</span>
+<span></span>
+<span>// The exact message the server sends when the CSRF token doesn't match the session</span>
+<span>// (security/auth.js). Usually it means the session expired or was replaced.</span>
+<span>const CSRF_FAILED = "Refresh the form and try again.";</span>
+<span></span>
+<span>export async function refreshCsrf() {</span>
+<span>  const response = await fetch("/api/auth/csrf", { credentials: "same-origin" });</span>
+<span>  const data = await response.json();</span>
+<span>  csrfToken = data.csrfToken;</span>
+<span>  return csrfToken;</span>
+<span>}</span>
+<span></span>
+<span>async function send(method, path, body, options) {</span>
+<span>  const headers = {};</span>
+<span>  if (body !== undefined) headers["Content-Type"] = "application/json";</span>
+<span></span>
+<span>  const isWrite = method !== "GET";</span>
+<span>  if (isWrite &amp;&amp; !options.skipCsrf) {</span>
+<span>    if (!csrfToken) await refreshCsrf();</span>
+<span>    headers["X-CSRF-Token"] = csrfToken;</span>
+<span>  }</span>
+<span></span>
+<span>  const response = await fetch(path, {</span>
+<span>    method,</span>
+<span>    headers,</span>
+<span>    credentials: "same-origin",</span>
+<span>    body: body === undefined ? undefined : JSON.stringify(body),</span>
+<span>  });</span>
+<span></span>
+<span>  // Some replies (204 No Content) have no body, so read text first.</span>
+<span>  const text = await response.text();</span>
+<span>  let data = null;</span>
+<span>  try {</span>
+<span>    data = text ? JSON.parse(text) : null;</span>
+<span>  } catch {</span>
+<span>    data = text;</span>
+<span>  }</span>
+<span></span>
+<span>  // Login hands back a NEW token (the old one stops working). Keep it.</span>
+<span>  if (data &amp;&amp; typeof data === "object" &amp;&amp; data.csrfToken) csrfToken = data.csrfToken;</span>
+<span>  // After logout the session is gone, so the token is useless too.</span>
+<span>  if (path === "/api/auth/logout" &amp;&amp; response.ok) csrfToken = null;</span>
+<span></span>
+<span>  return { status: response.status, ok: response.ok, data };</span>
+<span>}</span>
+<span></span>
+<span>// api("POST", "/api/games", { title: "..." })  -&gt;  { status, ok, data }</span>
+<span>// options.skipCsrf = true sends the request WITHOUT the token (only the route</span>
+<span>// tester uses it, to prove the server blocks that). Never use it in real pages.</span>
+<span>export async function api(method, path, body, options = {}) {</span>
+<span>  const result = await send(method, path, body, options);</span>
+<span></span>
+<span>  // If the session expired, the old token stops matching. Get a fresh token and</span>
+<span>  // try once more. (Only this site's own JavaScript can read the token, so a</span>
+<span>  // retry here doesn't help an attacker on another site.)</span>
+<span>  const tokenRejected =</span>
+<span>    result.status === 403 &amp;&amp; result.data &amp;&amp; result.data.error === CSRF_FAILED;</span>
+<span>  if (tokenRejected &amp;&amp; method !== "GET" &amp;&amp; !options.skipCsrf) {</span>
+<span>    await refreshCsrf();</span>
+<span>    return send(method, path, body, options);</span>
+<span>  }</span>
+<span>  return result;</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/services/request.js</h3>
+
+  <div class="div_p">
+    <p>Returns the data when a request works and throws the server's message when it does not. A 401 tells the app that the session has ended.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// Shared response handling: return the data when the request worked, otherwise throw an Error</span>
+<span>// with the server's message so the page can show it.</span>
+<span>import { api } from "../api.js";</span>
+<span></span>
+<span>export class ApiError extends Error {</span>
+<span>  constructor(status, message) {</span>
+<span>    super(message);</span>
+<span>    this.status = status; // 0 = couldn't reach the server at all</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>// When the server says "not signed in" (401) anywhere except the login form,</span>
+<span>// the session has ended (expired, or logged out in another tab). Tell the</span>
+<span>// AuthContext so the header stops showing a username.</span>
+<span>export const SIGNED_OUT_EVENT = "app:signed-out";</span>
+<span></span>
+<span>export async function request(method, path, body) {</span>
+<span>  let result;</span>
+<span>  try {</span>
+<span>    result = await api(method, path, body);</span>
+<span>  } catch {</span>
+<span>    throw new ApiError(0, "Can't reach the server. Check your connection and try again.");</span>
+<span>  }</span>
+<span></span>
+<span>  if (!result.ok) {</span>
+<span>    if (result.status === 401 &amp;&amp; path !== "/api/auth/login") {</span>
+<span>      window.dispatchEvent(new Event(SIGNED_OUT_EVENT));</span>
+<span>      throw new ApiError(401, "Your session ended. Log in again to continue.");</span>
+<span>    }</span>
+<span>    const fromServer = result.data &amp;&amp; typeof result.data === "object" ? result.data.error : "";</span>
+<span>    throw new ApiError(result.status, fromServer || `Request failed (${result.status}).`);</span>
+<span>  }</span>
+<span>  return result.data;</span>
+<span>}</span>
+<span></span>
+<span>// A friendly message for errors on forms. Pages pass in their own wording for</span>
+<span>// the statuses they care about, e.g. { 401: "Wrong email or password." }.</span>
+<span>export function messageFor(error, overrides = {}) {</span>
+<span>  if (error instanceof ApiError &amp;&amp; overrides[error.status]) return overrides[error.status];</span>
+<span>  if (error instanceof ApiError &amp;&amp; error.status === 429) {</span>
+<span>    return "Too many tries in a short time. Wait a few minutes, then try again.";</span>
+<span>  }</span>
+<span>  return error.message || "Something went wrong. Try again.";</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/services/authApi.js</h3>
+
+  <pre class="mycodereact">
+<span>// Sign-in routes from server/security/auth.js.</span>
+<span>import { api } from "../api.js";</span>
+<span>import { request } from "./request.js";</span>
+<span></span>
+<span>// GET /api/auth/me -&gt; the signed-in user ({ id, username, role }) or null.</span>
+<span>async function me() {</span>
+<span>  const result = await api("GET", "/api/auth/me");</span>
+<span>  if (result.status === 401) return null; // not signed in = a visitor</span>
+<span>  if (!result.ok) throw new Error("Couldn't check your session.");</span>
+<span>  return result.data.user;</span>
+<span>}</span>
+<span></span>
+<span>// The admin account must also send `code` (6 digits). Everyone else leaves it out.</span>
+<span>async function login({ email, password, code }) {</span>
+<span>  const body = { email, password };</span>
+<span>  if (code) body.code = code;</span>
+<span>  const data = await request("POST", "/api/auth/login", body);</span>
+<span>  return data.user;</span>
+<span>}</span>
+<span></span>
+<span>// 202 means "request received". It doesn't prove a new account was created</span>
+<span>// (so nobody can use this form to find out which emails are registered).</span>
+<span>async function register({ username, email, password }) {</span>
+<span>  return request("POST", "/api/auth/register", { username, email, password });</span>
+<span>}</span>
+<span></span>
+<span>async function logout() {</span>
+<span>  return request("POST", "/api/auth/logout", {});</span>
+<span>}</span>
+<span></span>
+<span>export default { me, login, register, logout };</span>
+  </pre>
+
+  <h3>client/src/auth/AuthContext.jsx</h3>
+
+  <div class="div_p">
+    <p>Shares who is signed in with every page. Nothing secret is saved in the browser. There is no password, no session id, and nothing in localStorage.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// Who is signed in, shared with every page.</span>
+<span>// The server is the real gatekeeper (sessions + requireAuth/requireAdmin); this</span>
+<span>// only decides what to SHOW. Nothing secret is kept in the browser: no password,</span>
+<span>// no session ID, nothing in localStorage. The session cookie is httpOnly, so</span>
+<span>// JavaScript can't read it at all.</span>
+<span>import { createContext, useContext, useEffect, useRef, useState } from "react";</span>
+<span>import authApi from "../services/authApi.js";</span>
+<span>import { SIGNED_OUT_EVENT } from "../services/request.js";</span>
+<span></span>
+<span>const AuthContext = createContext(null);</span>
+<span></span>
+<span>export function AuthProvider({ children }) {</span>
+<span>  const [user, setUser] = useState(null); // { id, username, role } or null</span>
+<span>  const [checking, setChecking] = useState(true); // true until /me answers</span>
+<span>  const [sessionEnded, setSessionEnded] = useState(false); // shows the "signed out" banner</span>
+<span>  const userRef = useRef(null); // the latest user, for the listener below</span>
+<span>  useEffect(() =&gt; {</span>
+<span>    userRef.current = user;</span>
+<span>  }, [user]);</span>
+<span></span>
+<span>  // On first load, ask the server whether this browser already has a session.</span>
+<span>  useEffect(() =&gt; {</span>
+<span>    let ignore = false;</span>
+<span>    authApi</span>
+<span>      .me()</span>
+<span>      .then((found) =&gt; {</span>
+<span>        if (!ignore) setUser(found);</span>
+<span>      })</span>
+<span>      .catch(() =&gt; {</span>
+<span>        if (!ignore) setUser(null);</span>
+<span>      })</span>
+<span>      .finally(() =&gt; {</span>
+<span>        if (!ignore) setChecking(false);</span>
+<span>      });</span>
+<span>    return () =&gt; {</span>
+<span>      ignore = true;</span>
+<span>    };</span>
+<span>  }, []);</span>
+<span></span>
+<span>  // A request found the session had ended: show the visitor view again.</span>
+<span>  useEffect(() =&gt; {</span>
+<span>    const forget = () =&gt; {</span>
+<span>      if (userRef.current) setSessionEnded(true);</span>
+<span>      setUser(null);</span>
+<span>    };</span>
+<span>    window.addEventListener(SIGNED_OUT_EVENT, forget);</span>
+<span>    return () =&gt; window.removeEventListener(SIGNED_OUT_EVENT, forget);</span>
+<span>  }, []);</span>
+<span></span>
+<span>  async function login(fields) {</span>
+<span>    const signedIn = await authApi.login(fields);</span>
+<span>    setUser(signedIn);</span>
+<span>    setSessionEnded(false);</span>
+<span>    return signedIn;</span>
+<span>  }</span>
+<span></span>
+<span>  async function logout() {</span>
+<span>    await authApi.logout();</span>
+<span>    setUser(null);</span>
+<span>  }</span>
+<span></span>
+<span>  const value = {</span>
+<span>    user,</span>
+<span>    checking,</span>
+<span>    isAdmin: user?.role === "admin",</span>
+<span>    login,</span>
+<span>    logout,</span>
+<span>    register: authApi.register,</span>
+<span>    sessionEnded,</span>
+<span>    dismissSessionEnded: () =&gt; setSessionEnded(false),</span>
+<span>  };</span>
+<span>  return &lt;AuthContext.Provider value={value}&gt;{children}&lt;/AuthContext.Provider&gt;;</span>
+<span>}</span>
+<span></span>
+<span>export function useAuth() {</span>
+<span>  return useContext(AuthContext);</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/auth/guards.jsx</h3>
+
+  <div class="div_p">
+    <p>Wrap a page in RequireAuth or RequireAdmin. These only change what the browser shows, and the server checks every request again. safeReturnPath stops a link from sending someone to another website after login. This uses StatusMessage.jsx and NotFound.jsx from the React page.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// Route guards. They only change what the browser shows: the API checks the</span>
+<span>// session again on every request, so hiding a page is never the security.</span>
+<span>import { Navigate, useLocation } from "react-router-dom";</span>
+<span>import { useAuth } from "./AuthContext.jsx";</span>
+<span>import StatusMessage from "../components/StatusMessage.jsx";</span>
+<span>import NotFound from "../pages/NotFound.jsx";</span>
+<span></span>
+<span>// Signed-in members only. Visitors go to /login and come back here afterwards.</span>
+<span>export function RequireAuth({ children }) {</span>
+<span>  const { user, checking } = useAuth();</span>
+<span>  const location = useLocation();</span>
+<span></span>
+<span>  if (checking) return &lt;StatusMessage kind="loading" title="Checking your session" /&gt;;</span>
+<span>  if (!user) {</span>
+<span>    return &lt;Navigate to="/login" replace state={{ from: location.pathname + location.search }} /&gt;;</span>
+<span>  }</span>
+<span>  return children;</span>
+<span>}</span>
+<span></span>
+<span>// The admin only. Everyone else sees an ordinary 404, so the page</span>
+<span>// doesn't advertise that an admin area exists.</span>
+<span>export function RequireAdmin({ children }) {</span>
+<span>  const { user, checking } = useAuth();</span>
+<span></span>
+<span>  if (checking) return &lt;StatusMessage kind="loading" title="Checking your session" /&gt;;</span>
+<span>  if (user?.role !== "admin") return &lt;NotFound /&gt;;</span>
+<span>  return children;</span>
+<span>}</span>
+<span></span>
+<span>// Where to go after signing in. Only same-site paths are allowed ("/games"),</span>
+<span>// never "//evil.example" or a full URL, and members are never sent to /admin.</span>
+<span>export function safeReturnPath(from, fallback = "/") {</span>
+<span>  if (typeof from !== "string") return fallback;</span>
+<span>  if (!from.startsWith("/") || from.startsWith("//") || from.startsWith("/\\")) return fallback;</span>
+<span>  if (from.startsWith("/admin")) return fallback;</span>
+<span>  return from;</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/main.jsx</h3>
+
+  <div class="div_p">
+    <p>AuthProvider goes inside BrowserRouter and wraps the App.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { StrictMode } from "react";</span>
+<span>import { createRoot } from "react-dom/client";</span>
+<span>import { BrowserRouter } from "react-router-dom";</span>
+<span>import { AuthProvider } from "./auth/AuthContext.jsx";</span>
+<span>import App from "./App.jsx";</span>
+<span>import "./login.css";</span>
+<span></span>
+<span>createRoot(document.getElementById("root")).render(</span>
+<span>  &lt;StrictMode&gt;</span>
+<span>    &lt;BrowserRouter&gt;</span>
+<span>      &lt;AuthProvider&gt;</span>
+<span>        &lt;App /&gt;</span>
+<span>      &lt;/AuthProvider&gt;</span>
+<span>    &lt;/BrowserRouter&gt;</span>
+<span>  &lt;/StrictMode&gt;,</span>
+<span>);</span>
+  </pre>
+
+  <h3>client/src/App.jsx</h3>
+
+  <div class="div_p">
+    <p>Replace the Dashboard placeholders with your real pages.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { Route, Routes } from "react-router-dom";</span>
+<span>import { RequireAdmin, RequireAuth } from "./auth/guards.jsx";</span>
+<span>import Login from "./pages/Login.jsx";</span>
+<span>import AdminLogin from "./pages/AdminLogin.jsx";</span>
+<span>import NotFound from "./pages/NotFound.jsx";</span>
+<span></span>
+<span>const Home = () =&gt; &lt;h1&gt;Home&lt;/h1&gt;;</span>
+<span>const Dashboard = () =&gt; &lt;h1&gt;Members only&lt;/h1&gt;;</span>
+<span>const AdminDashboard = () =&gt; &lt;h1&gt;Admin only&lt;/h1&gt;;</span>
+<span></span>
+<span>export default function App() {</span>
+<span>  return (</span>
+<span>    &lt;Routes&gt;</span>
+<span>      &lt;Route index element={&lt;Home /&gt;} /&gt;</span>
+<span>      &lt;Route path="login" element={&lt;Login /&gt;} /&gt;</span>
+<span>      &lt;Route path="admin/login" element={&lt;AdminLogin /&gt;} /&gt;</span>
+<span>      &lt;Route path="dashboard" element={&lt;RequireAuth&gt;&lt;Dashboard /&gt;&lt;/RequireAuth&gt;} /&gt;</span>
+<span>      &lt;Route path="admin/dashboard" element={&lt;RequireAdmin&gt;&lt;AdminDashboard /&gt;&lt;/RequireAdmin&gt;} /&gt;</span>
+<span>      &lt;Route path="*" element={&lt;NotFound /&gt;} /&gt;</span>
+<span>    &lt;/Routes&gt;</span>
+<span>  );</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/pages/Login.jsx</h3>
+
+  <div class="div_p">
+    <p>The Log in and Register tabs. Members only need an email and password. The client checks are only there to give fast feedback, and the server checks everything again.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// Log in or register.</span>
+<span>// Members only need an email and password. The admin's 6-digit code lives on</span>
+<span>// a separate page (/admin/login), so nobody else ever sees a code box.</span>
+<span>import { useId, useRef, useState } from "react";</span>
+<span>import { Link, Navigate, useLocation, useNavigate, useSearchParams } from "react-router-dom";</span>
+<span>import { useAuth } from "../auth/AuthContext.jsx";</span>
+<span>import { safeReturnPath } from "../auth/guards.jsx";</span>
+<span>import { messageFor } from "../services/request.js";</span>
+<span>import usePageTitle from "../hooks/usePageTitle.js";</span>
+<span></span>
+<span>// Same rules as server/security/input.js (parseRegistration, readNewPassword).</span>
+<span>const USERNAME_PATTERN = /^[A-Za-z0-9](?:[A-Za-z0-9_.-]*[A-Za-z0-9])?$/;</span>
+<span></span>
+<span>function checkRegistration({ username, email, password, confirm }) {</span>
+<span>  const problems = {};</span>
+<span>  if (username.length &lt; 3 || username.length &gt; 35) problems.username = "Use 3 to 35 characters.";</span>
+<span>  else if (!USERNAME_PATTERN.test(username)) problems.username = "Use letters, numbers, _ - or . and start and end with a letter or number.";</span>
+<span>  if (!/^\S+@\S+\.\S+$/.test(email)) problems.email = "Enter an email address like name@example.com.";</span>
+<span>  if (password.length &lt; 15 || password.length &gt; 128) problems.password = "Use 15 to 128 characters.";</span>
+<span>  if (confirm !== password) problems.confirm = "The two passwords don't match.";</span>
+<span>  return problems;</span>
+<span>}</span>
+<span></span>
+<span>export default function Login() {</span>
+<span>  usePageTitle("Log in");</span>
+<span>  const { user, checking } = useAuth();</span>
+<span>  const navigate = useNavigate();</span>
+<span>  const location = useLocation();</span>
+<span>  const [searchParams] = useSearchParams();</span>
+<span>  const [tab, setTab] = useState(searchParams.get("tab") === "register" ? "register" : "login");</span>
+<span>  const tabsId = useId();</span>
+<span>  const loginTab = useRef(null);</span>
+<span>  const registerTab = useRef(null);</span>
+<span></span>
+<span>  const returnTo = safeReturnPath(location.state?.from);</span>
+<span></span>
+<span>  // Already signed in? Nothing to do here.</span>
+<span>  if (!checking &amp;&amp; user) return &lt;Navigate to={returnTo} replace /&gt;;</span>
+<span></span>
+<span>  function onTabKey(event) {</span>
+<span>    if (event.key !== "ArrowLeft" &amp;&amp; event.key !== "ArrowRight") return;</span>
+<span>    const next = tab === "login" ? "register" : "login";</span>
+<span>    setTab(next);</span>
+<span>    (next === "login" ? loginTab : registerTab).current?.focus();</span>
+<span>  }</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;div className="page access"&gt;</span>
+<span>      &lt;section className="access__intro"&gt;</span>
+<span>        &lt;h1&gt;Welcome.&lt;/h1&gt;</span>
+<span>        &lt;p&gt;Sign in to your account, or make a new one.&lt;/p&gt;</span>
+<span>      &lt;/section&gt;</span>
+<span></span>
+<span>      &lt;div className="access__card"&gt;</span>
+<span>        &lt;div className="tabs" role="tablist" aria-label="Log in or register" onKeyDown={onTabKey}&gt;</span>
+<span>          &lt;button ref={loginTab} type="button" role="tab" id={`${tabsId}-login`} className="tab" aria-selected={tab === "login"} aria-controls={`${tabsId}-login-panel`} tabIndex={tab === "login" ? 0 : -1} onClick={() =&gt; setTab("login")}&gt;</span>
+<span>            Log in</span>
+<span>          &lt;/button&gt;</span>
+<span>          &lt;button ref={registerTab} type="button" role="tab" id={`${tabsId}-register`} className="tab" aria-selected={tab === "register"} aria-controls={`${tabsId}-register-panel`} tabIndex={tab === "register" ? 0 : -1} onClick={() =&gt; setTab("register")}&gt;</span>
+<span>            Register</span>
+<span>          &lt;/button&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span></span>
+<span>        &lt;div className="access__panel" role="tabpanel" id={`${tabsId}-${tab}-panel`} aria-labelledby={`${tabsId}-${tab}`}&gt;</span>
+<span>          {tab === "login" ? (</span>
+<span>            &lt;LoginForm onDone={() =&gt; navigate(returnTo, { replace: true })} /&gt;</span>
+<span>          ) : (</span>
+<span>            &lt;RegisterForm onDone={() =&gt; navigate(returnTo, { replace: true })} onUseLogin={() =&gt; setTab("login")} /&gt;</span>
+<span>          )}</span>
+<span>        &lt;/div&gt;</span>
+<span></span>
+<span>        &lt;div className="access__guest"&gt;</span>
+<span>          &lt;p className="access__guest-title"&gt;No account needed to look around&lt;/p&gt;</span>
+<span>          &lt;p&gt;You can still look around as a visitor.&lt;/p&gt;</span>
+<span>          &lt;Link className="button" to="/"&gt;Continue without signing in&lt;/Link&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>      &lt;/div&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>}</span>
+<span></span>
+<span>function LoginForm({ onDone }) {</span>
+<span>  const { login } = useAuth();</span>
+<span>  const [email, setEmail] = useState("");</span>
+<span>  const [password, setPassword] = useState("");</span>
+<span>  const [error, setError] = useState("");</span>
+<span>  const [pending, setPending] = useState(false);</span>
+<span>  const inFlight = useRef(false);</span>
+<span></span>
+<span>  async function handleSubmit(event) {</span>
+<span>    event.preventDefault();</span>
+<span>    if (inFlight.current) return;</span>
+<span>    inFlight.current = true;</span>
+<span>    setPending(true);</span>
+<span>    setError("");</span>
+<span>    try {</span>
+<span>      await login({ email: email.trim(), password });</span>
+<span>      onDone();</span>
+<span>    } catch (problem) {</span>
+<span>      setError(messageFor(problem, { 401: "That email and password don't match an account." }));</span>
+<span>      setPassword("");</span>
+<span>    } finally {</span>
+<span>      inFlight.current = false;</span>
+<span>      setPending(false);</span>
+<span>    }</span>
+<span>  }</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;form onSubmit={handleSubmit}&gt;</span>
+<span>      &lt;h2 className="access__title"&gt;Welcome back&lt;/h2&gt;</span>
+<span>      &lt;fieldset disabled={pending}&gt;</span>
+<span>        &lt;div className="field"&gt;</span>
+<span>          &lt;label htmlFor="login-email"&gt;Email&lt;/label&gt;</span>
+<span>          &lt;input id="login-email" className="input" type="email" autoComplete="email" required value={email} onChange={(event) =&gt; setEmail(event.target.value)} /&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>        &lt;div className="field"&gt;</span>
+<span>          &lt;label htmlFor="login-password"&gt;Password&lt;/label&gt;</span>
+<span>          &lt;PasswordInput id="login-password" autoComplete="current-password" value={password} onChange={setPassword} /&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>        {error &amp;&amp; &lt;p className="form-error" role="alert"&gt;{error}&lt;/p&gt;}</span>
+<span>        &lt;div className="form-actions"&gt;</span>
+<span>          &lt;button type="submit" className="button button--primary access__submit"&gt;{pending ? "Logging in..." : "Log in"}&lt;/button&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>        &lt;p className="field__hint access__forgot"&gt;Forgot your password? Password reset by email isn't switched on yet.&lt;/p&gt;</span>
+<span>      &lt;/fieldset&gt;</span>
+<span>    &lt;/form&gt;</span>
+<span>  );</span>
+<span>}</span>
+<span></span>
+<span>function RegisterForm({ onDone, onUseLogin }) {</span>
+<span>  const { register, login } = useAuth();</span>
+<span>  const [form, setForm] = useState({ username: "", email: "", password: "", confirm: "" });</span>
+<span>  const [problems, setProblems] = useState({});</span>
+<span>  const [error, setError] = useState("");</span>
+<span>  const [pending, setPending] = useState(false);</span>
+<span>  const inFlight = useRef(false);</span>
+<span></span>
+<span>  function update(name, value) {</span>
+<span>    setForm((previous) =&gt; ({ ...previous, [name]: value }));</span>
+<span>    setProblems((previous) =&gt; ({ ...previous, [name]: undefined }));</span>
+<span>  }</span>
+<span></span>
+<span>  async function handleSubmit(event) {</span>
+<span>    event.preventDefault();</span>
+<span>    if (inFlight.current) return;</span>
+<span>    const fields = { ...form, username: form.username.trim(), email: form.email.trim() };</span>
+<span>    const found = checkRegistration(fields);</span>
+<span>    setProblems(found);</span>
+<span>    if (Object.keys(found).length) return;</span>
+<span></span>
+<span>    inFlight.current = true;</span>
+<span>    setPending(true);</span>
+<span>    setError("");</span>
+<span>    try {</span>
+<span>      await register({ username: fields.username, email: fields.email, password: fields.password });</span>
+<span>      // The server never says whether an email was already taken, so try</span>
+<span>      // signing in with what was just typed.</span>
+<span>      try {</span>
+<span>        await login({ email: fields.email, password: fields.password });</span>
+<span>        onDone();</span>
+<span>      } catch (signInProblem) {</span>
+<span>        setError(</span>
+<span>          signInProblem.status === 429</span>
+<span>            ? "Too many sign-in attempts from this network. Wait a few minutes, then log in."</span>
+<span>            : "Your request went through, but you couldn't be signed in automatically. If this email already has an account, log in with it instead.",</span>
+<span>        );</span>
+<span>      }</span>
+<span>    } catch (problem) {</span>
+<span>      setError(messageFor(problem, { 409: "That username isn't available. Try another one." }));</span>
+<span>    } finally {</span>
+<span>      inFlight.current = false;</span>
+<span>      setPending(false);</span>
+<span>    }</span>
+<span>  }</span>
+<span></span>
+<span>  const describe = (name, hintId) =&gt; [hintId, problems[name] ? `register-${name}-error` : null].filter(Boolean).join(" ") || undefined;</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;form onSubmit={handleSubmit} noValidate&gt;</span>
+<span>      &lt;h2 className="access__title"&gt;Create an account&lt;/h2&gt;</span>
+<span>      &lt;fieldset disabled={pending}&gt;</span>
+<span>        &lt;div className="field"&gt;</span>
+<span>          &lt;label htmlFor="register-username"&gt;Username&lt;/label&gt;</span>
+<span>          &lt;input id="register-username" className="input" autoComplete="username" value={form.username} onChange={(event) =&gt; update("username", event.target.value)} aria-invalid={Boolean(problems.username)} aria-describedby={describe("username", "register-username-hint")} /&gt;</span>
+<span>          &lt;p id="register-username-hint" className="field__hint"&gt;3 to 35 letters or numbers. You can also use _ - and .&lt;/p&gt;</span>
+<span>          {problems.username &amp;&amp; &lt;p id="register-username-error" className="field__error"&gt;{problems.username}&lt;/p&gt;}</span>
+<span>        &lt;/div&gt;</span>
+<span>        &lt;div className="field"&gt;</span>
+<span>          &lt;label htmlFor="register-email"&gt;Email&lt;/label&gt;</span>
+<span>          &lt;input id="register-email" className="input" type="email" autoComplete="email" value={form.email} onChange={(event) =&gt; update("email", event.target.value)} aria-invalid={Boolean(problems.email)} aria-describedby={describe("email")} /&gt;</span>
+<span>          {problems.email &amp;&amp; &lt;p id="register-email-error" className="field__error"&gt;{problems.email}&lt;/p&gt;}</span>
+<span>        &lt;/div&gt;</span>
+<span>        &lt;div className="field"&gt;</span>
+<span>          &lt;label htmlFor="register-password"&gt;Password&lt;/label&gt;</span>
+<span>          &lt;PasswordInput id="register-password" autoComplete="new-password" value={form.password} onChange={(value) =&gt; update("password", value)} invalid={Boolean(problems.password)} describedBy={describe("password", "register-password-hint")} /&gt;</span>
+<span>          &lt;p id="register-password-hint" className="field__hint"&gt;At least 15 characters. A short sentence you'll remember works well.&lt;/p&gt;</span>
+<span>          {problems.password &amp;&amp; &lt;p id="register-password-error" className="field__error"&gt;{problems.password}&lt;/p&gt;}</span>
+<span>        &lt;/div&gt;</span>
+<span>        &lt;div className="field"&gt;</span>
+<span>          &lt;label htmlFor="register-confirm"&gt;Type the password again&lt;/label&gt;</span>
+<span>          &lt;PasswordInput id="register-confirm" autoComplete="new-password" value={form.confirm} onChange={(value) =&gt; update("confirm", value)} invalid={Boolean(problems.confirm)} describedBy={describe("confirm")} /&gt;</span>
+<span>          {problems.confirm &amp;&amp; &lt;p id="register-confirm-error" className="field__error"&gt;{problems.confirm}&lt;/p&gt;}</span>
+<span>        &lt;/div&gt;</span>
+<span>        {error &amp;&amp; (</span>
+<span>          &lt;p className="form-error" role="alert"&gt;</span>
+<span>            {error}{" "}</span>
+<span>            {error.includes("log in") &amp;&amp; &lt;button type="button" className="text-button" onClick={onUseLogin}&gt;Go to Log in&lt;/button&gt;}</span>
+<span>          &lt;/p&gt;</span>
+<span>        )}</span>
+<span>        &lt;div className="form-actions"&gt;</span>
+<span>          &lt;button type="submit" className="button button--primary access__submit"&gt;{pending ? "Creating account..." : "Create account"}&lt;/button&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>      &lt;/fieldset&gt;</span>
+<span>    &lt;/form&gt;</span>
+<span>  );</span>
+<span>}</span>
+<span></span>
+<span>// Password box with a Show/Hide button (handy for 15+ character passwords).</span>
+<span>export function PasswordInput({ id, value, onChange, autoComplete, invalid = false, describedBy }) {</span>
+<span>  const [visible, setVisible] = useState(false);</span>
+<span>  return (</span>
+<span>    &lt;div className="password"&gt;</span>
+<span>      &lt;input</span>
+<span>        id={id}</span>
+<span>        className="input"</span>
+<span>        type={visible ? "text" : "password"}</span>
+<span>        autoComplete={autoComplete}</span>
+<span>        required</span>
+<span>        value={value}</span>
+<span>        onChange={(event) =&gt; onChange(event.target.value)}</span>
+<span>        aria-invalid={invalid || undefined}</span>
+<span>        aria-describedby={describedBy}</span>
+<span>      /&gt;</span>
+<span>      &lt;button type="button" className="password__toggle" onClick={() =&gt; setVisible((shown) =&gt; !shown)} aria-pressed={visible} aria-label={visible ? "Hide password" : "Show password"}&gt;</span>
+<span>        {visible ? "Hide" : "Show"}</span>
+<span>      &lt;/button&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/pages/AdminLogin.jsx</h3>
+
+  <div class="div_p">
+    <p>The admin sign-in with the 6-digit code. No link points to it, so bookmark /admin/login.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// Owner sign-in: email, password AND the 6-digit code from your authenticator</span>
+<span>// app. Not linked anywhere on the site; bookmark /admin/login.</span>
+<span>// Finding this page doesn't help anyone: the server still needs your password</span>
+<span>// and a fresh code, and it rate-limits every attempt.</span>
+<span>import { useRef, useState } from "react";</span>
+<span>import { Navigate, useNavigate } from "react-router-dom";</span>
+<span>import { useAuth } from "../auth/AuthContext.jsx";</span>
+<span>import { messageFor } from "../services/request.js";</span>
+<span>import usePageTitle from "../hooks/usePageTitle.js";</span>
+<span>import { PasswordInput } from "./Login.jsx";</span>
+<span></span>
+<span>export default function AdminLogin() {</span>
+<span>  usePageTitle("Owner sign-in");</span>
+<span>  const { user, checking, login } = useAuth();</span>
+<span>  const navigate = useNavigate();</span>
+<span>  const [email, setEmail] = useState("");</span>
+<span>  const [password, setPassword] = useState("");</span>
+<span>  const [code, setCode] = useState("");</span>
+<span>  const [error, setError] = useState("");</span>
+<span>  const [pending, setPending] = useState(false);</span>
+<span>  const inFlight = useRef(false);</span>
+<span></span>
+<span>  if (!checking &amp;&amp; user?.role === "admin") return &lt;Navigate to="/admin/dashboard" replace /&gt;;</span>
+<span></span>
+<span>  async function handleSubmit(event) {</span>
+<span>    event.preventDefault();</span>
+<span>    if (inFlight.current) return;</span>
+<span>    const digits = code.replace(/\s/g, "");</span>
+<span>    if (!/^\d{6}$/.test(digits)) {</span>
+<span>      setError("Enter the 6-digit code from your authenticator app.");</span>
+<span>      return;</span>
+<span>    }</span>
+<span>    inFlight.current = true;</span>
+<span>    setPending(true);</span>
+<span>    setError("");</span>
+<span>    try {</span>
+<span>      const signedIn = await login({ email: email.trim(), password, code: digits });</span>
+<span>      navigate(signedIn.role === "admin" ? "/admin/dashboard" : "/", { replace: true });</span>
+<span>    } catch (problem) {</span>
+<span>      setError(</span>
+<span>        messageFor(problem, {</span>
+<span>          401: "That didn't work. Check your email and password, then wait for a new code and try again (each code works once).",</span>
+<span>        }),</span>
+<span>      );</span>
+<span>      setPassword("");</span>
+<span>      setCode("");</span>
+<span>    } finally {</span>
+<span>      inFlight.current = false;</span>
+<span>      setPending(false);</span>
+<span>    }</span>
+<span>  }</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;div className="page page--narrow"&gt;</span>
+<span>      &lt;form className="panel owner-login" onSubmit={handleSubmit} noValidate&gt;</span>
+<span>        &lt;h1 className="owner-login__title"&gt;Owner sign-in&lt;/h1&gt;</span>
+<span>        &lt;p className="owner-login__intro"&gt;For the site owner. You'll need the 6-digit code from your authenticator app.&lt;/p&gt;</span>
+<span>        &lt;fieldset disabled={pending}&gt;</span>
+<span>          &lt;div className="field"&gt;</span>
+<span>            &lt;label htmlFor="owner-email"&gt;Email&lt;/label&gt;</span>
+<span>            &lt;input id="owner-email" className="input" type="email" autoComplete="username" value={email} onChange={(event) =&gt; setEmail(event.target.value)} /&gt;</span>
+<span>          &lt;/div&gt;</span>
+<span>          &lt;div className="field"&gt;</span>
+<span>            &lt;label htmlFor="owner-password"&gt;Password&lt;/label&gt;</span>
+<span>            &lt;PasswordInput id="owner-password" autoComplete="current-password" value={password} onChange={setPassword} /&gt;</span>
+<span>          &lt;/div&gt;</span>
+<span>          &lt;div className="field"&gt;</span>
+<span>            &lt;label htmlFor="owner-code"&gt;6-digit code&lt;/label&gt;</span>
+<span>            &lt;input</span>
+<span>              id="owner-code"</span>
+<span>              className="input owner-login__code"</span>
+<span>              inputMode="numeric"</span>
+<span>              autoComplete="one-time-code"</span>
+<span>              pattern="\d{6}"</span>
+<span>              maxLength={7}</span>
+<span>              placeholder="123456"</span>
+<span>              value={code}</span>
+<span>              onChange={(event) =&gt; setCode(event.target.value.replace(/[^\d ]/g, ""))}</span>
+<span>            /&gt;</span>
+<span>            &lt;p className="field__hint"&gt;Codes change every 30 seconds and each one works once.&lt;/p&gt;</span>
+<span>          &lt;/div&gt;</span>
+<span>          {error &amp;&amp; &lt;p className="form-error" role="alert"&gt;{error}&lt;/p&gt;}</span>
+<span>          &lt;div className="form-actions"&gt;</span>
+<span>            &lt;button type="submit" className="button button--primary"&gt;{pending ? "Checking..." : "Sign in"}&lt;/button&gt;</span>
+<span>          &lt;/div&gt;</span>
+<span>        &lt;/fieldset&gt;</span>
+<span>      &lt;/form&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/login.css</h3>
+
+  <pre class="mycodecss">
+<span>.access, .page--narrow { max-width: 28rem; margin: 2rem auto; padding: 0 1rem; }</span>
+<span>.tabs { display: flex; gap: .5rem; margin-bottom: 1rem; }</span>
+<span>.tab[aria-selected="true"] { font-weight: 700; border-bottom: 2px solid currentColor; }</span>
+<span>fieldset { border: 0; padding: 0; margin: 0; }</span>
+<span>.field { margin-bottom: 1rem; }</span>
+<span>.field label { display: block; margin-bottom: .25rem; }</span>
+<span>.input { width: 100%; padding: .5rem; box-sizing: border-box; }</span>
+<span>.password { display: flex; gap: .5rem; }</span>
+<span>.field__hint { font-size: .85rem; opacity: .75; }</span>
+<span>.field__error, .form-error { color: #b3261e; }</span>
+  </pre>
+
+  <h2 id="step-12-try-it-from-the-terminal">Step 12 Try It From The Terminal</h2>
+
+  <div class="div_p">
+    <p>Start the server first. The cookies file holds a live session, so delete it when you finish.</p>
+  </div>
+
+  <h3>Get a CSRF token</h3>
+
+  <pre class="mycodecli">
+<span>curl -c cookies.txt http://127.0.0.1:3002/api/auth/csrf</span>
+  </pre>
+
+  <h3>Register, using the token from above</h3>
+
+  <pre class="mycodecli">
+<span>curl -b cookies.txt -c cookies.txt -X POST http://127.0.0.1:3002/api/auth/register -H "Content-Type: application/json" -H "X-CSRF-Token: PASTE_TOKEN_HERE" -d '{"username":"tester1","email":"tester1@example.com","password":"a long test password here"}'</span>
+  </pre>
+
+  <h3>Log in</h3>
+
+  <pre class="mycodecli">
+<span>curl -b cookies.txt -c cookies.txt -X POST http://127.0.0.1:3002/api/auth/login -H "Content-Type: application/json" -H "X-CSRF-Token: PASTE_TOKEN_HERE" -d '{"email":"tester1@example.com","password":"a long test password here"}'</span>
+  </pre>
+
+  <h3>See who is signed in, then clean up</h3>
+
+  <pre class="mycodecli">
+<span>curl -b cookies.txt http://127.0.0.1:3002/api/auth/me</span>
+<span>rm cookies.txt</span>
+  </pre>
+
+  <h2 id="before-going-live">Before Going Live</h2>
+
+  <div class="div_p">
+    <ul>
+      <li>Set NODE_ENV=production and TRUST_PROXY_HOPS on the host. The server will not start without them.</li>
+      <li>Set a real SESSION_SECRET and ADMIN_MFA_KEY in the host's settings. Never reuse the local ones.</li>
+      <li>Set CLIENT_ORIGIN to your https address with no slash on the end.</li>
+      <li>Use a database user with only readWrite on your project's database.</li>
+      <li>Add your username to RESERVED_USERNAMES.</li>
+      <li>Run npm audit, and confirm .env is not in Git.</li>
+      <li>Rate limits in app.js and auth.js live in memory, so they reset on restart and count per server. Stop large floods before they reach the server with a service like Cloudflare.</li>
+      <li>Password reset stays off until you connect an email service.</li>
+      <li>Keep a database backup. These layers make attacks harder, but no site is impossible to hack.</li>
+    </ul>
+  </div>
+
+  <br><br><br><br>
+
+  <footer class="footer"> &copy; By Jamar Brown
+
+    <div class="container">
+      <div id='clock'></div>
+    </div>
+  </footer>
+
+  <script src="js/clock.js"></script>
+  <script src="js/copy.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Jamar Brown">
+  <meta name="description" content="This is the page that has all the reusable React code">
+  <title>React Page</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand">Final Companion</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="html_page.html">Html Code</a></li>
+        <li><a href="css_page.html">Css Code</a></li>
+        <li><a href="javaScript.html">JavaScript Code</a></li>
+        <li><a href="setup_page.html">Setup &amp; .env</a></li>
+        <li><a href="react_page.html">React Code</a></li>
+        <li><a href="node_page.html">Node Code</a></li>
+        <li><a href="mongodb_page.html">MongoDB Code</a></li>
+        <li><a href="postgres_page.html">Postgres Code</a></li>
+        <li><a href="security_page.html">Security Code</a></li>
+        <li><a href="migration_page.html">Switch Databases</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <h2>On This Page</h2>
+
+  <div class="div_p">
+    <ul>
+      <li><a href="#what-is-react">What Is React</a></li>
+      <li><a href="#starting-files">Starting Files</a></li>
+      <li><a href="#components-and-props">Components And Props</a></li>
+      <li><a href="#usestate">useState</a></li>
+      <li><a href="#useeffect">useEffect</a></li>
+      <li><a href="#useref">useRef</a></li>
+      <li><a href="#usecontext">useContext</a></li>
+      <li><a href="#custom-hooks">Custom Hooks</a></li>
+      <li><a href="#reusable-components">Reusable Components</a></li>
+      <li><a href="#react-router">React Router</a></li>
+      <li><a href="#talking-to-the-server">Talking To The Server</a></li>
+      <li><a href="#full-pages">Full Pages</a></li>
+    </ul>
+  </div>
+
+  <h2 id="what-is-react">What Is React</h2>
+
+  <div class="div_p">
+    <p>React builds a page out of components. A component is a function that returns what should be on the screen. When its state changes, React runs the function again and updates the page. Terminal setup is on the Setup page. Every example here uses items, so use Find and Replace to change items to games, posts, or whatever your project needs.</p>
+  </div>
+
+  <h2 id="starting-files">Starting Files</h2>
+
+  <h3>client/src/main.jsx</h3>
+
+  <div class="div_p">
+    <p>This is the entry point. BrowserRouter wraps the app so that links and routes work everywhere.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import React from "react";</span>
+<span>import ReactDOM from "react-dom/client";</span>
+<span>import { BrowserRouter } from "react-router-dom";</span>
+<span>import App from "./App";</span>
+<span>import "./index.css";</span>
+<span></span>
+<span>const root = ReactDOM.createRoot(document.getElementById("root"));</span>
+<span>root.render(</span>
+<span>  &lt;React.StrictMode&gt;</span>
+<span>    &lt;BrowserRouter&gt;</span>
+<span>      &lt;App /&gt;</span>
+<span>    &lt;/BrowserRouter&gt;</span>
+<span>  &lt;/React.StrictMode&gt;</span>
+<span>);</span>
+  </pre>
+
+  <h3>client/src/App.jsx with useRoutes</h3>
+
+  <div class="div_p">
+    <p>This is the route list from my class projects. Each path shows one page. The path * catches everything else, so it shows the 404 page.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import React from "react";</span>
+<span>import { useRoutes } from "react-router-dom";</span>
+<span>import Navigation from "./components/Navigation";</span>
+<span>import Items from "./pages/Items";</span>
+<span>import ItemDetails from "./pages/ItemDetails";</span>
+<span>import CreateItem from "./pages/CreateItem";</span>
+<span>import EditItem from "./pages/EditItem";</span>
+<span>import NotFound from "./pages/NotFound";</span>
+<span></span>
+<span>const App = () =&gt; {</span>
+<span>  let element = useRoutes([</span>
+<span>    {</span>
+<span>      path: "/",</span>
+<span>      element: &lt;Items /&gt;,</span>
+<span>    },</span>
+<span>    {</span>
+<span>      path: "/items/:id",</span>
+<span>      element: &lt;ItemDetails /&gt;,</span>
+<span>    },</span>
+<span>    {</span>
+<span>      path: "/new",</span>
+<span>      element: &lt;CreateItem /&gt;,</span>
+<span>    },</span>
+<span>    {</span>
+<span>      path: "/edit/:id",</span>
+<span>      element: &lt;EditItem /&gt;,</span>
+<span>    },</span>
+<span>    {</span>
+<span>      path: "*",</span>
+<span>      element: &lt;NotFound /&gt;,</span>
+<span>    },</span>
+<span>  ]);</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;div className="app"&gt;</span>
+<span>      &lt;Navigation /&gt;</span>
+<span>      &lt;main&gt;{element}&lt;/main&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default App;</span>
+  </pre>
+
+  <h3>client/src/App.jsx with a shared layout</h3>
+
+  <div class="div_p">
+    <p>This is the Rev style. Every Route inside the Layout route shows up where the Layout puts its Outlet.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { Route, Routes } from "react-router-dom";</span>
+<span>import Layout from "./components/Layout";</span>
+<span>import Items from "./pages/Items";</span>
+<span>import ItemDetails from "./pages/ItemDetails";</span>
+<span>import NotFound from "./pages/NotFound";</span>
+<span></span>
+<span>export default function App() {</span>
+<span>  return (</span>
+<span>    &lt;Routes&gt;</span>
+<span>      &lt;Route element={&lt;Layout /&gt;}&gt;</span>
+<span>        &lt;Route index element={&lt;Items /&gt;} /&gt;</span>
+<span>        &lt;Route path="items/:id" element={&lt;ItemDetails /&gt;} /&gt;</span>
+<span>        &lt;Route path="*" element={&lt;NotFound /&gt;} /&gt;</span>
+<span>      &lt;/Route&gt;</span>
+<span>    &lt;/Routes&gt;</span>
+<span>  );</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/components/Layout.jsx</h3>
+
+  <pre class="mycodereact">
+<span>import { Outlet } from "react-router-dom";</span>
+<span>import Navigation from "./Navigation";</span>
+<span></span>
+<span>export default function Layout() {</span>
+<span>  return (</span>
+<span>    &lt;div className="site"&gt;</span>
+<span>      &lt;Navigation /&gt;</span>
+<span>      &lt;main&gt;</span>
+<span>        &lt;Outlet /&gt;</span>
+<span>      &lt;/main&gt;</span>
+<span>      &lt;footer&gt;Made by me&lt;/footer&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/vite.config.js</h3>
+
+  <div class="div_p">
+    <p>The proxy sends every /api request from React on port 5173 to Express on port 3000. That lets you write fetch("/api/items") with no full address and no CORS setup.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { defineConfig } from "vite";</span>
+<span>import react from "@vitejs/plugin-react";</span>
+<span></span>
+<span>export default defineConfig({</span>
+<span>  plugins: [react()],</span>
+<span>  build: {</span>
+<span>    outDir: "../server/public",</span>
+<span>    emptyOutDir: true,</span>
+<span>  },</span>
+<span>  server: {</span>
+<span>    proxy: {</span>
+<span>      "/api": {</span>
+<span>        target: "http://localhost:3000",</span>
+<span>      },</span>
+<span>    },</span>
+<span>  },</span>
+<span>});</span>
+  </pre>
+
+  <h2 id="components-and-props">Components And Props</h2>
+
+  <h3>A basic component</h3>
+
+  <div class="div_p">
+    <p>Props are the values a parent passes in. They read like HTML attributes when you use the component.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>const Greeting = ({ name, color = "black" }) =&gt; {</span>
+<span>  return &lt;h2 style={{ color }}&gt;Hello, {name}!&lt;/h2&gt;;</span>
+<span>};</span>
+<span></span>
+<span>export default Greeting;</span>
+  </pre>
+
+  <h3>Using a component</h3>
+
+  <pre class="mycodereact">
+<span>import Greeting from "./components/Greeting";</span>
+<span></span>
+<span>const Home = () =&gt; {</span>
+<span>  return (</span>
+<span>    &lt;div&gt;</span>
+<span>      &lt;Greeting name="Jamar" /&gt;</span>
+<span>      &lt;Greeting name="Rev" color="red" /&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default Home;</span>
+  </pre>
+
+  <h3>A wrapper component with children</h3>
+
+  <div class="div_p">
+    <p>Whatever you put between the opening and closing tags comes in as children.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>const Panel = ({ title, children }) =&gt; {</span>
+<span>  return (</span>
+<span>    &lt;section className="panel"&gt;</span>
+<span>      &lt;h2&gt;{title}&lt;/h2&gt;</span>
+<span>      {children}</span>
+<span>    &lt;/section&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default Panel;</span>
+<span></span>
+<span>// Using it:</span>
+<span>// &lt;Panel title="About"&gt;</span>
+<span>//   &lt;p&gt;Anything can go in here.&lt;/p&gt;</span>
+<span>// &lt;/Panel&gt;</span>
+  </pre>
+
+  <h3>Show something only sometimes</h3>
+
+  <pre class="mycodereact">
+<span>const Message = ({ error, loading, items }) =&gt; {</span>
+<span>  // Return early when the whole component changes.</span>
+<span>  if (loading) return &lt;p&gt;Loading...&lt;/p&gt;;</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;div&gt;</span>
+<span>      {/* &amp;&amp; shows the right side only when the left side is true */}</span>
+<span>      {error &amp;&amp; &lt;p role="alert"&gt;{error}&lt;/p&gt;}</span>
+<span></span>
+<span>      {/* ? : picks one of two options */}</span>
+<span>      {items.length &gt; 0 ? &lt;p&gt;{items.length} found&lt;/p&gt; : &lt;p&gt;Nothing here yet.&lt;/p&gt;}</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default Message;</span>
+  </pre>
+
+  <h3>Show a list with map</h3>
+
+  <div class="div_p">
+    <p>Every item needs a unique key so React can tell the rows apart. Use the database id, not the array index.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>const ItemList = ({ items }) =&gt; {</span>
+<span>  return (</span>
+<span>    &lt;ul&gt;</span>
+<span>      {items.map((item) =&gt; (</span>
+<span>        &lt;li key={item.id}&gt;{item.title}&lt;/li&gt;</span>
+<span>      ))}</span>
+<span>    &lt;/ul&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default ItemList;</span>
+  </pre>
+
+  <h3>client/src/components/Card.jsx</h3>
+
+  <pre class="mycodereact">
+<span>import { Link } from "react-router-dom";</span>
+<span></span>
+<span>const Card = ({ id, title, image, description }) =&gt; {</span>
+<span>  return (</span>
+<span>    &lt;article className="card"&gt;</span>
+<span>      {image &amp;&amp; &lt;img src={image} alt={title} loading="lazy" /&gt;}</span>
+<span>      &lt;h3&gt;{title}&lt;/h3&gt;</span>
+<span>      &lt;p&gt;{description}&lt;/p&gt;</span>
+<span>      &lt;Link to={`/items/${id}`}&gt;Read More&lt;/Link&gt;</span>
+<span>      &lt;Link to={`/edit/${id}`}&gt;Edit&lt;/Link&gt;</span>
+<span>    &lt;/article&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default Card;</span>
+  </pre>
+
+  <h2 id="usestate">useState</h2>
+
+  <div class="div_p">
+    <p>useState gives a component memory. It returns the current value and a function that changes it. Calling that function makes React redraw the component with the new value.</p>
+  </div>
+
+  <h3>Counter</h3>
+
+  <pre class="mycodereact">
+<span>import { useState } from "react";</span>
+<span></span>
+<span>const Counter = () =&gt; {</span>
+<span>  const [count, setCount] = useState(0);</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;div&gt;</span>
+<span>      &lt;p&gt;Count: {count}&lt;/p&gt;</span>
+<span>      {/* Use the previous value whenever the new value depends on it */}</span>
+<span>      &lt;button onClick={() =&gt; setCount((previous) =&gt; previous + 1)}&gt;Add&lt;/button&gt;</span>
+<span>      &lt;button onClick={() =&gt; setCount(0)}&gt;Reset&lt;/button&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default Counter;</span>
+  </pre>
+
+  <h3>Show and hide toggle</h3>
+
+  <pre class="mycodereact">
+<span>import { useState } from "react";</span>
+<span></span>
+<span>const ShowMore = ({ text }) =&gt; {</span>
+<span>  const [open, setOpen] = useState(false);</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;div&gt;</span>
+<span>      &lt;button type="button" onClick={() =&gt; setOpen((previous) =&gt; !previous)}&gt;</span>
+<span>        {open ? "Hide" : "Show"}</span>
+<span>      &lt;/button&gt;</span>
+<span>      {open &amp;&amp; &lt;p&gt;{text}&lt;/p&gt;}</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default ShowMore;</span>
+  </pre>
+
+  <h3>One text input</h3>
+
+  <div class="div_p">
+    <p>The input shows what is in state, and every key press updates state. This is called a controlled input.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { useState } from "react";</span>
+<span></span>
+<span>const Search = () =&gt; {</span>
+<span>  const [search, setSearch] = useState("");</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;input</span>
+<span>      type="text"</span>
+<span>      value={search}</span>
+<span>      onChange={(event) =&gt; setSearch(event.target.value)}</span>
+<span>      placeholder="Search"</span>
+<span>    /&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default Search;</span>
+  </pre>
+
+  <h3>A whole form in one object</h3>
+
+  <div class="div_p">
+    <p>One handleChange works for every field, as long as each input's name matches a key in the object. Always copy the old object with ...previous, or the other fields get lost.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { useState } from "react";</span>
+<span></span>
+<span>const SignUp = () =&gt; {</span>
+<span>  const [form, setForm] = useState({ name: "", email: "" });</span>
+<span></span>
+<span>  const handleChange = (event) =&gt; {</span>
+<span>    const { name, value } = event.target;</span>
+<span></span>
+<span>    setForm((previous) =&gt; ({ ...previous, [name]: value }));</span>
+<span>  };</span>
+<span></span>
+<span>  const handleSubmit = (event) =&gt; {</span>
+<span>    event.preventDefault(); // stops the browser from reloading the page</span>
+<span>    console.log(form);</span>
+<span>  };</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;form onSubmit={handleSubmit}&gt;</span>
+<span>      &lt;label htmlFor="name"&gt;Name&lt;/label&gt;</span>
+<span>      &lt;input id="name" name="name" value={form.name} onChange={handleChange} /&gt;</span>
+<span></span>
+<span>      &lt;label htmlFor="email"&gt;Email&lt;/label&gt;</span>
+<span>      &lt;input id="email" name="email" type="email" value={form.email} onChange={handleChange} /&gt;</span>
+<span></span>
+<span>      &lt;button type="submit"&gt;Submit&lt;/button&gt;</span>
+<span>    &lt;/form&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default SignUp;</span>
+  </pre>
+
+  <h3>Add, update, and remove in an array</h3>
+
+  <div class="div_p">
+    <p>Never use push or splice on state. Make a new array so React can see that it changed.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { useState } from "react";</span>
+<span></span>
+<span>const Todos = () =&gt; {</span>
+<span>  const [todos, setTodos] = useState([]);</span>
+<span>  const [text, setText] = useState("");</span>
+<span></span>
+<span>  const addTodo = (event) =&gt; {</span>
+<span>    event.preventDefault();</span>
+<span>    if (!text.trim()) return;</span>
+<span></span>
+<span>    setTodos((previous) =&gt; [</span>
+<span>      ...previous,</span>
+<span>      { id: crypto.randomUUID(), text: text.trim(), done: false },</span>
+<span>    ]);</span>
+<span>    setText("");</span>
+<span>  };</span>
+<span></span>
+<span>  const toggleTodo = (id) =&gt; {</span>
+<span>    setTodos((previous) =&gt;</span>
+<span>      previous.map((todo) =&gt; (todo.id === id ? { ...todo, done: !todo.done } : todo)),</span>
+<span>    );</span>
+<span>  };</span>
+<span></span>
+<span>  const removeTodo = (id) =&gt; {</span>
+<span>    setTodos((previous) =&gt; previous.filter((todo) =&gt; todo.id !== id));</span>
+<span>  };</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;div&gt;</span>
+<span>      &lt;form onSubmit={addTodo}&gt;</span>
+<span>        &lt;input value={text} onChange={(event) =&gt; setText(event.target.value)} /&gt;</span>
+<span>        &lt;button type="submit"&gt;Add&lt;/button&gt;</span>
+<span>      &lt;/form&gt;</span>
+<span></span>
+<span>      &lt;ul&gt;</span>
+<span>        {todos.map((todo) =&gt; (</span>
+<span>          &lt;li key={todo.id}&gt;</span>
+<span>            &lt;label&gt;</span>
+<span>              &lt;input type="checkbox" checked={todo.done} onChange={() =&gt; toggleTodo(todo.id)} /&gt;</span>
+<span>              {todo.text}</span>
+<span>            &lt;/label&gt;</span>
+<span>            &lt;button type="button" onClick={() =&gt; removeTodo(todo.id)}&gt;Remove&lt;/button&gt;</span>
+<span>          &lt;/li&gt;</span>
+<span>        ))}</span>
+<span>      &lt;/ul&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default Todos;</span>
+  </pre>
+
+  <h3>Start state from a slow calculation</h3>
+
+  <div class="div_p">
+    <p>Passing a function means the calculation only runs the first time, not on every redraw.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>const [timeLeft, setTimeLeft] = useState(() =&gt; getTimeLeft(startsAt));</span>
+  </pre>
+
+  <h2 id="useeffect">useEffect</h2>
+
+  <div class="div_p">
+    <p>useEffect runs code after the component is on the screen. Use it to reach outside of React, such as fetching data, starting a timer, or listening for events. The array at the end says when to run it again.</p>
+  </div>
+
+  <h3>The three dependency options</h3>
+
+  <pre class="mycodereact">
+<span>import { useEffect } from "react";</span>
+<span></span>
+<span>// Runs once, when the component first shows up.</span>
+<span>useEffect(() =&gt; {</span>
+<span>  console.log("Page loaded");</span>
+<span>}, []);</span>
+<span></span>
+<span>// Runs once, and again every time id changes.</span>
+<span>useEffect(() =&gt; {</span>
+<span>  console.log("New id:", id);</span>
+<span>}, [id]);</span>
+<span></span>
+<span>// No array: runs after every redraw. You almost never want this.</span>
+<span>useEffect(() =&gt; {</span>
+<span>  console.log("Redrew");</span>
+<span>});</span>
+  </pre>
+
+  <h3>Fetch data when the page loads</h3>
+
+  <div class="div_p">
+    <p>This is the pattern I use the most. It tracks loading and error, and the ignore flag drops a response that comes back after the user has already left the page. Keep the ignore flag, because React StrictMode runs effects twice in development.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { useEffect, useState } from "react";</span>
+<span></span>
+<span>const Items = () =&gt; {</span>
+<span>  const [items, setItems] = useState([]);</span>
+<span>  const [loading, setLoading] = useState(true);</span>
+<span>  const [error, setError] = useState("");</span>
+<span></span>
+<span>  useEffect(() =&gt; {</span>
+<span>    let ignore = false;</span>
+<span></span>
+<span>    const fetchItems = async () =&gt; {</span>
+<span>      try {</span>
+<span>        const response = await fetch("/api/items");</span>
+<span></span>
+<span>        if (!response.ok) {</span>
+<span>          throw new Error(`Request failed (${response.status}).`);</span>
+<span>        }</span>
+<span></span>
+<span>        const data = await response.json();</span>
+<span></span>
+<span>        if (!ignore) {</span>
+<span>          setItems(data);</span>
+<span>        }</span>
+<span>      } catch (problem) {</span>
+<span>        if (!ignore) {</span>
+<span>          console.error("Error loading items:", problem);</span>
+<span>          setError("Unable to load items. Please try again.");</span>
+<span>        }</span>
+<span>      } finally {</span>
+<span>        if (!ignore) {</span>
+<span>          setLoading(false);</span>
+<span>        }</span>
+<span>      }</span>
+<span>    };</span>
+<span></span>
+<span>    fetchItems();</span>
+<span></span>
+<span>    return () =&gt; {</span>
+<span>      ignore = true;</span>
+<span>    };</span>
+<span>  }, []);</span>
+<span></span>
+<span>  if (loading) return &lt;p role="status"&gt;Loading...&lt;/p&gt;;</span>
+<span>  if (error) return &lt;p role="alert"&gt;{error}&lt;/p&gt;;</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;ul&gt;</span>
+<span>      {items.map((item) =&gt; (</span>
+<span>        &lt;li key={item.id}&gt;{item.title}&lt;/li&gt;</span>
+<span>      ))}</span>
+<span>    &lt;/ul&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default Items;</span>
+  </pre>
+
+  <h3>Fetch again when the URL changes</h3>
+
+  <pre class="mycodereact">
+<span>import { useEffect, useState } from "react";</span>
+<span>import { useParams } from "react-router-dom";</span>
+<span></span>
+<span>const ItemPage = () =&gt; {</span>
+<span>  const { id } = useParams();</span>
+<span>  const [item, setItem] = useState(null);</span>
+<span></span>
+<span>  useEffect(() =&gt; {</span>
+<span>    let ignore = false;</span>
+<span></span>
+<span>    const fetchItem = async () =&gt; {</span>
+<span>      const response = await fetch(`/api/items/${id}`);</span>
+<span>      const data = await response.json();</span>
+<span></span>
+<span>      if (!ignore) setItem(data);</span>
+<span>    };</span>
+<span></span>
+<span>    fetchItem();</span>
+<span></span>
+<span>    return () =&gt; {</span>
+<span>      ignore = true;</span>
+<span>    };</span>
+<span>  }, [id]); // Runs again when /items/1 becomes /items/2</span>
+<span></span>
+<span>  if (!item) return &lt;p&gt;Loading...&lt;/p&gt;;</span>
+<span></span>
+<span>  return &lt;h2&gt;{item.title}&lt;/h2&gt;;</span>
+<span>};</span>
+<span></span>
+<span>export default ItemPage;</span>
+  </pre>
+
+  <h3>A timer with cleanup</h3>
+
+  <div class="div_p">
+    <p>This is Countdown.jsx from xenoblade1_Locations. The function returned from useEffect is the cleanup. It stops the timer when the component goes away.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { useEffect, useState } from "react";</span>
+<span></span>
+<span>const getTimeLeft = (startsAt) =&gt; {</span>
+<span>  const diff = new Date(startsAt).getTime() - Date.now();</span>
+<span>  if (diff &lt;= 0) return null;</span>
+<span>  return {</span>
+<span>    days: Math.floor(diff / (1000 * 60 * 60 * 24)),</span>
+<span>    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),</span>
+<span>    minutes: Math.floor((diff / (1000 * 60)) % 60),</span>
+<span>    seconds: Math.floor((diff / 1000) % 60),</span>
+<span>  };</span>
+<span>};</span>
+<span></span>
+<span>const Countdown = ({ startsAt }) =&gt; {</span>
+<span>  const [timeLeft, setTimeLeft] = useState(() =&gt; getTimeLeft(startsAt));</span>
+<span></span>
+<span>  useEffect(() =&gt; {</span>
+<span>    const timer = setInterval(() =&gt; setTimeLeft(getTimeLeft(startsAt)), 1000);</span>
+<span>    return () =&gt; clearInterval(timer);</span>
+<span>  }, [startsAt]);</span>
+<span></span>
+<span>  if (!timeLeft) {</span>
+<span>    return &lt;p&gt;This event has passed.&lt;/p&gt;;</span>
+<span>  }</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;p&gt;</span>
+<span>      {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s</span>
+<span>    &lt;/p&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default Countdown;</span>
+  </pre>
+
+  <h3>Listen for a window event</h3>
+
+  <pre class="mycodereact">
+<span>import { useEffect, useState } from "react";</span>
+<span></span>
+<span>const WindowWidth = () =&gt; {</span>
+<span>  const [width, setWidth] = useState(window.innerWidth);</span>
+<span></span>
+<span>  useEffect(() =&gt; {</span>
+<span>    const handleResize = () =&gt; setWidth(window.innerWidth);</span>
+<span></span>
+<span>    window.addEventListener("resize", handleResize);</span>
+<span>    return () =&gt; window.removeEventListener("resize", handleResize);</span>
+<span>  }, []);</span>
+<span></span>
+<span>  return &lt;p&gt;The window is {width}px wide.&lt;/p&gt;;</span>
+<span>};</span>
+<span></span>
+<span>export default WindowWidth;</span>
+  </pre>
+
+  <h3>Scroll to the top on a new page</h3>
+
+  <div class="div_p">
+    <p>Put this in Layout.jsx. This one came from Rev.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { useEffect } from "react";</span>
+<span>import { useLocation } from "react-router-dom";</span>
+<span></span>
+<span>const { pathname } = useLocation();</span>
+<span></span>
+<span>useEffect(() =&gt; {</span>
+<span>  window.scrollTo(0, 0);</span>
+<span>}, [pathname]);</span>
+  </pre>
+
+  <h2 id="useref">useRef</h2>
+
+  <div class="div_p">
+    <p>useRef keeps a value that survives redraws, but changing it does not redraw the page. Use it for a value the screen does not show, or to reach a real HTML element.</p>
+  </div>
+
+  <h3>Stop a double click from submitting twice</h3>
+
+  <div class="div_p">
+    <p>State updates wait for the next redraw, so two fast clicks could both get through. A ref changes right away.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { useRef, useState } from "react";</span>
+<span></span>
+<span>const SaveButton = ({ onSave }) =&gt; {</span>
+<span>  const [saving, setSaving] = useState(false);</span>
+<span>  const inFlight = useRef(false);</span>
+<span></span>
+<span>  const handleClick = async () =&gt; {</span>
+<span>    if (inFlight.current) return;</span>
+<span></span>
+<span>    inFlight.current = true;</span>
+<span>    setSaving(true);</span>
+<span></span>
+<span>    try {</span>
+<span>      await onSave();</span>
+<span>    } finally {</span>
+<span>      inFlight.current = false;</span>
+<span>      setSaving(false);</span>
+<span>    }</span>
+<span>  };</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;button type="button" disabled={saving} onClick={handleClick}&gt;</span>
+<span>      {saving ? "Saving..." : "Save"}</span>
+<span>    &lt;/button&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default SaveButton;</span>
+  </pre>
+
+  <h3>Focus an input</h3>
+
+  <pre class="mycodereact">
+<span>import { useEffect, useRef } from "react";</span>
+<span></span>
+<span>const FocusInput = () =&gt; {</span>
+<span>  const input = useRef(null);</span>
+<span></span>
+<span>  useEffect(() =&gt; {</span>
+<span>    input.current.focus();</span>
+<span>  }, []);</span>
+<span></span>
+<span>  return &lt;input ref={input} /&gt;;</span>
+<span>};</span>
+<span></span>
+<span>export default FocusInput;</span>
+  </pre>
+
+  <h2 id="usecontext">useContext</h2>
+
+  <div class="div_p">
+    <p>Context shares a value with every component inside the Provider, so you do not have to pass props down through each layer. The login on the Security page uses this same pattern.</p>
+  </div>
+
+  <h3>client/src/context/CartContext.jsx</h3>
+
+  <pre class="mycodereact">
+<span>import { createContext, useContext, useState } from "react";</span>
+<span></span>
+<span>const CartContext = createContext(null);</span>
+<span></span>
+<span>export function CartProvider({ children }) {</span>
+<span>  const [cart, setCart] = useState([]);</span>
+<span></span>
+<span>  const addToCart = (item) =&gt; {</span>
+<span>    setCart((previous) =&gt; [...previous, item]);</span>
+<span>  };</span>
+<span></span>
+<span>  const value = { cart, addToCart, count: cart.length };</span>
+<span></span>
+<span>  return &lt;CartContext.Provider value={value}&gt;{children}&lt;/CartContext.Provider&gt;;</span>
+<span>}</span>
+<span></span>
+<span>export function useCart() {</span>
+<span>  return useContext(CartContext);</span>
+<span>}</span>
+  </pre>
+
+  <h3>Wrap the app in main.jsx</h3>
+
+  <pre class="mycodereact">
+<span>&lt;BrowserRouter&gt;</span>
+<span>  &lt;CartProvider&gt;</span>
+<span>    &lt;App /&gt;</span>
+<span>  &lt;/CartProvider&gt;</span>
+<span>&lt;/BrowserRouter&gt;</span>
+  </pre>
+
+  <h3>Use it in any component</h3>
+
+  <pre class="mycodereact">
+<span>import { useCart } from "../context/CartContext";</span>
+<span></span>
+<span>const CartButton = ({ item }) =&gt; {</span>
+<span>  const { addToCart, count } = useCart();</span>
+<span></span>
+<span>  return &lt;button onClick={() =&gt; addToCart(item)}&gt;Add to cart ({count})&lt;/button&gt;;</span>
+<span>};</span>
+<span></span>
+<span>export default CartButton;</span>
+  </pre>
+
+  <h2 id="custom-hooks">Custom Hooks</h2>
+
+  <div class="div_p">
+    <p>A custom hook is a function that starts with use and calls other hooks. It lets several components share the same logic.</p>
+  </div>
+
+  <h3>client/src/hooks/useFetch.js</h3>
+
+  <div class="div_p">
+    <p>This is the fetch pattern from above, packed into one line for your pages to use. Write const { data, loading, error } = useFetch("/api/items");</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { useEffect, useState } from "react";</span>
+<span></span>
+<span>export default function useFetch(url) {</span>
+<span>  const [data, setData] = useState(null);</span>
+<span>  const [loading, setLoading] = useState(true);</span>
+<span>  const [error, setError] = useState("");</span>
+<span></span>
+<span>  useEffect(() =&gt; {</span>
+<span>    let ignore = false;</span>
+<span></span>
+<span>    const load = async () =&gt; {</span>
+<span>      setLoading(true);</span>
+<span>      setError("");</span>
+<span></span>
+<span>      try {</span>
+<span>        const response = await fetch(url);</span>
+<span></span>
+<span>        if (!response.ok) {</span>
+<span>          throw new Error(`Request failed (${response.status}).`);</span>
+<span>        }</span>
+<span></span>
+<span>        const json = await response.json();</span>
+<span></span>
+<span>        if (!ignore) setData(json);</span>
+<span>      } catch (problem) {</span>
+<span>        if (!ignore) setError(problem.message);</span>
+<span>      } finally {</span>
+<span>        if (!ignore) setLoading(false);</span>
+<span>      }</span>
+<span>    };</span>
+<span></span>
+<span>    load();</span>
+<span></span>
+<span>    return () =&gt; {</span>
+<span>      ignore = true;</span>
+<span>    };</span>
+<span>  }, [url]);</span>
+<span></span>
+<span>  return { data, loading, error };</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/hooks/usePageTitle.js</h3>
+
+  <div class="div_p">
+    <p>Sets the browser tab title. usePageTitle("Games") shows Games | My App.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { useEffect } from "react";</span>
+<span></span>
+<span>export default function usePageTitle(title) {</span>
+<span>  useEffect(() =&gt; {</span>
+<span>    document.title = title ? `${title} | My App` : "My App";</span>
+<span>  }, [title]);</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/hooks/useElementWidth.js</h3>
+
+  <div class="div_p">
+    <p>Measures an element and updates when it resizes. Rev uses this to redraw charts at the right size. Write const [ref, width] = useElementWidth(); and put ref={ref} on the element.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { useEffect, useRef, useState } from "react";</span>
+<span></span>
+<span>// Measures an element's width and updates when it resizes (charts use this to</span>
+<span>// redraw at the right size). Returns [ref, width].</span>
+<span>export default function useElementWidth(initial = 600) {</span>
+<span>  const ref = useRef(null);</span>
+<span>  const [width, setWidth] = useState(initial);</span>
+<span></span>
+<span>  useEffect(() =&gt; {</span>
+<span>    const element = ref.current;</span>
+<span>    if (!element) return undefined;</span>
+<span>    setWidth(element.clientWidth || initial);</span>
+<span>    const observer = new ResizeObserver(([entry]) =&gt; {</span>
+<span>      setWidth(Math.round(entry.contentRect.width));</span>
+<span>    });</span>
+<span>    observer.observe(element);</span>
+<span>    return () =&gt; observer.disconnect();</span>
+<span>  }, [initial]);</span>
+<span></span>
+<span>  return [ref, width];</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="reusable-components">Reusable Components</h2>
+
+  <h3>client/src/components/Navigation.jsx</h3>
+
+  <pre class="mycodereact">
+<span>import { Link } from "react-router-dom";</span>
+<span></span>
+<span>const Navigation = () =&gt; {</span>
+<span>  return (</span>
+<span>    &lt;nav&gt;</span>
+<span>      &lt;h1&gt;My App&lt;/h1&gt;</span>
+<span>      &lt;ul&gt;</span>
+<span>        &lt;li&gt;</span>
+<span>          &lt;Link to="/"&gt;Home&lt;/Link&gt;</span>
+<span>        &lt;/li&gt;</span>
+<span>        &lt;li&gt;</span>
+<span>          &lt;Link to="/new"&gt;Add New&lt;/Link&gt;</span>
+<span>        &lt;/li&gt;</span>
+<span>      &lt;/ul&gt;</span>
+<span>    &lt;/nav&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default Navigation;</span>
+  </pre>
+
+  <h3>client/src/components/StatusMessage.jsx</h3>
+
+  <div class="div_p">
+    <p>Loading, empty, and error messages in one place. Use it like this: StatusMessage kind="error" title="Unable to load".</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// kind: "loading" | "empty" | "error"</span>
+<span>export default function StatusMessage({ kind = "empty", title, children, action }) {</span>
+<span>  const role = kind === "error" ? "alert" : "status";</span>
+<span>  return (</span>
+<span>    &lt;div className={`status status--${kind}`} role={role}&gt;</span>
+<span>      {title &amp;&amp; &lt;p className="status__title"&gt;{title}&lt;/p&gt;}</span>
+<span>      {children &amp;&amp; &lt;div className="status__text"&gt;{children}&lt;/div&gt;}</span>
+<span>      {action &amp;&amp; &lt;div className="status__action"&gt;{action}&lt;/div&gt;}</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/components/DeleteButton.jsx</h3>
+
+  <div class="div_p">
+    <p>A delete button with an inline "are you sure" box instead of a browser pop-up. It also shows the error if the delete fails. onDelete needs to be an async function that throws on failure.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { useId, useRef, useState } from "react";</span>
+<span></span>
+<span>export default function DeleteButton({ itemName, onDelete, label = "Delete", disabled = false }) {</span>
+<span>  const [confirming, setConfirming] = useState(false);</span>
+<span>  const [pending, setPending] = useState(false);</span>
+<span>  const [error, setError] = useState("");</span>
+<span>  const inFlight = useRef(false); // blocks a double click from deleting twice</span>
+<span>  const trigger = useRef(null);</span>
+<span>  const messageId = useId();</span>
+<span></span>
+<span>  function cancel() {</span>
+<span>    if (inFlight.current) return;</span>
+<span>    setConfirming(false);</span>
+<span>    setError("");</span>
+<span>    trigger.current?.focus();</span>
+<span>  }</span>
+<span></span>
+<span>  async function confirm() {</span>
+<span>    if (inFlight.current || disabled) return;</span>
+<span>    inFlight.current = true;</span>
+<span>    setPending(true);</span>
+<span>    setError("");</span>
+<span>    try {</span>
+<span>      await onDelete();</span>
+<span>      setConfirming(false);</span>
+<span>    } catch (problem) {</span>
+<span>      setError(problem.message || "Couldn't delete it. Try again.");</span>
+<span>    } finally {</span>
+<span>      inFlight.current = false;</span>
+<span>      setPending(false);</span>
+<span>    }</span>
+<span>  }</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;div className="delete-control"&gt;</span>
+<span>      &lt;button</span>
+<span>        ref={trigger}</span>
+<span>        type="button"</span>
+<span>        disabled={disabled || pending}</span>
+<span>        aria-expanded={confirming}</span>
+<span>        onClick={() =&gt; setConfirming(true)}</span>
+<span>      &gt;</span>
+<span>        {label}</span>
+<span>      &lt;/button&gt;</span>
+<span></span>
+<span>      {confirming &amp;&amp; (</span>
+<span>        &lt;div</span>
+<span>          role="group"</span>
+<span>          aria-labelledby={messageId}</span>
+<span>          onKeyDown={(event) =&gt; {</span>
+<span>            if (event.key === "Escape") {</span>
+<span>              event.preventDefault();</span>
+<span>              cancel();</span>
+<span>            }</span>
+<span>          }}</span>
+<span>        &gt;</span>
+<span>          &lt;p id={messageId}&gt;Delete "{itemName}"? This can't be undone.&lt;/p&gt;</span>
+<span>          {error &amp;&amp; &lt;p role="alert"&gt;{error}&lt;/p&gt;}</span>
+<span>          &lt;button type="button" autoFocus disabled={pending} onClick={cancel}&gt;</span>
+<span>            Keep it</span>
+<span>          &lt;/button&gt;</span>
+<span>          &lt;button type="button" disabled={pending} onClick={confirm}&gt;</span>
+<span>            {pending ? "Deleting..." : "Yes, delete"}</span>
+<span>          &lt;/button&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>      )}</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/pages/NotFound.jsx</h3>
+
+  <pre class="mycodereact">
+<span>import { Link } from "react-router-dom";</span>
+<span></span>
+<span>export default function NotFound() {</span>
+<span>  return (</span>
+<span>    &lt;section&gt;</span>
+<span>      &lt;h2&gt;404 - Page Not Found&lt;/h2&gt;</span>
+<span>      &lt;Link to="/"&gt;Go back home&lt;/Link&gt;</span>
+<span>    &lt;/section&gt;</span>
+<span>  );</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/theme.js for light and dark mode</h3>
+
+  <div class="div_p">
+    <p>This came from Rev. The choice is saved in localStorage. Call applySavedTheme() in main.jsx before render, then write your colors under html[data-theme="dark"] in your CSS.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>const KEY = "app-theme";</span>
+<span></span>
+<span>function paint(theme) {</span>
+<span>  document.documentElement.dataset.theme = theme;</span>
+<span>}</span>
+<span></span>
+<span>export function applySavedTheme() {</span>
+<span>  let saved = null;</span>
+<span>  try {</span>
+<span>    saved = localStorage.getItem(KEY);</span>
+<span>  } catch {</span>
+<span>    // Private windows can block storage; the default theme still works.</span>
+<span>  }</span>
+<span>  paint(saved === "dark" ? "dark" : "light");</span>
+<span>}</span>
+<span></span>
+<span>export function currentTheme() {</span>
+<span>  return document.documentElement.dataset.theme === "dark" ? "dark" : "light";</span>
+<span>}</span>
+<span></span>
+<span>export function saveTheme(theme) {</span>
+<span>  paint(theme);</span>
+<span>  try {</span>
+<span>    localStorage.setItem(KEY, theme);</span>
+<span>  } catch {</span>
+<span>    // Ignore: the theme still changes for this visit.</span>
+<span>  }</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/components/ThemeToggle.jsx</h3>
+
+  <pre class="mycodereact">
+<span>import { useState } from "react";</span>
+<span>import { currentTheme, saveTheme } from "../theme";</span>
+<span></span>
+<span>export default function ThemeToggle() {</span>
+<span>  const [theme, setTheme] = useState(currentTheme);</span>
+<span>  const next = theme === "dark" ? "light" : "dark";</span>
+<span></span>
+<span>  const handleClick = () =&gt; {</span>
+<span>    saveTheme(next);</span>
+<span>    setTheme(next);</span>
+<span>  };</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;button type="button" onClick={handleClick}&gt;</span>
+<span>      Switch to {next} theme</span>
+<span>    &lt;/button&gt;</span>
+<span>  );</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="react-router">React Router</h2>
+
+  <h3>Link to another page</h3>
+
+  <div class="div_p">
+    <p>Use Link instead of an a tag for pages in your own site, so the page does not reload.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { Link } from "react-router-dom";</span>
+<span></span>
+<span>&lt;Link to="/items"&gt;All Items&lt;/Link&gt;</span>
+<span>&lt;Link to={`/items/${item.id}`}&gt;{item.title}&lt;/Link&gt;</span>
+  </pre>
+
+  <h3>Read the id from the URL</h3>
+
+  <div class="div_p">
+    <p>The name matches the :id in your route path.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { useParams } from "react-router-dom";</span>
+<span></span>
+<span>const { id } = useParams();</span>
+  </pre>
+
+  <h3>Go to another page from code</h3>
+
+  <pre class="mycodereact">
+<span>import { useNavigate } from "react-router-dom";</span>
+<span></span>
+<span>const navigate = useNavigate();</span>
+<span></span>
+<span>navigate("/items");</span>
+  </pre>
+
+  <h3>Read ?tab=register from the URL</h3>
+
+  <pre class="mycodereact">
+<span>import { useSearchParams } from "react-router-dom";</span>
+<span></span>
+<span>const [searchParams] = useSearchParams();</span>
+<span>const tab = searchParams.get("tab");</span>
+  </pre>
+
+  <h2 id="talking-to-the-server">Talking To The Server</h2>
+
+  <h3>client/src/services/ItemsAPI.js</h3>
+
+  <div class="div_p">
+    <p>All five requests live in one file so pages stay short. readResponse throws the server's error message, and the page shows it. This works with both the Postgres and MongoDB examples.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>const readResponse = async (response) =&gt; {</span>
+<span>  const data = await response.json().catch(() =&gt; null);</span>
+<span></span>
+<span>  if (!response.ok) {</span>
+<span>    throw new Error(data?.error || `Request failed (${response.status}).`);</span>
+<span>  }</span>
+<span></span>
+<span>  if (data === null) {</span>
+<span>    throw new Error("The server returned an unexpected response.");</span>
+<span>  }</span>
+<span></span>
+<span>  return data;</span>
+<span>};</span>
+<span></span>
+<span>const getAllItems = async () =&gt; {</span>
+<span>  const response = await fetch("/api/items");</span>
+<span>  return readResponse(response);</span>
+<span>};</span>
+<span></span>
+<span>const getItemById = async (id) =&gt; {</span>
+<span>  const response = await fetch(`/api/items/${encodeURIComponent(id)}`);</span>
+<span>  return readResponse(response);</span>
+<span>};</span>
+<span></span>
+<span>const createItem = async (item) =&gt; {</span>
+<span>  const response = await fetch("/api/items", {</span>
+<span>    method: "POST",</span>
+<span>    headers: {</span>
+<span>      "Content-Type": "application/json",</span>
+<span>    },</span>
+<span>    body: JSON.stringify(item),</span>
+<span>  });</span>
+<span>  return readResponse(response);</span>
+<span>};</span>
+<span></span>
+<span>const updateItem = async (id, item) =&gt; {</span>
+<span>  const response = await fetch(`/api/items/${encodeURIComponent(id)}`, {</span>
+<span>    method: "PATCH",</span>
+<span>    headers: {</span>
+<span>      "Content-Type": "application/json",</span>
+<span>    },</span>
+<span>    body: JSON.stringify(item),</span>
+<span>  });</span>
+<span>  return readResponse(response);</span>
+<span>};</span>
+<span></span>
+<span>const deleteItem = async (id) =&gt; {</span>
+<span>  const response = await fetch(`/api/items/${encodeURIComponent(id)}`, {</span>
+<span>    method: "DELETE",</span>
+<span>  });</span>
+<span>  return readResponse(response);</span>
+<span>};</span>
+<span></span>
+<span>export default {</span>
+<span>  getAllItems,</span>
+<span>  getItemById,</span>
+<span>  createItem,</span>
+<span>  updateItem,</span>
+<span>  deleteItem,</span>
+<span>};</span>
+  </pre>
+
+  <h2 id="full-pages">Full Pages</h2>
+
+  <div class="div_p">
+    <p>These five pages work together with ItemsAPI.js as a full create, read, update, and delete app.</p>
+  </div>
+
+  <h3>client/src/pages/Items.jsx</h3>
+
+  <pre class="mycodereact">
+<span>import { useEffect, useState } from "react";</span>
+<span>import ItemsAPI from "../services/ItemsAPI";</span>
+<span>import Card from "../components/Card";</span>
+<span>import DeleteButton from "../components/DeleteButton";</span>
+<span></span>
+<span>const Items = () =&gt; {</span>
+<span>  const [items, setItems] = useState([]);</span>
+<span>  const [loading, setLoading] = useState(true);</span>
+<span>  const [error, setError] = useState("");</span>
+<span></span>
+<span>  useEffect(() =&gt; {</span>
+<span>    let ignore = false;</span>
+<span></span>
+<span>    const fetchItems = async () =&gt; {</span>
+<span>      try {</span>
+<span>        const data = await ItemsAPI.getAllItems();</span>
+<span></span>
+<span>        if (!ignore) setItems(data);</span>
+<span>      } catch (problem) {</span>
+<span>        if (!ignore) setError(problem.message);</span>
+<span>      } finally {</span>
+<span>        if (!ignore) setLoading(false);</span>
+<span>      }</span>
+<span>    };</span>
+<span></span>
+<span>    fetchItems();</span>
+<span></span>
+<span>    return () =&gt; {</span>
+<span>      ignore = true;</span>
+<span>    };</span>
+<span>  }, []);</span>
+<span></span>
+<span>  const handleDelete = async (item) =&gt; {</span>
+<span>    await ItemsAPI.deleteItem(item.id);</span>
+<span>    setItems((previous) =&gt; previous.filter((other) =&gt; other.id !== item.id));</span>
+<span>  };</span>
+<span></span>
+<span>  if (loading) return &lt;p role="status"&gt;Loading...&lt;/p&gt;;</span>
+<span>  if (error) return &lt;p role="alert"&gt;{error}&lt;/p&gt;;</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;section&gt;</span>
+<span>      {items.length === 0 &amp;&amp; &lt;p&gt;Nothing saved yet. Add your first one!&lt;/p&gt;}</span>
+<span></span>
+<span>      {items.map((item) =&gt; (</span>
+<span>        &lt;div key={item.id}&gt;</span>
+<span>          &lt;Card</span>
+<span>            id={item.id}</span>
+<span>            title={item.title}</span>
+<span>            image={item.image}</span>
+<span>            description={item.description}</span>
+<span>          /&gt;</span>
+<span>          &lt;DeleteButton itemName={item.title} onDelete={() =&gt; handleDelete(item)} /&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>      ))}</span>
+<span>    &lt;/section&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default Items;</span>
+  </pre>
+
+  <h3>client/src/pages/ItemDetails.jsx</h3>
+
+  <pre class="mycodereact">
+<span>import { useEffect, useState } from "react";</span>
+<span>import { useParams } from "react-router-dom";</span>
+<span>import ItemsAPI from "../services/ItemsAPI";</span>
+<span></span>
+<span>const ItemDetails = () =&gt; {</span>
+<span>  const { id } = useParams();</span>
+<span>  const [item, setItem] = useState(null);</span>
+<span>  const [error, setError] = useState("");</span>
+<span></span>
+<span>  useEffect(() =&gt; {</span>
+<span>    let ignore = false;</span>
+<span></span>
+<span>    const fetchItem = async () =&gt; {</span>
+<span>      setItem(null);</span>
+<span>      setError("");</span>
+<span></span>
+<span>      try {</span>
+<span>        const data = await ItemsAPI.getItemById(id);</span>
+<span></span>
+<span>        if (!ignore) setItem(data);</span>
+<span>      } catch (problem) {</span>
+<span>        if (!ignore) setError(problem.message);</span>
+<span>      }</span>
+<span>    };</span>
+<span></span>
+<span>    fetchItem();</span>
+<span></span>
+<span>    return () =&gt; {</span>
+<span>      ignore = true;</span>
+<span>    };</span>
+<span>  }, [id]);</span>
+<span></span>
+<span>  if (error) return &lt;p role="alert"&gt;{error}&lt;/p&gt;;</span>
+<span>  if (!item) return &lt;p role="status"&gt;Loading...&lt;/p&gt;;</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;article&gt;</span>
+<span>      {item.image &amp;&amp; &lt;img src={item.image} alt={item.title} /&gt;}</span>
+<span>      &lt;h2&gt;{item.title}&lt;/h2&gt;</span>
+<span>      &lt;p&gt;{item.description}&lt;/p&gt;</span>
+<span>    &lt;/article&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default ItemDetails;</span>
+  </pre>
+
+  <h3>client/src/components/ItemForm.jsx</h3>
+
+  <div class="div_p">
+    <p>The create page and the edit page share this one form. The page passes in what to do with the saved values through onSubmit.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { useRef, useState } from "react";</span>
+<span></span>
+<span>const defaults = { title: "", description: "", image: "" };</span>
+<span></span>
+<span>export default function ItemForm({ initialValues = defaults, heading, submitLabel, onSubmit }) {</span>
+<span>  const [item, setItem] = useState({ ...defaults, ...initialValues });</span>
+<span>  const [error, setError] = useState("");</span>
+<span>  const [saving, setSaving] = useState(false);</span>
+<span>  const submitting = useRef(false);</span>
+<span></span>
+<span>  const handleChange = ({ target: { name, value } }) =&gt; {</span>
+<span>    setItem((previous) =&gt; ({ ...previous, [name]: value }));</span>
+<span>    setError("");</span>
+<span>  };</span>
+<span></span>
+<span>  const handleSubmit = async (event) =&gt; {</span>
+<span>    event.preventDefault();</span>
+<span>    if (submitting.current) return;</span>
+<span></span>
+<span>    if (!item.title.trim()) {</span>
+<span>      setError("Enter a title.");</span>
+<span>      return;</span>
+<span>    }</span>
+<span></span>
+<span>    submitting.current = true;</span>
+<span>    setSaving(true);</span>
+<span></span>
+<span>    try {</span>
+<span>      await onSubmit({</span>
+<span>        title: item.title.trim(),</span>
+<span>        description: item.description.trim(),</span>
+<span>        image: item.image.trim(),</span>
+<span>      });</span>
+<span>    } catch (problem) {</span>
+<span>      setError(problem.message || "Unable to save. Please try again.");</span>
+<span>    } finally {</span>
+<span>      submitting.current = false;</span>
+<span>      setSaving(false);</span>
+<span>    }</span>
+<span>  };</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;section&gt;</span>
+<span>      &lt;h2&gt;{heading}&lt;/h2&gt;</span>
+<span></span>
+<span>      &lt;form onSubmit={handleSubmit}&gt;</span>
+<span>        &lt;fieldset disabled={saving}&gt;</span>
+<span>          &lt;label htmlFor="title"&gt;Title&lt;/label&gt;</span>
+<span>          &lt;input id="title" name="title" value={item.title} onChange={handleChange} maxLength={255} required /&gt;</span>
+<span></span>
+<span>          &lt;label htmlFor="description"&gt;Description&lt;/label&gt;</span>
+<span>          &lt;textarea id="description" name="description" rows="5" value={item.description} onChange={handleChange} /&gt;</span>
+<span></span>
+<span>          &lt;label htmlFor="image"&gt;Image URL&lt;/label&gt;</span>
+<span>          &lt;input id="image" name="image" value={item.image} onChange={handleChange} /&gt;</span>
+<span></span>
+<span>          {error &amp;&amp; &lt;p role="alert"&gt;{error}&lt;/p&gt;}</span>
+<span></span>
+<span>          &lt;button type="submit"&gt;{saving ? "Saving..." : submitLabel}&lt;/button&gt;</span>
+<span>        &lt;/fieldset&gt;</span>
+<span>      &lt;/form&gt;</span>
+<span>    &lt;/section&gt;</span>
+<span>  );</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/pages/CreateItem.jsx</h3>
+
+  <pre class="mycodereact">
+<span>import { useNavigate } from "react-router-dom";</span>
+<span>import ItemForm from "../components/ItemForm";</span>
+<span>import ItemsAPI from "../services/ItemsAPI";</span>
+<span></span>
+<span>export default function CreateItem() {</span>
+<span>  const navigate = useNavigate();</span>
+<span></span>
+<span>  const saveItem = async (item) =&gt; {</span>
+<span>    await ItemsAPI.createItem(item);</span>
+<span>    navigate("/");</span>
+<span>  };</span>
+<span></span>
+<span>  return &lt;ItemForm heading="Add An Item" submitLabel="Add Item" onSubmit={saveItem} /&gt;;</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/pages/EditItem.jsx</h3>
+
+  <div class="div_p">
+    <p>The form only mounts after the item loads, so its inputs start with the saved values. The key makes React start a fresh form when the id changes.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import { useEffect, useState } from "react";</span>
+<span>import { useNavigate, useParams } from "react-router-dom";</span>
+<span>import ItemForm from "../components/ItemForm";</span>
+<span>import ItemsAPI from "../services/ItemsAPI";</span>
+<span></span>
+<span>export default function EditItem() {</span>
+<span>  const { id } = useParams();</span>
+<span>  const navigate = useNavigate();</span>
+<span>  const [result, setResult] = useState(null);</span>
+<span></span>
+<span>  useEffect(() =&gt; {</span>
+<span>    let ignore = false;</span>
+<span></span>
+<span>    const load = async () =&gt; {</span>
+<span>      try {</span>
+<span>        const item = await ItemsAPI.getItemById(id);</span>
+<span>        if (!ignore) setResult({ id, item });</span>
+<span>      } catch (problem) {</span>
+<span>        if (!ignore) setResult({ id, error: problem.message });</span>
+<span>      }</span>
+<span>    };</span>
+<span></span>
+<span>    load();</span>
+<span></span>
+<span>    return () =&gt; {</span>
+<span>      ignore = true;</span>
+<span>    };</span>
+<span>  }, [id]);</span>
+<span></span>
+<span>  // Never show the previous record while a different id is loading.</span>
+<span>  if (result?.id !== id) return &lt;p role="status"&gt;Loading...&lt;/p&gt;;</span>
+<span>  if (result.error) return &lt;p role="alert"&gt;{result.error}&lt;/p&gt;;</span>
+<span></span>
+<span>  const updateItem = async (item) =&gt; {</span>
+<span>    await ItemsAPI.updateItem(id, item);</span>
+<span>    navigate("/");</span>
+<span>  };</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;ItemForm</span>
+<span>      key={id}</span>
+<span>      initialValues={result.item}</span>
+<span>      heading="Edit Item"</span>
+<span>      submitLabel="Save Changes"</span>
+<span>      onSubmit={updateItem}</span>
+<span>    /&gt;</span>
+<span>  );</span>
+<span>}</span>
+  </pre>
+
+  <br><br><br><br>
+
+  <footer class="footer"> &copy; By Jamar Brown
+
+    <div class="container">
+      <div id='clock'></div>
+    </div>
+  </footer>
+
+  <script src="js/clock.js"></script>
+  <script src="js/copy.js"></script>
+</body>
+
+</html>

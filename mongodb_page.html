@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Jamar Brown">
+  <meta name="description" content="This is the page that has all the reusable MongoDB and Mongoose code">
+  <title>MongoDB Page</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand">Final Companion</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="html_page.html">Html Code</a></li>
+        <li><a href="css_page.html">Css Code</a></li>
+        <li><a href="javaScript.html">JavaScript Code</a></li>
+        <li><a href="setup_page.html">Setup &amp; .env</a></li>
+        <li><a href="react_page.html">React Code</a></li>
+        <li><a href="node_page.html">Node Code</a></li>
+        <li><a href="mongodb_page.html">MongoDB Code</a></li>
+        <li><a href="postgres_page.html">Postgres Code</a></li>
+        <li><a href="security_page.html">Security Code</a></li>
+        <li><a href="migration_page.html">Switch Databases</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <h2>On This Page</h2>
+
+  <div class="div_p">
+    <ul>
+      <li><a href="#what-is-mongodb">What Is MongoDB</a></li>
+      <li><a href="#project-setup">Project Setup</a></li>
+      <li><a href="#starter-schema-and-crud">Starter Schema And CRUD</a></li>
+      <li><a href="#schema-field-options">Schema Field Options</a></li>
+      <li><a href="#schemas-from-rev">Schemas From Rev</a></li>
+      <li><a href="#query-reference">Query Reference</a></li>
+      <li><a href="#the-mongo-shell">The Mongo Shell</a></li>
+    </ul>
+  </div>
+
+  <h2 id="what-is-mongodb">What Is MongoDB</h2>
+
+  <div class="div_p">
+    <p>MongoDB stores JSON-like documents in collections instead of rows in tables. Mongoose is the package that adds schemas, which set the shape and rules of each document. A model is a schema you can run queries on. The .env file for MongoDB is on the Setup page.</p>
+  </div>
+
+  <h2 id="project-setup">Project Setup</h2>
+
+  <h3>Install the package</h3>
+
+  <div class="div_p">
+    <p>Run this from the folder that has your server package.json.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>npm install mongoose</span>
+  </pre>
+
+  <h3>Atlas steps</h3>
+
+  <div class="div_p">
+    <ul>
+      <li>Create a free cluster at cloud.mongodb.com.</li>
+      <li>Under Database Access, add a user with the readWrite role on only your project's database, not Atlas admin.</li>
+      <li>Under Network Access, add your current IP address.</li>
+      <li>Click Connect, then Drivers, and copy the connection string into MONGODB_URI in server/.env.</li>
+    </ul>
+  </div>
+
+  <h3>server/config/database.js</h3>
+
+  <pre class="mycodemongo">
+<span>import "dotenv/config";</span>
+<span>import mongoose from "mongoose";</span>
+<span></span>
+<span>export async function connectDatabase() {</span>
+<span>  await mongoose.connect(process.env.MONGODB_URI, {</span>
+<span>    dbName: process.env.MONGODB_DB_NAME,</span>
+<span>    serverSelectionTimeoutMS: 10000, // stop waiting after 10 seconds</span>
+<span>  });</span>
+<span></span>
+<span>  console.log("MongoDB connected.");</span>
+<span>}</span>
+<span></span>
+<span>export async function disconnectDatabase() {</span>
+<span>  await mongoose.disconnect();</span>
+<span>}</span>
+  </pre>
+
+  <h3>server/server.js for MongoDB</h3>
+
+  <div class="div_p">
+    <p>Connect to the database before opening the port, so that the first request has a database to use.</p>
+  </div>
+
+  <pre class="mycodemongo">
+<span>import "dotenv/config";</span>
+<span>import express from "express";</span>
+<span>import { connectDatabase } from "./config/database.js";</span>
+<span>import itemsRouter from "./routes/items.js";</span>
+<span>import { HttpError } from "./utils/HttpError.js";</span>
+<span></span>
+<span>const PORT = process.env.PORT || 3000;</span>
+<span></span>
+<span>const app = express();</span>
+<span></span>
+<span>app.use(express.json());</span>
+<span></span>
+<span>app.use("/api/items", itemsRouter);</span>
+<span></span>
+<span>app.use((req, res) =&gt; {</span>
+<span>  res.status(404).json({ error: "Route not found." });</span>
+<span>});</span>
+<span></span>
+<span>app.use((error, req, res, next) =&gt; {</span>
+<span>  if (error instanceof HttpError) {</span>
+<span>    return res.status(error.status).json({ error: error.message });</span>
+<span>  }</span>
+<span></span>
+<span>  // Bad data caught by the schema. Do not echo the details back.</span>
+<span>  if (["ValidationError", "CastError"].includes(error.name)) {</span>
+<span>    return res.status(400).json({ error: "The request contains invalid data." });</span>
+<span>  }</span>
+<span></span>
+<span>  console.error(error);</span>
+<span>  res.status(500).json({ error: "An unexpected server error occurred." });</span>
+<span>});</span>
+<span></span>
+<span>try {</span>
+<span>  await connectDatabase();</span>
+<span></span>
+<span>  app.listen(PORT, () =&gt; {</span>
+<span>    console.log(`🚀 Server listening on http://localhost:${PORT}`);</span>
+<span>  });</span>
+<span>} catch (error) {</span>
+<span>  console.error("Could not connect to MongoDB:", error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="starter-schema-and-crud">Starter Schema And CRUD</h2>
+
+  <div class="div_p">
+    <p>This is the smallest full setup. It uses the routes file and HttpError.js from the Node page, and it answers the same way as the Postgres version, so the React pages work with either one.</p>
+  </div>
+
+  <h3>server/models/Item.js</h3>
+
+  <div class="div_p">
+    <p>toJSON changes what gets sent to the browser. It adds an id field and removes _id and __v, so React can use item.id.</p>
+  </div>
+
+  <pre class="mycodemongo">
+<span>import mongoose from "mongoose";</span>
+<span></span>
+<span>const itemSchema = new mongoose.Schema(</span>
+<span>  {</span>
+<span>    title: {</span>
+<span>      type: String,</span>
+<span>      required: true,</span>
+<span>      trim: true,</span>
+<span>      maxlength: 255,</span>
+<span>    },</span>
+<span>    description: {</span>
+<span>      type: String,</span>
+<span>      trim: true,</span>
+<span>      maxlength: 10000,</span>
+<span>      default: "",</span>
+<span>    },</span>
+<span>    image: {</span>
+<span>      type: String,</span>
+<span>      trim: true,</span>
+<span>      maxlength: 2000,</span>
+<span>      default: "",</span>
+<span>    },</span>
+<span>  },</span>
+<span>  {</span>
+<span>    timestamps: true, // adds createdAt and updatedAt</span>
+<span>    collection: "items",</span>
+<span>    toJSON: {</span>
+<span>      virtuals: true,</span>
+<span>      versionKey: false,</span>
+<span>      transform(document, result) {</span>
+<span>        delete result._id;</span>
+<span>        return result;</span>
+<span>      },</span>
+<span>    },</span>
+<span>  },</span>
+<span>);</span>
+<span></span>
+<span>const Item = mongoose.model("Item", itemSchema);</span>
+<span></span>
+<span>export default Item;</span>
+  </pre>
+
+  <h3>server/utils/readObjectId.js</h3>
+
+  <div class="div_p">
+    <p>A MongoDB id is 24 hexadecimal characters. Anything else gets a 404 before it reaches the database.</p>
+  </div>
+
+  <pre class="mycodemongo">
+<span>import { HttpError } from "./HttpError.js";</span>
+<span></span>
+<span>export function readObjectId(value) {</span>
+<span>  if (typeof value !== "string" || !/^[a-f0-9]{24}$/i.test(value)) {</span>
+<span>    throw new HttpError(404, "Item not found.");</span>
+<span>  }</span>
+<span></span>
+<span>  return value.toLowerCase();</span>
+<span>}</span>
+  </pre>
+
+  <h3>server/controllers/items.js</h3>
+
+  <div class="div_p">
+    <p>This uses Express 5, where a thrown error goes to the error handler in server.js. pickFields only copies the fields you allow, so a user cannot set a field like role by adding it to the request.</p>
+  </div>
+
+  <pre class="mycodemongo">
+<span>import Item from "../models/Item.js";</span>
+<span>import { HttpError } from "../utils/HttpError.js";</span>
+<span>import { readObjectId } from "../utils/readObjectId.js";</span>
+<span></span>
+<span>const pickFields = (body) =&gt; {</span>
+<span>  if (!body || typeof body !== "object" || Array.isArray(body)) {</span>
+<span>    throw new HttpError(400, "Send a JSON object.");</span>
+<span>  }</span>
+<span></span>
+<span>  if (typeof body.title !== "string" || !body.title.trim()) {</span>
+<span>    throw new HttpError(400, "Title is required.");</span>
+<span>  }</span>
+<span></span>
+<span>  return {</span>
+<span>    title: body.title,</span>
+<span>    description: String(body.description ?? ""),</span>
+<span>    image: String(body.image ?? ""),</span>
+<span>  };</span>
+<span>};</span>
+<span></span>
+<span>const findItem = async (id) =&gt; {</span>
+<span>  const item = await Item.findById(readObjectId(id));</span>
+<span></span>
+<span>  if (!item) throw new HttpError(404, "Item not found.");</span>
+<span>  return item;</span>
+<span>};</span>
+<span></span>
+<span>const getItems = async (req, res) =&gt; {</span>
+<span>  const items = await Item.find({}).sort({ createdAt: 1 });</span>
+<span></span>
+<span>  res.status(200).json(items);</span>
+<span>};</span>
+<span></span>
+<span>const getItemById = async (req, res) =&gt; {</span>
+<span>  res.status(200).json(await findItem(req.params.id));</span>
+<span>};</span>
+<span></span>
+<span>const createItem = async (req, res) =&gt; {</span>
+<span>  const item = await Item.create(pickFields(req.body));</span>
+<span></span>
+<span>  res.status(201).json(item);</span>
+<span>};</span>
+<span></span>
+<span>// save() runs the schema rules. findByIdAndUpdate skips them by default.</span>
+<span>const updateItem = async (req, res) =&gt; {</span>
+<span>  const item = await findItem(req.params.id);</span>
+<span></span>
+<span>  Object.assign(item, pickFields(req.body));</span>
+<span>  await item.save();</span>
+<span>  res.status(200).json(item);</span>
+<span>};</span>
+<span></span>
+<span>const deleteItem = async (req, res) =&gt; {</span>
+<span>  const item = await findItem(req.params.id);</span>
+<span></span>
+<span>  await item.deleteOne();</span>
+<span>  res.status(200).json(item);</span>
+<span>};</span>
+<span></span>
+<span>export default {</span>
+<span>  getItems,</span>
+<span>  getItemById,</span>
+<span>  createItem,</span>
+<span>  updateItem,</span>
+<span>  deleteItem,</span>
+<span>};</span>
+  </pre>
+
+  <h3>server/config/reset.js</h3>
+
+  <div class="div_p">
+    <p>Deletes everything in the collection and adds your starter data. Run it by hand only. Use the same data file as the Postgres page, and add the script with npm pkg set scripts.reset="node config/reset.js".</p>
+  </div>
+
+  <pre class="mycodemongo">
+<span>import { connectDatabase, disconnectDatabase } from "./database.js";</span>
+<span>import Item from "../models/Item.js";</span>
+<span>import itemData from "../data/items.js";</span>
+<span></span>
+<span>try {</span>
+<span>  await connectDatabase();</span>
+<span>  await Item.deleteMany({});</span>
+<span>  await Item.insertMany(itemData);</span>
+<span>  console.log(`🎉 Finished! Saved ${itemData.length} items.`);</span>
+<span>} catch (error) {</span>
+<span>  console.error("⚠️ Reset failed:", error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>} finally {</span>
+<span>  await disconnectDatabase();</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="schema-field-options">Schema Field Options</h2>
+
+  <h3>Every option I use in one place</h3>
+
+  <pre class="mycodemongo">
+<span>const exampleSchema = new mongoose.Schema({</span>
+<span>  name: {</span>
+<span>    type: String,</span>
+<span>    required: true,            // must be there</span>
+<span>    trim: true,                // removes spaces from both ends</span>
+<span>    minlength: 3,</span>
+<span>    maxlength: 35,</span>
+<span>  },</span>
+<span>  email: {</span>
+<span>    type: String,</span>
+<span>    required: true,</span>
+<span>    lowercase: true,           // saves in lowercase</span>
+<span>    unique: true,              // builds a unique index, not a validator</span>
+<span>    match: /^\S+@\S+\.\S+$/,   // must match this pattern</span>
+<span>    select: false,             // left out of queries unless you ask for it</span>
+<span>  },</span>
+<span>  role: {</span>
+<span>    type: String,</span>
+<span>    enum: ["user", "admin"],   // only these values</span>
+<span>    default: "user",</span>
+<span>  },</span>
+<span>  age: {</span>
+<span>    type: Number,</span>
+<span>    min: 0,</span>
+<span>    max: 120,</span>
+<span>    validate: {                // your own rule</span>
+<span>      validator: Number.isInteger,</span>
+<span>      message: "Age must be a whole number.",</span>
+<span>    },</span>
+<span>  },</span>
+<span>  isActive: { type: Boolean, default: true },</span>
+<span>  birthday: { type: Date },</span>
+<span>  tags: { type: [String], default: [] },</span>
+<span>  address: {                   // an object inside the document</span>
+<span>    city: { type: String },</span>
+<span>    zip: { type: String },</span>
+<span>  },</span>
+<span>  ownerId: {                   // links to a document in another collection</span>
+<span>    type: mongoose.Schema.Types.ObjectId,</span>
+<span>    ref: "User",</span>
+<span>    required: true,</span>
+<span>  },</span>
+<span>});</span>
+  </pre>
+
+  <h3>Required only in some cases</h3>
+
+  <div class="div_p">
+    <p>Use a normal function here, not an arrow function, so this means the document.</p>
+  </div>
+
+  <pre class="mycodemongo">
+<span>rating: {</span>
+<span>  type: Number,</span>
+<span>  min: 1,</span>
+<span>  max: 10,</span>
+<span>  required: function () {</span>
+<span>    return this.kind === "review";</span>
+<span>  },</span>
+<span>},</span>
+  </pre>
+
+  <h3>Hide fields from the browser</h3>
+
+  <pre class="mycodemongo">
+<span>toJSON: {</span>
+<span>  transform(document, result) {</span>
+<span>    delete result.passwordHash;</span>
+<span>    delete result.__v;</span>
+<span>    return result;</span>
+<span>  },</span>
+<span>},</span>
+  </pre>
+
+  <h3>Run a check across two fields</h3>
+
+  <div class="div_p">
+    <p>Mongoose 9 removed next from these hooks, so do not add a next parameter.</p>
+  </div>
+
+  <pre class="mycodemongo">
+<span>postSchema.pre("validate", function () {</span>
+<span>  if (this.kind === "discussion" &amp;&amp; this.rating !== undefined) {</span>
+<span>    this.invalidate("rating", "Ratings belong to review posts only.");</span>
+<span>  }</span>
+<span>});</span>
+  </pre>
+
+  <h3>Indexes</h3>
+
+  <div class="div_p">
+    <p>An index makes a search fast. Add one for each way your pages sort or filter a large collection.</p>
+  </div>
+
+  <pre class="mycodemongo">
+<span>// Newest first. _id breaks ties when two have the same time.</span>
+<span>postSchema.index({ createdAt: -1, _id: -1 });</span>
+<span></span>
+<span>// All posts by one author, newest first.</span>
+<span>postSchema.index({ authorId: 1, createdAt: -1 });</span>
+<span></span>
+<span>// One vote for each user on each post.</span>
+<span>voteSchema.index({ postId: 1, userId: 1 }, { unique: true });</span>
+<span></span>
+<span>// MongoDB deletes the document after this date. It can run up to a minute late.</span>
+<span>tokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });</span>
+  </pre>
+
+  <h2 id="schemas-from-rev">Schemas From Rev</h2>
+
+  <div class="div_p">
+    <p>These are the real Rev models. They show one to many links, a unique pair, and rules that depend on another field. Each one imports the two files right below.</p>
+  </div>
+
+  <h3>server/config/mongooseSecurity.js</h3>
+
+  <div class="div_p">
+    <p>Add import "../config/mongooseSecurity.js"; at the top of every model file. It blocks query injection and cancels runaway queries for every model.</p>
+  </div>
+
+  <pre class="mycodemongo">
+<span>// database-wide safety settings for Mongoose.</span>
+<span>//</span>
+<span>// Every model file imports this module BEFORE it creates its schema, so these</span>
+<span>// rules apply to every model automatically, including ones you add later.</span>
+<span>// When you create a new model, add this import at the top of the file:</span>
+<span>//</span>
+<span>//   import "../config/mongooseSecurity.js";</span>
+<span></span>
+<span>import mongoose from "mongoose";</span>
+<span></span>
+<span>// --- 1. Neutralize query-operator injection --------------------------------</span>
+<span>// With sanitizeFilter on, if a value inside a query filter is an object that</span>
+<span>// contains "$" keys (for example { email: { $ne: null } } built from untrusted</span>
+<span>// input), Mongoose wraps it in { $eq: ... }. The query then looks for that</span>
+<span>// literal object instead of running the operator, so it matches nothing or</span>
+<span>// throws a CastError. It also refuses $where, $expr, $jsonSchema, and $text</span>
+<span>// at the top of a filter.</span>
+<span>//</span>
+<span>// This is a SAFETY NET behind the HTTP input checks, not a replacement for them.</span>
+<span>//</span>
+<span>// IMPORTANT FOR FUTURE ROUTES: when YOUR server code needs an operator,</span>
+<span>// mark that piece of the filter as trusted:</span>
+<span>//</span>
+<span>//   import { trusted } from "../config/mongooseSecurity.js";</span>
+<span>//   Post.find({ rating: trusted({ $gte: minimumRating }) });</span>
+<span>//</span>
+<span>// Aggregation pipelines (Model.aggregate) are NOT sanitized. Build $match</span>
+<span>// stages only from values you have already validated.</span>
+<span>mongoose.set("sanitizeFilter", true);</span>
+<span></span>
+<span>export const trusted = mongoose.trusted;</span>
+<span></span>
+<span>// --- 2. Stop runaway queries from tying up the database ---------------------</span>
+<span>// A slow query (for example a future search box using a regex) can be fired</span>
+<span>// repeatedly by a bot to overload the database. maxTimeMS tells MongoDB to</span>
+<span>// cancel any read that runs longer than this. A route can still set its own</span>
+<span>// limit with .maxTimeMS(ms) when it genuinely needs longer.</span>
+<span>export const DEFAULT_QUERY_TIME_LIMIT_MS = 5000;</span>
+<span>export const DEFAULT_AGGREGATE_TIME_LIMIT_MS = 15000;</span>
+<span></span>
+<span>const READ_QUERIES = [</span>
+<span>  "find",</span>
+<span>  "findOne",</span>
+<span>  "countDocuments",</span>
+<span>  "estimatedDocumentCount",</span>
+<span>  "distinct",</span>
+<span>];</span>
+<span></span>
+<span>function queryTimeLimitPlugin(schema) {</span>
+<span>  schema.pre(READ_QUERIES, function applyQueryTimeLimit() {</span>
+<span>    if (this.getOptions().maxTimeMS == null) {</span>
+<span>      this.maxTimeMS(DEFAULT_QUERY_TIME_LIMIT_MS);</span>
+<span>    }</span>
+<span>  });</span>
+<span></span>
+<span>  schema.pre("aggregate", function applyAggregateTimeLimit() {</span>
+<span>    if (this.options?.maxTimeMS == null) {</span>
+<span>      this.option({ maxTimeMS: DEFAULT_AGGREGATE_TIME_LIMIT_MS });</span>
+<span>    }</span>
+<span>  });</span>
+<span>}</span>
+<span></span>
+<span>// Register once per process, even if many model files import this module.</span>
+<span>if (!mongoose.__revQueryTimeLimitPlugin) {</span>
+<span>  mongoose.plugin(queryTimeLimitPlugin);</span>
+<span>  Object.defineProperty(mongoose, "__revQueryTimeLimitPlugin", { value: true });</span>
+<span>}</span>
+  </pre>
+
+  <h3>server/models/validators.js</h3>
+
+  <div class="div_p">
+    <p>Shared rules for usernames, emails, and links. The model and the API both use this file, so they can never disagree.</p>
+  </div>
+
+  <pre class="mycodemongo">
+<span>// Shared format rules used by BOTH the Mongoose models and the HTTP input</span>
+<span>// parsers in security/input.js. Keeping one copy means the database and the</span>
+<span>// API can never disagree about what a valid username, email, or link is.</span>
+<span></span>
+<span>// Usernames are shown publicly next to reviews and posts.</span>
+<span>// Only plain letters, digits, underscore, hyphen, and period are allowed, and</span>
+<span>// the first and last characters must be a letter or digit. This blocks</span>
+<span>// look-alike Unicode names (for example a Cyrillic "а" posing as "a"),</span>
+<span>// invisible characters, and names that are only punctuation.</span>
+<span>export const USERNAME_PATTERN = /^[A-Za-z0-9](?:[A-Za-z0-9_.-]*[A-Za-z0-9])?$/;</span>
+<span></span>
+<span>// Case-insensitive comparison rule for usernames. "Sam", "sam",</span>
+<span>// and "SAM" are treated as the same name by the unique database index.</span>
+<span>export const USERNAME_COLLATION = Object.freeze({ locale: "en", strength: 2 });</span>
+<span></span>
+<span>// Basic email shape check. \s blocks spaces and line breaks</span>
+<span>// (which also stops email-header injection), \p{Cc} blocks control</span>
+<span>// characters, and \p{Cf} blocks invisible formatting characters such as</span>
+<span>// zero-width spaces. A format check still does NOT prove mailbox ownership.</span>
+<span>export const EMAIL_PATTERN =</span>
+<span>  /^[^\s@\p{Cc}\p{Cf}]+@[^\s@\p{Cc}\p{Cf}]+\.[^\s@\p{Cc}\p{Cf}]+$/u;</span>
+<span></span>
+<span>// Links and image addresses stored in the database.</span>
+<span>// Browsers treat some URL schemes as code (javascript:) or as embedded</span>
+<span>// documents (data:, file:), so only real web addresses are accepted.</span>
+<span>// allowRelative lets admin-managed records point at the site's own assets,</span>
+<span>// such as "/images/cover.png", but never at "//other-site.example".</span>
+<span>export function isSafeWebUrl(</span>
+<span>  value,</span>
+<span>  { allowRelative = false, allowHttp = false } = {},</span>
+<span>) {</span>
+<span>  // Optional fields may be empty; "required" rules handle mandatory ones.</span>
+<span>  if (value === undefined || value === null || value === "") return true;</span>
+<span>  if (typeof value !== "string" || value.length &gt; 2000) return false;</span>
+<span></span>
+<span>  // A site-relative path: starts with exactly one "/" and uses safe characters.</span>
+<span>  if (allowRelative &amp;&amp; /^\/(?!\/)[A-Za-z0-9._~\-/]+$/.test(value)) return true;</span>
+<span></span>
+<span>  let url;</span>
+<span>  try {</span>
+<span>    url = new URL(value);</span>
+<span>  } catch {</span>
+<span>    return false;</span>
+<span>  }</span>
+<span></span>
+<span>  const allowedProtocols = allowHttp ? ["https:", "http:"] : ["https:"];</span>
+<span></span>
+<span>  // Reject other schemes, embedded usernames/passwords, and empty hosts.</span>
+<span>  return (</span>
+<span>    allowedProtocols.includes(url.protocol) &amp;&amp;</span>
+<span>    !url.username &amp;&amp;</span>
+<span>    !url.password &amp;&amp;</span>
+<span>    url.hostname.length &gt; 0</span>
+<span>  );</span>
+<span>}</span>
+<span></span>
+<span>// Mongoose validator factory, e.g. validate: safeUrl({ allowRelative: true })</span>
+<span>export function safeUrl(options = {}) {</span>
+<span>  return {</span>
+<span>    validator: (value) =&gt; isSafeWebUrl(value, options),</span>
+<span>    message: options.allowRelative</span>
+<span>      ? "Use an https:// address or a site path that starts with /."</span>
+<span>      : "Use a full https:// address.",</span>
+<span>  };</span>
+<span>}</span>
+  </pre>
+
+  <h3>server/models/Game.js</h3>
+
+  <pre class="mycodemongo">
+<span>import mongoose from "mongoose";</span>
+<span>// database-wide safety settings; must load before the schema below.</span>
+<span>import "../config/mongooseSecurity.js";</span>
+<span>// only https:// links or the site's own /asset paths may be stored.</span>
+<span>import { safeUrl } from "./validators.js";</span>
+<span></span>
+<span>const gameSchema = new mongoose.Schema(</span>
+<span>  {</span>
+<span>    // Human-readable title of the game.</span>
+<span>    title: {</span>
+<span>      type: String,</span>
+<span>      required: true,</span>
+<span>      trim: true,</span>
+<span>      maxlength: 200,</span>
+<span>    },</span>
+<span></span>
+<span>    description: {</span>
+<span>      type: String,</span>
+<span>      required: true,</span>
+<span>      trim: true,</span>
+<span>      maxlength: 10000,</span>
+<span>    },</span>
+<span></span>
+<span>    platform: {</span>
+<span>      type: String,</span>
+<span>      required: true,</span>
+<span>      trim: true,</span>
+<span>      maxlength: 100,</span>
+<span>    },</span>
+<span></span>
+<span>    genre: {</span>
+<span>      type: String,</span>
+<span>      required: true,</span>
+<span>      trim: true,</span>
+<span>      maxlength: 100,</span>
+<span>    },</span>
+<span></span>
+<span>    releaseYear: {</span>
+<span>      type: Number,</span>
+<span>      min: 1950,</span>
+<span>      max: 2100,</span>
+<span>      validate: {</span>
+<span>        validator: Number.isInteger,</span>
+<span>        message: `Release year must be a whole number`,</span>
+<span>      },</span>
+<span>    },</span>
+<span></span>
+<span>    coverImage: {</span>
+<span>      type: String,</span>
+<span>      required: true,</span>
+<span>      trim: true,</span>
+<span>      maxlength: 2000,</span>
+<span>      // https:// address or a site path such as /images/cover.png.</span>
+<span>      validate: safeUrl({ allowRelative: true }),</span>
+<span>    },</span>
+<span></span>
+<span>    headerImage: {</span>
+<span>      type: String,</span>
+<span>      trim: true,</span>
+<span>      maxlength: 2000,</span>
+<span>      // https:// address or a site path such as /images/header.png.</span>
+<span>      validate: safeUrl({ allowRelative: true }),</span>
+<span>    },</span>
+<span></span>
+<span>    // One game can reference multiple Category documents.</span>
+<span>    categoryIds: {</span>
+<span>      // Array of ObjectIds referencing Category documents, with a maximum of 10 unique categories.</span>
+<span>      type: [</span>
+<span>        {</span>
+<span>          type: mongoose.Schema.Types.ObjectId,</span>
+<span>          ref: "Category",</span>
+<span>        },</span>
+<span>      ],</span>
+<span>      default: [],</span>
+<span>      validate: {</span>
+<span>        validator: function (ids) {</span>
+<span>          const uniqueIds = new Set(ids.map((id) =&gt; id.toString()));</span>
+<span></span>
+<span>          return ids.length &lt;= 10 &amp;&amp; uniqueIds.size === ids.length;</span>
+<span>        },</span>
+<span>        message: "Choose up to 10 categories without duplicates.",</span>
+<span>      },</span>
+<span>    },</span>
+<span></span>
+<span>    // Initially represents your own recorded playtime.</span>
+<span>    playtimeHours: {</span>
+<span>      type: Number,</span>
+<span>      min: 0,</span>
+<span>      default: 0,</span>
+<span>    },</span>
+<span>  },</span>
+<span>  {</span>
+<span>    timestamps: true,</span>
+<span>    collection: "games",</span>
+<span>  },</span>
+<span>);</span>
+<span></span>
+<span>const Game = mongoose.model("Game", gameSchema);</span>
+<span></span>
+<span>export default Game;</span>
+  </pre>
+
+  <h3>server/models/Category.js</h3>
+
+  <pre class="mycodemongo">
+<span>import mongoose from "mongoose";</span>
+<span>// database-wide safety settings; must load before the schema below.</span>
+<span>import "../config/mongooseSecurity.js";</span>
+<span></span>
+<span>const categorySchema = new mongoose.Schema(</span>
+<span>  {</span>
+<span>    // Human-readable name of the category, required and unique.</span>
+<span>    name: {</span>
+<span>      type: String,</span>
+<span>      required: true,</span>
+<span>      trim: true,</span>
+<span>      maxlength: 100,</span>
+<span>    },</span>
+<span></span>
+<span>    // consistent identifier, such as "role-playing" or "first-person-shooter", required and unique.</span>
+<span>    slug: {</span>
+<span>      type: String,</span>
+<span>      required: true,</span>
+<span>      trim: true,</span>
+<span>      lowercase: true,</span>
+<span>      maxlength: 100,</span>
+<span>      match: /^[a-z0-9]+(?:-[a-z0-9]+)*$/, // Slug format validation</span>
+<span>      unique: true,</span>
+<span>    },</span>
+<span>  },</span>
+<span>  {</span>
+<span>    timestamps: true,</span>
+<span>    collection: "categories",</span>
+<span>  },</span>
+<span>);</span>
+<span></span>
+<span>// Case-insensitive unique index on the name field to ensure no duplicate category names exist, regardless of case.</span>
+<span>categorySchema.index(</span>
+<span>  { name: 1 },</span>
+<span>  {</span>
+<span>    unique: true,</span>
+<span>    collation: { locale: "en", strength: 2 },</span>
+<span>  },</span>
+<span>);</span>
+<span></span>
+<span>const Category = mongoose.model("Category", categorySchema);</span>
+<span></span>
+<span>export default Category;</span>
+  </pre>
+
+  <h3>server/models/Post.js</h3>
+
+  <div class="div_p">
+    <p>One user has many posts, so each post saves its author's id. A review needs a game and a rating, and a discussion cannot have them.</p>
+  </div>
+
+  <pre class="mycodemongo">
+<span>// Post for each user and a user can have many posts</span>
+<span>// one to many relationship between user and post</span>
+<span></span>
+<span>import mongoose from "mongoose";</span>
+<span>// database-wide safety settings; must load before the schema below.</span>
+<span>import "../config/mongooseSecurity.js";</span>
+<span>// only real https:// links may be stored.</span>
+<span>import { safeUrl } from "./validators.js";</span>
+<span></span>
+<span>const postSchema = new mongoose.Schema(</span>
+<span>  {</span>
+<span>    // Reference to the User model-not the filename.</span>
+<span>    authorId: {</span>
+<span>      type: mongoose.Schema.Types.ObjectId,</span>
+<span>      ref: "User",</span>
+<span>      required: true,</span>
+<span>    },</span>
+<span></span>
+<span>    // Reviews require a game; discussions do not.</span>
+<span>    gameId: {</span>
+<span>      type: mongoose.Schema.Types.ObjectId,</span>
+<span>      ref: "Game",</span>
+<span>      required: function () {</span>
+<span>        return this.kind === "review";</span>
+<span>      },</span>
+<span>    },</span>
+<span></span>
+<span>    // The kind of post, either "review" or "discussion".</span>
+<span>    kind: {</span>
+<span>      type: String,</span>
+<span>      enum: ["review", "discussion"],</span>
+<span>      default: "discussion",</span>
+<span>      required: true,</span>
+<span>    },</span>
+<span></span>
+<span>    // The title of the post, required for both reviews and discussions.</span>
+<span>    title: {</span>
+<span>      type: String,</span>
+<span>      required: true,</span>
+<span>      trim: true,</span>
+<span>      maxlength: 400,</span>
+<span>    },</span>
+<span></span>
+<span>    // The body of the post, required for both reviews and discussions.</span>
+<span>    body: {</span>
+<span>      type: String,</span>
+<span>      required: true,</span>
+<span>      trim: true,</span>
+<span>      maxlength: 10000,</span>
+<span>    },</span>
+<span></span>
+<span>    // The image URL of the post, optional.</span>
+<span>    imageUrl: {</span>
+<span>      type: String,</span>
+<span>      trim: true,</span>
+<span>      maxlength: 2000,</span>
+<span>      // members write posts, so this link is untrusted. Only</span>
+<span>      // https:// addresses are accepted: no javascript:, data:, or file: links.</span>
+<span>      validate: safeUrl(),</span>
+<span>    },</span>
+<span>    // Rating is required for reviews and not allowed for discussions.</span>
+<span>    rating: {</span>
+<span>      type: Number,</span>
+<span>      min: 1,</span>
+<span>      max: 10,</span>
+<span>      required: function () {</span>
+<span>        return this.kind === "review";</span>
+<span>      },</span>
+<span>    },</span>
+<span>    // Recommendation is optional for reviews; there is no default value.</span>
+<span>    recommend: {</span>
+<span>      type: Boolean,</span>
+<span>    },</span>
+<span>  },</span>
+<span>  {</span>
+<span>    timestamps: true,</span>
+<span>    collection: "posts",</span>
+<span>  },</span>
+<span>);</span>
+<span></span>
+<span>// Cross-field rule: disucssions should not contain review-only fields.</span>
+<span>// This runs during document validation, including before save().</span>
+<span>postSchema.pre("validate", function () {</span>
+<span>  if (this.kind === "discussion") {</span>
+<span>    if (this.rating !== undefined) {</span>
+<span>      this.invalidate("rating", "Ratings belong to review posts only.");</span>
+<span>    }</span>
+<span></span>
+<span>    if (this.recommend !== undefined) {</span>
+<span>      this.invalidate(</span>
+<span>        "recommend",</span>
+<span>        "Recommendations belong to review posts only.",</span>
+<span>      );</span>
+<span>    }</span>
+<span>  } // Both checks belong inside this condition.</span>
+<span>});</span>
+<span></span>
+<span>// Supports displaying the newest posts first.</span>
+<span>// _id provides a consistent tie-breaker for identical timestamps.</span>
+<span>postSchema.index({ createdAt: -1, _id: -1 });</span>
+<span></span>
+<span>// indexes planned in the ERD for "a user's</span>
+<span>// posts" and "a game's reviews" pages. Without them, those future queries</span>
+<span>// scan the whole collection, which a bot can repeat to slow the database.</span>
+<span>postSchema.index({ authorId: 1, createdAt: -1 });</span>
+<span>postSchema.index({ gameId: 1, createdAt: -1 });</span>
+<span></span>
+<span>const Post = mongoose.model("Post", postSchema);</span>
+<span>export default Post;</span>
+  </pre>
+
+  <h3>server/models/Comment.js</h3>
+
+  <pre class="mycodemongo">
+<span>import mongoose from "mongoose";</span>
+<span>// database-wide safety settings; must load before the schema below.</span>
+<span>import "../config/mongooseSecurity.js";</span>
+<span></span>
+<span>// The Comment model represents a comment made by a user on a post. Each comment is associated with a specific post and has an author. The body of the comment is required and can be up to 10,000 characters long. Comments are timestamped and stored in the "comments" collection.</span>
+<span>const commentSchema = new mongoose.Schema(</span>
+<span>  {</span>
+<span>    // Reference to the Post model, indicating which post the comment belongs to.</span>
+<span>    postId: {</span>
+<span>      type: mongoose.Schema.Types.ObjectId,</span>
+<span>      ref: "Post",</span>
+<span>      required: true,</span>
+<span>    },</span>
+<span>    // Reference to the User model, indicating who authored the comment.</span>
+<span>    authorId: {</span>
+<span>      type: mongoose.Schema.Types.ObjectId,</span>
+<span>      ref: "User",</span>
+<span>      required: true,</span>
+<span>    },</span>
+<span></span>
+<span>    // The body of the comment, which is required and can be up to 10,000 characters long.</span>
+<span>    body: {</span>
+<span>      type: String,</span>
+<span>      required: true,</span>
+<span>      trim: true,</span>
+<span>      maxlength: 10000,</span>
+<span>    },</span>
+<span>  },</span>
+<span>  {</span>
+<span>    // Timestamps and collection name for the schema.</span>
+<span>    timestamps: true,</span>
+<span>    collection: "comments",</span>
+<span>  },</span>
+<span>);</span>
+<span></span>
+<span>// Supports displaying the oldest comments first. _id provides a consistent tie-breaker for identical timestamps.</span>
+<span>commentSchema.index({</span>
+<span>  postId: 1,</span>
+<span>  createdAt: 1,</span>
+<span>  _id: 1,</span>
+<span>});</span>
+<span></span>
+<span>const Comment = mongoose.model("Comment", commentSchema);</span>
+<span></span>
+<span>export default Comment;</span>
+  </pre>
+
+  <h3>server/models/Vote.js</h3>
+
+  <pre class="mycodemongo">
+<span>import mongoose from "mongoose";</span>
+<span>// database-wide safety settings; must load before the schema below.</span>
+<span>import "../config/mongooseSecurity.js";</span>
+<span></span>
+<span>const voteSchema = new mongoose.Schema(</span>
+<span>  {</span>
+<span>    // Reference to the Post model, indicating which post the vote belongs to.</span>
+<span>    postId: {</span>
+<span>      type: mongoose.Schema.Types.ObjectId,</span>
+<span>      ref: "Post",</span>
+<span>      required: true,</span>
+<span>    },</span>
+<span></span>
+<span>    // Reference to the User model, indicating who cast the vote.</span>
+<span>    userId: {</span>
+<span>      type: mongoose.Schema.Types.ObjectId,</span>
+<span>      ref: "User",</span>
+<span>      required: true,</span>
+<span>    },</span>
+<span>    // The value of the vote, either 1 (upvote) or -1 (downvote).</span>
+<span>    value: {</span>
+<span>      type: Number,</span>
+<span>      enum: [1, -1],</span>
+<span>      required: true,</span>
+<span>    },</span>
+<span>  },</span>
+<span>  {</span>
+<span>    //  Timestamps and collection name for the schema.</span>
+<span>    timestamps: true,</span>
+<span>    collection: "votes",</span>
+<span>  },</span>
+<span>);</span>
+<span></span>
+<span>// The combination of postId and userId must be unique, ensuring that a user can only vote once per post.</span>
+<span></span>
+<span>voteSchema.index(</span>
+<span>  {</span>
+<span>    postId: 1,</span>
+<span>    userId: 1,</span>
+<span>  },</span>
+<span>  { unique: true },</span>
+<span>);</span>
+<span></span>
+<span>const Vote = mongoose.model("Vote", voteSchema);</span>
+<span></span>
+<span>export default Vote;</span>
+  </pre>
+
+  <h3>Where the other models are</h3>
+
+  <div class="div_p">
+    <p>The User and PasswordResetToken models are on the Security page.</p>
+  </div>
+
+  <h2 id="query-reference">Query Reference</h2>
+
+  <h3>Create</h3>
+
+  <pre class="mycodemongo">
+<span>const item = await Item.create({ title: "New item" });</span>
+<span>await Item.insertMany([{ title: "One" }, { title: "Two" }]);</span>
+  </pre>
+
+  <h3>Read</h3>
+
+  <pre class="mycodemongo">
+<span>await Item.find({});                              // everything</span>
+<span>await Item.find({ kind: "review" });              // with a filter</span>
+<span>await Item.findById(id);                          // one by id, or null</span>
+<span>await Item.findOne({ email });                    // first match, or null</span>
+<span>await Item.countDocuments({ kind: "review" });    // how many</span>
+<span>await Item.exists({ title: "New item" });         // found or null</span>
+<span>await User.findOne({ email }).select("+passwordHash"); // include a hidden field</span>
+<span>await Item.find({}).select("title image");        // only these fields</span>
+  </pre>
+
+  <h3>Sort and pages</h3>
+
+  <pre class="mycodemongo">
+<span>const limit = 24;</span>
+<span></span>
+<span>const items = await Item.find({})</span>
+<span>  .sort({ createdAt: -1 }) // -1 is newest first, 1 is oldest first</span>
+<span>  .skip((page - 1) * limit)</span>
+<span>  .limit(limit);</span>
+  </pre>
+
+  <h3>Filter operators</h3>
+
+  <div class="div_p">
+    <p>If the Rev mongooseSecurity.js file is loaded, wrap operators you wrote yourself in trusted().</p>
+  </div>
+
+  <pre class="mycodemongo">
+<span>import { trusted } from "../config/mongooseSecurity.js";</span>
+<span></span>
+<span>await Post.find({ rating: trusted({ $gte: 8 }) });          // 8 or higher</span>
+<span>await Post.find({ kind: trusted({ $in: ["review"] }) });    // any of these</span>
+<span>await Post.find({ imageUrl: trusted({ $exists: true }) });  // field is there</span>
+  </pre>
+
+  <h3>Fill in linked documents with populate</h3>
+
+  <div class="div_p">
+    <p>Like a SQL JOIN. Name the ref field and the fields you want. Always choose the fields so private data stays out.</p>
+  </div>
+
+  <pre class="mycodemongo">
+<span>const posts = await Post.find({}).populate("authorId", "username");</span>
+  </pre>
+
+  <h3>Update</h3>
+
+  <pre class="mycodemongo">
+<span>// Best: load it, change it, save it. This runs every schema rule.</span>
+<span>const item = await Item.findById(id);</span>
+<span>item.title = "Changed";</span>
+<span>await item.save();</span>
+<span></span>
+<span>// One step, for counters. $inc adds to the number.</span>
+<span>await User.updateOne({ _id: id }, { $inc: { sessionVersion: 1 } });</span>
+<span>await User.updateOne({ _id: id }, { $set: { status: "banned" } }, { runValidators: true });</span>
+  </pre>
+
+  <h3>Delete</h3>
+
+  <pre class="mycodemongo">
+<span>await item.deleteOne();</span>
+<span>await Item.deleteOne({ _id: id });</span>
+<span>await Comment.deleteMany({ postId: id }); // clean up records that point at it</span>
+  </pre>
+
+  <h3>Block a delete when records still point at it</h3>
+
+  <pre class="mycodemongo">
+<span>if (await Post.exists({ gameId: id })) {</span>
+<span>  throw new HttpError(409, "This game still has reviews. Delete the reviews first.");</span>
+<span>}</span>
+  </pre>
+
+  <h3>Change several documents together with a transaction</h3>
+
+  <div class="div_p">
+    <p>All of it saves or none of it does. Atlas supports this. A plain local mongod needs to run as a replica set first.</p>
+  </div>
+
+  <pre class="mycodemongo">
+<span>const session = await mongoose.startSession();</span>
+<span></span>
+<span>try {</span>
+<span>  await session.withTransaction(async () =&gt; {</span>
+<span>    await Comment.deleteMany({ postId: id }, { session });</span>
+<span>    await Post.deleteOne({ _id: id }, { session });</span>
+<span>  });</span>
+<span>} finally {</span>
+<span>  await session.endSession();</span>
+<span>}</span>
+  </pre>
+
+  <h3>SQL to MongoDB</h3>
+
+  <pre class="mycodefile">
+<span>SQL                                MongoDB with Mongoose</span>
+<span>table                              collection</span>
+<span>row                                document</span>
+<span>column                             field</span>
+<span>SERIAL PRIMARY KEY                 _id (made for you)</span>
+<span>REFERENCES users(id)               type: ObjectId, ref: "User"</span>
+<span>JOIN                               populate()</span>
+<span>SELECT * FROM items                Item.find({})</span>
+<span>SELECT * ... WHERE id = $1         Item.findById(id)</span>
+<span>INSERT INTO ... RETURNING *        Item.create(fields)</span>
+<span>UPDATE ... WHERE id = $1           load it, change it, item.save()</span>
+<span>DELETE ... WHERE id = $1           item.deleteOne()</span>
+<span>ORDER BY title LIMIT 24 OFFSET 48  .sort({ title: 1 }).skip(48).limit(24)</span>
+  </pre>
+
+  <h2 id="the-mongo-shell">The Mongo Shell</h2>
+
+  <h3>Connect and look around</h3>
+
+  <pre class="mycodecli">
+<span>mongosh "mongodb+srv://your_user:your_password@your_cluster.mongodb.net/my_project"</span>
+  </pre>
+
+  <h3>Commands inside mongosh</h3>
+
+  <pre class="mycodefile">
+<span>show dbs</span>
+<span>use my_project</span>
+<span>show collections</span>
+<span>db.items.find().limit(5)</span>
+<span>db.items.countDocuments()</span>
+<span>exit</span>
+  </pre>
+
+  <br><br><br><br>
+
+  <footer class="footer"> &copy; By Jamar Brown
+
+    <div class="container">
+      <div id='clock'></div>
+    </div>
+  </footer>
+
+  <script src="js/clock.js"></script>
+  <script src="js/copy.js"></script>
+</body>
+
+</html>

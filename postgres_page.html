@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Jamar Brown">
+  <meta name="description" content="This is the page that has all the reusable PostgreSQL code">
+  <title>Postgres Page</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand">Final Companion</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="html_page.html">Html Code</a></li>
+        <li><a href="css_page.html">Css Code</a></li>
+        <li><a href="javaScript.html">JavaScript Code</a></li>
+        <li><a href="setup_page.html">Setup &amp; .env</a></li>
+        <li><a href="react_page.html">React Code</a></li>
+        <li><a href="node_page.html">Node Code</a></li>
+        <li><a href="mongodb_page.html">MongoDB Code</a></li>
+        <li><a href="postgres_page.html">Postgres Code</a></li>
+        <li><a href="security_page.html">Security Code</a></li>
+        <li><a href="migration_page.html">Switch Databases</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <h2>On This Page</h2>
+
+  <div class="div_p">
+    <ul>
+      <li><a href="#what-is-postgres">What Is Postgres</a></li>
+      <li><a href="#project-setup">Project Setup</a></li>
+      <li><a href="#create-and-seed-one-table">Create And Seed One Table</a></li>
+      <li><a href="#full-crud-controller">Full CRUD Controller</a></li>
+      <li><a href="#two-connected-tables">Two Connected Tables</a></li>
+      <li><a href="#sql-reference">SQL Reference</a></li>
+      <li><a href="#the-psql-terminal">The psql Terminal</a></li>
+    </ul>
+  </div>
+
+  <h2 id="what-is-postgres">What Is Postgres</h2>
+
+  <div class="div_p">
+    <p>Postgres stores data in tables with rows and columns, and every column has a set type. You talk to it with SQL. Tables connect to each other through ids. The .env file for Postgres is on the Setup page.</p>
+  </div>
+
+  <h2 id="project-setup">Project Setup</h2>
+
+  <h3>Install the package</h3>
+
+  <div class="div_p">
+    <p>Run this from the folder that has your server package.json.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>npm install pg</span>
+  </pre>
+
+  <h3>Local Postgres on a Mac</h3>
+
+  <div class="div_p">
+    <p>Use this when you want a database on your computer instead of a hosted one. A Homebrew install uses your Mac username with no password.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>brew services start postgresql@14</span>
+<span>createdb my_project</span>
+<span>psql my_project</span>
+  </pre>
+
+  <h3>server/config/database.js</h3>
+
+  <div class="div_p">
+    <p>The pool keeps a few open connections and hands one to each query. Hosted databases like Render need SSL, and local ones do not. rejectUnauthorized: false still encrypts the connection, but it skips checking the host's certificate, so this is a class project setting.</p>
+  </div>
+
+  <pre class="mycodepg">
+<span>import "dotenv/config";</span>
+<span>import pg from "pg";</span>
+<span></span>
+<span>const isLocal = ["localhost", "127.0.0.1"].includes(process.env.PGHOST);</span>
+<span></span>
+<span>const config = {</span>
+<span>  user: process.env.PGUSER,</span>
+<span>  password: process.env.PGPASSWORD,</span>
+<span>  host: process.env.PGHOST,</span>
+<span>  port: process.env.PGPORT,</span>
+<span>  database: process.env.PGDATABASE,</span>
+<span>  ssl: isLocal ? false : { rejectUnauthorized: false },</span>
+<span>};</span>
+<span></span>
+<span>export const pool = new pg.Pool(config);</span>
+  </pre>
+
+  <h3>server/server.js for Postgres</h3>
+
+  <pre class="mycodepg">
+<span>import "dotenv/config";</span>
+<span>import express from "express";</span>
+<span>import itemsRouter from "./routes/items.js";</span>
+<span></span>
+<span>const PORT = process.env.PORT || 3000;</span>
+<span></span>
+<span>const app = express();</span>
+<span></span>
+<span>app.use(express.json());</span>
+<span></span>
+<span>app.use("/api/items", itemsRouter);</span>
+<span></span>
+<span>app.use((req, res) =&gt; {</span>
+<span>  res.status(404).json({ error: "Route not found." });</span>
+<span>});</span>
+<span></span>
+<span>app.use((error, req, res, next) =&gt; {</span>
+<span>  console.error(error);</span>
+<span>  res.status(500).json({ error: "An unexpected server error occurred." });</span>
+<span>});</span>
+<span></span>
+<span>app.listen(PORT, () =&gt; {</span>
+<span>  console.log(`🚀 Server listening on http://localhost:${PORT}`);</span>
+<span>});</span>
+  </pre>
+
+  <h2 id="create-and-seed-one-table">Create And Seed One Table</h2>
+
+  <div class="div_p">
+    <p>reset.js deletes the table, builds it again, and fills it with your starter data. Only run it by hand with npm run reset. Never add it to your start script, because every restart would delete everything users saved.</p>
+  </div>
+
+  <h3>server/data/items.js</h3>
+
+  <pre class="mycodepg">
+<span>const itemData = [</span>
+<span>  {</span>
+<span>    title: "First Item",</span>
+<span>    description: "This is the first item.",</span>
+<span>    image: "https://picsum.photos/id/10/400/300",</span>
+<span>  },</span>
+<span>  {</span>
+<span>    title: "Second Item",</span>
+<span>    description: "This is the second item.",</span>
+<span>    image: "https://picsum.photos/id/20/400/300",</span>
+<span>  },</span>
+<span>];</span>
+<span></span>
+<span>export default itemData;</span>
+  </pre>
+
+  <h3>server/config/reset.js</h3>
+
+  <pre class="mycodepg">
+<span>import "dotenv/config";</span>
+<span>import { pool } from "./database.js";</span>
+<span>import itemData from "../data/items.js";</span>
+<span></span>
+<span>const createTables = async () =&gt; {</span>
+<span>  const createTableQuery = `</span>
+<span>    DROP TABLE IF EXISTS items;</span>
+<span></span>
+<span>    CREATE TABLE items (</span>
+<span>      id SERIAL PRIMARY KEY,</span>
+<span>      title VARCHAR(255) NOT NULL,</span>
+<span>      description TEXT NOT NULL DEFAULT '',</span>
+<span>      image TEXT NOT NULL DEFAULT '',</span>
+<span>      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()</span>
+<span>    );</span>
+<span>  `;</span>
+<span></span>
+<span>  await pool.query(createTableQuery);</span>
+<span>  console.log("🎉 Items table created.");</span>
+<span>};</span>
+<span></span>
+<span>const seedTables = async () =&gt; {</span>
+<span>  const insertQuery = `</span>
+<span>    INSERT INTO items (title, description, image)</span>
+<span>    VALUES ($1, $2, $3);</span>
+<span>  `;</span>
+<span></span>
+<span>  for (const item of itemData) {</span>
+<span>    const values = [item.title, item.description, item.image];</span>
+<span></span>
+<span>    await pool.query(insertQuery, values);</span>
+<span>    console.log(`✅ ${item.title} added successfully`);</span>
+<span>  }</span>
+<span>};</span>
+<span></span>
+<span>try {</span>
+<span>  await createTables();</span>
+<span>  await seedTables();</span>
+<span>  console.log(`🎉 Finished! Saved ${itemData.length} items.`);</span>
+<span>} catch (error) {</span>
+<span>  console.error("⚠️ Reset failed:", error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>} finally {</span>
+<span>  await pool.end();</span>
+<span>}</span>
+  </pre>
+
+  <h3>Scripts for package.json and running the reset</h3>
+
+  <pre class="mycodecli">
+<span>npm pkg set scripts.reset="node config/reset.js"</span>
+<span>npm run reset</span>
+  </pre>
+
+  <h2 id="full-crud-controller">Full CRUD Controller</h2>
+
+  <h3>server/controllers/items.js</h3>
+
+  <div class="div_p">
+    <p>The $1 placeholders keep user input separate from the SQL, which is what stops SQL injection. RETURNING * sends back the saved row. Each route also checks the id first and answers 404 when no row matched. The update replaces every field, so send them all, which the edit form on the React page does. This uses the routes file from the Node page.</p>
+  </div>
+
+  <pre class="mycodepg">
+<span>import { pool } from "../config/database.js";</span>
+<span></span>
+<span>// Validate IDs before querying PostgreSQL.</span>
+<span>const readId = (value) =&gt; {</span>
+<span>  if (!/^[0-9]+$/.test(String(value))) return null;</span>
+<span></span>
+<span>  const id = Number(value);</span>
+<span></span>
+<span>  return Number.isInteger(id) &amp;&amp; id &gt; 0 &amp;&amp; id &lt;= 2147483647 ? id : null;</span>
+<span>};</span>
+<span></span>
+<span>// Return an error message, or an empty string when everything is valid.</span>
+<span>const validateItem = (item) =&gt; {</span>
+<span>  if (!item || typeof item !== "object" || Array.isArray(item)) {</span>
+<span>    return "Item information is required.";</span>
+<span>  }</span>
+<span></span>
+<span>  if (</span>
+<span>    typeof item.title !== "string" ||</span>
+<span>    !item.title.trim() ||</span>
+<span>    item.title.trim().length &gt; 255</span>
+<span>  ) {</span>
+<span>    return "Enter a title between 1 and 255 characters.";</span>
+<span>  }</span>
+<span></span>
+<span>  return "";</span>
+<span>};</span>
+<span></span>
+<span>// Match the order of the SQL placeholders.</span>
+<span>const itemValues = (item) =&gt; [</span>
+<span>  item.title.trim(),</span>
+<span>  String(item.description ?? "").trim(),</span>
+<span>  String(item.image ?? "").trim(),</span>
+<span>];</span>
+<span></span>
+<span>// Log the real error, but never send database details to the browser.</span>
+<span>const serverError = (res, error) =&gt; {</span>
+<span>  console.error("Items database error:", error);</span>
+<span></span>
+<span>  return res.status(500).json({</span>
+<span>    error: "Unable to complete the request. Please try again.",</span>
+<span>  });</span>
+<span>};</span>
+<span></span>
+<span>const getItems = async (req, res) =&gt; {</span>
+<span>  try {</span>
+<span>    const results = await pool.query("SELECT * FROM items ORDER BY id ASC");</span>
+<span></span>
+<span>    return res.status(200).json(results.rows);</span>
+<span>  } catch (error) {</span>
+<span>    return serverError(res, error);</span>
+<span>  }</span>
+<span>};</span>
+<span></span>
+<span>const getItemById = async (req, res) =&gt; {</span>
+<span>  const id = readId(req.params.id);</span>
+<span></span>
+<span>  if (id === null) {</span>
+<span>    return res.status(400).json({ error: "Invalid item ID." });</span>
+<span>  }</span>
+<span></span>
+<span>  try {</span>
+<span>    const results = await pool.query("SELECT * FROM items WHERE id = $1", [id]);</span>
+<span></span>
+<span>    if (results.rows.length === 0) {</span>
+<span>      return res.status(404).json({ error: "Item not found." });</span>
+<span>    }</span>
+<span></span>
+<span>    return res.status(200).json(results.rows[0]);</span>
+<span>  } catch (error) {</span>
+<span>    return serverError(res, error);</span>
+<span>  }</span>
+<span>};</span>
+<span></span>
+<span>const createItem = async (req, res) =&gt; {</span>
+<span>  const validationError = validateItem(req.body);</span>
+<span></span>
+<span>  if (validationError) {</span>
+<span>    return res.status(400).json({ error: validationError });</span>
+<span>  }</span>
+<span></span>
+<span>  try {</span>
+<span>    const results = await pool.query(</span>
+<span>      `INSERT INTO items (title, description, image)</span>
+<span>      VALUES ($1, $2, $3)</span>
+<span>      RETURNING *`,</span>
+<span>      itemValues(req.body),</span>
+<span>    );</span>
+<span></span>
+<span>    return res.status(201).json(results.rows[0]);</span>
+<span>  } catch (error) {</span>
+<span>    return serverError(res, error);</span>
+<span>  }</span>
+<span>};</span>
+<span></span>
+<span>const updateItem = async (req, res) =&gt; {</span>
+<span>  const id = readId(req.params.id);</span>
+<span></span>
+<span>  if (id === null) {</span>
+<span>    return res.status(400).json({ error: "Invalid item ID." });</span>
+<span>  }</span>
+<span></span>
+<span>  const validationError = validateItem(req.body);</span>
+<span></span>
+<span>  if (validationError) {</span>
+<span>    return res.status(400).json({ error: validationError });</span>
+<span>  }</span>
+<span></span>
+<span>  try {</span>
+<span>    const results = await pool.query(</span>
+<span>      `UPDATE items SET</span>
+<span>        title = $1,</span>
+<span>        description = $2,</span>
+<span>        image = $3</span>
+<span>      WHERE id = $4</span>
+<span>      RETURNING *`,</span>
+<span>      [...itemValues(req.body), id],</span>
+<span>    );</span>
+<span></span>
+<span>    if (results.rows.length === 0) {</span>
+<span>      return res.status(404).json({ error: "Item not found." });</span>
+<span>    }</span>
+<span></span>
+<span>    return res.status(200).json(results.rows[0]);</span>
+<span>  } catch (error) {</span>
+<span>    return serverError(res, error);</span>
+<span>  }</span>
+<span>};</span>
+<span></span>
+<span>const deleteItem = async (req, res) =&gt; {</span>
+<span>  const id = readId(req.params.id);</span>
+<span></span>
+<span>  if (id === null) {</span>
+<span>    return res.status(400).json({ error: "Invalid item ID." });</span>
+<span>  }</span>
+<span></span>
+<span>  try {</span>
+<span>    const results = await pool.query(</span>
+<span>      "DELETE FROM items WHERE id = $1 RETURNING *",</span>
+<span>      [id],</span>
+<span>    );</span>
+<span></span>
+<span>    if (results.rows.length === 0) {</span>
+<span>      return res.status(404).json({ error: "Item not found." });</span>
+<span>    }</span>
+<span></span>
+<span>    return res.status(200).json(results.rows[0]);</span>
+<span>  } catch (error) {</span>
+<span>    return serverError(res, error);</span>
+<span>  }</span>
+<span>};</span>
+<span></span>
+<span>export default {</span>
+<span>  getItems,</span>
+<span>  getItemById,</span>
+<span>  createItem,</span>
+<span>  updateItem,</span>
+<span>  deleteItem,</span>
+<span>};</span>
+  </pre>
+
+  <h2 id="two-connected-tables">Two Connected Tables</h2>
+
+  <div class="div_p">
+    <p>This is the one to many setup from xenoblade1_Locations, where one location has many events. events.location_id is a foreign key that points at locations.id. Parents get inserted first so their ids exist, and child tables get dropped first.</p>
+  </div>
+
+  <h3>server/data/locations.js</h3>
+
+  <pre class="mycodepg">
+<span>const locationData = [</span>
+<span>  {</span>
+<span>    name: "Gaur Plain",</span>
+<span>    description: "A wide open plain.",</span>
+<span>    image: "https://picsum.photos/id/30/400/300",</span>
+<span>  },</span>
+<span>];</span>
+<span></span>
+<span>export default locationData;</span>
+  </pre>
+
+  <h3>server/data/events.js</h3>
+
+  <pre class="mycodepg">
+<span>const eventData = [</span>
+<span>  {</span>
+<span>    locationName: "Gaur Plain",</span>
+<span>    title: "Exploration Walk",</span>
+<span>    description: "Explore the open landscape.",</span>
+<span>    starts_at: "2026-10-10T15:00:00-04:00",</span>
+<span>  },</span>
+<span>];</span>
+<span></span>
+<span>export default eventData;</span>
+  </pre>
+
+  <h3>server/config/reset.js with a transaction</h3>
+
+  <div class="div_p">
+    <p>BEGIN and COMMIT make the whole reset count as one step. If anything fails, ROLLBACK puts the database back the way it was. A transaction has to use one client from the pool, not pool.query.</p>
+  </div>
+
+  <pre class="mycodepg">
+<span>import "dotenv/config";</span>
+<span>import { pool } from "./database.js";</span>
+<span>import locationData from "../data/locations.js";</span>
+<span>import eventData from "../data/events.js";</span>
+<span></span>
+<span>const createTables = async (client) =&gt; {</span>
+<span>  const createTableQuery = `</span>
+<span>    DROP TABLE IF EXISTS events;</span>
+<span>    DROP TABLE IF EXISTS locations;</span>
+<span></span>
+<span>    CREATE TABLE locations (</span>
+<span>      id SERIAL PRIMARY KEY,</span>
+<span>      name VARCHAR(255) NOT NULL UNIQUE,</span>
+<span>      description TEXT NOT NULL,</span>
+<span>      image TEXT NOT NULL</span>
+<span>    );</span>
+<span></span>
+<span>    CREATE TABLE events (</span>
+<span>      id SERIAL PRIMARY KEY,</span>
+<span>      location_id INTEGER NOT NULL REFERENCES locations(id) ON DELETE CASCADE,</span>
+<span>      title VARCHAR(255) NOT NULL,</span>
+<span>      description TEXT NOT NULL,</span>
+<span>      starts_at TIMESTAMPTZ NOT NULL</span>
+<span>    );</span>
+<span>  `;</span>
+<span></span>
+<span>  await client.query(createTableQuery);</span>
+<span>  console.log("🎉 Locations and events tables created.");</span>
+<span>};</span>
+<span></span>
+<span>const seedTables = async (client) =&gt; {</span>
+<span>  // Save each new location's id so the events can point at it.</span>
+<span>  const locationIds = new Map();</span>
+<span></span>
+<span>  for (const location of locationData) {</span>
+<span>    const results = await client.query(</span>
+<span>      `INSERT INTO locations (name, description, image)</span>
+<span>      VALUES ($1, $2, $3)</span>
+<span>      RETURNING id;`,</span>
+<span>      [location.name, location.description, location.image],</span>
+<span>    );</span>
+<span></span>
+<span>    locationIds.set(location.name, results.rows[0].id);</span>
+<span>  }</span>
+<span></span>
+<span>  for (const event of eventData) {</span>
+<span>    const locationId = locationIds.get(event.locationName);</span>
+<span></span>
+<span>    if (locationId === undefined) {</span>
+<span>      throw new Error(`Unknown location "${event.locationName}" for event "${event.title}".`);</span>
+<span>    }</span>
+<span></span>
+<span>    await client.query(</span>
+<span>      `INSERT INTO events (location_id, title, description, starts_at)</span>
+<span>      VALUES ($1, $2, $3, $4);`,</span>
+<span>      [locationId, event.title, event.description, event.starts_at],</span>
+<span>    );</span>
+<span>  }</span>
+<span>};</span>
+<span></span>
+<span>const resetDatabase = async () =&gt; {</span>
+<span>  const client = await pool.connect();</span>
+<span></span>
+<span>  try {</span>
+<span>    await client.query("BEGIN");</span>
+<span></span>
+<span>    await createTables(client);</span>
+<span>    await seedTables(client);</span>
+<span></span>
+<span>    await client.query("COMMIT");</span>
+<span></span>
+<span>    console.log(`✅ Saved ${locationData.length} locations and ${eventData.length} events.`);</span>
+<span>  } catch (error) {</span>
+<span>    await client.query("ROLLBACK");</span>
+<span>    throw error;</span>
+<span>  } finally {</span>
+<span>    client.release();</span>
+<span>  }</span>
+<span>};</span>
+<span></span>
+<span>try {</span>
+<span>  await resetDatabase();</span>
+<span>} catch (error) {</span>
+<span>  console.error("⚠️ Reset failed:", error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>} finally {</span>
+<span>  await pool.end();</span>
+<span>}</span>
+  </pre>
+
+  <h3>Get events with their location using JOIN</h3>
+
+  <pre class="mycodepg">
+<span>import { pool } from "../config/database.js";</span>
+<span></span>
+<span>const getEvents = async (req, res) =&gt; {</span>
+<span>  try {</span>
+<span>    const results = await pool.query(</span>
+<span>      `SELECT e.id, e.location_id, e.title, e.description, e.starts_at,</span>
+<span>              l.name AS location_name, l.image AS location_image</span>
+<span>       FROM events AS e</span>
+<span>       JOIN locations AS l ON l.id = e.location_id</span>
+<span>       ORDER BY e.starts_at, e.id`,</span>
+<span>    );</span>
+<span></span>
+<span>    res.status(200).json(results.rows);</span>
+<span>  } catch (error) {</span>
+<span>    console.error("Error loading events:", error.message);</span>
+<span>    res.status(500).json({ error: "Unable to load events." });</span>
+<span>  }</span>
+<span>};</span>
+<span></span>
+<span>const getEventsByLocation = async (req, res) =&gt; {</span>
+<span>  const locationId = Number(req.params.locationId);</span>
+<span></span>
+<span>  if (!Number.isInteger(locationId) || locationId &lt; 1 || locationId &gt; 2147483647) {</span>
+<span>    return res.status(400).json({ error: "Invalid location ID." });</span>
+<span>  }</span>
+<span></span>
+<span>  try {</span>
+<span>    const locationResults = await pool.query(</span>
+<span>      "SELECT id FROM locations WHERE id = $1",</span>
+<span>      [locationId],</span>
+<span>    );</span>
+<span></span>
+<span>    if (locationResults.rows.length === 0) {</span>
+<span>      return res.status(404).json({ error: "Location not found." });</span>
+<span>    }</span>
+<span></span>
+<span>    const results = await pool.query(</span>
+<span>      `SELECT id, location_id, title, description, starts_at</span>
+<span>       FROM events</span>
+<span>       WHERE location_id = $1</span>
+<span>       ORDER BY starts_at, id`,</span>
+<span>      [locationId],</span>
+<span>    );</span>
+<span></span>
+<span>    res.status(200).json(results.rows);</span>
+<span>  } catch (error) {</span>
+<span>    console.error("Error loading events:", error.message);</span>
+<span>    res.status(500).json({ error: "Unable to load events for this location." });</span>
+<span>  }</span>
+<span>};</span>
+<span></span>
+<span>export default { getEvents, getEventsByLocation };</span>
+  </pre>
+
+  <h3>Many to many with a join table</h3>
+
+  <div class="div_p">
+    <p>One student can take many classes, and one class has many students. The middle table stores one row for each pairing.</p>
+  </div>
+
+  <pre class="mycodepg">
+<span>CREATE TABLE students (</span>
+<span>  id SERIAL PRIMARY KEY,</span>
+<span>  name VARCHAR(255) NOT NULL</span>
+<span>);</span>
+<span></span>
+<span>CREATE TABLE classes (</span>
+<span>  id SERIAL PRIMARY KEY,</span>
+<span>  title VARCHAR(255) NOT NULL</span>
+<span>);</span>
+<span></span>
+<span>CREATE TABLE enrollments (</span>
+<span>  student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,</span>
+<span>  class_id INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,</span>
+<span>  PRIMARY KEY (student_id, class_id)</span>
+<span>);</span>
+<span></span>
+<span>SELECT s.name, c.title</span>
+<span>FROM enrollments AS e</span>
+<span>JOIN students AS s ON s.id = e.student_id</span>
+<span>JOIN classes AS c ON c.id = e.class_id</span>
+<span>WHERE c.id = 1;</span>
+  </pre>
+
+  <h2 id="sql-reference">SQL Reference</h2>
+
+  <h3>Column types and rules</h3>
+
+  <pre class="mycodepg">
+<span>CREATE TABLE examples (</span>
+<span>  id SERIAL PRIMARY KEY,                       -- auto-increasing id</span>
+<span>  name VARCHAR(255) NOT NULL,                  -- short text, required</span>
+<span>  email VARCHAR(254) NOT NULL UNIQUE,          -- no duplicates allowed</span>
+<span>  bio TEXT,                                    -- long text, optional</span>
+<span>  age INTEGER CHECK (age &gt;= 0),                -- whole number with a rule</span>
+<span>  price_cents INTEGER NOT NULL DEFAULT 0,      -- store money as whole cents</span>
+<span>  rating NUMERIC(3, 1),                        -- exact decimal such as 9.5</span>
+<span>  is_active BOOLEAN NOT NULL DEFAULT TRUE,     -- true or false</span>
+<span>  tags TEXT[],                                 -- a list of text</span>
+<span>  settings JSONB,                              -- JSON data</span>
+<span>  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW() -- date and time</span>
+<span>);</span>
+  </pre>
+
+  <h3>Reading rows</h3>
+
+  <pre class="mycodepg">
+<span>SELECT * FROM items;</span>
+<span>SELECT id, title FROM items WHERE id = 1;</span>
+<span>SELECT * FROM items WHERE title ILIKE '%game%';     -- search, ignoring capitals</span>
+<span>SELECT * FROM items ORDER BY created_at DESC;       -- newest first</span>
+<span>SELECT * FROM items ORDER BY id LIMIT 10 OFFSET 20; -- page 3 of 10 per page</span>
+<span>SELECT COUNT(*) FROM items;</span>
+  </pre>
+
+  <h3>Adding, changing, and deleting rows</h3>
+
+  <div class="div_p">
+    <p>Always include WHERE on UPDATE and DELETE. Without it, every row in the table changes.</p>
+  </div>
+
+  <pre class="mycodepg">
+<span>INSERT INTO items (title, description) VALUES ('New item', 'Hello');</span>
+<span>UPDATE items SET title = 'Changed' WHERE id = 1;</span>
+<span>DELETE FROM items WHERE id = 1;</span>
+  </pre>
+
+  <h3>Group and count</h3>
+
+  <pre class="mycodepg">
+<span>SELECT location_id, COUNT(*) AS total</span>
+<span>FROM events</span>
+<span>GROUP BY location_id</span>
+<span>HAVING COUNT(*) &gt; 1</span>
+<span>ORDER BY total DESC;</span>
+  </pre>
+
+  <h3>Change a table that has data in it</h3>
+
+  <pre class="mycodepg">
+<span>ALTER TABLE items ADD COLUMN price_cents INTEGER NOT NULL DEFAULT 0;</span>
+<span>ALTER TABLE items RENAME COLUMN price_cents TO price;</span>
+<span>ALTER TABLE items DROP COLUMN price;</span>
+<span>CREATE INDEX items_title_index ON items (title);</span>
+  </pre>
+
+  <h3>Search with user input the safe way</h3>
+
+  <div class="div_p">
+    <p>Put the % signs in the value, not in the SQL string.</p>
+  </div>
+
+  <pre class="mycodepg">
+<span>const search = String(req.query.search ?? "");</span>
+<span></span>
+<span>const results = await pool.query(</span>
+<span>  "SELECT * FROM items WHERE title ILIKE $1 ORDER BY id LIMIT 50",</span>
+<span>  [`%${search}%`],</span>
+<span>);</span>
+  </pre>
+
+  <h3>Never build SQL by joining strings</h3>
+
+  <div class="div_p">
+    <p>The top line lets anyone run their own SQL through your form. The bottom line is safe.</p>
+  </div>
+
+  <pre class="mycodepg">
+<span>// DANGER: SQL injection</span>
+<span>pool.query(`SELECT * FROM users WHERE email = '${req.body.email}'`);</span>
+<span></span>
+<span>// SAFE: the value travels separately from the SQL</span>
+<span>pool.query("SELECT * FROM users WHERE email = $1", [req.body.email]);</span>
+  </pre>
+
+  <h3>Column names turn lowercase</h3>
+
+  <div class="div_p">
+    <p>Postgres lowers any name without quotes, so pricePoint becomes pricepoint. That caused my unearthed mismatch. Use snake_case names like price_point, and rename them for React with AS.</p>
+  </div>
+
+  <pre class="mycodepg">
+<span>const results = await pool.query(</span>
+<span>  `SELECT id, price_point AS "pricePoint" FROM gifts`,</span>
+<span>);</span>
+  </pre>
+
+  <h2 id="the-psql-terminal">The psql Terminal</h2>
+
+  <h3>Connect to a hosted database</h3>
+
+  <div class="div_p">
+    <p>Paste the External Database URL from your database page in place of the placeholder.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>psql "postgresql://your_user:your_password@your_host/your_database"</span>
+  </pre>
+
+  <h3>Commands inside psql</h3>
+
+  <pre class="mycodefile">
+<span>\l              list the databases</span>
+<span>\c my_project   connect to a database</span>
+<span>\dt             list the tables</span>
+<span>\d items        show the columns of a table</span>
+<span>\q              quit</span>
+  </pre>
+
+  <br><br><br><br>
+
+  <footer class="footer"> &copy; By Jamar Brown
+
+    <div class="container">
+      <div id='clock'></div>
+    </div>
+  </footer>
+
+  <script src="js/clock.js"></script>
+  <script src="js/copy.js"></script>
+</body>
+
+</html>

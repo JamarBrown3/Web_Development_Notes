@@ -1,0 +1,306 @@
+/*
+
+Student ID: 23778313
+
+Student Name: Jamar Brown
+
+File Name: style.css
+*/
+
+
+body {
+    /* Set "my-h3-counter" to 0 */
+    counter-reset: my-h3-counter;
+}
+
+h3::before {
+    /* Increment "my-h3-counter" by 1 */
+    counter-increment: my-h3-counter;
+    content: "Snippet " counter(my-h3-counter) ". ";
+}
+
+.mycodecss {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #c7af6b;
+    background: #1a8468;
+}
+
+.mycodecss:before {
+    content: "CSS Code ";
+    /*content: "Example " counter(exampleno);*/
+    min-width: 7.5em;
+    text-transform: uppercase;
+    display: block;
+    color: #11f6fd;
+    font-family: sans-serif;
+}
+
+.mycodehtml {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #e05915;
+    background: #f250ec;
+    font-size: 14px;
+}
+
+.mycodehtml:before {
+    content: "HTML Code ";
+    /*content: "Example " counter(exampleno);*/
+    min-width: 7.5em;
+    text-transform: uppercase;
+    display: block;
+    color: #e62739;
+    font-family: sans-serif;
+}
+
+.mycodejs {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #845007;
+    background-color: #c9af98;
+    font-size: 14px;
+}
+
+.mycodejs:before {
+    content: "JavaScript Code ";
+    min-width: 7.5em;
+    text-transform: uppercase;
+    display: block;
+    color: rgb(187, 95, 15);
+    font-family: sans-serif;
+}
+
+.mycodereact {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #087ea4;
+    background-color: #c4f1ff;
+    font-size: 14px;
+}
+
+.mycodereact:before {
+    content: "React Code ";
+    min-width: 7.5em;
+    text-transform: uppercase;
+    display: block;
+    color: #087ea4;
+    font-family: sans-serif;
+}
+
+.mycodenode {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #3c873a;
+    background-color: #d5efb5;
+    font-size: 14px;
+}
+
+.mycodenode:before {
+    content: "Node Code ";
+    min-width: 7.5em;
+    text-transform: uppercase;
+    display: block;
+    color: #2b6529;
+    font-family: sans-serif;
+}
+
+.mycodemongo {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #00ed64;
+    background-color: #001e2b;
+    color: #c3f5d8;
+    font-size: 14px;
+}
+
+.mycodemongo:before {
+    content: "MongoDB Code ";
+    min-width: 7.5em;
+    text-transform: uppercase;
+    display: block;
+    color: #00ed64;
+    font-family: sans-serif;
+}
+
+.mycodepg {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #ffd34e;
+    background-color: #336791;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.mycodepg:before {
+    content: "Postgres Code ";
+    min-width: 7.5em;
+    text-transform: uppercase;
+    display: block;
+    color: #ffd34e;
+    font-family: sans-serif;
+}
+
+.mycodesecurity {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #b3261e;
+    background-color: #fbd5d5;
+    font-size: 14px;
+}
+
+.mycodesecurity:before {
+    content: "Security Code ";
+    min-width: 7.5em;
+    text-transform: uppercase;
+    display: block;
+    color: #b3261e;
+    font-family: sans-serif;
+}
+
+.mycodeenv {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #c9a400;
+    background-color: #fff3b0;
+    font-size: 14px;
+}
+
+.mycodeenv:before {
+    content: ".env File ";
+    min-width: 7.5em;
+    display: block;
+    color: #7a6000;
+    font-family: sans-serif;
+}
+
+.mycodecli {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #feda6a;
+    background-color: #1d1e22;
+    color: #f2f2f2;
+    font-size: 14px;
+}
+
+.mycodecli:before {
+    content: "Terminal ";
+    min-width: 7.5em;
+    text-transform: uppercase;
+    display: block;
+    color: #feda6a;
+    font-family: sans-serif;
+}
+
+.mycodefile {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #6b7280;
+    background-color: #e5e7eb;
+    font-size: 14px;
+}
+
+.mycodefile:before {
+    content: "File ";
+    min-width: 7.5em;
+    text-transform: uppercase;
+    display: block;
+    color: #4b5563;
+    font-family: sans-serif;
+}
+
+/* Line numbers need to be lighter on the dark code blocks */
+.mycodemongo span:before,
+.mycodepg span:before,
+.mycodecli span:before {
+    color: #cfd8dc;
+}
+
+pre {
+    position: relative;
+}
+
+.copy-btn {
+    position: absolute;
+    top: .4em;
+    right: .4em;
+    padding: 2px 10px;
+    border: 1px solid #1d1e22;
+    border-radius: 4px;
+    background-color: #feda6a;
+    color: #1d1e22;
+    font-family: sans-serif;
+    font-size: 12px;
+    user-select: none;
+}
+
+.copy-btn:hover {
+    background-color: #ffffff;
+}
+
+h3 {
+    border-bottom: 2px solid red;
+    border-top: 2px solid red;
+}
+
+pre {
+    counter-reset: line;
+}
+
+span {
+    counter-increment: line;
+}
+
+span:before {
+    content: counter(line);
+    display: inline-block;
+    border-right: 1px solid #ddd;
+    padding: 0 .5em;
+    margin-right: .5em;
+    color: #888;
+}
+
+.container {
+    width: 960px;
+    margin: auto;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #feda6a;
+    color: #1d1e22;
+    text-align: center;
+    margin: auto;
+    padding: 6px;
+}
+
+.div_p{
+    text-align: center;
+    margin: 0 auto;
+    width: 70%;
+}
+
+h2{
+    text-align: center;
+}
+
+.div_p li{
+    list-style-position: inside;
+}
+
+
+

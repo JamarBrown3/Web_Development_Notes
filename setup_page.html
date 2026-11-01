@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Jamar Brown">
+  <meta name="description" content="This is the page that has the terminal setup and .env files for every project">
+  <title>Setup Page</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand">Final Companion</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="html_page.html">Html Code</a></li>
+        <li><a href="css_page.html">Css Code</a></li>
+        <li><a href="javaScript.html">JavaScript Code</a></li>
+        <li><a href="setup_page.html">Setup &amp; .env</a></li>
+        <li><a href="react_page.html">React Code</a></li>
+        <li><a href="node_page.html">Node Code</a></li>
+        <li><a href="mongodb_page.html">MongoDB Code</a></li>
+        <li><a href="postgres_page.html">Postgres Code</a></li>
+        <li><a href="security_page.html">Security Code</a></li>
+        <li><a href="migration_page.html">Switch Databases</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <h2>On This Page</h2>
+
+  <div class="div_p">
+    <ul>
+      <li><a href="#vs-code-terminal">VS Code Terminal</a></li>
+      <li><a href="#project-folder-layouts">Project Folder Layouts</a></li>
+      <li><a href="#setup-react-with-vite">Setup React With Vite</a></li>
+      <li><a href="#setup-node-and-express">Setup Node And Express</a></li>
+      <li><a href="#run-react-and-node-together">Run React And Node Together</a></li>
+      <li><a href="#add-a-database-or-security">Add A Database Or Security</a></li>
+      <li><a href="#env-files">Env Files</a></li>
+      <li><a href="#gitignore">Gitignore</a></li>
+    </ul>
+  </div>
+
+  <h2 id="vs-code-terminal">VS Code Terminal</h2>
+
+  <div class="div_p">
+    <p>Open the terminal in VS Code with Ctrl + ` (that key is above Tab). Every Terminal block on this page gets typed in there. Ctrl + C stops a running server.</p>
+  </div>
+
+  <h3>Open a project folder from the terminal</h3>
+
+  <pre class="mycodecli">
+<span>cd ~/Documents/Node_Express_class</span>
+<span>mkdir my-project</span>
+<span>cd my-project</span>
+<span>code .</span>
+  </pre>
+
+  <h3>Commands you use the most</h3>
+
+  <pre class="mycodecli">
+<span>pwd                # show the folder you are in</span>
+<span>ls                 # list the files in this folder</span>
+<span>ls -a              # also list hidden files such as .env</span>
+<span>cd client          # go into the client folder</span>
+<span>cd ..              # go back up one folder</span>
+<span>mkdir server       # make a folder</span>
+<span>touch server/.env  # make an empty file</span>
+  </pre>
+
+  <h3>Check that everything is installed</h3>
+
+  <pre class="mycodecli">
+<span>node -v</span>
+<span>npm -v</span>
+<span>git --version</span>
+  </pre>
+
+  <h2 id="project-folder-layouts">Project Folder Layouts</h2>
+
+  <div class="div_p">
+    <p>Pick one of these before you start. The first one is what xenoblade1_Locations and video_gameStore use. The second one is what Rev uses.</p>
+  </div>
+
+  <h3>One package.json for the whole project</h3>
+
+  <pre class="mycodefile">
+<span>my-project/</span>
+<span>  package.json        &lt;- all packages and the "npm run dev" script</span>
+<span>  node_modules/</span>
+<span>  .gitignore</span>
+<span>  client/</span>
+<span>    index.html</span>
+<span>    vite.config.js</span>
+<span>    src/</span>
+<span>      main.jsx</span>
+<span>      App.jsx</span>
+<span>      components/</span>
+<span>      pages/</span>
+<span>      services/</span>
+<span>  server/</span>
+<span>    .env              &lt;- your secrets</span>
+<span>    server.js</span>
+<span>    config/</span>
+<span>      database.js</span>
+<span>      reset.js</span>
+<span>    controllers/</span>
+<span>    data/</span>
+<span>    routes/</span>
+  </pre>
+
+  <h3>Separate client and server packages</h3>
+
+  <pre class="mycodefile">
+<span>my-project/</span>
+<span>  .gitignore</span>
+<span>  client/</span>
+<span>    package.json      &lt;- npm run dev here</span>
+<span>    src/</span>
+<span>  server/</span>
+<span>    package.json      &lt;- npm run dev here, in a second terminal</span>
+<span>    .env</span>
+<span>    .env.example</span>
+<span>    app.js</span>
+<span>    server.js</span>
+<span>    config/</span>
+<span>    controllers/</span>
+<span>    models/</span>
+<span>    routes/</span>
+<span>    security/</span>
+<span>    services/</span>
+  </pre>
+
+  <h2 id="setup-react-with-vite">Setup React With Vite</h2>
+
+  <div class="div_p">
+    <p>Run this from your project folder. It makes the client folder. When Vite asks a question, use the arrow keys and press Enter.</p>
+  </div>
+
+  <h3>Make the React app</h3>
+
+  <pre class="mycodecli">
+<span>npm create vite@latest client -- --template react</span>
+<span>cd client</span>
+<span>npm install</span>
+<span>npm install react-router-dom</span>
+<span>npm run dev</span>
+  </pre>
+
+  <div class="div_p">
+    <p>The site opens at http://localhost:5173. Press Ctrl + C to stop it.</p>
+  </div>
+
+  <h3>Remove the starter files you will not use</h3>
+
+  <div class="div_p">
+    <p>Run this after you paste in your own App.jsx from the React page, because the starter App.jsx uses these files.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>rm src/App.css src/assets/react.svg src/assets/vite.svg src/assets/hero.png</span>
+  </pre>
+
+  <h2 id="setup-node-and-express">Setup Node And Express</h2>
+
+  <div class="div_p">
+    <p>Run this from your project folder. It makes the server folder and adds the scripts.</p>
+  </div>
+
+  <h3>Make the Express server</h3>
+
+  <pre class="mycodecli">
+<span>mkdir server</span>
+<span>cd server</span>
+<span>npm init -y</span>
+<span>npm pkg set type=module</span>
+<span>npm pkg set scripts.dev="nodemon server.js" scripts.start="node server.js"</span>
+<span>npm install express cors dotenv</span>
+<span>npm install --save-dev nodemon</span>
+<span>mkdir config controllers routes data</span>
+<span>touch server.js .env .env.example</span>
+  </pre>
+
+  <h3>Start the server</h3>
+
+  <pre class="mycodecli">
+<span>npm run dev</span>
+  </pre>
+
+  <div class="div_p">
+    <p>The starter server.js is on the Node page.</p>
+  </div>
+
+  <h3>The parts of server/package.json that matter</h3>
+
+  <pre class="mycodenode">
+<span>{</span>
+<span>  "name": "server",</span>
+<span>  "version": "1.0.0",</span>
+<span>  "type": "module",</span>
+<span>  "main": "server.js",</span>
+<span>  "scripts": {</span>
+<span>    "dev": "nodemon server.js",</span>
+<span>    "start": "node server.js"</span>
+<span>  }</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="run-react-and-node-together">Run React And Node Together</h2>
+
+  <div class="div_p">
+    <p>This is the one package.json layout. Run these from the main project folder, and one command starts both the client and the server.</p>
+  </div>
+
+  <h3>Add concurrently from the main project folder</h3>
+
+  <pre class="mycodecli">
+<span>npm init -y</span>
+<span>npm pkg set type=module</span>
+<span>npm install concurrently express dotenv react react-dom react-router-dom</span>
+<span>npm install --save-dev vite @vitejs/plugin-react nodemon</span>
+  </pre>
+
+  <h3>package.json scripts in the main project folder</h3>
+
+  <pre class="mycodenode">
+<span>{</span>
+<span>  "scripts": {</span>
+<span>    "dev": "concurrently \"cd client &amp;&amp; vite\" \"cd server &amp;&amp; nodemon server\"",</span>
+<span>    "reset": "cd server &amp;&amp; node --require dotenv/config config/reset.js",</span>
+<span>    "build": "cd client &amp;&amp; vite build",</span>
+<span>    "start": "cd server &amp;&amp; node server"</span>
+<span>  }</span>
+<span>}</span>
+  </pre>
+
+  <h3>Start everything</h3>
+
+  <pre class="mycodecli">
+<span>npm run dev</span>
+  </pre>
+
+  <h2 id="add-a-database-or-security">Add A Database Or Security</h2>
+
+  <div class="div_p">
+    <p>Run the one you need from the folder that has your server package.json.</p>
+  </div>
+
+  <h3>Postgres</h3>
+
+  <pre class="mycodecli">
+<span>npm install pg</span>
+  </pre>
+
+  <h3>MongoDB</h3>
+
+  <pre class="mycodecli">
+<span>npm install mongoose</span>
+  </pre>
+
+  <h3>Security and login packages from Rev</h3>
+
+  <pre class="mycodecli">
+<span>npm install helmet express-rate-limit express-session connect-mongo argon2</span>
+  </pre>
+
+  <h2 id="env-files">Env Files</h2>
+
+  <div class="div_p">
+    <ul>
+      <li>The .env file holds your passwords. It goes in the server folder and it never goes on GitHub.</li>
+      <li>There are no spaces around the = sign and no quotes are needed.</li>
+      <li>Copy the block you need, then replace the placeholder values with your real ones.</li>
+      <li>.env.example is the same file with the secret values left blank. That one is safe to commit.</li>
+      <li>Restart the server after you change .env, because it is only read at startup.</li>
+    </ul>
+  </div>
+
+  <h3>server/.env for Postgres</h3>
+
+  <pre class="mycodeenv">
+<span># Copy these from the Connections section of your database page</span>
+<span>PGUSER=your_database_user</span>
+<span>PGPASSWORD=your_database_password</span>
+<span>PGHOST=your_database_host</span>
+<span>PGPORT=5432</span>
+<span>PGDATABASE=your_database_name</span>
+<span></span>
+<span>PORT=3000</span>
+<span>NODE_ENV=development</span>
+  </pre>
+
+  <h3>server/.env for local Postgres on your computer</h3>
+
+  <pre class="mycodeenv">
+<span># Homebrew Postgres uses your Mac username and no password</span>
+<span>PGUSER=your_mac_username</span>
+<span>PGPASSWORD=</span>
+<span>PGHOST=localhost</span>
+<span>PGPORT=5432</span>
+<span>PGDATABASE=my_project</span>
+<span></span>
+<span>PORT=3000</span>
+<span>NODE_ENV=development</span>
+  </pre>
+
+  <h3>server/.env for MongoDB Atlas</h3>
+
+  <pre class="mycodeenv">
+<span># Atlas &gt; Database &gt; Connect &gt; Drivers. Keep the query options on the end.</span>
+<span># URL-encode special characters in the password.</span>
+<span>MONGODB_URI=mongodb+srv://your_user:your_password@your_cluster.mongodb.net/?retryWrites=true&amp;w=majority</span>
+<span># The database name, not the cluster name.</span>
+<span>MONGODB_DB_NAME=my_project</span>
+<span></span>
+<span>PORT=3000</span>
+<span>NODE_ENV=development</span>
+  </pre>
+
+  <h3>server/.env for the Rev login and security</h3>
+
+  <pre class="mycodeenv">
+<span>MONGODB_URI=mongodb+srv://your_user:your_password@your_cluster.mongodb.net/?retryWrites=true&amp;w=majority</span>
+<span>MONGODB_DB_NAME=my_project</span>
+<span>PORT=3002</span>
+<span># Frontend origin only, with no path and no slash on the end.</span>
+<span>CLIENT_ORIGIN=http://localhost:5173</span>
+<span></span>
+<span># Make each of these with the Generate Secrets snippet below.</span>
+<span>SESSION_SECRET=paste_generated_value_here</span>
+<span>ADMIN_MFA_KEY=paste_generated_value_here</span>
+<span></span>
+<span># Names nobody is allowed to register.</span>
+<span>RESERVED_USERNAMES=yourname</span>
+<span></span>
+<span># Only set these on the live server.</span>
+<span># NODE_ENV=production</span>
+<span># TRUST_PROXY_HOPS=1</span>
+  </pre>
+
+  <h3>server/.env.example</h3>
+
+  <pre class="mycodeenv">
+<span># Copy this file to .env and fill in the real values there.</span>
+<span>MONGODB_URI=</span>
+<span>MONGODB_DB_NAME=</span>
+<span>PORT=3002</span>
+<span>CLIENT_ORIGIN=http://localhost:5173</span>
+<span>SESSION_SECRET=</span>
+<span>ADMIN_MFA_KEY=</span>
+<span>RESERVED_USERNAMES=</span>
+  </pre>
+
+  <h3>client/.env for a live API address</h3>
+
+  <div class="div_p">
+    <p>Only use this when the API is on a different address. Anything starting with VITE_ gets built into the website where anyone can read it, so never put a password in here.</p>
+  </div>
+
+  <pre class="mycodeenv">
+<span>VITE_API_URL=https://your-api.onrender.com</span>
+  </pre>
+
+  <h3>Read the client .env value in React</h3>
+
+  <pre class="mycodereact">
+<span>const API_URL = import.meta.env.VITE_API_URL ?? "";</span>
+<span></span>
+<span>const response = await fetch(`${API_URL}/api/items`);</span>
+  </pre>
+
+  <h3>Generate Secrets</h3>
+
+  <div class="div_p">
+    <p>Run this once for SESSION_SECRET and once more for ADMIN_MFA_KEY, and use a different value for each one.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"</span>
+  </pre>
+
+  <h3>Load .env in the server</h3>
+
+  <div class="div_p">
+    <p>Put this line at the top of the first file that needs it. It looks for .env in the folder you started the server from.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>import "dotenv/config";</span>
+  </pre>
+
+  <h3>server/config/env.js</h3>
+
+  <div class="div_p">
+    <p>This Rev version finds .env no matter which folder you start from, and it stops with a clear message when a value is missing or wrong.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>// Resolve .env relative to this file, not the terminal's working directory.</span>
+<span>// Existing deployment environment variables take precedence over .env.</span>
+<span>import dotenv from "dotenv";</span>
+<span>import { fileURLToPath } from "node:url";</span>
+<span></span>
+<span>dotenv.config({</span>
+<span>  path: fileURLToPath(new URL("../.env", import.meta.url)),</span>
+<span>  quiet: true,</span>
+<span>});</span>
+<span></span>
+<span>// Read and validate the MongoDB connection settings.</span>
+<span>// This does not connect to the MongoDB database yet.</span>
+<span>export function getDatabaseConfig() {</span>
+<span>  const uri = process.env.MONGODB_URI?.trim();</span>
+<span>  const dbName = process.env.MONGODB_DB_NAME?.trim();</span>
+<span></span>
+<span>  // Accept either supported MongoDB connection-string scheme.</span>
+<span>  const validScheme =</span>
+<span>    uri?.startsWith("mongodb://") || uri?.startsWith("mongodb+srv://");</span>
+<span></span>
+<span>  if (!validScheme) {</span>
+<span>    throw new Error("Set a valid MONGODB_URI in server/.env.");</span>
+<span>  }</span>
+<span></span>
+<span>  if (!dbName || !/^[a-zA-Z0-9_-]+$/.test(dbName)) {</span>
+<span>    throw new Error(</span>
+<span>      "MONGODB_DB_NAME must contain only letters, numbers, underscores, and hyphens.",</span>
+<span>    );</span>
+<span>  }</span>
+<span></span>
+<span>  // Return only the settings the database module needs.</span>
+<span>  return { uri, dbName };</span>
+<span>}</span>
+<span></span>
+<span>// Environment variables are strings.</span>
+<span>// Convert the port to a number and validate it.</span>
+<span>export function getPort() {</span>
+<span>  const port = Number(process.env.PORT || 3002);</span>
+<span></span>
+<span>  if (!Number.isInteger(port) || port &lt; 1 || port &gt; 65535) {</span>
+<span>    throw new Error("PORT must be an integer between 1 and 65535.");</span>
+<span>  }</span>
+<span>  return port;</span>
+<span>}</span>
+<span></span>
+<span>// How many reverse proxies sit in front of the API.</span>
+<span>// On Render every visitor arrives through Render's proxy. Without this, every</span>
+<span>// visitor appears to have the same IP, so one bot's bad logins lock out everyone.</span>
+<span>//   TRUST_PROXY_HOPS=1   Render (one proxy)</span>
+<span>//   TRUST_PROXY_HOPS=2   Render behind Cloudflare</span>
+<span>//   TRUST_PROXY_HOPS=0   no proxy at all</span>
+<span>// Never set a number higher than the real number of proxies: visitors could then</span>
+<span>// fake their IP address with an X-Forwarded-For header and dodge rate limits.</span>
+<span>export function getTrustProxy(env = process.env) {</span>
+<span>  const raw = env.TRUST_PROXY_HOPS?.trim();</span>
+<span></span>
+<span>  if (!raw) {</span>
+<span>    if (env.NODE_ENV === "production") {</span>
+<span>      throw new Error(</span>
+<span>        "Set TRUST_PROXY_HOPS in production (1 on Render, 0 if there is no proxy).",</span>
+<span>      );</span>
+<span>    }</span>
+<span>    return false; // local development: trust no forwarded headers</span>
+<span>  }</span>
+<span></span>
+<span>  const hops = Number(raw);</span>
+<span>  if (!Number.isInteger(hops) || hops &lt; 0 || hops &gt; 3) {</span>
+<span>    throw new Error("TRUST_PROXY_HOPS must be a whole number from 0 to 3.");</span>
+<span>  }</span>
+<span>  return hops === 0 ? false : hops;</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="gitignore">Gitignore</h2>
+
+  <div class="div_p">
+    <p>Make this file in the main project folder before your first commit.</p>
+  </div>
+
+  <h3>.gitignore</h3>
+
+  <pre class="mycodefile">
+<span>node_modules</span>
+<span>dist</span>
+<span>.DS_Store</span>
+<span></span>
+<span># Secrets. .env.example stays because it has no real values.</span>
+<span>.env</span>
+<span>.env.*</span>
+<span>!.env.example</span>
+<span></span>
+<span># The built React site</span>
+<span>server/public</span>
+<span></span>
+<span>logs</span>
+<span>*.log</span>
+  </pre>
+
+  <h3>Check that .env is ignored</h3>
+
+  <div class="div_p">
+    <p>Nothing should print from the second line. If git prints .env, it is not being ignored.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>git check-ignore server/.env</span>
+<span>git ls-files | grep '\.env$'</span>
+  </pre>
+
+  <h3>If you already committed .env</h3>
+
+  <div class="div_p">
+    <p>This stops tracking the file. The old password is still in your Git history, so also change the password on the database.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>git rm --cached server/.env</span>
+<span>git commit -m "Stop tracking .env"</span>
+  </pre>
+
+  <br><br><br><br>
+
+  <footer class="footer"> &copy; By Jamar Brown
+
+    <div class="container">
+      <div id='clock'></div>
+    </div>
+  </footer>
+
+  <script src="js/clock.js"></script>
+  <script src="js/copy.js"></script>
+</body>
+
+</html>
