@@ -49,10 +49,15 @@
       <li><a href="#step-8-put-the-server-together">Step 8 Put The Server Together</a></li>
       <li><a href="#step-9-protect-your-own-routes">Step 9 Protect Your Own Routes</a></li>
       <li><a href="#step-10-create-the-admin">Step 10 Create The Admin</a></li>
+      <li><a href="#set-up-microsoft-authenticator">Set Up Microsoft Authenticator</a></li>
       <li><a href="#step-11-the-react-login">Step 11 The React Login</a></li>
       <li><a href="#step-12-try-it-from-the-terminal">Step 12 Try It From The Terminal</a></li>
       <li><a href="#before-going-live">Before Going Live</a></li>
     </ul>
+  </div>
+
+  <div class="div_p">
+    <p>To start a new project with all of this already working, copy the <a href="node_page.html#login-starter">Login Starter</a> instead of pasting these one at a time.</p>
   </div>
 
   <h2 id="how-the-rev-login-works">How The Rev Login Works</h2>
@@ -2785,6 +2790,75 @@
   <pre class="mycodecli">
 <span>npm run admin:create -- --email you@example.com --reset-mfa</span>
   </pre>
+
+  <h2 id="set-up-microsoft-authenticator">Set Up Microsoft Authenticator</h2>
+
+  <div class="div_p">
+    <p>This is the two-step sign-in for the admin account. After your password, you also type a 6-digit code from the app on your phone. Someone with your password still cannot get in without your phone. An admin with no authenticator set up cannot sign in at all. Regular members do not use this.</p>
+  </div>
+
+  <h3>Make the secret key once</h3>
+
+  <div class="div_p">
+    <p>Run this from the server folder. It prints a long random key. This key locks the authenticator secret in the database.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"</span>
+  </pre>
+
+  <h3>Add the key to server/.env</h3>
+
+  <div class="div_p">
+    <p>Replace the words with your key. Use the same key on your computer and in your hosting settings. If the key changes, the saved authenticator stops working.</p>
+  </div>
+
+  <pre class="mycodeenv">
+<span>ADMIN_MFA_KEY=paste_the_64_character_key_here</span>
+  </pre>
+
+  <h3>Start the setup</h3>
+
+  <div class="div_p">
+    <p>Run the admin script from Step 10. It prints an account name and a setup key, then waits for a code from your phone. Keep the terminal open.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>npm run admin:create -- --email you@example.com --username YourName</span>
+  </pre>
+
+  <h3>Add the account on your phone</h3>
+
+  <div class="div_p">
+    <p>The button names can change a little between iPhone, Android and app updates.</p>
+    <ol>
+      <li>Install Microsoft Authenticator from the App Store or Google Play.</li>
+      <li>Open the app and tap the plus button to add an account.</li>
+      <li>Choose Other account.</li>
+      <li>Choose to enter the code manually.</li>
+      <li>Type the account name from the terminal.</li>
+      <li>Type the setup key from the terminal, then finish.</li>
+      <li>Type the 6-digit code from the app into the terminal.</li>
+    </ol>
+    <p>Do not screenshot or share the setup key. Anyone who has it can make your codes.</p>
+  </div>
+
+  <h3>Sign in</h3>
+
+  <div class="div_p">
+    <p>Go to /admin/login and enter your email, password and the current 6-digit code. The code you typed during setup counts as used, so wait for the next one. A new code shows every 30 seconds, and each code works only once.</p>
+  </div>
+
+  <h3>If the code does not work</h3>
+
+  <div class="div_p">
+    <ul>
+      <li>Wait for a new code and try again. A used code is always rejected.</li>
+      <li>Set the time on your phone and computer to automatic. The codes depend on the clock.</li>
+      <li>Check that ADMIN_MFA_KEY is the same on your computer and your host.</li>
+      <li>If you lost your phone, run the Lost your phone command in Step 10 and add the account again.</li>
+    </ul>
+  </div>
 
   <h2 id="step-11-the-react-login">Step 11 The React Login</h2>
 

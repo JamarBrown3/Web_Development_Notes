@@ -1,0 +1,10 @@
+node_modules
+.DS_Store
+
+# Secrets. .env.example stays because it has no real values.
+.env
+.env.*
+!.env.example
+
+logs
+*.log

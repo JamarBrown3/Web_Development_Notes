@@ -44,6 +44,7 @@
       <li><a href="#setup-1-data-and-database">Setup 1: Data Folder And A Database</a></li>
       <li><a href="#setup-2-data-folder-only">Setup 2: Data Folder Only</a></li>
       <li><a href="#setup-3-database-only">Setup 3: Database Only</a></li>
+      <li><a href="#login-starter">Login Starter</a></li>
       <li><a href="#how-server-js-works">How server.js Works</a></li>
       <li><a href="#regular-server-js">A Regular server.js</a></li>
       <li><a href="#reading-a-request">Reading A Request</a></li>
@@ -86,6 +87,24 @@
       <li><a href="#setup-2-data-folder-only">Setup 2: Data Folder Only</a>. The data folder is all you have. Use this for a menu, a list of products, or practice. <strong>pizza-menu is this one.</strong></li>
       <li><a href="#setup-3-database-only">Setup 3: Database Only</a>. The table starts empty and users add everything. Use this for accounts, posts, comments, or orders.</li>
     </ul>
+  </div>
+
+  <h3>Copy a starter folder instead of pasting</h3>
+
+  <div class="div_p">
+    <p>Each setup is also a working folder inside starters in these notes. Copy the whole folder into a new project, then swap in your data. Each one has a README with the exact commands, and the code is the same as this page. Run this from the folder that holds your projects, and replace setup-2-data-folder-only with the setup you picked.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>mkdir my-project</span>
+<span>cp -R ~/Documents/Web_Development_Notes/starters/setup-2-data-folder-only my-project/server</span>
+<span>cd my-project/server</span>
+<span>npm install</span>
+<span>npm run dev</span>
+  </pre>
+
+  <div class="div_p">
+    <p>The three folders are setup-1-data-and-database, setup-2-data-folder-only, and setup-3-database-only. Setup 1 and Setup 3 also need cp .env.example .env, your database login, and npm run reset or npm run setup before npm run dev.</p>
   </div>
 
   <h3>What to rename for your project</h3>
@@ -164,7 +183,7 @@
 <span></span>
 <span>const app = express();</span>
 <span></span>
-<span>app.use(express.json());</span>
+<span>app.use(express.json({ limit: "100kb" }));</span>
 <span></span>
 <span>app.get("/api/health", (req, res) =&gt; {</span>
 <span>  res.status(200).json({ status: "ok" });</span>
@@ -181,6 +200,14 @@
 <span>app.use((error, req, res, next) =&gt; {</span>
 <span>  if (error instanceof HttpError) {</span>
 <span>    return res.status(error.status).json({ error: error.message });</span>
+<span>  }</span>
+<span></span>
+<span>  // express.json() could not read the request body.</span>
+<span>  if (error.type === "entity.parse.failed") {</span>
+<span>    return res.status(400).json({ error: "Invalid JSON." });</span>
+<span>  }</span>
+<span>  if (error.type === "entity.too.large") {</span>
+<span>    return res.status(413).json({ error: "Request body is too large." });</span>
 <span>  }</span>
 <span></span>
 <span>  console.error(error);</span>
@@ -325,6 +352,10 @@
 
   <h3>Setup 1 server/config/database.js</h3>
 
+  <div class="div_p">
+    <p>A hosted database uses SSL here. rejectUnauthorized: false still encrypts the connection, but it skips checking the host's certificate, so this is fine for practice. For a real product, use your host's CA certificate.</p>
+  </div>
+
   <pre class="mycodepg">
 <span>import "dotenv/config";</span>
 <span>import pg from "pg";</span>
@@ -406,6 +437,10 @@
 <span>    throw new HttpError(400, "Title is required.");</span>
 <span>  }</span>
 <span></span>
+<span>  if (body.title.trim().length &gt; 255) {</span>
+<span>    throw new HttpError(400, "Title must be 255 characters or fewer.");</span>
+<span>  }</span>
+<span></span>
 <span>  return [</span>
 <span>    body.title.trim(),</span>
 <span>    String(body.description ?? ""),</span>
@@ -441,11 +476,16 @@
 <span></span>
 <span>const updateItem = async (req, res) =&gt; {</span>
 <span>  const id = readId(req.params.id);</span>
+<span>  const found = await pool.query("SELECT * FROM items WHERE id = $1", [id]);</span>
+<span></span>
+<span>  if (found.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
+<span></span>
+<span>  // PATCH keeps any field the request left out.</span>
 <span>  const results = await pool.query(</span>
 <span>    `UPDATE items SET title = $1, description = $2, image = $3</span>
 <span>    WHERE id = $4</span>
 <span>    RETURNING *`,</span>
-<span>    [...pickFields(req.body), id],</span>
+<span>    [...pickFields({ ...found.rows[0], ...req.body }), id],</span>
 <span>  );</span>
 <span></span>
 <span>  if (results.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
@@ -611,6 +651,10 @@
 <span>    throw new HttpError(400, "Title is required.");</span>
 <span>  }</span>
 <span></span>
+<span>  if (body.title.trim().length &gt; 255) {</span>
+<span>    throw new HttpError(400, "Title must be 255 characters or fewer.");</span>
+<span>  }</span>
+<span></span>
 <span>  return {</span>
 <span>    title: body.title.trim(),</span>
 <span>    description: String(body.description ?? ""),</span>
@@ -645,7 +689,8 @@
 <span>const updateItem = (req, res) =&gt; {</span>
 <span>  const item = findItem(req.params.id);</span>
 <span></span>
-<span>  Object.assign(item, pickFields(req.body));</span>
+<span>  // PATCH keeps any field the request left out.</span>
+<span>  Object.assign(item, pickFields({ ...item, ...req.body }));</span>
 <span>  res.status(200).json(item);</span>
 <span>};</span>
 <span></span>
@@ -738,6 +783,10 @@
 
   <h3>Setup 3 server/config/database.js</h3>
 
+  <div class="div_p">
+    <p>A hosted database uses SSL here. rejectUnauthorized: false still encrypts the connection, but it skips checking the host's certificate, so this is fine for practice. For a real product, use your host's CA certificate.</p>
+  </div>
+
   <pre class="mycodepg">
 <span>import "dotenv/config";</span>
 <span>import pg from "pg";</span>
@@ -803,6 +852,10 @@
 <span>    throw new HttpError(400, "Title is required.");</span>
 <span>  }</span>
 <span></span>
+<span>  if (body.title.trim().length &gt; 255) {</span>
+<span>    throw new HttpError(400, "Title must be 255 characters or fewer.");</span>
+<span>  }</span>
+<span></span>
 <span>  return [</span>
 <span>    body.title.trim(),</span>
 <span>    String(body.description ?? ""),</span>
@@ -838,11 +891,16 @@
 <span></span>
 <span>const updateItem = async (req, res) =&gt; {</span>
 <span>  const id = readId(req.params.id);</span>
+<span>  const found = await pool.query("SELECT * FROM items WHERE id = $1", [id]);</span>
+<span></span>
+<span>  if (found.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
+<span></span>
+<span>  // PATCH keeps any field the request left out.</span>
 <span>  const results = await pool.query(</span>
 <span>    `UPDATE items SET title = $1, description = $2, image = $3</span>
 <span>    WHERE id = $4</span>
 <span>    RETURNING *`,</span>
-<span>    [...pickFields(req.body), id],</span>
+<span>    [...pickFields({ ...found.rows[0], ...req.body }), id],</span>
 <span>  );</span>
 <span></span>
 <span>  if (results.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
@@ -891,6 +949,33 @@
     <p>MongoDB makes the collection the first time you save, so skip createTable.js. Use the connection, model, and controller from the <a href="mongodb_page.html#starter-schema-and-crud">MongoDB page</a>, and skip its reset.js because you have no data folder.</p>
   </div>
 
+
+  <h2 id="login-starter">Login Starter</h2>
+
+  <div class="div_p">
+    <p>Use this when a project needs accounts. It is a separate starter that uses MongoDB, with email and password login, Argon2id, sessions, CSRF protection, rate limits, admin accounts, and password reset. All the commands are in its README inside starters/login-argon2-mongodb.</p>
+    <ul>
+      <li>It has no two-step sign-in, so nothing from the Microsoft Authenticator setup in Rev carries over.</li>
+      <li>Never copy .env from another project. Make a new SESSION_SECRET and use a new database every time.</li>
+      <li>Your database login can only have readWrite on that one database, or the server refuses to start.</li>
+      <li>Password reset stays off until you add an email sender in server.js.</li>
+    </ul>
+  </div>
+
+  <h3>Copy the login starter</h3>
+
+  <pre class="mycodecli">
+<span>mkdir my-project</span>
+<span>cp -R ~/Documents/Web_Development_Notes/starters/login-argon2-mongodb my-project/server</span>
+<span>cd my-project/server</span>
+<span>npm install</span>
+<span>cp .env.example .env</span>
+<span>npm test</span>
+  </pre>
+
+  <div class="div_p">
+    <p>Fill in .env, then run npm run dev. Your own routes go where server.js says YOUR ROUTES GO HERE.</p>
+  </div>
 
   <h2 id="how-server-js-works">How server.js Works</h2>
 
@@ -1015,9 +1100,12 @@
 <span>    return res.status(error.status).json({ error: error.message });</span>
 <span>  }</span>
 <span></span>
-<span>  // express.json() could not read the JSON that was sent.</span>
+<span>  // express.json() could not read the request body.</span>
 <span>  if (error.type === "entity.parse.failed") {</span>
 <span>    return res.status(400).json({ error: "Invalid JSON." });</span>
+<span>  }</span>
+<span>  if (error.type === "entity.too.large") {</span>
+<span>    return res.status(413).json({ error: "Request body is too large." });</span>
 <span>  }</span>
 <span></span>
 <span>  // Log the real error, but never send those details to the browser.</span>
