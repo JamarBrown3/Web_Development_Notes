@@ -249,6 +249,17 @@ pre {
     background-color: #ffffff;
 }
 
+.class-table code {
+    cursor: pointer;
+}
+
+/* Tailwind class lists are long, so wrap them instead of scrolling sideways */
+.wrap-code pre {
+    white-space: pre-wrap;
+    word-break: normal;
+    overflow-wrap: anywhere;
+}
+
 h3 {
     border-bottom: 2px solid red;
     border-top: 2px solid red;

@@ -45,3 +45,18 @@ function addCopyButton(block) {
 }
 
 document.querySelectorAll('pre').forEach(addCopyButton);
+
+// Clicking a class in a cheat sheet table copies just that class.
+function addClassCopy(code) {
+    const text = code.textContent;
+
+    code.addEventListener('click', async () => {
+        const copied = await copyToClipboard(text);
+        code.textContent = copied ? 'Copied!' : text;
+        setTimeout(() => {
+            code.textContent = text;
+        }, 1000);
+    });
+}
+
+document.querySelectorAll('.class-table code').forEach(addClassCopy);
