@@ -168,6 +168,32 @@
 <span>rm src/App.css src/assets/react.svg src/assets/vite.svg src/assets/hero.png</span>
   </pre>
 
+  <h3>What the client folder should look like</h3>
+
+  <div class="div_p">
+    <p>index.html goes in the client folder, not in src. If it ends up inside src, Vite shows a 404 at http://localhost:5173. The script line in index.html has to point at /src/main.jsx, and any file with JSX in it has to end in .jsx or .tsx.</p>
+  </div>
+
+  <pre class="mycodefile">
+<span>client/</span>
+<span>  index.html          &lt;- has the root div and loads /src/main.jsx</span>
+<span>  package.json</span>
+<span>  vite.config.js      &lt;- the proxy goes here</span>
+<span>  public/             &lt;- images used by address, such as pizzas/funghi.jpg</span>
+<span>  src/</span>
+<span>    main.jsx          &lt;- puts App inside the root div</span>
+<span>    App.jsx</span>
+<span>    index.css</span>
+<span>    assets/</span>
+<span>    components/</span>
+<span>    pages/</span>
+<span>    services/         &lt;- your fetch calls</span>
+  </pre>
+
+  <div class="div_p">
+    <p>The Vite proxy code is on the <a href="react_page.html">React page</a>.</p>
+  </div>
+
   <h2 id="setup-node-and-express">Setup Node And Express</h2>
 
   <div class="div_p">
@@ -181,10 +207,9 @@
 <span>cd server</span>
 <span>npm init -y</span>
 <span>npm pkg set type=module</span>
-<span>npm pkg set scripts.dev="nodemon server.js" scripts.start="node server.js"</span>
+<span>npm pkg set scripts.dev="node --watch server.js" scripts.start="node server.js"</span>
 <span>npm install express cors dotenv</span>
-<span>npm install --save-dev nodemon</span>
-<span>mkdir config controllers routes data</span>
+<span>mkdir config controllers routes data utils</span>
 <span>touch server.js .env .env.example</span>
   </pre>
 
@@ -195,8 +220,81 @@
   </pre>
 
   <div class="div_p">
-    <p>The starter server.js is on the Node page.</p>
+    <p>npm run dev uses node --watch, which is built into Node, so there is nothing extra to install. It restarts the server when you save server.js or a file it imports. If you change .env, restart the server yourself.</p>
+    <p>First pick one of the three setups on the <a href="node_page.html#pick-your-setup">Node page</a>, because that decides whether you need a database, a data folder, and a .env file. The server will not start until server.js and every file it imports exist, so make the files below first.</p>
   </div>
+
+  <h3>What the server folder should look like</h3>
+
+  <pre class="mycodefile">
+<span>server/</span>
+<span>  package.json        &lt;- has "type": "module" and the scripts</span>
+<span>  package-lock.json</span>
+<span>  node_modules/</span>
+<span>  .env                &lt;- only with a database, never on GitHub</span>
+<span>  .env.example        &lt;- same names with blank values</span>
+<span>  server.js           &lt;- starts the server and lists the routes</span>
+<span>  config/             &lt;- only with a database</span>
+<span>  controllers/</span>
+<span>    items.js          &lt;- the functions that do the work</span>
+<span>  data/               &lt;- only if your setup uses a data folder</span>
+<span>  routes/</span>
+<span>    items.js          &lt;- which URL goes to which function</span>
+<span>  utils/</span>
+<span>    HttpError.js      &lt;- an error with a status code</span>
+  </pre>
+
+  <h3>The order to make the server files</h3>
+
+  <div class="div_p">
+    <ol>
+      <li>Run the setup commands above. Check that server/package.json says "type": "module" and that express is under dependencies.</li>
+      <li>If you have a database, fill in server/.env. With no database, skip this.</li>
+      <li>Make utils/HttpError.js, because the other files import it.</li>
+      <li>Make controllers/items.js.</li>
+      <li>Make routes/items.js, which imports the controller.</li>
+      <li>Make server.js, which imports the routes and HttpError.</li>
+      <li>Run npm run dev and test /api/health.</li>
+      <li>Test /api/items, then connect React.</li>
+    </ol>
+  </div>
+
+  <h3>Check that the server works</h3>
+
+  <div class="div_p">
+    <p>Keep the server running and use a second terminal. The first line should print {"status":"ok"} and the second should print your items.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>curl http://localhost:3000/api/health</span>
+<span>curl http://localhost:3000/api/items</span>
+  </pre>
+
+  <h3>Errors you will see during setup</h3>
+
+  <pre class="mycodefile">
+<span>Cannot use import statement outside a module</span>
+<span>  "type" is missing or says commonjs. Run: npm pkg set type=module</span>
+<span></span>
+<span>Cannot find package 'express'</span>
+<span>  It is not installed in this folder. cd server, then: npm install express</span>
+<span></span>
+<span>Cannot find module './routes/items.js'</span>
+<span>  That file is missing or the path is wrong. Check the spelling and the .js on the end.</span>
+<span></span>
+<span>The requested module does not provide an export named 'pizzaData'</span>
+<span>  The other file has no matching export. Named: export const pizzaData = [...]</span>
+<span>  and import { pizzaData }. Default: export default pizzaData and import pizzaData.</span>
+<span></span>
+<span>EADDRINUSE: address already in use :::3000</span>
+<span>  Another server is on that port. Run: lsof -ti :3000 | xargs kill</span>
+<span></span>
+<span>npm error Missing script: "dev"</span>
+<span>  You are in the wrong folder, or package.json has no dev script.</span>
+<span></span>
+<span>Blocked by CORS policy, in the browser console</span>
+<span>  Add the Vite proxy from the React page, or the cors code from the Node page.</span>
+  </pre>
 
   <h3>The parts of server/package.json that matter</h3>
 
@@ -207,7 +305,7 @@
 <span>  "type": "module",</span>
 <span>  "main": "server.js",</span>
 <span>  "scripts": {</span>
-<span>    "dev": "nodemon server.js",</span>
+<span>    "dev": "node --watch server.js",</span>
 <span>    "start": "node server.js"</span>
 <span>  }</span>
 <span>}</span>
@@ -225,7 +323,7 @@
 <span>npm init -y</span>
 <span>npm pkg set type=module</span>
 <span>npm install concurrently express dotenv react react-dom react-router-dom</span>
-<span>npm install --save-dev vite @vitejs/plugin-react nodemon</span>
+<span>npm install --save-dev vite @vitejs/plugin-react</span>
   </pre>
 
   <h3>package.json scripts in the main project folder</h3>
@@ -233,7 +331,7 @@
   <pre class="mycodenode">
 <span>{</span>
 <span>  "scripts": {</span>
-<span>    "dev": "concurrently \"cd client &amp;&amp; vite\" \"cd server &amp;&amp; nodemon server\"",</span>
+<span>    "dev": "concurrently \"cd client &amp;&amp; vite\" \"cd server &amp;&amp; node --watch server.js\"",</span>
 <span>    "reset": "cd server &amp;&amp; node --require dotenv/config config/reset.js",</span>
 <span>    "build": "cd client &amp;&amp; vite build",</span>
 <span>    "start": "cd server &amp;&amp; node server"</span>

@@ -38,7 +38,14 @@
   <div class="div_p">
     <ul>
       <li><a href="#what-is-node-and-express">What Is Node And Express</a></li>
-      <li><a href="#server-files">Server Files</a></li>
+      <li><a href="#pick-your-setup">Pick Your Setup</a></li>
+      <li><a href="#routes-and-controllers">Routes And Controllers</a></li>
+      <li><a href="#files-every-setup-uses">Files Every Setup Uses</a></li>
+      <li><a href="#setup-1-data-and-database">Setup 1: Data Folder And A Database</a></li>
+      <li><a href="#setup-2-data-folder-only">Setup 2: Data Folder Only</a></li>
+      <li><a href="#setup-3-database-only">Setup 3: Database Only</a></li>
+      <li><a href="#how-server-js-works">How server.js Works</a></li>
+      <li><a href="#regular-server-js">A Regular server.js</a></li>
       <li><a href="#reading-a-request">Reading A Request</a></li>
       <li><a href="#middleware">Middleware</a></li>
       <li><a href="#errors-in-express-4-and-5">Errors In Express 4 And 5</a></li>
@@ -55,25 +62,100 @@
     <p>Node runs JavaScript outside of the browser. Express is a package that turns Node into a web server. A request comes in, goes down the list of app.use and route lines in order, and the first one that sends a response ends it. Terminal setup is on the Setup page.</p>
   </div>
 
-  <h2 id="server-files">Server Files</h2>
+  <h2 id="pick-your-setup">Pick Your Setup</h2>
+
+  <div class="div_p">
+    <p>Where your data lives decides which files you need. Find your project below, then only follow that one setup. The examples use the word item on purpose. See the rename list below for how to swap in pizza, game, or anything else.</p>
+  </div>
+
+  <pre class="mycodefile">
+<span>                         Setup 1          Setup 2           Setup 3</span>
+<span>                         Data + Database  Data Folder Only  Database Only</span>
+<span>data/items.js            Yes              Yes               No</span>
+<span>Database                 Yes              No                Yes</span>
+<span>.env file                Yes              No                Yes</span>
+<span>config/database.js       Yes              No                Yes</span>
+<span>Start data comes from    data folder      data folder       Empty table</span>
+<span>ids come from            Database         You type them     Database</span>
+<span>Saved changes last       Yes              Until restart     Yes</span>
+  </pre>
 
   <div class="div_p">
     <ul>
-      <li>server.js starts the server and lists the routes.</li>
-      <li>routes/ says which URL goes to which function.</li>
-      <li>controllers/ holds the function that does the work.</li>
-      <li>config/ holds the database connection and setup scripts.</li>
+      <li><a href="#setup-1-data-and-database">Setup 1: Data Folder And A Database</a>. The data folder fills the database once, then the database is the real copy. Use this when you want starter records that users can change.</li>
+      <li><a href="#setup-2-data-folder-only">Setup 2: Data Folder Only</a>. The data folder is all you have. Use this for a menu, a list of products, or practice. <strong>pizza-menu is this one.</strong></li>
+      <li><a href="#setup-3-database-only">Setup 3: Database Only</a>. The table starts empty and users add everything. Use this for accounts, posts, comments, or orders.</li>
     </ul>
+  </div>
+
+  <h3>What to rename for your project</h3>
+
+  <div class="div_p">
+    <p>Keep the same word through the whole project. This shows a pizza project, but any word works. When you rename a file, change every import that points at it too, or you get ERR_MODULE_NOT_FOUND.</p>
+  </div>
+
+  <pre class="mycodefile">
+<span>In these examples            Your project</span>
+<span>item, items                  pizza, pizzas</span>
+<span>itemData                     pizzaData</span>
+<span>Item                         Pizza</span>
+<span>ItemsController              PizzasController</span>
+<span>itemsRouter                  pizzasRouter</span>
+<span>routes/items.js              routes/pizzas.js</span>
+<span>"./routes/items.js"          "./routes/pizzas.js" in server.js</span>
+<span>controllers/items.js         controllers/pizzas.js</span>
+<span>data/items.js                data/pizzas.js</span>
+<span>/api/items                   /api/pizzas</span>
+<span>title, description, image    name, ingredients, price, photoName, soldOut</span>
+  </pre>
+
+  <div class="div_p">
+    <p>The fields are the one part that always changes. When you rename them, change them everywhere they appear: the data file, pickFields, and for a database the CREATE TABLE and the SQL queries.</p>
+  </div>
+
+  <h2 id="routes-and-controllers">Routes And Controllers</h2>
+
+  <div class="div_p">
+    <p>A request goes through three files in order: server.js sends it to the routes file, the routes file sends it to a controller function, and the controller sends back the response.</p>
+    <ul>
+      <li><strong>Routes</strong> only say which URL goes to which function. They look the same in every setup.</li>
+      <li><strong>Controllers</strong> do the work: get the data, check it, and send the response. They change with each setup because the data lives in a different place.</li>
+    </ul>
+  </div>
+
+  <h3>Jump to the routes</h3>
+
+  <div class="div_p">
+    <ul>
+      <li><a href="#routes-full">Full routes file: GET, POST, PATCH, and DELETE</a></li>
+      <li><a href="#routes-read-only">Routes for reading only: just the two GET routes</a></li>
+    </ul>
+  </div>
+
+  <h3>Jump to the controllers</h3>
+
+  <div class="div_p">
+    <ul>
+      <li><a href="#controller-setup-1">Setup 1 controller: data folder and a database</a></li>
+      <li><a href="#controller-setup-2-read">Setup 2 controller for reading only: pizza-menu uses this one</a></li>
+      <li><a href="#controller-setup-2-crud">Setup 2 controller with full CRUD: data folder only</a></li>
+      <li><a href="#controller-setup-3">Setup 3 controller: database only</a></li>
+    </ul>
+  </div>
+
+  <h2 id="files-every-setup-uses">Files Every Setup Uses</h2>
+
+  <div class="div_p">
+    <p>These three files are the same in all three setups. server.js and the routes never know where the data comes from. Only the controller knows, and that is why each setup below has its own controller.</p>
   </div>
 
   <h3>server/server.js</h3>
 
   <div class="div_p">
-    <p>This is the full starter. It works on its own with the routes and controller below. The two error handlers at the bottom have to stay after every route.</p>
+    <p>This is the Setup 2 version, and it needs no .env. For Setup 1 and Setup 3, add import "dotenv/config"; as the very first line. MongoDB also has to connect before listening, which is on the <a href="mongodb_page.html#project-setup">MongoDB page</a>. The two handlers at the bottom have to stay after every route.</p>
   </div>
 
   <pre class="mycodenode">
-<span>import "dotenv/config";</span>
 <span>import express from "express";</span>
 <span>import itemsRouter from "./routes/items.js";</span>
 <span>import { HttpError } from "./utils/HttpError.js";</span>
@@ -125,7 +207,11 @@
 <span>}</span>
   </pre>
 
-  <h3>server/routes/items.js</h3>
+  <h3 id="routes-full">server/routes/items.js</h3>
+
+  <div class="div_p">
+    <p>Paths in this file start after the /api/items in server.js, so "/" means /api/items and "/:id" means /api/items/5.</p>
+  </div>
 
   <pre class="mycodenode">
 <span>import express from "express";</span>
@@ -142,17 +228,177 @@
 <span>export default router;</span>
   </pre>
 
-  <h3>server/controllers/items.js with no database</h3>
+  <h3 id="routes-read-only">server/routes/items.js when you only read data</h3>
 
   <div class="div_p">
-    <p>This keeps the items in an array so you can test your routes before adding a database. The list empties when the server restarts. The Postgres and MongoDB pages each have a version with the same function names, so the routes file does not change.</p>
+    <p>If people only view your data, such as a menu, you only need the two GET routes. This one goes with the short Setup 2 controller. A route for a function the controller does not export crashes the server when it starts.</p>
   </div>
 
   <pre class="mycodenode">
+<span>import express from "express";</span>
+<span>import ItemsController from "../controllers/items.js";</span>
+<span></span>
+<span>const router = express.Router();</span>
+<span></span>
+<span>router.get("/", ItemsController.getItems);</span>
+<span>router.get("/:id", ItemsController.getItemById);</span>
+<span></span>
+<span>export default router;</span>
+  </pre>
+
+  <h2 id="setup-1-data-and-database">Setup 1: Data Folder And A Database</h2>
+
+  <div class="div_p">
+    <p>Your data folder holds the starter records. npm run reset copies them into the database once, and after that the server only talks to the database. Changing the data file does nothing until you run the reset again, and the reset deletes everything users saved.</p>
+  </div>
+
+  <h3>Setup 1 folder</h3>
+
+  <pre class="mycodefile">
+<span>server/</span>
+<span>  package.json</span>
+<span>  .env                &lt;- database login</span>
+<span>  server.js           &lt;- same file, plus import "dotenv/config" on line 1</span>
+<span>  config/</span>
+<span>    database.js       &lt;- connects to the database</span>
+<span>    reset.js          &lt;- copies the data folder into the database</span>
+<span>  controllers/</span>
+<span>    items.js          &lt;- talks to the database</span>
+<span>  data/</span>
+<span>    items.js          &lt;- YOUR STARTER DATA GOES HERE</span>
+<span>  routes/</span>
+<span>    items.js          &lt;- same file</span>
+<span>  utils/</span>
+<span>    HttpError.js      &lt;- same file</span>
+  </pre>
+
+  <h3>Setup 1 install</h3>
+
+  <div class="div_p">
+    <p>Run these from the server folder, the one with server.js in it. If you made one package.json for the whole project, like pizza-menu, run them from the main project folder instead.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>cd server</span>
+<span>npm install express dotenv pg</span>
+<span>npm pkg set scripts.dev="node --watch server.js" scripts.start="node server.js"</span>
+<span>npm pkg set scripts.reset="node config/reset.js"</span>
+  </pre>
+
+  <h3>Setup 1 server/.env</h3>
+
+  <div class="div_p">
+    <p>A local database uses other values, which are on the <a href="setup_page.html#env-files">Setup page</a>.</p>
+  </div>
+
+  <pre class="mycodeenv">
+<span># Copy these from the Connections section of your database page.</span>
+<span>PGUSER=your_database_user</span>
+<span>PGPASSWORD=your_database_password</span>
+<span>PGHOST=your_database_host</span>
+<span>PGPORT=5432</span>
+<span>PGDATABASE=your_database_name</span>
+<span></span>
+<span>PORT=3000</span>
+  </pre>
+
+  <h3>Setup 1 server/data/items.js</h3>
+
+  <pre class="mycodenode">
+<span>// YOUR DATA GOES HERE: pizzas, games, products, or anything else.</span>
+<span>// There is no id, because the database makes one for each row.</span>
+<span>const itemData = [</span>
+<span>  {</span>
+<span>    title: "First Item",</span>
+<span>    description: "This is the first item.",</span>
+<span>    image: "images/first-item.jpg",</span>
+<span>  },</span>
+<span>  {</span>
+<span>    title: "Second Item",</span>
+<span>    description: "This is the second item.",</span>
+<span>    image: "images/second-item.jpg",</span>
+<span>  },</span>
+<span>];</span>
+<span></span>
+<span>export default itemData;</span>
+  </pre>
+
+  <h3>Setup 1 server/config/database.js</h3>
+
+  <pre class="mycodepg">
+<span>import "dotenv/config";</span>
+<span>import pg from "pg";</span>
+<span></span>
+<span>const isLocal = ["localhost", "127.0.0.1"].includes(process.env.PGHOST);</span>
+<span></span>
+<span>export const pool = new pg.Pool({</span>
+<span>  user: process.env.PGUSER,</span>
+<span>  password: process.env.PGPASSWORD,</span>
+<span>  host: process.env.PGHOST,</span>
+<span>  port: process.env.PGPORT,</span>
+<span>  database: process.env.PGDATABASE,</span>
+<span>  ssl: isLocal ? false : { rejectUnauthorized: false },</span>
+<span>});</span>
+  </pre>
+
+  <h3>Setup 1 server/config/reset.js</h3>
+
+  <div class="div_p">
+    <p>This deletes the table, makes it again, and copies in your data. Only run it by hand. Never add it to your start script.</p>
+  </div>
+
+  <pre class="mycodepg">
+<span>import { pool } from "./database.js";</span>
+<span>import itemData from "../data/items.js";</span>
+<span></span>
+<span>const createTableQuery = `</span>
+<span>  DROP TABLE IF EXISTS items;</span>
+<span></span>
+<span>  CREATE TABLE items (</span>
+<span>    id SERIAL PRIMARY KEY,</span>
+<span>    title VARCHAR(255) NOT NULL,</span>
+<span>    description TEXT NOT NULL DEFAULT '',</span>
+<span>    image TEXT NOT NULL DEFAULT '',</span>
+<span>    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()</span>
+<span>  );</span>
+<span>`;</span>
+<span></span>
+<span>const insertQuery = `</span>
+<span>  INSERT INTO items (title, description, image)</span>
+<span>  VALUES ($1, $2, $3);</span>
+<span>`;</span>
+<span></span>
+<span>try {</span>
+<span>  await pool.query(createTableQuery);</span>
+<span></span>
+<span>  for (const item of itemData) {</span>
+<span>    await pool.query(insertQuery, [item.title, item.description, item.image]);</span>
+<span>  }</span>
+<span></span>
+<span>  console.log(`🎉 Finished! Saved ${itemData.length} items.`);</span>
+<span>} catch (error) {</span>
+<span>  console.error("⚠️ Reset failed:", error.code || error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>} finally {</span>
+<span>  await pool.end();</span>
+<span>}</span>
+  </pre>
+
+  <h3 id="controller-setup-1">Setup 1 server/controllers/items.js</h3>
+
+  <div class="div_p">
+    <p>Nothing here imports the data folder. Once the reset has run, the database has the data.</p>
+  </div>
+
+  <pre class="mycodepg">
+<span>import { pool } from "../config/database.js";</span>
 <span>import { HttpError } from "../utils/HttpError.js";</span>
 <span></span>
-<span>let items = [{ id: 1, title: "First item", description: "Hello" }];</span>
-<span>let nextId = 2;</span>
+<span>// An id has to be a whole number before it goes to the database.</span>
+<span>const readId = (value) =&gt; {</span>
+<span>  if (!/^\d{1,9}$/.test(value)) throw new HttpError(404, "Item not found.");</span>
+<span>  return Number(value);</span>
+<span>};</span>
 <span></span>
 <span>// Only copy the fields you expect. Never save the whole req.body.</span>
 <span>const pickFields = (body) =&gt; {</span>
@@ -160,9 +406,219 @@
 <span>    throw new HttpError(400, "Title is required.");</span>
 <span>  }</span>
 <span></span>
-<span>  return { title: body.title.trim(), description: String(body.description ?? "") };</span>
+<span>  return [</span>
+<span>    body.title.trim(),</span>
+<span>    String(body.description ?? ""),</span>
+<span>    String(body.image ?? ""),</span>
+<span>  ];</span>
 <span>};</span>
 <span></span>
+<span>const getItems = async (req, res) =&gt; {</span>
+<span>  const results = await pool.query("SELECT * FROM items ORDER BY id ASC");</span>
+<span></span>
+<span>  res.status(200).json(results.rows);</span>
+<span>};</span>
+<span></span>
+<span>const getItemById = async (req, res) =&gt; {</span>
+<span>  const results = await pool.query("SELECT * FROM items WHERE id = $1", [</span>
+<span>    readId(req.params.id),</span>
+<span>  ]);</span>
+<span></span>
+<span>  if (results.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
+<span>  res.status(200).json(results.rows[0]);</span>
+<span>};</span>
+<span></span>
+<span>const createItem = async (req, res) =&gt; {</span>
+<span>  const results = await pool.query(</span>
+<span>    `INSERT INTO items (title, description, image)</span>
+<span>    VALUES ($1, $2, $3)</span>
+<span>    RETURNING *`,</span>
+<span>    pickFields(req.body),</span>
+<span>  );</span>
+<span></span>
+<span>  res.status(201).json(results.rows[0]);</span>
+<span>};</span>
+<span></span>
+<span>const updateItem = async (req, res) =&gt; {</span>
+<span>  const id = readId(req.params.id);</span>
+<span>  const results = await pool.query(</span>
+<span>    `UPDATE items SET title = $1, description = $2, image = $3</span>
+<span>    WHERE id = $4</span>
+<span>    RETURNING *`,</span>
+<span>    [...pickFields(req.body), id],</span>
+<span>  );</span>
+<span></span>
+<span>  if (results.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
+<span>  res.status(200).json(results.rows[0]);</span>
+<span>};</span>
+<span></span>
+<span>const deleteItem = async (req, res) =&gt; {</span>
+<span>  const results = await pool.query(</span>
+<span>    "DELETE FROM items WHERE id = $1 RETURNING *",</span>
+<span>    [readId(req.params.id)],</span>
+<span>  );</span>
+<span></span>
+<span>  if (results.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
+<span>  res.status(200).json(results.rows[0]);</span>
+<span>};</span>
+<span></span>
+<span>export default { getItems, getItemById, createItem, updateItem, deleteItem };</span>
+  </pre>
+
+  <h3>Setup 1 run it</h3>
+
+  <div class="div_p">
+    <p>Terminal 1 starts the server and stays running, so it will not give you the prompt back. Press Ctrl + C to stop it. Open a second terminal with the + button in the VS Code terminal for the curl lines. curl works from any folder.</p>
+  </div>
+
+  <h4>Terminal 1: from the server folder. With one package.json for the whole project, skip the cd and run npm run dev in the main folder, which starts React too.</h4>
+
+  <pre class="mycodecli">
+<span>cd server</span>
+<span>npm run reset</span>
+<span>npm run dev</span>
+  </pre>
+
+  <h4>Terminal 2: from any folder</h4>
+
+  <pre class="mycodecli">
+<span>curl http://localhost:3000/api/health</span>
+<span>curl http://localhost:3000/api/items</span>
+  </pre>
+
+  <h3>Setup 1 with MongoDB instead</h3>
+
+  <div class="div_p">
+    <p>Keep the same data file with no id. Replace database.js, reset.js, and the controller with the versions on the <a href="mongodb_page.html#starter-schema-and-crud">MongoDB page</a>, then add models/Item.js and utils/readObjectId.js. Install mongoose instead of pg.</p>
+  </div>
+
+  <h2 id="setup-2-data-folder-only">Setup 2: Data Folder Only</h2>
+
+  <div class="div_p">
+    <p>There is no database and no .env. The server loads your data file when it starts and keeps it in memory. If the controller adds or deletes something, that change is gone when the server restarts.</p>
+  </div>
+
+  <h3>Setup 2 folder</h3>
+
+  <pre class="mycodefile">
+<span>server/</span>
+<span>  package.json</span>
+<span>  server.js           &lt;- same file, with no dotenv</span>
+<span>  controllers/</span>
+<span>    items.js          &lt;- reads the data folder</span>
+<span>  data/</span>
+<span>    items.js          &lt;- YOUR DATA GOES HERE</span>
+<span>  routes/</span>
+<span>    items.js          &lt;- same file</span>
+<span>  utils/</span>
+<span>    HttpError.js      &lt;- same file</span>
+  </pre>
+
+  <h3>Setup 2 install</h3>
+
+  <div class="div_p">
+    <p>Run these from the server folder, the one with server.js in it. If you made one package.json for the whole project, like pizza-menu, run them from the main project folder instead.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>cd server</span>
+<span>npm install express</span>
+<span>npm pkg set scripts.dev="node --watch server.js" scripts.start="node server.js"</span>
+  </pre>
+
+  <h3>Setup 2 server/data/items.js</h3>
+
+  <pre class="mycodenode">
+<span>// YOUR DATA GOES HERE: pizzas, games, products, or anything else.</span>
+<span>// Every record needs its own id, because there is no database to make one.</span>
+<span>const itemData = [</span>
+<span>  {</span>
+<span>    id: 1,</span>
+<span>    title: "First Item",</span>
+<span>    description: "This is the first item.",</span>
+<span>    image: "images/first-item.jpg",</span>
+<span>  },</span>
+<span>  {</span>
+<span>    id: 2,</span>
+<span>    title: "Second Item",</span>
+<span>    description: "This is the second item.",</span>
+<span>    image: "images/second-item.jpg",</span>
+<span>  },</span>
+<span>];</span>
+<span></span>
+<span>export default itemData;</span>
+  </pre>
+
+  <h3>Setup 2 server/data/items.json instead</h3>
+
+  <div class="div_p">
+    <p>A real .json file works too. Every key needs double quotes, there are no comments, and there is no export. Use the import line below in the controller instead of the items.js one.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>[</span>
+<span>  { "id": 1, "title": "First Item", "description": "This is the first item.", "image": "images/first-item.jpg" },</span>
+<span>  { "id": 2, "title": "Second Item", "description": "This is the second item.", "image": "images/second-item.jpg" }</span>
+<span>]</span>
+  </pre>
+
+  <pre class="mycodenode">
+<span>import itemData from "../data/items.json" with { type: "json" };</span>
+  </pre>
+
+  <h3 id="controller-setup-2-read">Setup 2 server/controllers/items.js for reading only</h3>
+
+  <div class="div_p">
+    <p>This is all a menu needs. Use it with the routes file for reading data above.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>import itemData from "../data/items.js";</span>
+<span>import { HttpError } from "../utils/HttpError.js";</span>
+<span></span>
+<span>const getItems = (req, res) =&gt; {</span>
+<span>  res.status(200).json(itemData);</span>
+<span>};</span>
+<span></span>
+<span>// req.params.id is always text, so turn it into a number before comparing.</span>
+<span>const getItemById = (req, res) =&gt; {</span>
+<span>  const item = itemData.find((other) =&gt; other.id === Number(req.params.id));</span>
+<span></span>
+<span>  if (!item) throw new HttpError(404, "Item not found.");</span>
+<span>  res.status(200).json(item);</span>
+<span>};</span>
+<span></span>
+<span>export default { getItems, getItemById };</span>
+  </pre>
+
+  <h3 id="controller-setup-2-crud">Setup 2 server/controllers/items.js with full CRUD</h3>
+
+  <div class="div_p">
+    <p>Use this one with the full routes file when you want to practice POST, PATCH, and DELETE without a database.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>import itemData from "../data/items.js";</span>
+<span>import { HttpError } from "../utils/HttpError.js";</span>
+<span></span>
+<span>// Work on a copy of the array from the data folder.</span>
+<span>let items = [...itemData];</span>
+<span>let nextId = Math.max(0, ...items.map((item) =&gt; item.id)) + 1;</span>
+<span></span>
+<span>// Only copy the fields you expect. Never save the whole req.body.</span>
+<span>const pickFields = (body) =&gt; {</span>
+<span>  if (typeof body?.title !== "string" || !body.title.trim()) {</span>
+<span>    throw new HttpError(400, "Title is required.");</span>
+<span>  }</span>
+<span></span>
+<span>  return {</span>
+<span>    title: body.title.trim(),</span>
+<span>    description: String(body.description ?? ""),</span>
+<span>    image: String(body.image ?? ""),</span>
+<span>  };</span>
+<span>};</span>
+<span></span>
+<span>// req.params.id is always text, so turn it into a number before comparing.</span>
 <span>const findItem = (id) =&gt; {</span>
 <span>  const item = items.find((other) =&gt; other.id === Number(id));</span>
 <span></span>
@@ -201,6 +657,406 @@
 <span>};</span>
 <span></span>
 <span>export default { getItems, getItemById, createItem, updateItem, deleteItem };</span>
+  </pre>
+
+  <h3>Setup 2 run it</h3>
+
+  <div class="div_p">
+    <p>Terminal 1 starts the server and stays running, so it will not give you the prompt back. Press Ctrl + C to stop it. Open a second terminal with the + button in the VS Code terminal for the curl lines. curl works from any folder.</p>
+  </div>
+
+  <h4>Terminal 1: from the server folder. With one package.json for the whole project, skip the cd and run npm run dev in the main folder, which starts React too.</h4>
+
+  <pre class="mycodecli">
+<span>cd server</span>
+<span>npm run dev</span>
+  </pre>
+
+  <h4>Terminal 2: from any folder</h4>
+
+  <pre class="mycodecli">
+<span>curl http://localhost:3000/api/health</span>
+<span>curl http://localhost:3000/api/items</span>
+<span>curl http://localhost:3000/api/items/1</span>
+  </pre>
+
+  <h2 id="setup-3-database-only">Setup 3: Database Only</h2>
+
+  <div class="div_p">
+    <p>There is no data folder. You make an empty table once, and every record comes from users through POST, such as a sign up or a form. A GET right after setup returns [] and that is correct.</p>
+  </div>
+
+  <h3>Setup 3 folder</h3>
+
+  <pre class="mycodefile">
+<span>server/</span>
+<span>  package.json</span>
+<span>  .env                &lt;- database login</span>
+<span>  server.js           &lt;- same file, plus import "dotenv/config" on line 1</span>
+<span>  config/</span>
+<span>    database.js       &lt;- connects to the database</span>
+<span>    createTable.js    &lt;- makes the empty table</span>
+<span>  controllers/</span>
+<span>    items.js          &lt;- talks to the database</span>
+<span>  routes/</span>
+<span>    items.js          &lt;- same file</span>
+<span>  utils/</span>
+<span>    HttpError.js      &lt;- same file</span>
+<span></span>
+<span>There is no data folder. YOUR DATA COMES IN THROUGH POST REQUESTS.</span>
+  </pre>
+
+  <h3>Setup 3 install</h3>
+
+  <div class="div_p">
+    <p>Run these from the server folder, the one with server.js in it. If you made one package.json for the whole project, like pizza-menu, run them from the main project folder instead.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>cd server</span>
+<span>npm install express dotenv pg</span>
+<span>npm pkg set scripts.dev="node --watch server.js" scripts.start="node server.js"</span>
+<span>npm pkg set scripts.setup="node config/createTable.js"</span>
+  </pre>
+
+  <h3>Setup 3 server/.env</h3>
+
+  <div class="div_p">
+    <p>A local database uses other values, which are on the <a href="setup_page.html#env-files">Setup page</a>.</p>
+  </div>
+
+  <pre class="mycodeenv">
+<span># Copy these from the Connections section of your database page.</span>
+<span>PGUSER=your_database_user</span>
+<span>PGPASSWORD=your_database_password</span>
+<span>PGHOST=your_database_host</span>
+<span>PGPORT=5432</span>
+<span>PGDATABASE=your_database_name</span>
+<span></span>
+<span>PORT=3000</span>
+  </pre>
+
+  <h3>Setup 3 server/config/database.js</h3>
+
+  <pre class="mycodepg">
+<span>import "dotenv/config";</span>
+<span>import pg from "pg";</span>
+<span></span>
+<span>const isLocal = ["localhost", "127.0.0.1"].includes(process.env.PGHOST);</span>
+<span></span>
+<span>export const pool = new pg.Pool({</span>
+<span>  user: process.env.PGUSER,</span>
+<span>  password: process.env.PGPASSWORD,</span>
+<span>  host: process.env.PGHOST,</span>
+<span>  port: process.env.PGPORT,</span>
+<span>  database: process.env.PGDATABASE,</span>
+<span>  ssl: isLocal ? false : { rejectUnauthorized: false },</span>
+<span>});</span>
+  </pre>
+
+  <h3>Setup 3 server/config/createTable.js</h3>
+
+  <pre class="mycodepg">
+<span>import { pool } from "./database.js";</span>
+<span></span>
+<span>// IF NOT EXISTS means this never deletes rows, so it is safe to run again.</span>
+<span>const createTableQuery = `</span>
+<span>  CREATE TABLE IF NOT EXISTS items (</span>
+<span>    id SERIAL PRIMARY KEY,</span>
+<span>    title VARCHAR(255) NOT NULL,</span>
+<span>    description TEXT NOT NULL DEFAULT '',</span>
+<span>    image TEXT NOT NULL DEFAULT '',</span>
+<span>    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()</span>
+<span>  );</span>
+<span>`;</span>
+<span></span>
+<span>try {</span>
+<span>  await pool.query(createTableQuery);</span>
+<span>  console.log("🎉 Items table is ready.");</span>
+<span>} catch (error) {</span>
+<span>  console.error("⚠️ Could not create the table:", error.code || error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>} finally {</span>
+<span>  await pool.end();</span>
+<span>}</span>
+  </pre>
+
+  <h3 id="controller-setup-3">Setup 3 server/controllers/items.js</h3>
+
+  <div class="div_p">
+    <p>This is the same controller as Setup 1, because both only talk to the database.</p>
+  </div>
+
+  <pre class="mycodepg">
+<span>import { pool } from "../config/database.js";</span>
+<span>import { HttpError } from "../utils/HttpError.js";</span>
+<span></span>
+<span>// An id has to be a whole number before it goes to the database.</span>
+<span>const readId = (value) =&gt; {</span>
+<span>  if (!/^\d{1,9}$/.test(value)) throw new HttpError(404, "Item not found.");</span>
+<span>  return Number(value);</span>
+<span>};</span>
+<span></span>
+<span>// Only copy the fields you expect. Never save the whole req.body.</span>
+<span>const pickFields = (body) =&gt; {</span>
+<span>  if (typeof body?.title !== "string" || !body.title.trim()) {</span>
+<span>    throw new HttpError(400, "Title is required.");</span>
+<span>  }</span>
+<span></span>
+<span>  return [</span>
+<span>    body.title.trim(),</span>
+<span>    String(body.description ?? ""),</span>
+<span>    String(body.image ?? ""),</span>
+<span>  ];</span>
+<span>};</span>
+<span></span>
+<span>const getItems = async (req, res) =&gt; {</span>
+<span>  const results = await pool.query("SELECT * FROM items ORDER BY id ASC");</span>
+<span></span>
+<span>  res.status(200).json(results.rows);</span>
+<span>};</span>
+<span></span>
+<span>const getItemById = async (req, res) =&gt; {</span>
+<span>  const results = await pool.query("SELECT * FROM items WHERE id = $1", [</span>
+<span>    readId(req.params.id),</span>
+<span>  ]);</span>
+<span></span>
+<span>  if (results.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
+<span>  res.status(200).json(results.rows[0]);</span>
+<span>};</span>
+<span></span>
+<span>const createItem = async (req, res) =&gt; {</span>
+<span>  const results = await pool.query(</span>
+<span>    `INSERT INTO items (title, description, image)</span>
+<span>    VALUES ($1, $2, $3)</span>
+<span>    RETURNING *`,</span>
+<span>    pickFields(req.body),</span>
+<span>  );</span>
+<span></span>
+<span>  res.status(201).json(results.rows[0]);</span>
+<span>};</span>
+<span></span>
+<span>const updateItem = async (req, res) =&gt; {</span>
+<span>  const id = readId(req.params.id);</span>
+<span>  const results = await pool.query(</span>
+<span>    `UPDATE items SET title = $1, description = $2, image = $3</span>
+<span>    WHERE id = $4</span>
+<span>    RETURNING *`,</span>
+<span>    [...pickFields(req.body), id],</span>
+<span>  );</span>
+<span></span>
+<span>  if (results.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
+<span>  res.status(200).json(results.rows[0]);</span>
+<span>};</span>
+<span></span>
+<span>const deleteItem = async (req, res) =&gt; {</span>
+<span>  const results = await pool.query(</span>
+<span>    "DELETE FROM items WHERE id = $1 RETURNING *",</span>
+<span>    [readId(req.params.id)],</span>
+<span>  );</span>
+<span></span>
+<span>  if (results.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
+<span>  res.status(200).json(results.rows[0]);</span>
+<span>};</span>
+<span></span>
+<span>export default { getItems, getItemById, createItem, updateItem, deleteItem };</span>
+  </pre>
+
+  <h3>Setup 3 run it</h3>
+
+  <div class="div_p">
+    <p>Terminal 1 starts the server and stays running, so it will not give you the prompt back. Press Ctrl + C to stop it. Open a second terminal with the + button in the VS Code terminal for the curl lines. curl works from any folder.</p>
+  </div>
+
+  <h4>Terminal 1: from the server folder. With one package.json for the whole project, skip the cd and run npm run dev in the main folder, which starts React too.</h4>
+
+  <pre class="mycodecli">
+<span>cd server</span>
+<span>npm run setup</span>
+<span>npm run dev</span>
+  </pre>
+
+  <h4>Terminal 2: from any folder</h4>
+
+  <pre class="mycodecli">
+<span>curl http://localhost:3000/api/health</span>
+<span>curl http://localhost:3000/api/items</span>
+<span>curl -X POST http://localhost:3000/api/items -H "Content-Type: application/json" -d '{"title":"First item"}'</span>
+<span>curl http://localhost:3000/api/items</span>
+  </pre>
+
+  <h3>Setup 3 with MongoDB instead</h3>
+
+  <div class="div_p">
+    <p>MongoDB makes the collection the first time you save, so skip createTable.js. Use the connection, model, and controller from the <a href="mongodb_page.html#starter-schema-and-crud">MongoDB page</a>, and skip its reset.js because you have no data folder.</p>
+  </div>
+
+
+  <h2 id="how-server-js-works">How server.js Works</h2>
+
+  <div class="div_p">
+    <p>Almost every server.js has the same parts in the same order. A request starts at the top and moves down until something sends a response, so moving a part can break the server without showing an error.</p>
+  </div>
+
+  <h3>The order of a server.js file</h3>
+
+  <div class="div_p">
+    <ol>
+      <li><strong>Load .env.</strong> This goes first so other files can read process.env.</li>
+      <li><strong>Imports.</strong> Express, your routes, and HttpError.</li>
+      <li><strong>Settings.</strong> Values such as PORT.</li>
+      <li><strong>Create the app.</strong> const app = express().</li>
+      <li><strong>Middleware.</strong> This runs on requests before they reach a route, such as express.json().</li>
+      <li><strong>Routes.</strong> Each one matches a URL and sends a response.</li>
+      <li><strong>404 handler.</strong> Only requests that no route answered get here.</li>
+      <li><strong>Error handler.</strong> This catches anything a route throws. It goes after the routes.</li>
+      <li><strong>Start listening.</strong> app.listen goes last.</li>
+    </ol>
+  </div>
+
+  <h3>The smallest server.js that works</h3>
+
+  <div class="div_p">
+    <p>Start here to prove that Express runs. It needs no other files.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>import express from "express";</span>
+<span></span>
+<span>const app = express();</span>
+<span></span>
+<span>app.get("/api/health", (req, res) =&gt; {</span>
+<span>  res.status(200).json({ status: "ok" });</span>
+<span>});</span>
+<span></span>
+<span>app.listen(3000, () =&gt; {</span>
+<span>  console.log("Server listening on http://localhost:3000");</span>
+<span>});</span>
+  </pre>
+
+  <h3>What each piece does</h3>
+
+  <pre class="mycodefile">
+<span>import "dotenv/config"     Reads .env into process.env</span>
+<span>express()                  Creates the app</span>
+<span>app.use(something)         Runs on every request</span>
+<span>app.use("/path", router)   Sends requests that start with /path to that router</span>
+<span>app.get("/path", fn)       Runs fn for a GET request to exactly that path</span>
+<span>express.json()             Turns JSON from fetch into req.body</span>
+<span>req                        What came in: params, query, body, headers</span>
+<span>res                        What goes back: res.status(200).json(data)</span>
+<span>next                       Passes the request to the next function</span>
+<span>next(error)                Skips ahead to the error handler</span>
+<span>app.listen(PORT, fn)       Opens the port and runs fn once it is ready</span>
+  </pre>
+
+  <h3>Mistakes caused by the wrong order</h3>
+
+  <pre class="mycodefile">
+<span>req.body is undefined        express.json() is missing or below the route</span>
+<span>Every URL gives a 404        The 404 handler is above the routes</span>
+<span>Errors come back as HTML     The error handler is missing or above the routes</span>
+<span>Error handler never runs     It needs all four: (error, req, res, next)</span>
+<span>Request hangs forever        A function never sent a response or called next()</span>
+<span>Cannot set headers after     A function responded twice, so add return before</span>
+<span>they are sent                the first response</span>
+<span>CORS error stays             cors() has to be above the routes</span>
+  </pre>
+
+  <h2 id="regular-server-js">A Regular server.js</h2>
+
+  <div class="div_p">
+    <p>This is what a normal server.js looks like once the project is real. It has comments for each part and works with the HttpError, routes, and controller files from any setup above. For Setup 2, leave out the dotenv line. If you use the Vite proxy from the <a href="react_page.html">React page</a>, leave out the two cors lines and run the server without that package.</p>
+  </div>
+
+  <h3>server/server.js with every part explained</h3>
+
+  <pre class="mycodenode">
+<span>// 1. Load .env first so everything below can read process.env.</span>
+<span>import "dotenv/config";</span>
+<span></span>
+<span>// 2. Imports. Your own files need ./ and .js on the end.</span>
+<span>import express from "express";</span>
+<span>import cors from "cors";</span>
+<span>import itemsRouter from "./routes/items.js";</span>
+<span>import { HttpError } from "./utils/HttpError.js";</span>
+<span></span>
+<span>// 3. Settings. The host sets PORT when the site is live.</span>
+<span>const PORT = process.env.PORT || 3000;</span>
+<span>const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5173";</span>
+<span></span>
+<span>// 4. Create the app.</span>
+<span>const app = express();</span>
+<span></span>
+<span>// 5. Middleware. These run in order before any route.</span>
+<span>app.use(cors({ origin: CLIENT_ORIGIN }));</span>
+<span>app.use(express.json({ limit: "100kb" }));</span>
+<span></span>
+<span>app.use((req, res, next) =&gt; {</span>
+<span>  console.log(`${req.method} ${req.path}`);</span>
+<span>  next();</span>
+<span>});</span>
+<span></span>
+<span>// 6. Routes. Paths inside itemsRouter start after /api/items.</span>
+<span>app.get("/api/health", (req, res) =&gt; {</span>
+<span>  res.status(200).json({ status: "ok" });</span>
+<span>});</span>
+<span></span>
+<span>app.use("/api/items", itemsRouter);</span>
+<span></span>
+<span>// 7. No route above matched.</span>
+<span>app.use((req, res) =&gt; {</span>
+<span>  res.status(404).json({ error: "Route not found." });</span>
+<span>});</span>
+<span></span>
+<span>// 8. Express knows this is the error handler because it has four parameters.</span>
+<span>app.use((error, req, res, next) =&gt; {</span>
+<span>  if (error instanceof HttpError) {</span>
+<span>    return res.status(error.status).json({ error: error.message });</span>
+<span>  }</span>
+<span></span>
+<span>  // express.json() could not read the JSON that was sent.</span>
+<span>  if (error.type === "entity.parse.failed") {</span>
+<span>    return res.status(400).json({ error: "Invalid JSON." });</span>
+<span>  }</span>
+<span></span>
+<span>  // Log the real error, but never send those details to the browser.</span>
+<span>  console.error(error);</span>
+<span>  res.status(500).json({ error: "An unexpected server error occurred." });</span>
+<span>});</span>
+<span></span>
+<span>// 9. Start the server last.</span>
+<span>app.listen(PORT, () =&gt; {</span>
+<span>  console.log(`🚀 Server listening on http://localhost:${PORT}`);</span>
+<span>});</span>
+  </pre>
+
+  <h3>Add a route for another resource</h3>
+
+  <div class="div_p">
+    <p>Each resource gets its own routes file and controller file, then one import and one app.use line in server.js. The app.use line goes above the 404 handler.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>import pizzasRouter from "./routes/pizzas.js";</span>
+<span></span>
+<span>app.use("/api/pizzas", pizzasRouter);</span>
+  </pre>
+
+  <h3>Start the server after the database connects</h3>
+
+  <div class="div_p">
+    <p>With a database, replace step 9 with this so the server only opens once the connection works. The connectDatabase code is on the <a href="mongodb_page.html">MongoDB page</a>.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>import { connectDatabase } from "./config/database.js";</span>
+<span></span>
+<span>await connectDatabase();</span>
+<span></span>
+<span>app.listen(PORT, () =&gt; {</span>
+<span>  console.log(`🚀 Server listening on http://localhost:${PORT}`);</span>
+<span>});</span>
   </pre>
 
   <h2 id="reading-a-request">Reading A Request</h2>
