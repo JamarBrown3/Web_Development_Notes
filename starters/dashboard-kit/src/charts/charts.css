@@ -1,0 +1,186 @@
+/* Styles for ChartCard, LineChart and BarChart.
+   Import it once:  import "./charts/charts.css";
+
+   The charts read these colors. Recharts draws SVG, so it needs real
+   color values. Change them here to match the client's brand. */
+:root {
+  --bg: #eef2f6;         /* page */
+  --surface: #ffffff;    /* cards */
+  --surface-2: #f4f6f9;  /* hover behind a bar */
+  --line: #cbd4df;       /* borders */
+  --text: #121b28;
+  --text-2: #3d4b5c;
+  --muted: #5b6878;
+  --link: #1d4ed8;       /* the Show table button */
+  --series-1: #2a78d6;   /* first line or bar color */
+  --series-2: #eb6834;   /* second line color */
+  --grid: #e3e8ee;
+  --axis: #c3ccd7;
+  --radius: 8px;
+}
+
+/* Dark mode follows the visitor's device. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #101826;
+    --surface: #172231;
+    --surface-2: #1e2b3d;
+    --line: #2b3b52;
+    --text: #e9eef5;
+    --text-2: #b4c1d1;
+    --muted: #8a9aaf;
+    --link: #93c5fd;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --grid: #26354a;
+    --axis: #3b4d68;
+  }
+}
+
+/* Two cards side by side, one column on a phone */
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.chart-card {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.chart-card--wide {
+  grid-column: 1 / -1;
+}
+
+.chart-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.chart-card__title {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.chart-card__subtitle {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.chart-card__switch {
+  flex: none;
+  font-size: 0.875rem;
+}
+
+.text-button {
+  padding: 4px 2px;
+  border: 0;
+  background: none;
+  color: var(--link);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+@media (max-width: 899px) {
+  .chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* The box that shows when you hover a bar */
+.chart-tooltip {
+  min-width: 160px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  color: var(--text);
+  font-size: 0.75rem;
+}
+
+.chart-tooltip p {
+  margin: 0;
+}
+
+.chart-tooltip__date {
+  margin-bottom: 4px;
+  color: var(--muted);
+}
+
+/* The table behind the Show table button */
+.table-wrap {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.data-table thead th {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.data-table tbody th {
+  font-weight: 500;
+}
+
+.data-table td {
+  color: var(--text-2);
+}
+
+.data-table caption {
+  padding-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-align: left;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Printing: hide the tooltip and the switch, and show the table under each chart.
+   print.css from the Print Button section has the same two classes. */
+.print-only {
+  display: none;
+}
+
+@media print {
+  .no-print,
+  .chart-card__switch {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block;
+  }
+}

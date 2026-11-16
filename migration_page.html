@@ -21,14 +21,18 @@
         <li><a href="html_page.html">Html Code</a></li>
         <li><a href="css_page.html">Css Code</a></li>
         <li><a href="tailwind_page.html">Tailwind Code</a></li>
+        <li><a href="photo_effects_page.html">Photo Effects</a></li>
+        <li><a href="blog_page.html">Blog Template</a></li>
         <li><a href="javaScript.html">JavaScript Code</a></li>
         <li><a href="setup_page.html">Setup &amp; .env</a></li>
         <li><a href="react_page.html">React Code</a></li>
+        <li><a href="dashboard_page.html">Dashboard Code</a></li>
         <li><a href="node_page.html">Node Code</a></li>
         <li><a href="mongodb_page.html">MongoDB Code</a></li>
         <li><a href="postgres_page.html">Postgres Code</a></li>
         <li><a href="security_page.html">Security Code</a></li>
         <li><a href="migration_page.html">Switch Databases</a></li>
+        <li><a href="bugs_page.html">Common Bugs</a></li>
       </ul>
     </div>
   </nav>
@@ -134,8 +138,10 @@
   </div>
 
   <pre class="mycodepg">
+<span>-- IF NOT EXISTS makes this file safe to run again.</span>
 <span>CREATE TABLE IF NOT EXISTS users (</span>
 <span>  id SERIAL PRIMARY KEY,</span>
+<span>  -- The 24 character MongoDB _id this row came from.</span>
 <span>  mongo_id CHAR(24) UNIQUE,</span>
 <span>  username VARCHAR(35) NOT NULL UNIQUE,</span>
 <span>  email VARCHAR(254) NOT NULL UNIQUE,</span>
@@ -148,14 +154,17 @@
 <span>CREATE TABLE IF NOT EXISTS posts (</span>
 <span>  id SERIAL PRIMARY KEY,</span>
 <span>  mongo_id CHAR(24) UNIQUE,</span>
+<span>  -- Points at users.id. Deleting a user deletes their posts.</span>
 <span>  author_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,</span>
 <span>  title VARCHAR(400) NOT NULL,</span>
 <span>  body TEXT NOT NULL,</span>
+<span>  -- A list of text. '{}' is an empty list.</span>
 <span>  tags TEXT[] NOT NULL DEFAULT '{}',</span>
 <span>  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),</span>
 <span>  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()</span>
 <span>);</span>
 <span></span>
+<span>-- Makes loading one author's posts fast.</span>
 <span>CREATE INDEX IF NOT EXISTS posts_author_index ON posts (author_id);</span>
   </pre>
 
@@ -164,6 +173,10 @@
   <pre class="mycodecli">
 <span>psql "postgresql://your_user:your_password@your_host/your_database" -f config/schema.sql</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> psql keeps going after an error. Add -v ON_ERROR_STOP=1 to the command so it stops at the first statement that fails.</p>
+  </div>
 
   <h3>server/scripts/mongoToPostgres.js</h3>
 
@@ -183,6 +196,7 @@
 <span>import mongoose from "mongoose";</span>
 <span>import pg from "pg";</span>
 <span></span>
+<span>// The same connection settings as config/database.js.</span>
 <span>const isLocal = ["localhost", "127.0.0.1"].includes(process.env.PGHOST);</span>
 <span></span>
 <span>const pool = new pg.Pool({</span>
@@ -194,10 +208,14 @@
 <span>  ssl: isLocal ? false : { rejectUnauthorized: false },</span>
 <span>});</span>
 <span></span>
+<span>// Copies every user. It gives back a Map of old id to new id.</span>
 <span>const copyUsers = async (mongo, client) =&gt; {</span>
 <span>  const newIds = new Map(); // Mongo _id text -&gt; new Postgres id</span>
 <span></span>
+<span>  // Read straight from the collection, one document at a time.</span>
 <span>  for await (const user of mongo.collection("users").find()) {</span>
+<span>    // ON CONFLICT makes this safe to run twice. A user that was already copied</span>
+<span>    // is updated and not added again.</span>
 <span>    const results = await client.query(</span>
 <span>      `INSERT INTO users (mongo_id, username, email, password_hash, role, created_at, updated_at)</span>
 <span>      VALUES ($1, $2, $3, $4, $5, $6, $7)</span>
@@ -209,10 +227,12 @@
 <span>        updated_at = EXCLUDED.updated_at</span>
 <span>      RETURNING id`,</span>
 <span>      [</span>
+<span>        // An ObjectId is not text until you call toString().</span>
 <span>        user._id.toString(),</span>
 <span>        user.username,</span>
 <span>        user.email,</span>
 <span>        user.passwordHash,</span>
+<span>        // Old documents can be missing newer fields, so give those a value.</span>
 <span>        user.role ?? "user",</span>
 <span>        user.createdAt ?? new Date(),</span>
 <span>        user.updatedAt ?? new Date(),</span>
@@ -225,11 +245,13 @@
 <span>  return newIds;</span>
 <span>};</span>
 <span></span>
+<span>// Copies every post whose author was copied.</span>
 <span>const copyPosts = async (mongo, client, userIds) =&gt; {</span>
 <span>  let saved = 0;</span>
 <span>  let skipped = 0;</span>
 <span></span>
 <span>  for await (const post of mongo.collection("posts").find()) {</span>
+<span>    // Swap the Mongo author id for the new Postgres id.</span>
 <span>    const authorId = userIds.get(post.authorId?.toString());</span>
 <span></span>
 <span>    if (!authorId) {</span>
@@ -264,12 +286,14 @@
 <span>  return { saved, skipped };</span>
 <span>};</span>
 <span></span>
+<span>// One client for the whole transaction.</span>
 <span>const client = await pool.connect();</span>
 <span></span>
 <span>try {</span>
 <span>  await mongoose.connect(process.env.MONGODB_URI, { dbName: process.env.MONGODB_DB_NAME });</span>
 <span>  const mongo = mongoose.connection.db;</span>
 <span></span>
+<span>  // Nothing is final until COMMIT.</span>
 <span>  await client.query("BEGIN");</span>
 <span></span>
 <span>  const userIds = await copyUsers(mongo, client);</span>
@@ -279,10 +303,12 @@
 <span></span>
 <span>  console.log(`✅ Copied ${userIds.size} users and ${posts.saved} posts. Skipped ${posts.skipped} posts.`);</span>
 <span>} catch (error) {</span>
+<span>  // Undo everything since BEGIN.</span>
 <span>  await client.query("ROLLBACK");</span>
 <span>  console.error("⚠️ Nothing was saved. Migration failed:", error.message);</span>
 <span>  process.exitCode = 1;</span>
 <span>} finally {</span>
+<span>  // Close both databases, even after an error.</span>
 <span>  client.release();</span>
 <span>  await pool.end();</span>
 <span>  await mongoose.disconnect();</span>
@@ -302,9 +328,11 @@
   </div>
 
   <pre class="mycodepg">
+<span>-- Compare these two numbers with mongosh.</span>
 <span>SELECT COUNT(*) FROM users;</span>
 <span>SELECT COUNT(*) FROM posts;</span>
 <span></span>
+<span>-- Spot check: the five newest posts with the name of their author.</span>
 <span>SELECT p.title, u.username</span>
 <span>FROM posts AS p</span>
 <span>JOIN users AS u ON u.id = p.author_id</span>
@@ -315,6 +343,7 @@
   <h3>Remove the old ids once everything works</h3>
 
   <pre class="mycodepg">
+<span>-- Only after everything is checked. This cannot be undone.</span>
 <span>ALTER TABLE posts DROP COLUMN mongo_id;</span>
 <span>ALTER TABLE users DROP COLUMN mongo_id;</span>
   </pre>
@@ -346,11 +375,28 @@
   <h3>Add the models</h3>
 
   <div class="div_p">
-    <p>Use the schema examples on the MongoDB page. The Rev User model needs fields like status and sessionVersion, so set those in the script too. Add this field to each model. It remembers which row each document came from.</p>
+    <p>Use the schema examples on the MongoDB page. The Rev User model needs fields like status and sessionVersion, so set those in the script too. Add the legacyId field to each model. It remembers which row each document came from. The box shows it inside a small User model.</p>
   </div>
 
   <pre class="mycodemongo">
-<span>legacyId: { type: Number, unique: true, sparse: true },</span>
+<span>import mongoose from "mongoose";</span>
+<span></span>
+<span>const userSchema = new mongoose.Schema(</span>
+<span>  {</span>
+<span>    // The Postgres id this document came from.</span>
+<span>    // unique stops the same row from being copied twice.</span>
+<span>    // sparse lets documents made after the move have no legacyId at all.</span>
+<span>    legacyId: { type: Number, unique: true, sparse: true },</span>
+<span></span>
+<span>    username: { type: String, required: true, trim: true },</span>
+<span>    email: { type: String, required: true, trim: true, lowercase: true },</span>
+<span>  },</span>
+<span>  { timestamps: true, collection: "users" },</span>
+<span>);</span>
+<span></span>
+<span>const User = mongoose.model("User", userSchema);</span>
+<span></span>
+<span>export default User;</span>
   </pre>
 
   <h3>server/scripts/postgresToMongo.js</h3>
@@ -370,6 +416,7 @@
 <span>import mongoose from "mongoose";</span>
 <span>import pg from "pg";</span>
 <span></span>
+<span>// The same connection settings as config/database.js.</span>
 <span>const isLocal = ["localhost", "127.0.0.1"].includes(process.env.PGHOST);</span>
 <span></span>
 <span>const pool = new pg.Pool({</span>
@@ -388,8 +435,10 @@
 <span>  await collection.bulkWrite(</span>
 <span>    documents.map((document) =&gt; ({</span>
 <span>      updateOne: {</span>
+<span>        // Match on the old Postgres id.</span>
 <span>        filter: { legacyId: document.legacyId },</span>
 <span>        update: { $set: document },</span>
+<span>        // Update the document when it is there, and add it when it is not.</span>
 <span>        upsert: true,</span>
 <span>      },</span>
 <span>    })),</span>
@@ -403,10 +452,12 @@
 <span>  return new Map(saved.map((document) =&gt; [document.legacyId, document._id]));</span>
 <span>};</span>
 <span></span>
+<span>// Copies every user row. It gives back a Map of old id to new _id.</span>
 <span>const copyUsers = async (mongo) =&gt; {</span>
 <span>  const collection = mongo.collection("users");</span>
 <span>  const { rows } = await pool.query("SELECT * FROM users ORDER BY id");</span>
 <span></span>
+<span>  // The index makes the legacyId lookups fast and stops duplicates.</span>
 <span>  await collection.createIndex({ legacyId: 1 }, { unique: true, sparse: true });</span>
 <span></span>
 <span>  await saveAll(</span>
@@ -417,6 +468,7 @@
 <span>      email: row.email,</span>
 <span>      passwordHash: row.password_hash,</span>
 <span>      role: row.role,</span>
+<span>      // The Rev User model needs these two, and raw writes skip the schema defaults.</span>
 <span>      status: "active",</span>
 <span>      sessionVersion: 0,</span>
 <span>      createdAt: row.created_at,</span>
@@ -427,6 +479,7 @@
 <span>  return readNewIds(collection);</span>
 <span>};</span>
 <span></span>
+<span>// Copies every post row and points it at the new author _id.</span>
 <span>const copyPosts = async (mongo, userIds) =&gt; {</span>
 <span>  const collection = mongo.collection("posts");</span>
 <span>  const { rows } = await pool.query("SELECT * FROM posts ORDER BY id");</span>
@@ -437,6 +490,7 @@
 <span>    collection,</span>
 <span>    rows.map((row) =&gt; ({</span>
 <span>      legacyId: row.id,</span>
+<span>      // Swap the Postgres author id for the new Mongo _id.</span>
 <span>      authorId: userIds.get(row.author_id),</span>
 <span>      title: row.title,</span>
 <span>      body: row.body,</span>
@@ -461,6 +515,7 @@
 <span>  console.error("⚠️ Migration failed. Fix the problem and run it again:", error.message);</span>
 <span>  process.exitCode = 1;</span>
 <span>} finally {</span>
+<span>  // Close both databases, even after an error.</span>
 <span>  await pool.end();</span>
 <span>  await mongoose.disconnect();</span>
 <span>}</span>
@@ -505,7 +560,9 @@
   <pre class="mycodepg">
 <span>import { pool } from "../config/database.js";</span>
 <span></span>
+<span>// GET /api/posts sends back the 20 newest posts.</span>
 <span>const getPosts = async (req, res) =&gt; {</span>
+<span>  // AS renames the columns so the JSON matches the MongoDB version.</span>
 <span>  const results = await pool.query(</span>
 <span>    `SELECT p.id, p.title, p.body, p.tags,</span>
 <span>            p.created_at AS "createdAt",</span>
@@ -527,19 +584,23 @@
   <pre class="mycodemongo">
 <span>import Post from "../models/Post.js";</span>
 <span></span>
+<span>// GET /api/posts sends back the 20 newest posts.</span>
 <span>const getPosts = async (req, res) =&gt; {</span>
 <span>  const posts = await Post.find({})</span>
 <span>    .sort({ createdAt: -1, _id: -1 })</span>
 <span>    .limit(20)</span>
+<span>    // Swaps each authorId for the user document, with only the username in it.</span>
 <span>    .populate("authorId", "username");</span>
 <span></span>
 <span>  res.status(200).json(</span>
+<span>    // Build the same JSON shape the Postgres version sends.</span>
 <span>    posts.map((post) =&gt; ({</span>
 <span>      id: post._id,</span>
 <span>      title: post.title,</span>
 <span>      body: post.body,</span>
 <span>      tags: post.tags,</span>
 <span>      createdAt: post.createdAt,</span>
+<span>      // ?. covers a post whose author was deleted.</span>
 <span>      authorName: post.authorId?.username,</span>
 <span>    })),</span>
 <span>  );</span>
@@ -569,19 +630,27 @@
   <h3>Handle a duplicate value after switching</h3>
 
   <div class="div_p">
-    <p>The error code changes between databases, so check every place you catch a duplicate.</p>
+    <p>The error code changes between databases, so check every place you catch a duplicate. This is a whole file. Save it as server/utils/isDuplicateError.js.</p>
   </div>
 
   <pre class="mycodenode">
-<span>// Postgres</span>
-<span>if (error.code === "23505") {</span>
-<span>  return res.status(409).json({ error: "That value is already taken." });</span>
+<span>// True when the database refused a value because it is already taken.</span>
+<span>export function isDuplicateError(error) {</span>
+<span>  // Postgres: 23505 is the unique_violation code. It is text.</span>
+<span>  if (error?.code === "23505") return true;</span>
+<span></span>
+<span>  // MongoDB: 11000 is the duplicate key code. It is a number.</span>
+<span>  if (error?.code === 11000) return true;</span>
+<span></span>
+<span>  return false;</span>
 <span>}</span>
 <span></span>
-<span>// MongoDB</span>
-<span>if (error.code === 11000) {</span>
-<span>  return res.status(409).json({ error: "That value is already taken." });</span>
-<span>}</span>
+<span>// Use it in the error handler in server.js, above the lines that send the 500:</span>
+<span>// import { isDuplicateError } from "./utils/isDuplicateError.js";</span>
+<span>//</span>
+<span>// if (isDuplicateError(error)) {</span>
+<span>//   return res.status(409).json({ error: "That value is already taken." });</span>
+<span>// }</span>
   </pre>
 
   <h2 id="login-and-security-after-switching">Login And Security After Switching</h2>
@@ -609,12 +678,16 @@
 <span>import connectPgSimple from "connect-pg-simple";</span>
 <span>import { pool } from "../config/database.js";</span>
 <span></span>
+<span>// connect-pg-simple needs the session package to build its store class.</span>
 <span>const PgStore = connectPgSimple(session);</span>
 <span></span>
 <span>export const store = new PgStore({</span>
+<span>  // Reuse the pool from config/database.js.</span>
 <span>  pool,</span>
 <span>  tableName: "sessions",</span>
+<span>  // Makes the sessions table the first time it runs.</span>
 <span>  createTableIfMissing: true,</span>
+<span>  // Seconds until a session ends. 1800 is 30 minutes.</span>
 <span>  ttl: 1800,</span>
 <span>});</span>
   </pre>

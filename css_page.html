@@ -21,19 +21,77 @@
         <li><a href="html_page.html">Html Code</a></li>
         <li><a href="css_page.html">Css Code</a></li>
         <li><a href="tailwind_page.html">Tailwind Code</a></li>
+        <li><a href="photo_effects_page.html">Photo Effects</a></li>
+        <li><a href="blog_page.html">Blog Template</a></li>
         <li><a href="javaScript.html">JavaScript Code</a></li>
         <li><a href="setup_page.html">Setup &amp; .env</a></li>
         <li><a href="react_page.html">React Code</a></li>
+        <li><a href="dashboard_page.html">Dashboard Code</a></li>
         <li><a href="node_page.html">Node Code</a></li>
         <li><a href="mongodb_page.html">MongoDB Code</a></li>
         <li><a href="postgres_page.html">Postgres Code</a></li>
         <li><a href="security_page.html">Security Code</a></li>
         <li><a href="migration_page.html">Switch Databases</a></li>
+        <li><a href="bugs_page.html">Common Bugs</a></li>
       </ul>
     </div>
   </nav>
 
-  <h2>What Is CSS</h2>
+  <h2>On This Page</h2>
+
+  <div class="div_p toc">
+    <ul>
+      <li><a href="#what-is-css">What Is CSS</a></li>
+      <li><a href="#how-where-to-use-css">How/Where to Use CSS </a></li>
+      <li><a href="#cascade-style-sheets-syntax">Cascade Style Sheets Syntax</a></li>
+      <li><a href="#css-syntax-outline">CSS Syntax Outline</a></li>
+      <li><a href="#css-selectors">CSS Selectors</a></li>
+      <li><a href="#css-units">CSS Units</a></li>
+      <li><a href="#relative-lengths">Relative Lengths</a></li>
+      <li><a href="#absolute-lengths">Absolute Lengths</a></li>
+      <li><a href="#box-model">Box Model</a></li>
+      <li><a href="#visualizing-the-css-box-model">Visualizing the CSS Box Model</a></li>
+      <li><a href="#the-css-box-model-broken-down">The CSS Box Model Broken Down</a></li>
+      <li><a href="#working-with-the-box-model">Working with the Box Model</a></li>
+      <li><a href="#width-height">Width & Height</a></li>
+      <li><a href="#width">Width</a></li>
+      <li><a href="#height">Height</a></li>
+      <li><a href="#margin-padding">Margin & Padding</a></li>
+      <li><a href="#margin">Margin</a></li>
+      <li><a href="#padding">Padding</a></li>
+      <li><a href="#border">Border</a></li>
+      <li><a href="#border-style">Border Style</a></li>
+      <li><a href="#border-style-examples">border-style examples</a></li>
+      <li><a href="#tricky-border-cases">Tricky Border Cases</a></li>
+      <li><a href="#tricky-border-radius">Tricky Border Radius</a></li>
+      <li><a href="#conflicting-styles">Conflicting Styles</a></li>
+      <li><a href="#positioning-elements">Positioning Elements</a></li>
+      <li><a href="#absolute-positioning">Absolute Positioning</a></li>
+      <li><a href="#the-z-index-property">The z-index property</a></li>
+      <li><a href="#relative-positioning">Relative Positioning</a></li>
+      <li><a href="#inline-and-block-level-elements">Inline and Block-Level Elements</a></li>
+      <li><a href="#inline-elements">Inline Elements</a></li>
+      <li><a href="#backgrounds">Backgrounds</a></li>
+      <li><a href="#css-background-properties">CSS Background Properties:</a></li>
+      <li><a href="#background-css-examples">Background CSS Examples:</a></li>
+      <li><a href="#background-shorthand-property">Background - Shorthand Property</a></li>
+      <li><a href="#background-gifs-from-my-chairvana-project">Background GIFs (from my Chairvana project)</a></li>
+      <li><a href="#element-dimensions">Element Dimensions</a></li>
+      <li><a href="#all-css-dimension-properties">All CSS Dimension Properties</a></li>
+      <li><a href="#float">Float</a></li>
+      <li><a href="#media-types">Media Types</a></li>
+      <li><a href="#media-queries">Media Queries</a></li>
+      <li><a href="#building-a-css-menu">Building a CSS Menu:</a></li>
+      <li><a href="#the-4-css-rules-of-multiplicity">The 4 CSS Rules of Multiplicity</a></li>
+      <li><a href="#multiple-declarations">Multiple declarations</a></li>
+      <li><a href="#using-the-css-import-rule">Using the CSS @import Rule</a></li>
+      <li><a href="#issues-with-the-import-rule">Issues with the @import rule</a></li>
+      <li><a href="#the-important-declaration">The !important declaration</a></li>
+      <li><a href="#the-important-rule-should-never-be-used">The !important rule should never be used</a></li>
+    </ul>
+  </div>
+
+  <h2 id="what-is-css">What Is CSS</h2>
 
   <div class="div_p">
     <p>CSS controls the visual presentation and styling of HTML elements, including colors, fonts, spacing, layouts, and
@@ -44,7 +102,7 @@
       devices, and follows modern web standards for future browser compatibility.</p>
   </div>
 
-  <h2>How/Where to Use CSS </h2>
+  <h2 id="how-where-to-use-css">How/Where to Use CSS </h2>
 
   <div class="div_p">
     <p>CSS offers superior styling capabilities compared to HTML, enables responsive design for multiple devices, and
@@ -64,41 +122,54 @@
 
   <pre class="mycodecss">
 <span>&lt;!DOCTYPE html&gt;</span>
-<span>&lt;html&gt;</span>
-<span>   &lt;head&gt;</span>
-<span>   &lt;/head&gt;</span>
-<span>   &lt;body&gt;</span>
-<span>      &lt;h1 style="color:#36C;"&gt; This is inline CSS &lt;/h1&gt;</span>
-<span>   &lt;/body&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Inline CSS&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- The style attribute holds the CSS. It only changes this one element. --&gt;</span>
+<span>  &lt;h1 style="color: #36C;"&gt;This is inline CSS&lt;/h1&gt;</span>
+<span></span>
+<span>  &lt;!-- More than one rule goes in the same quotes, with a semicolon after each one. --&gt;</span>
+<span>  &lt;p style="color: maroon; font-size: 20px;"&gt;Two rules on one element.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
 <span>&lt;/html&gt;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Inline styles beat the rules in a style block or a CSS file, and they have to be changed one element at a time. Use them for a quick test, then move the rule into your CSS.</p>
+  </div>
 
   <h3>Internal CSS: Using the &lt;style&gt;</h3>
 
   <div class="div_p">
     <p>Internal CSS uses the &lt;style&gt; element in the HTML document's &lt;head&gt; section to apply styles to all
-      matching elements. The required type="text/css" attribute specifies the MIME type, while the optional media
-      attribute defines target devices.</p>
+      matching elements. The type="text/css" attribute is optional in HTML5, because CSS is the default, and the optional media attribute defines target devices.</p>
   </div>
 
   <pre class="mycodecss">
 <span>&lt;!DOCTYPE html&gt;</span>
-<span>&lt;html&gt;</span>
-<span>   &lt;head&gt;</span>
-<span>      &lt;style type="text/css" media="all"&gt;</span>
-<span>         body {</span>
-<span>            background-color: linen;</span>
-<span>         }</span>
-<span>         h1 {</span>
-<span>            color: maroon;</span>
-<span>            margin-left: 40px;</span>
-<span>         }</span>
-<span>      &lt;/style&gt;</span>
-<span>   &lt;/head&gt;</span>
-<span>   &lt;body&gt;</span>
-<span>      &lt;h1&gt;This is a heading&lt;/h1&gt;</span>
-<span>      &lt;p&gt;This is a paragraph.&lt;/p&gt;</span>
-<span>   &lt;/body&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Internal CSS&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* Rules inside &lt;style&gt; apply to every matching element on this page. */</span>
+<span>    body {</span>
+<span>      background-color: linen;</span>
+<span>    }</span>
+<span></span>
+<span>    h1 {</span>
+<span>      color: maroon;</span>
+<span>      margin-left: 40px;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;h1&gt;This is a heading&lt;/h1&gt;</span>
+<span>  &lt;p&gt;This is a paragraph.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
 <span>&lt;/html&gt;</span>
   </pre>
 
@@ -107,22 +178,23 @@
   <h3>External CSS: &lt;link&gt; and Bootstrap Link</h3>
 
   <div class="div_p">
-    <p>External CSS uses the &lt;link&gt; element to connect a separate .css file to HTML documents. Required attributes
-      include type="text/css", href for the file path, and rel="stylesheet", with an optional media attribute for device
-      targeting.<br><br>Consider a simple style sheet folder and file with a name `css/style.css` having the following
-      rules:</p>
+    <p>External CSS uses the &lt;link&gt; element to connect a separate .css file to HTML documents. The required attributes are href for the file path and rel="stylesheet". type="text/css" is optional in HTML5, and there is an optional media attribute for device targeting.Consider a simple style sheet file with the name styles.css, saved in the same folder as the page, having the following rules:</p>
   </div>
 
   <h3>External CSS Files Content</h3>
 
   <pre class="mycodecss">
-<span>styles.css file</span>
+<span>/* styles.css: save this file in the same folder as the page. */</span>
+<span></span>
+<span>/* One rule for all three headings. */</span>
 <span>h1, h2, h3 {</span>
-<span>   color: #36C;</span>
-<span>   font-weight: normal;</span>
-<span>   letter-spacing: .4em;</span>
-<span>   margin-bottom: 1em;</span>
-<span>   text-transform: lowercase;</span>
+<span>  color: #36C;</span>
+<span>  font-weight: normal;</span>
+<span>  /* The space between the letters. */</span>
+<span>  letter-spacing: .4em;</span>
+<span>  margin-bottom: 1em;</span>
+<span>  /* Shows the text in small letters, however it was typed. */</span>
+<span>  text-transform: lowercase;</span>
 <span>}</span>
 </pre>
 
@@ -130,9 +202,12 @@
 
   <pre class="mycodecss">
 <span>&lt;!DOCTYPE html&gt;</span>
-<span>&lt;html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
 <span>&lt;head&gt;</span>
-<span>  &lt;link rel="stylesheet" type="text/css" href="styles.css"&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;External CSS&lt;/title&gt;</span>
+<span>  &lt;!-- href is the path to the CSS file, starting from the folder this page is in. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="styles.css"&gt;</span>
 <span>&lt;/head&gt;</span>
 <span>&lt;body&gt;</span>
 <span>  &lt;h1&gt;Heading 1&lt;/h1&gt;</span>
@@ -142,19 +217,39 @@
 <span>&lt;/html&gt;</span>
     </pre>
 
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> If the page shows with no styling at all, the href path is wrong. Open the browser DevTools, go to the Network tab, reload, and look for the CSS file with a 404 next to it.</p>
+  </div>
+
   <h3>Imported CSS: The @import Rule</h3>
   <div class="div_p">
-    <p>@import is used to import an external stylesheet in a manner similar to the element.<br><br>
+    <p>@import is used to import an external stylesheet in a manner similar to the &lt;link&gt; element.
       Here is the generic syntax of the @import rule:</p>
   </div>
 
   <pre class="mycodecss">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
 <span>&lt;head&gt;</span>
-<span>@import "mystyle.css";</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Imported CSS&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* @import goes inside &lt;style&gt;, above every other rule. */</span>
+<span>    @import "mystyle.css";</span>
+<span></span>
+<span>    /* Rules written under it come later, so they win when both set the same thing. */</span>
+<span>    h1 {</span>
+<span>      color: maroon;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
 <span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;h1&gt;Styled by mystyle.css and by this page&lt;/h1&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
-  <h2>Cascade Style Sheets Syntax</h2>
+  <h2 id="cascade-style-sheets-syntax">Cascade Style Sheets Syntax</h2>
 
   <div class="div_p">
     <p>The style sheets define the color, size and position of text and other HTML tags, while the HTML files define the
@@ -172,34 +267,33 @@
       apply them to any element using the class="?" attribute.</p>
   </div>
 
-  <h2>CSS Syntax Outline</h2>
+  <h2 id="css-syntax-outline">CSS Syntax Outline</h2>
 
   <div class="div_p">
-    <p>The whole structure is called a rule set (but often a "rule" for short.) Note also the names of the idividual
-      parts: selector, declaration, property, value.</p>
+    <p>The whole structure is called a rule set (but often a "rule" for short.) Note also the names of the individual parts: selector, declaration, property, value.</p>
     <p><img src="images/css-structure-anatomy.png" alt="CSS_structure_image_1"></p>
     <p><img src="images/css-syntax-outline.png" alt="CSS_smallar_structure_2"></p>
 
-    <p>Selector:
-      The HTML element name at the start of the rule set. It selects the element(s) to be styled (in this case, p
-      elements). To style a different element, just change the selector.<br><br>
-      Declaration:
-      (Property + Value) A single rule like margin:10px; specifying wich of the element's properties you want to
-      style.<br><br>
-      Property:
-      Ways in wich you can style a given HTML element. (in this case, color is a property of the p elements.) In CSS,
-      you choose which properties you want to affect in your rule.<br><br>
-      Property Value:
-      To the right of the property, after the colon, we have the property value, to choose one out of many possible
-      appearances for a given property.</p>
+    <ul>
+      <li><strong>Selector:</strong> The HTML element name at the start of the rule set. It selects the element(s) to
+        be styled (in this case, p elements). To style a different element, just change the selector.</li>
+      <li><strong>Declaration:</strong> (Property + Value) A single rule like margin:10px; specifying which of the
+        element's properties you want to style.</li>
+      <li><strong>Property:</strong> Ways in which you can style a given HTML element. (In this case, color is a
+        property of the p elements.) In CSS, you choose which properties you want to affect in your rule.</li>
+      <li><strong>Property Value:</strong> To the right of the property, after the colon, we have the property value,
+        to choose one out of many possible appearances for a given property.</li>
+    </ul>
 
-    <p>Each rule set (apart from the selector) must be wrapped in curly braces ({}).<br><br>
-      Within each declaration (between property and value), you must use a colon (:) to separate the property from its
-      values.<br><br>
-      Within each rule set, you must use a semicolon (;) to separate each declaration from the next one.</p>
+    <ul>
+      <li>Each rule set (apart from the selector) must be wrapped in curly braces ({}).</li>
+      <li>Within each declaration (between property and value), you must use a colon (:) to separate the property from
+        its values.</li>
+      <li>Within each rule set, you must use a semicolon (;) to separate each declaration from the next one.</li>
+    </ul>
   </div>
 
-  <h2>CSS Selectors</h2>
+  <h2 id="css-selectors">CSS Selectors</h2>
   <div class="div_p">
     <p>CSS selectors target specific HTML elements for styling. Basic selectors include element, class, and ID
       selectors, along with pseudo-classes for element states.</p>
@@ -210,12 +304,28 @@
   <div class="div_p">
     <p>Sometimes called a tag or type selector. This basic selector chooses all elements that matches the given
       name.<br><br>
-      For example the code below use the p element selector which is for pargraphs and all paragraphs will have that
-      look that is in the paragraph element.</p>
+      For example, the code below uses the p element selector, so every paragraph on the page gets that look.</p>
   </div>
 
   <pre class="mycodecss">
-<span>p {...}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Element Selector&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* The tag name on its own: every &lt;p&gt; on the page gets this rule. */</span>
+<span>    p {</span>
+<span>      color: navy;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;h1&gt;The heading is not changed&lt;/h1&gt;</span>
+<span>  &lt;p&gt;First paragraph.&lt;/p&gt;</span>
+<span>  &lt;p&gt;Second paragraph.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
   <h3>Class Selectors</h3>
@@ -223,28 +333,64 @@
   <div class="div_p">
     <p>This basic selector chooses element(s) based on the value of their class attribute (Multiple class instances can
       appear on a page).<br><br>
-      The example below uses the class name index so any attribute that has the class=index will use the index
-      attribute.
+      The example below uses the class name index, so any element that has class="index" gets the index rule.
     </p>
   </div>
 
   <pre class="mycodecss">
-<span>.index{...}</span>
-<span>&lt;p class="index"&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Class Selector&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* A class selector starts with a dot. Any number of elements can share a class. */</span>
+<span>    .index {</span>
+<span>      color: green;</span>
+<span>      font-weight: bold;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p class="index"&gt;This paragraph has the class.&lt;/p&gt;</span>
+<span>  &lt;p&gt;This paragraph does not.&lt;/p&gt;</span>
+<span>  &lt;!-- The same class works on any tag. --&gt;</span>
+<span>  &lt;h2 class="index"&gt;This heading has it too.&lt;/h2&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
   <h3>ID Selectors</h3>
 
   <div class="div_p">
     <p>This basic selector chooses element on the page with the specified ID based on the value of its id attribute.
-      There should be only one element with a given ID in a document. For example, the code below we will use the id
-      called calm.</p>
+      There should be only one element with a given ID in a document. For example, the code below uses the id called calm.</p>
   </div>
 
   <pre class="mycodecss">
-<span>#calm{...}</span>
-<span>&lt;p id="calm"&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;ID Selector&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* An id selector starts with a #. Only one element on the page may use this id. */</span>
+<span>    #calm {</span>
+<span>      background-color: lightblue;</span>
+<span>      padding: 10px;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p id="calm"&gt;Only this paragraph has the id.&lt;/p&gt;</span>
+<span>  &lt;p&gt;This paragraph is not changed.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> An id beats any number of classes, which makes its rule hard to change later. Use classes for styling, and keep ids for links, labels and JavaScript.</p>
+  </div>
 
   <h3>Universal Selectors</h3>
 
@@ -253,7 +399,26 @@
   </div>
 
   <pre class="mycodecss">
-<span>* {...}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Universal Selector&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* The * matches every element on the page. This is a common reset. */</span>
+<span>    * {</span>
+<span>      margin: 0;</span>
+<span>      padding: 0;</span>
+<span>      /* Makes width and height include the padding and the border. */</span>
+<span>      box-sizing: border-box;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;h1&gt;No default space around this heading&lt;/h1&gt;</span>
+<span>  &lt;p&gt;Or around this paragraph.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
   <h3>Attribute Selectors</h3>
@@ -262,13 +427,38 @@
     <p>This basic selector chooses nodes based on the value of one of its attributes.<br><br>
       The following is the syntax we usually use: [attr] [attr=value] [attr~=value] [attr|=value] [attr^=value]
       [attr$=value] [attr*=value].<br><br>
-      The code below shows that img[src] will be changed not img is self.</p>
+      The code below styles only an img that has a src attribute, not every img.</p>
   </div>
 
   <pre class="mycodecss">
-<span>img[src] {...}</span>
-<span>&lt;img src="myimage.png"&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Attribute Selectors&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* [src] matches every &lt;img&gt; that has a src attribute. */</span>
+<span>    img[src] {</span>
+<span>      border: 4px solid orange;</span>
+<span>    }</span>
 <span></span>
+<span>    /* [attr="value"] matches one exact value. */</span>
+<span>    a[target="_blank"] {</span>
+<span>      color: crimson;</span>
+<span>    }</span>
+<span></span>
+<span>    /* [attr^="value"] matches a value that starts with that text. */</span>
+<span>    a[href^="https"] {</span>
+<span>      font-weight: bold;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;img src="https://placehold.co/200x100" alt="A placeholder image"&gt;</span>
+<span>  &lt;p&gt;&lt;a href="https://example.com" target="_blank" rel="noopener noreferrer"&gt;Opens in a new tab&lt;/a&gt;&lt;/p&gt;</span>
+<span>  &lt;p&gt;&lt;a href="page.html"&gt;A plain link&lt;/a&gt;&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
@@ -279,14 +469,31 @@
   </div>
 
   <pre class="mycodecss">
-<span>a:link { color: #FF0000; }</span>
-<span>/* visited link */</span>
-<span>a:visited { color: #00FF00; }</span>
-<span>/* mouse over link */</span>
-<span>a:hover { color: #FF00FF; }</span>
-<span>/* selected link */</span>
-<span>a:active { color: #0000FF; }</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Pseudo Class Selectors&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* unvisited link */</span>
+<span>    a:link { color: #FF0000; }</span>
+<span>    /* visited link */</span>
+<span>    a:visited { color: #00FF00; }</span>
+<span>    /* mouse over link */</span>
+<span>    a:hover { color: #FF00FF; }</span>
+<span>    /* selected link: while the mouse button is held down */</span>
+<span>    a:active { color: #0000FF; }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;a href="https://example.com"&gt;Move the mouse over this link, then click it&lt;/a&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Keep these four in this order: link, visited, hover, active. They are equally specific, so the one written last wins. With hover above visited, a visited link never changes on hover.</p>
+  </div>
 
   <h3>Selecting Multiple Elements</h3>
 
@@ -296,12 +503,30 @@
   </div>
 
   <pre class="mycodecss">
-<span>p, li, h1 {</span>
-<span>color: red;</span>
-<span>}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Selecting Multiple Elements&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* The commas mean: this one rule set is for p, li and h1. */</span>
+<span>    p, li, h1 {</span>
+<span>      color: red;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;h1&gt;A red heading&lt;/h1&gt;</span>
+<span>  &lt;p&gt;A red paragraph.&lt;/p&gt;</span>
+<span>  &lt;ul&gt;</span>
+<span>    &lt;li&gt;A red list item&lt;/li&gt;</span>
+<span>  &lt;/ul&gt;</span>
+<span>  &lt;h2&gt;This heading is not in the list, so it stays black&lt;/h2&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
-  <h2>CSS Units</h2>
+  <h2 id="css-units">CSS Units</h2>
 
   <div class="div_p">
     <p>Before we start our study of CSS, we need an understanding of CSS measurement units.<br><br>
@@ -311,7 +536,7 @@
 
       You need these values while specifying various measurements in your style rules.<br><br>
 
-      For example: border=1px solid red;<br><br>
+      For example: border: 1px solid red;
 
       CSS has several different units for expressing a length. Many CSS properties take "length" values, such as width,
       margin, padding, font-size, border-width, etc.<br><br>
@@ -322,40 +547,39 @@
 
   </div>
 
-  <h2>Relative Lengths</h2>
+  <h2 id="relative-lengths">Relative Lengths</h2>
 
   <div class="div_p">
-    <p>Relative length units specify a length relative to another length property. Relative length units scales better
-      between different rendering mediums.<br><br>
-
-      The em and rem units are practical in creating perfectly scalable layout!<br><br>
-      px: Pixels - exact size. <br><br>
-      %: Percentage - relative to parent.<br><br>
-      em Relative to current font size (common).<br><br>
-      rem: Relative to root font size (common).<br><br>
-      vw/vh: Viewport width/height (for responsive).
-    </p>
+    <p>Relative length units specify a length relative to another length property. Relative length units scale better
+      between different rendering mediums. The em and rem units are practical in creating perfectly scalable layout!</p>
+    <ul>
+      <li><strong>px:</strong> Pixels - exact size.</li>
+      <li><strong>%:</strong> Percentage - relative to parent.</li>
+      <li><strong>em:</strong> Relative to current font size (common).</li>
+      <li><strong>rem:</strong> Relative to root font size (common).</li>
+      <li><strong>vw/vh:</strong> Viewport width/height (for responsive).</li>
+    </ul>
   </div>
 
-  <h2>Absolute Lengths</h2>
+  <h2 id="absolute-lengths">Absolute Lengths</h2>
 
   <div class="div_p">
-    <p>The absolute length units are fixed and a length expressed in any of these will appear as exactly that size.<br><br>
+    <p>The absolute length units are fixed and a length expressed in any of these will appear as exactly that size.
       Absolute length units are not recommended for use on screen, because screen sizes vary so much. However, they can
-      be used if the output medium is known, such as for print layout. For example below we have a list of unit
-      descriptions<br><br>
-      cm - Defines a measurement in centimeters.<br><br>
-      div { margin-bottom:2cm; }<br><br>
-      mm - Defines a measurement in millimeters.<br><br>
-      in - inches (1in = 96px = 2.54cm)<br><br>
-      px * - pixels (1px = 1/96th of 1in)<br><br>
-      pt - points (1pt = 1/72 of 1in)<br><br>
-      pc - picas (1pc = 12 pt)<br><br>
-      * Pixels (px) are relative to the viewing device. For low-dpi devices, 1px is one device pixel (dot) of the
+      be used if the output medium is known, such as for print layout. Here is a list of the units:</p>
+    <ul>
+      <li><strong>cm:</strong> centimeters. For example: div { margin-bottom: 2cm; }</li>
+      <li><strong>mm:</strong> millimeters.</li>
+      <li><strong>in:</strong> inches (1in = 96px = 2.54cm)</li>
+      <li><strong>px *:</strong> pixels (1px = 1/96th of 1in)</li>
+      <li><strong>pt:</strong> points (1pt = 1/72 of 1in)</li>
+      <li><strong>pc:</strong> picas (1pc = 12pt)</li>
+    </ul>
+    <p>* Pixels (px) are relative to the viewing device. For low-dpi devices, 1px is one device pixel (dot) of the
       display. For printers and high resolution screens 1px implies multiple device pixels.</p>
   </div>
 
-  <h2>Box Model</h2>
+  <h2 id="box-model">Box Model</h2>
 
   <div class="div_p">
     <p><img src="images/box-model.gif" alt="Box model"></p>
@@ -365,7 +589,7 @@
   </div>
 
 
-  <h2>Visualizing the CSS Box Model</h2>
+  <h2 id="visualizing-the-css-box-model">Visualizing the CSS Box Model</h2>
 
   <div class="div_p">
     <p>The first step to understanding the CSS box model is to create a clear mental picture of it. If you've ever
@@ -378,57 +602,73 @@
       margins, with outer boxes wrapping inner boxes.</p>
   </div>
 
-  <h2>The CSS Box Model Broken Down</h2>
+  <h2 id="the-css-box-model-broken-down">The CSS Box Model Broken Down</h2>
 
   <div class="div_p">
     <p>The CSS box model is made up of 5 layers. However, developers usually lump the border and outline together into
       the same layer so it can be interpreted as only 4 layers.</p>
     <p><img src="images/css_box_model_broken_Down.png" alt="Broken_Down_Css_Box_Model"></p>
 
-    <p>Content: The innermost layer that contains the text or other elements of the target element.<br><br>
-      Padding: The layer just outside the content layer. Adding space to the padding will give the visual effect of
-      increasing the size of the content layer.<br><br>
-      Border: The layer surrounding the padding layer. Many times this layer will have a small width of maybe only 1
-      pixel. Unlike the padding and margin layers, this layer can be given color and style.<br><br>
-      Outline: The layer surrounding the border layer. This layer many times is ignored since the border does basically
-      the same job. It can be manipulated in the same way as the border layer and given color and style.<br><br>
-      Margin: The outermost layer between the target element and its parent element. Adding space to the margin will
-      give the visual effect of increasing the content size of the parent element.</p>
+    <ul>
+      <li><strong>Content:</strong> The innermost layer that contains the text or other elements of the target
+        element.</li>
+      <li><strong>Padding:</strong> The layer just outside the content layer. Adding space to the padding will give the
+        visual effect of increasing the size of the content layer.</li>
+      <li><strong>Border:</strong> The layer surrounding the padding layer. Many times this layer will have a small
+        width of maybe only 1 pixel. Unlike the padding and margin layers, this layer can be given color and
+        style.</li>
+      <li><strong>Outline:</strong> The layer surrounding the border layer. This layer many times is ignored since the
+        border does basically the same job. It can be manipulated in the same way as the border layer and given color
+        and style.</li>
+      <li><strong>Margin:</strong> The outermost layer between the target element and its parent element. Adding space
+        to the margin will give the visual effect of increasing the content size of the parent element.</li>
+    </ul>
   </div>
 
   <h3>CSS Box Model Example</h3>
 
   <pre class="mycodecss">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
 <span>&lt;head&gt;</span>
-<span>&lt;style&gt;</span>
-<span>#parent {</span>
-<span>background: yellow;</span>
-<span>overflow: auto;</span>
-<span>}</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;CSS Box Model&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    #parent {</span>
+<span>      background: yellow;</span>
+<span>      /* Keeps the margin of the child inside the parent. */</span>
+<span>      overflow: auto;</span>
+<span>    }</span>
 <span></span>
-<span>#child {</span>
-<span>background: blue;</span>
-<span>width: 512px;</span>
-<span>height: 128px;</span>
-<span>padding: 16px;</span>
-<span>margin: 16px;</span>
-<span>border: 8px solid green;</span>
-<span>outline: 8px solid red;</span>
+<span>    #child {</span>
+<span>      background: blue;</span>
+<span>      /* The content area. */</span>
+<span>      width: 512px;</span>
+<span>      height: 128px;</span>
+<span>      /* Space inside the border. It shows the blue background. */</span>
+<span>      padding: 16px;</span>
+<span>      /* Space outside the border. The yellow parent shows through it. */</span>
+<span>      margin: 16px;</span>
+<span>      border: 8px solid green;</span>
+<span>      /* Drawn outside the border. It takes up no space of its own. */</span>
+<span>      outline: 8px solid red;</span>
+<span>    }</span>
 <span></span>
-<span>}</span>
-<span>#grandchild {</span>
-<span>background: orange;</span>
-<span>width: 512px;</span>
-<span>height: 128px;</span>
-<span>}</span>
-<span>&lt;/style&gt;</span>
+<span>    #grandchild {</span>
+<span>      background: orange;</span>
+<span>      width: 512px;</span>
+<span>      height: 128px;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
 <span>&lt;/head&gt;</span>
-<span></span>
-<span>&lt;div id="parent"&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;div id="parent"&gt;</span>
 <span>    &lt;div id="child"&gt;</span>
-<span>        &lt;div id="grandchild"&gt;&lt;/div&gt;</span>
+<span>      &lt;div id="grandchild"&gt;&lt;/div&gt;</span>
 <span>    &lt;/div&gt;</span>
-<span>&lt;/div&gt;</span>
+<span>  &lt;/div&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
   <div class="div_p">
@@ -446,7 +686,7 @@
     </p>
   </div>
 
-  <h2>Working with the Box Model</h2>
+  <h2 id="working-with-the-box-model">Working with the Box Model</h2>
 
   <div class="div_p">
     <p>Every element is a rectangular box, and there are several properties that determine the size of that box.<br><br>
@@ -467,14 +707,32 @@
   <h3>Box model example</h3>
 
   <pre class="mycodecss">
-<span>div {</span>
-<span>border:  6px solid #949599;</span>
-<span>height:  100px;</span>
-<span>margin:  20px;</span>
-<span>padding: 20px;</span>
-<span>width:   400px;</span>
-<span>}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Box Model Example&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    div {</span>
+<span>      border:  6px solid #949599;</span>
+<span>      height:  100px;</span>
+<span>      margin:  20px;</span>
+<span>      padding: 20px;</span>
+<span>      width:   400px;</span>
+<span>      /* Total width:  20 + 6 + 20 + 400 + 20 + 6 + 20 = 492px */</span>
+<span>      /* Total height: 20 + 6 + 20 + 100 + 20 + 6 + 20 = 192px */</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;div&gt;This box takes up 492px by 192px on the page.&lt;/div&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Add box-sizing: border-box; to make width mean the whole box, with the padding and the border inside it. Then width: 400px really is 400px wide. Most projects set it on every element with * { box-sizing: border-box; }.</p>
+  </div>
 
   <div class="div_p">
     <p>According to the box model, the total width of an element can be calculated using the following formula:<br><br>
@@ -503,7 +761,7 @@
   </div>
 
 
-  <h2>Width & Height</h2>
+  <h2 id="width-height">Width & Height</h2>
 
   <div class="div_p">
     Every element has default width and height. That width and height may be 0 pixels, but browsers, by default, will
@@ -512,7 +770,7 @@
     In this case, the property values for non-inline elements may be specified.
   </div>
 
-  <h2>Width</h2>
+  <h2 id="width">Width</h2>
 
   <div class="div_p">
     <p>The default width of an element depends on its display value. Block-level elements have a default width of 100%,
@@ -524,12 +782,26 @@
 
   <h3>Width Example</h3>
   <pre class="mycodecss">
-<span>div {</span>
-<span>width: 400px;</span>
-<span>}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Width&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    div {</span>
+<span>      /* A block element is as wide as the page unless you set a width. */</span>
+<span>      width: 400px;</span>
+<span>      background-color: lightblue;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;div&gt;This div is 400px wide.&lt;/div&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
-  <h2>Height</h2>
+  <h2 id="height">Height</h2>
 
   <div class="div_p">
     <p>The default height of an element is determined by its content. An element will expand and contract vertically as
@@ -539,12 +811,26 @@
 
   <h3>Height Example</h3>
   <pre class="mycodecss">
-<span>div {</span>
-<span>height: 100px;</span>
-<span>}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Height&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    div {</span>
+<span>      /* Without a height, a box is only as tall as its content. */</span>
+<span>      height: 100px;</span>
+<span>      background-color: lightblue;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;div&gt;This div is 100px tall.&lt;/div&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
-  <h2>Margin & Padding</h2>
+  <h2 id="margin-padding">Margin & Padding</h2>
 
   <div class="div_p">
     <p>Depending on the element, browsers may apply default margins and padding to an element to help with legibility
@@ -555,7 +841,7 @@
       work from the ground up and to specify our own values.</p>
   </div>
 
-  <h2>Margin</h2>
+  <h2 id="margin">Margin</h2>
 
   <div class="div_p">
     <p>The margin property allows us to set the amount of space that surrounds an element. Margins for an element fall
@@ -565,10 +851,29 @@
 
   <h3>Margin Example</h3>
   <pre class="mycodecss">
-<span>div {</span>
-<span>margin: 20px;</span>
-<span>}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Margin&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    div {</span>
+<span>      /* 20px of empty space on all four sides, outside the border. */</span>
+<span>      margin: 20px;</span>
+<span>      background-color: lightblue;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;div&gt;First box&lt;/div&gt;</span>
+<span>  &lt;div&gt;Second box&lt;/div&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Top and bottom margins that touch are merged into one. Two boxes with margin: 20px are 20px apart, not 40px. This is called margin collapse, and it does not happen to padding.</p>
+  </div>
 
   <div class="div_p">
     <p>Something important to notice:<br><br>
@@ -577,7 +882,7 @@
       elements. These vertical margins are, however, accepted by block-level and inline-block elements.</p>
   </div>
 
-  <h2>Padding</h2>
+  <h2 id="padding">Padding</h2>
 
 
   <div class="div_p">
@@ -588,12 +893,26 @@
 
   <h3>Padding Example</h3>
   <pre class="mycodecss">
-<span>div {</span>
-<span>padding: 20px;<span>
-<span>}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Padding&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    div {</span>
+<span>      /* 20px of space on all four sides, between the text and the edge of the box. */</span>
+<span>      padding: 20px;</span>
+<span>      background-color: lightblue;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;div&gt;The text sits 20px in from every edge.&lt;/div&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
-  <h2>Border</h2>
+  <h2 id="border">Border</h2>
 
   <div class="div_p">
     <p>Borders fall between the padding and margin, providing an outline around an element. The border property requires
@@ -617,12 +936,25 @@
   <h3>Border Example</h3>
 
   <pre class="mycodecss">
-<span>div {</span>
-<span>border: 6px solid #949599;</span>
-<span>}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Border&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    div {</span>
+<span>      /* The order is: width, style, color. */</span>
+<span>      border: 6px solid #949599;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;div&gt;A 6 pixel wide, solid, gray border.&lt;/div&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
-  <h2>Border Style</h2>
+  <h2 id="border-style">Border Style</h2>
 
   <div class="div_p">
     <p>The border-style property specifies what kind of border to display. The following values are allowed: (* The
@@ -642,7 +974,7 @@
     </p>
   </div>
 
-  <h2>border-style examples</h2>
+  <h2 id="border-style-examples">border-style examples</h2>
 
   <div class="div_p">
     <p><img src="images/border_style_example.png" alt="Border_box_styles"></p>
@@ -651,19 +983,36 @@
   <h3>Border Box Style</h3>
 
   <pre class="mycodecss">
-<span>&lt;p style="border-style: dotted;"&gt;A dotted border.&lt;/p&gt;</span>
-<span>&lt;p style="border-style: dashed;"&gt;A dashed border.&lt;/p&gt;</span>
-<span>&lt;p style="border-style: solid;"&gt;A solid border.&lt;/p&gt;</span>
-<span>&lt;p style="border-style: double;"&gt;A double border.&lt;/p&gt;</span>
-<span>&lt;p style="border-style: groove;"&gt;A groove border.&lt;/p&gt;</span>
-<span>&lt;p style="border-style: ridge;"&gt;A ridge border.&lt;/p&gt;</span>
-<span>&lt;p style="border-style: inset;"&gt;An inset border.&lt;/p&gt;</span>
-<span>&lt;p style="border-style: outset;"&gt;An outset border.&lt;/p&gt;</span>
-<span>&lt;p style="border-style: none;"&gt;No border.&lt;/p&gt;</span>
-<span>&lt;p style="border-style: hidden;"&gt;A hidden border.&lt;/p&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Border Styles&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* A wide colored border makes the 3D styles easy to see. */</span>
+<span>    p {</span>
+<span>      border-width: 6px;</span>
+<span>      border-color: steelblue;</span>
+<span>      padding: 4px;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p style="border-style: dotted;"&gt;A dotted border.&lt;/p&gt;</span>
+<span>  &lt;p style="border-style: dashed;"&gt;A dashed border.&lt;/p&gt;</span>
+<span>  &lt;p style="border-style: solid;"&gt;A solid border.&lt;/p&gt;</span>
+<span>  &lt;p style="border-style: double;"&gt;A double border.&lt;/p&gt;</span>
+<span>  &lt;p style="border-style: groove;"&gt;A groove border.&lt;/p&gt;</span>
+<span>  &lt;p style="border-style: ridge;"&gt;A ridge border.&lt;/p&gt;</span>
+<span>  &lt;p style="border-style: inset;"&gt;An inset border.&lt;/p&gt;</span>
+<span>  &lt;p style="border-style: outset;"&gt;An outset border.&lt;/p&gt;</span>
+<span>  &lt;p style="border-style: none;"&gt;No border.&lt;/p&gt;</span>
+<span>  &lt;p style="border-style: hidden;"&gt;A hidden border.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
-  <h2>Tricky Border Cases</h2>
+  <h2 id="tricky-border-cases">Tricky Border Cases</h2>
 
   <div class="div_p">
     <p>Shorthands handling properties related to edges of a box, like border-style, margin or padding, always use a
@@ -671,7 +1020,7 @@
     <p><img src="images/border_style_borders.png" alt="Tricky_borders"></p>
   </div>
 
-  <h2>Tricky Border Radius</h2>
+  <h2 id="tricky-border-radius">Tricky Border Radius</h2>
 
   <div class="div_p">
     <p>Similarly, shorthands handling properties related to corners of a box, like border-radius, always use a
@@ -679,7 +1028,7 @@
     <p><img src="images/Tricky_border.png" alt="Trick_radius_borders"></p>
   </div>
 
-  <h2>Conflicting Styles</h2>
+  <h2 id="conflicting-styles">Conflicting Styles</h2>
 
   <div class="div_p">
     <p>
@@ -703,53 +1052,57 @@
     </p>
   </div>
 
-  <h3>HTML head section</h3>
+  <h3>Conflicting styles: the whole page</h3>
 
   <pre class="mycodecss">
-<span><head></span>
-<span>&lt;style type="text/css"&gt;</span>
-<span>   body     { font-family: arial, helvetica, sans-serif; }</span>
-<span>   a.nodec  { text-decoration: none; }</span>
-<span>  a:hover  { text-decoration: underline; }</span>
-<span>  li em    { font-weight: bold; }</span>
-<span>     h1, em   { text-decoration: underline; }</span>
-<span>ul       { margin-left: 20px; }<span>
-<span>ul ul    { font-size: .8em; }</span>
-<span>&lt;/style&gt;<span>
-</span>&lt;/head&gt;</span>
-    </pre>
-
-
-  <h3>The HTML body section</h3>
-
-  <pre class="mycodecss">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Conflicting Styles&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    body     { font-family: arial, helvetica, sans-serif; }</span>
+<span>    /* Only a link with class="nodec". */</span>
+<span>    a.nodec  { text-decoration: none; }</span>
+<span>    /* Written later than a.nodec, so on hover this rule wins and the underline comes back. */</span>
+<span>    a:hover  { text-decoration: underline; }</span>
+<span>    /* Only an &lt;em&gt; that is inside an &lt;li&gt;. */</span>
+<span>    li em    { font-weight: bold; }</span>
+<span>    h1, em   { text-decoration: underline; }</span>
+<span>    ul       { margin-left: 20px; }</span>
+<span>    /* A list inside a list: 80% of the size of the outer list. */</span>
+<span>    ul ul    { font-size: .8em; }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
 <span>&lt;body&gt;</span>
-<span>    &lt;h1&gt;Shopping list for Monday:&lt;/h1&gt;</span>
-<span>     &lt;ul&gt;</span>
-<span>         &lt;li&gt;Milk&lt;/li&gt;</span>
-<span>         &lt;li&gt;Bread</span>
-<span>            &lt;ul&gt;</span>
-<span>               &lt;li&gt;White bread&lt;/li&gt;</span>
-<span>               &lt;li&gt;Rye bread&lt;/li&gt;</span>
-<span>               &lt;li&gt;Whole wheat bread&lt;/li&gt;</span>
-<span>            &lt;/ul&gt;</span>
-<span>         &lt;/li&gt;</span>
-<span>         &lt;li&gt;Rice&lt;/li&gt;</span>
-<span>         &lt;li&gt;Potatoes&lt;/li&gt;</span>
-<span>         &lt;li&gt;Pizza &lt;em&gt;with mushrooms&lt;/em&gt;&lt;/li&gt;</span>
-<span>     &lt;/ul&gt;</span>
+<span>  &lt;h1&gt;Shopping list for Monday:&lt;/h1&gt;</span>
+<span>  &lt;ul&gt;</span>
+<span>    &lt;li&gt;Milk&lt;/li&gt;</span>
+<span>    &lt;li&gt;Bread</span>
+<span>      &lt;ul&gt;</span>
+<span>        &lt;li&gt;White bread&lt;/li&gt;</span>
+<span>        &lt;li&gt;Rye bread&lt;/li&gt;</span>
+<span>        &lt;li&gt;Whole wheat bread&lt;/li&gt;</span>
+<span>      &lt;/ul&gt;</span>
+<span>    &lt;/li&gt;</span>
+<span>    &lt;li&gt;Rice&lt;/li&gt;</span>
+<span>    &lt;li&gt;Potatoes&lt;/li&gt;</span>
+<span>    &lt;!-- This em matches two rules: li em makes it bold and h1, em underlines it. --&gt;</span>
+<span>    &lt;li&gt;Pizza &lt;em&gt;with mushrooms&lt;/em&gt;&lt;/li&gt;</span>
+<span>  &lt;/ul&gt;</span>
 <span>  &lt;p&gt;&lt;em&gt;Go to the&lt;/em&gt;</span>
-<span>    &lt;a class="nodec" href="http://www.store.com"&gt;</span>
-<span>    Grocery store&lt;/a&gt;</span>
+<span>    &lt;a class="nodec" href="http://www.store.com"&gt;Grocery store&lt;/a&gt;</span>
 <span>  &lt;/p&gt;</span>
 <span>&lt;/body&gt;</span>
-   </pre>
+<span>&lt;/html&gt;</span>
+    </pre>
+
 
   <div class="div_p">
     <p><img src="images/css_conflicting_style_result.png" alt="The_conflicting_style"></p>
   </div>
 
-  <h2>Positioning Elements</h2>
+  <h2 id="positioning-elements">Positioning Elements</h2>
 
   <div class="div_p">
     <p>
@@ -774,7 +1127,7 @@
     </p>
   </div>
 
-  <h2>Absolute Positioning</h2>
+  <h2 id="absolute-positioning">Absolute Positioning</h2>
 
   <div class="div_p">
     <p>Before CSS, controlling the positioning of elements in an (X)HTML document was difficult—the browser determined
@@ -782,45 +1135,57 @@
       authors greater control over how document elements are displayed.</p>
   </div>
 
-  <h3>Absolute Positiong</h3>
+  <h3>Absolute Positioning</h3>
 
   <pre class="mycodecss">
 <span>&lt;!DOCTYPE html&gt;</span>
-<span>&lt;!-- Absolute positioning of elements. --&gt;</span>
-<span>&lt;html&gt;</span>
-<span>   &lt;head&gt;</span>
-<span>      &lt;title&gt;Absolute Positioning&lt;/title&gt;</span>
-<span>      &lt;style type="text/css"&gt;</span>
-<span>         .bgimg{ position: absolute;</span>
-<span>                     top: 0px;</span>
-<span>                     left: 0px;</span>
-<span>                     z-index: 1 }</span>
-<span>         .fgimg{ position: absolute;</span>
-<span>                     top: 25px;</span>
-<span>                     left: 100px;</span>
-<span>                     z-index: 2 }</span>
-<span>         .text{ position: absolute;</span>
-<span>                     top: 25px;</span>
-<span>                     left: 100px;</span>
-<span>                     z-index: 3;</span>
-<span>                     font-size: 20pt;</span>
-<span>                     font-family: tahoma, geneva, sans-serif }</span>
-<span>      &lt;/style&gt;</span>
-<span>   &lt;/head&gt;</span>
-<span>   &lt;body&gt;</span>
-<span>      &lt;p&gt;&lt;img src="bgimg.gif" </span>
-<span>                class="bgimg"</span>
-<span>              alt="First positioned image" /&gt;&lt;/p&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Absolute Positioning&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* absolute: placed by top and left, measured from the corner of the page. */</span>
+<span>    .bgimg {</span>
+<span>      position: absolute;</span>
+<span>      top: 0px;</span>
+<span>      left: 0px;</span>
+<span>      /* The lowest z-index, so it is at the back. */</span>
+<span>      z-index: 1;</span>
+<span>    }</span>
 <span></span>
-<span>      &lt;p&gt;&lt;img src="fgimg.gif" </span>
-<span>                class="fgimg"</span>
-<span>              alt="Second positioned image" /&gt;&lt;/p&gt;</span>
+<span>    .fgimg {</span>
+<span>      position: absolute;</span>
+<span>      top: 25px;</span>
+<span>      left: 100px;</span>
+<span>      /* In front of bgimg. */</span>
+<span>      z-index: 2;</span>
+<span>    }</span>
 <span></span>
-<span>      &lt;p class="text"&gt;Positioned Text&lt;/p&gt;</span>
+<span>    .text {</span>
+<span>      position: absolute;</span>
+<span>      top: 25px;</span>
+<span>      left: 100px;</span>
+<span>      /* The highest z-index, so the text is in front of both images. */</span>
+<span>      z-index: 3;</span>
+<span>      font-size: 20pt;</span>
+<span>      font-family: tahoma, geneva, sans-serif;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- bgimg.gif and fgimg.gif have to be files in the same folder as this page. --&gt;</span>
+<span>  &lt;p&gt;&lt;img src="bgimg.gif" class="bgimg" alt="First positioned image"&gt;&lt;/p&gt;</span>
 <span></span>
-<span>   &lt;/body&gt;</span>
+<span>  &lt;p&gt;&lt;img src="fgimg.gif" class="fgimg" alt="Second positioned image"&gt;&lt;/p&gt;</span>
+<span></span>
+<span>  &lt;p class="text"&gt;Positioned Text&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
 <span>&lt;/html&gt;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> An absolute element is placed from the nearest parent that has a position set. To place it inside one box instead of the whole page, give that box position: relative.</p>
+  </div>
 
   <div class="div_p">
     <p><img src="images/css-absolite-positioning-code.png" alt="Absolute_postioning_code"></p>
@@ -828,7 +1193,7 @@
     <p><img src="images/bgimg_result.gif" alt="Original_position"></p>
   </div>
 
-  <h2>The z-index property</h2>
+  <h2 id="the-z-index-property">The z-index property</h2>
 
   <div class="div_p">
     <p><img src="images/css_zindex_axes.png" alt="Z_index"></p>
@@ -839,16 +1204,15 @@
       <li>The z-index property allows you to layer overlapping elements properly.</li>
       <li>Elements that have higher z-index values are displayed in front of elements with lower z-index values.</li>
       <li>In the previous example, bgimg.gif has the lowest z-index (1), so it displays in the background.</li>
-      <li>The .fgimg CSS rule in lines 11-14 gives the circle image (fgimg.gif, in line 27) a z-index of 2, so it
-        displays in front of i.gif.</li>
-      <li>The p element in line 30 (Positioned Text) is given a z-index of 3, so it displays in front of the other two.
+      <li>The .fgimg CSS rule gives the circle image (fgimg.gif) a z-index of 2, so it displays in front of bgimg.gif.</li>
+      <li>The p element (Positioned Text) is given a z-index of 3, so it displays in front of the other two.
       </li>
       <li>If you do not specify a z-index or if elements have the same z-index value, the elements are placed from
         background to foreground in the order they are encountered in the document.</li>
     </ul>
   </div>
 
-  <h2>Relative Positioning</h2>
+  <h2 id="relative-positioning">Relative Positioning</h2>
 
   <div class="div_p">
     <p>Absolute positioning is not the only way to specify page layout. The following example demonstrates relative
@@ -859,30 +1223,37 @@
     <p><img src="images/css-relative-positioning-example.png" alt="Realtive_positioning"></p>
   </div>
 
-  <h2>Inline and Block-Level Elements</h2>
+  <h2 id="inline-and-block-level-elements">Inline and Block-Level Elements</h2>
 
   <div class="div_p">
-    <p>We introduce the span element in line 2. Lines 4-6 define the CSS rule for all span elements. The height of the
-      span determines how much vertical space the span will occupy. The font-size determines the size of the text inside
-      the span.</p>
+    <p>The example wraps the end of a sentence in a span with the class super. The CSS rule for .super uses relative positioning: top: -1ex lifts that text a little above the line, like a superscript, while the rest of the sentence stays where it was.</p>
   </div>
 
   <h3>Inline and Block-Level Elements</h3>
 
   <pre class="mycodecss">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
 <span>&lt;head&gt;</span>
-<span>&lt;style&gt;</span>
-<span>.super      { position: relative;</span>
-<span>              top: -1ex; }</span>
-<span>&lt;/style&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Relative Positioning&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* relative: moved from the place where it would normally sit. */</span>
+<span>    .super {</span>
+<span>      position: relative;</span>
+<span>      /* -1ex lifts the text by about the height of one small letter. */</span>
+<span>      top: -1ex;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
 <span>&lt;/head&gt;</span>
 <span>&lt;body&gt;</span>
-<span>&lt;p&gt;The text at the end of this sentence</span>
-<span>&lt;span class="super"&gt;is in superscript&lt;/span&gt;.&lt;/p&gt;</span>
+<span>  &lt;p&gt;The text at the end of this sentence</span>
+<span>    &lt;span class="super"&gt;is in superscript&lt;/span&gt;.&lt;/p&gt;</span>
 <span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
-  <h2>Inline Elements</h2>
+  <h2 id="inline-elements">Inline Elements</h2>
 
   <div class="div_p">
     <p>
@@ -897,11 +1268,11 @@
     </ul>
     </p>
   </div>
-  <h2>Backgrounds</h2>
+  <h2 id="backgrounds">Backgrounds</h2>
 
   <div class="div_p">
     <p>CSS provides control over the background of block-level elements. CSS can set a background color or add
-      background images to (X)HTML elements. In the example bellow, the author adds a corporate logo to the
+      background images to (X)HTML elements. In the example below, the author adds a corporate logo to the
       bottom-right corner of the document. This logo stays fixed in the corner even when the user scrolls up or down
       the screen.</p>
   </div>
@@ -909,25 +1280,49 @@
   <h3>Background Internal CSS</h3>
 
   <pre class="mycodecss">
-<span>&lt;style type="text/css"&gt;</span>
-<span>    body{ background-image: url(logo.gif);</span>
-<span>          background-position: bottom right;</span>
-<span>          background-repeat: no-repeat;</span>
-<span>          background-attachment: fixed;</span>
-<span>          background-color: #eeeeee; }</span>
-<span>    p{    font-size: 18pt;</span>
-<span>          color: #1144AA;</span>
-<span>          text-indent: 1em;</span>
-<span>          font-family: arial,sans-serif; }</span>
-<span>    .dark{ font-weight: bold }</span>
-<span>&lt;/style&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Background&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    body {</span>
+<span>      /* logo.gif has to be a file in the same folder as this page. */</span>
+<span>      background-image: url(logo.gif);</span>
+<span>      background-position: bottom right;</span>
+<span>      /* Show the image once instead of tiling it. */</span>
+<span>      background-repeat: no-repeat;</span>
+<span>      /* The image stays in the corner while the page scrolls. */</span>
+<span>      background-attachment: fixed;</span>
+<span>      background-color: #eeeeee;</span>
+<span>    }</span>
+<span></span>
+<span>    p {</span>
+<span>      font-size: 18pt;</span>
+<span>      color: #1144AA;</span>
+<span>      /* Indents the first line of each paragraph. */</span>
+<span>      text-indent: 1em;</span>
+<span>      font-family: arial, sans-serif;</span>
+<span>    }</span>
+<span></span>
+<span>    .dark { font-weight: bold; }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;This example uses the background-image, background-position and</span>
+<span>    background-attachment styles to place the &lt;span class="dark"&gt;logo&lt;/span&gt;</span>
+<span>    in the bottom right corner of the page.&lt;/p&gt;</span>
+<span>  &lt;p&gt;Notice how the logo stays in the proper position when you resize your</span>
+<span>    browser window.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
       </pre>
 
   <div class="div_p">
     <p><img src="images/css_background_code.png" alt="CSS_background_code"></p>
   </div>
 
-  <h2>CSS Background Properties:</h2>
+  <h2 id="css-background-properties">CSS Background Properties:</h2>
 
   <div class="div_p">
     <p>
@@ -947,33 +1342,36 @@
     </p>
   </div>
 
-  <h2>Background CSS Examples:</h2>
+  <h2 id="background-css-examples">Background CSS Examples:</h2>
 
   <pre class="mycodecss">
-<span>&lt;style&gt;</span>
-<span>body {</span>
-<span>    background-image: url("gradient_bg.png");</span>
-<span>}</span>
-<span>&lt;/style&gt;</span>
-<span></span>
-<span>&lt;style&gt;</span>
-<span>body {</span>
-<span>    background-image: url("gradient_bg.png");</span>
-<span>    background-repeat: repeat-x;</span>
-<span>}</span>
-<span>&lt;/style&gt;</span>
-<span></span>
-<span>&lt;style&gt;</span>
-<span>body {</span>
-<span>    background-image: url("img_tree.png");</span>
-<span>    background-repeat: no-repeat;</span>
-<span>    background-position: right top;</span>
-<span>    background-attachment: fixed;</span>
-<span>}</span>
-<span>&lt;/style&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Background Examples&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    body {</span>
+<span>      /* img_tree.png has to be a file in the same folder as this page. */</span>
+<span>      background-image: url("img_tree.png");</span>
+<span>      /* no-repeat shows the image once. repeat-x would repeat it across the page,</span>
+<span>         and repeat-y would repeat it down the page. */</span>
+<span>      background-repeat: no-repeat;</span>
+<span>      /* Where the image sits: across first, then up or down. */</span>
+<span>      background-position: right top;</span>
+<span>      /* fixed: the image does not scroll with the rest of the page. */</span>
+<span>      background-attachment: fixed;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;h1&gt;Background image&lt;/h1&gt;</span>
+<span>  &lt;p&gt;The tree is shown once, in the top right corner.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
-  <h2>Background - Shorthand Property</h2>
+  <h2 id="background-shorthand-property">Background - Shorthand Property</h2>
 
   <div class="div_p">
     <p>To shorten the code, it is also possible to specify all the background properties in one single property.<br><br>
@@ -985,12 +1383,244 @@
   <h3>Background - Shorthand Property</h3>
 
   <pre class="mycodecss">
-<span>body {</span>
-<span>background: #ffffff url("img_tree.png") no-repeat right top;</span>   
-<span>}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Background Shorthand&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    body {</span>
+<span>      /* All in one line: color, image, repeat, position. */</span>
+<span>      background: #ffffff url("img_tree.png") no-repeat right top;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;h1&gt;Background shorthand&lt;/h1&gt;</span>
+<span>  &lt;p&gt;One property does the work of four.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
-  <h2>Element Dimensions</h2>
+
+  <h2 id="background-gifs-from-my-chairvana-project">Background GIFs (from my Chairvana project)</h2>
+
+  <div class="div_p">
+    <p>In Chairvana (CodePath Web102) I put moving GIFs behind the page and behind the forms. The trick is an &lt;img&gt; that is <b>position: fixed</b> (or absolute) and stretched to fill the screen, pushed behind the content with <b>z-index</b>, faded with <b>opacity</b>, and made unclickable with <b>pointer-events: none</b>. The content then gets a higher z-index so it sits on top.</p>
+  </div>
+
+  <h3>1. A GIF behind the whole page (stays put while you scroll)</h3>
+
+  <pre class="mycodecss">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;GIF Behind The Whole Page&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    .bg-gif-fixed {</span>
+<span>        position: fixed;       /* glued to the screen, doesn't scroll */</span>
+<span>        top: 0;</span>
+<span>        left: 0;</span>
+<span>        width: 100%;</span>
+<span>        height: 100%;</span>
+<span>        object-fit: cover;     /* fills the screen without stretching */</span>
+<span>        z-index: 0;            /* behind everything */</span>
+<span>        opacity: 0.2;          /* faded so text stays readable */</span>
+<span>        pointer-events: none;  /* clicks go "through" it to the page */</span>
+<span>    }</span>
+<span></span>
+<span>    #content {</span>
+<span>        position: relative;    /* z-index only works on positioned elements */</span>
+<span>        z-index: 1;            /* content sits ON TOP of the GIF */</span>
+<span>        background: transparent;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- Decorative, so alt="" and aria-hidden (screen readers skip it). --&gt;</span>
+<span>  &lt;!-- In React (JSX) write className instead of class, and end the tag with /&gt;. --&gt;</span>
+<span>  &lt;img src="old_man_in_chair.gif" class="bg-gif-fixed" alt="" aria-hidden="true"&gt;</span>
+<span></span>
+<span>  &lt;div id="content"&gt;</span>
+<span>    &lt;h1&gt;Chairvana&lt;/h1&gt;</span>
+<span>    &lt;p&gt;The page content sits on top of the GIF.&lt;/p&gt;</span>
+<span>  &lt;/div&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>2. A GIF behind one form (create / update / delete pages)</h3>
+
+  <pre class="mycodecss">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;GIF Behind One Form&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    .create-page-wrapper {</span>
+<span>        position: relative;    /* the GIF is positioned INSIDE this box */</span>
+<span>        min-height: 100vh;</span>
+<span>        display: flex;</span>
+<span>        justify-content: center;</span>
+<span>        align-items: flex-start;</span>
+<span>        padding-top: 50px;</span>
+<span>        overflow: hidden;      /* clips the GIF so it can't spill out */</span>
+<span>        background: #000;      /* fallback if the GIF fails to load */</span>
+<span>    }</span>
+<span></span>
+<span>    .bg-gif {</span>
+<span>        position: absolute;    /* absolute = relative to the wrapper, not the screen */</span>
+<span>        inset: 0;              /* same as top:0; right:0; bottom:0; left:0 */</span>
+<span>        width: 100%;</span>
+<span>        height: 100%;</span>
+<span>        object-fit: cover;</span>
+<span>        z-index: 1;</span>
+<span>        opacity: 0.5;</span>
+<span>    }</span>
+<span></span>
+<span>    .form-container {</span>
+<span>        position: relative;</span>
+<span>        z-index: 2;                                /* form ABOVE the GIF */</span>
+<span>        background: rgba(249, 240, 255, 0.95);     /* almost solid = readable */</span>
+<span>        backdrop-filter: blur(5px);                /* frosted-glass look */</span>
+<span>        padding: 30px;</span>
+<span>        border-radius: 8px;</span>
+<span>        max-width: 500px;</span>
+<span>        width: 100%;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- In React (JSX) write className instead of class. --&gt;</span>
+<span>  &lt;div class="create-page-wrapper"&gt;</span>
+<span>    &lt;img src="chair-bg.gif" class="bg-gif" alt="" aria-hidden="true"&gt;</span>
+<span>    &lt;section class="form-container"&gt;</span>
+<span>      &lt;form&gt;</span>
+<span>        &lt;label for="name"&gt;Chair name&lt;/label&gt;&lt;br&gt;</span>
+<span>        &lt;input type="text" id="name" name="name"&gt;&lt;br&gt;&lt;br&gt;</span>
+<span>        &lt;button type="submit"&gt;Create&lt;/button&gt;</span>
+<span>      &lt;/form&gt;</span>
+<span>    &lt;/section&gt;</span>
+<span>  &lt;/div&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>3. Make it accessible (what Chairvana was missing)</h3>
+
+  <div class="div_p">
+    <p><b>alt text:</b> Chairvana used alt="background", so screen readers read the word "background" on every page. A purely decorative image should have <b>alt=""</b> (plus aria-hidden="true") so it is skipped.<br><br><b>Motion:</b> WCAG 2.2.2 says moving content that lasts more than 5 seconds needs a way to pause or hide it, and some people get dizzy or sick from motion. CSS can't pause a GIF, so the safe fix is to hide it for anyone who turned on Reduce Motion (Mac: System Settings &gt; Accessibility &gt; Display).<br><br><b>Readability:</b> keep the GIF faded (opacity 0.2 to 0.5) and put text on a near-solid panel, so text contrast stays at least 4.5:1.</p>
+  </div>
+  <pre class="mycodecss">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Reduced Motion&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    .bg-gif-fixed {</span>
+<span>        position: fixed;</span>
+<span>        inset: 0;</span>
+<span>        width: 100%;</span>
+<span>        height: 100%;</span>
+<span>        object-fit: cover;</span>
+<span>        opacity: 0.2;</span>
+<span>        pointer-events: none;</span>
+<span>    }</span>
+<span></span>
+<span>    /* People who asked for less motion get no moving background */</span>
+<span>    @media (prefers-reduced-motion: reduce) {</span>
+<span>        .bg-gif,</span>
+<span>        .bg-gif-fixed {</span>
+<span>            display: none;</span>
+<span>        }</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;img src="old_man_in_chair.gif" class="bg-gif-fixed" alt="" aria-hidden="true"&gt;</span>
+<span>  &lt;h1&gt;Turn on Reduce Motion and the GIF is gone&lt;/h1&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>4. Bonus: the spinning card image (Nivo-slider style)</h3>
+
+  <div class="div_p">
+    <p>Chairvana's post images rotated and wiped in and out. The container uses overflow: hidden so the rotating image is clipped, and the image rests at scale(0.7) so its corners fit while it turns. React adds the <b>animating</b> class every 30 seconds to replay it.</p>
+  </div>
+  <pre class="mycodecss">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Spinning Card Image&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    .post-image-container {</span>
+<span>        overflow: hidden;              /* clips the image while it rotates */</span>
+<span>        display: flex;</span>
+<span>        align-items: center;</span>
+<span>        justify-content: center;</span>
+<span>    }</span>
+<span></span>
+<span>    .post-image {</span>
+<span>        transform: rotate(0deg) scale(0.7);  /* small enough to fit at any angle */</span>
+<span>        transform-origin: center center;</span>
+<span>    }</span>
+<span></span>
+<span>    .post-image.animating {</span>
+<span>        animation: nivoMasterSequence 12s ease-in-out forwards;</span>
+<span>    }</span>
+<span></span>
+<span>    /* Each step wipes the image out to one side, turns it 90 degrees, and wipes it back in. */</span>
+<span>    @keyframes nivoMasterSequence {</span>
+<span>      0%   { clip-path: inset(0 0 0 0);    opacity: 1; transform: rotate(0deg)   scale(0.7);  }</span>
+<span>      8%   { clip-path: inset(0 0 0 100%); opacity: 0; transform: rotate(0deg)   scale(0.65); }</span>
+<span>      18%  { clip-path: inset(0 0 0 0);    opacity: 1; transform: rotate(90deg)  scale(0.7);  }</span>
+<span>      28%  { clip-path: inset(100% 0 0 0); opacity: 0; transform: rotate(90deg)  scale(0.65); }</span>
+<span>      40%  { clip-path: inset(0 0 0 0);    opacity: 1; transform: rotate(180deg) scale(0.7);  }</span>
+<span>      50%  { clip-path: inset(0 100% 0 0); opacity: 0; transform: rotate(180deg) scale(0.65); }</span>
+<span>      62%  { clip-path: inset(0 0 0 0);    opacity: 1; transform: rotate(270deg) scale(0.7);  }</span>
+<span>      72%  { clip-path: inset(0 0 100% 0); opacity: 0; transform: rotate(270deg) scale(0.65); }</span>
+<span>      85%  { clip-path: inset(0 0 0 0);    opacity: 1; transform: rotate(360deg) scale(0.7);  }</span>
+<span>      100% { clip-path: inset(0 0 0 0);    opacity: 1; transform: rotate(360deg) scale(0.7);  }</span>
+<span>    }</span>
+<span></span>
+<span>    /* Same rule: no spinning for people who asked for less motion */</span>
+<span>    @media (prefers-reduced-motion: reduce) {</span>
+<span>        .post-image.animating { animation: none; }</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;div class="post-image-container"&gt;</span>
+<span>    &lt;img class="post-image" id="postImage" src="https://placehold.co/300x200" alt="A chair"&gt;</span>
+<span>  &lt;/div&gt;</span>
+<span>  &lt;button type="button" id="replay"&gt;Play it again&lt;/button&gt;</span>
+<span></span>
+<span>  &lt;script&gt;</span>
+<span>    // In Chairvana, React added the animating class on a timer.</span>
+<span>    // Plain JavaScript does the same job here.</span>
+<span>    const image = document.getElementById("postImage");</span>
+<span></span>
+<span>    function play() {</span>
+<span>      // Take the class off and put it back on, so the animation starts from 0%.</span>
+<span>      image.classList.remove("animating");</span>
+<span>      // Reading offsetWidth makes the browser notice that the class is gone.</span>
+<span>      void image.offsetWidth;</span>
+<span>      image.classList.add("animating");</span>
+<span>    }</span>
+<span></span>
+<span>    document.getElementById("replay").addEventListener("click", play);</span>
+<span>    play();</span>
+<span>  &lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h2 id="element-dimensions">Element Dimensions</h2>
 
   <div class="div_p">
     <p>In addition to positioning elements, CSS rules can specify the actual dimensions of each page element. The
@@ -1000,30 +1630,39 @@
   <h3>Element Dimensions</h3>
 
   <pre class="mycodecss">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
 <span>&lt;head&gt;</span>
-<span>  &lt;style type="text/css"&gt;</span>
-<span>   div{ background-color: #aaccff;</span>
-<span>        margin-bottom: .5em;</span>
-<span>        font-family: arial, helvetica, sans-serif }</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Element Dimensions&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    div {</span>
+<span>      background-color: #aaccff;</span>
+<span>      margin-bottom: .5em;</span>
+<span>      font-family: arial, helvetica, sans-serif;</span>
+<span>    }</span>
 <span>  &lt;/style&gt;</span>
 <span>&lt;/head&gt;</span>
 <span>&lt;body&gt;</span>
-<span>&lt;div style="width: 20%"&gt;Here is some</span>
-<span>  text that goes in a box which is</span>
-<span>  set to stretch across twenty percent</span>
-<span>  of the width of the screen.&lt;/div&gt;</span>
+<span>  &lt;!-- 20% of the width of the page. --&gt;</span>
+<span>  &lt;div style="width: 20%"&gt;Here is some</span>
+<span>    text that goes in a box which is</span>
+<span>    set to stretch across twenty percent</span>
+<span>    of the width of the screen.&lt;/div&gt;</span>
 <span></span>
-<span>&lt;div style="width: 80%; text-align: center"&gt;</span>
-<span>  Here is some CENTERED text that goes in a box</span>
-<span>  which is set to stretch across eighty percent of</span>
-<span>  the width of the screen.&lt;/div&gt;</span>
+<span>  &lt;div style="width: 80%; text-align: center"&gt;</span>
+<span>    Here is some CENTERED text that goes in a box</span>
+<span>    which is set to stretch across eighty percent of</span>
+<span>    the width of the screen.&lt;/div&gt;</span>
 <span></span>
-<span>&lt;div style="width: 20%; height: 150px; overflow: scroll"&gt;</span>
-<span>  This box is only twenty percent of</span>
-<span>  the width and has a fixed height.</span>
-<span>  What do we do if it overflows? Set the</span>
-<span>  overflow property to scroll!&lt;/div&gt;</span>
+<span>  &lt;!-- A fixed height. overflow: scroll adds scroll bars when the text does not fit. --&gt;</span>
+<span>  &lt;div style="width: 20%; height: 150px; overflow: scroll"&gt;</span>
+<span>    This box is only twenty percent of</span>
+<span>    the width and has a fixed height.</span>
+<span>    What do we do if it overflows? Set the</span>
+<span>    overflow property to scroll!&lt;/div&gt;</span>
 <span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
   <div class="div_p">
@@ -1042,7 +1681,7 @@
       elsewhere. text-align: center other values for the text-align property include left and right.</p>
   </div>
 
-  <h2>All CSS Dimension Properties</h2>
+  <h2 id="all-css-dimension-properties">All CSS Dimension Properties</h2>
 
   <div class="div_p">
     <p>
@@ -1057,7 +1696,7 @@
     </p>
   </div>
 
-  <h2>Float</h2>
+  <h2 id="float">Float</h2>
 
   <div class="div_p">
     <p>The float property specifies whether or not a box (an element) should float.<br><br>
@@ -1087,59 +1726,77 @@
   <h3>Float CSS Example</h3>
 
   <pre class="mycodecss">
-
-<span>&lt;html&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
 <span>&lt;head&gt;</span>
-<span>  &lt;style type="text/css"&gt;</span>
-<span> div.heading { background-color: #bbddff;</span>
-<span>               text-align: center;</span>
-<span>               font-family: arial, helvetica, sans-serif;</span>
-<span>               padding: .2em; }</span>
-<span>  p           { text-align: justify;</span>
-<span>               font-family: verdana, geneva, sans-serif;</span>
-<span>               margin: .5em }</span>
-<span> div.floated { background-color: #eeeeee;</span>
-<span>               font-size: 1.5em;</span>
-<span>               font-family: arial, helvetica, sans-serif;</span>
-<span>               padding: .2em;</span>
-<span>               margin-left: .5em;</span>
-<span>               margin-bottom: .5em;</span>
-<span>               float: right;</span>
-<span>               text-align: right;</span>
-<span>               width: 50% }</span>
-<span> div.section { border: 1px solid #bbddff }</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Float&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    div.heading {</span>
+<span>      background-color: #bbddff;</span>
+<span>      text-align: center;</span>
+<span>      font-family: arial, helvetica, sans-serif;</span>
+<span>      padding: .2em;</span>
+<span>    }</span>
+<span></span>
+<span>    p {</span>
+<span>      text-align: justify;</span>
+<span>      font-family: verdana, geneva, sans-serif;</span>
+<span>      margin: .5em;</span>
+<span>    }</span>
+<span></span>
+<span>    div.floated {</span>
+<span>      background-color: #eeeeee;</span>
+<span>      font-size: 1.5em;</span>
+<span>      font-family: arial, helvetica, sans-serif;</span>
+<span>      padding: .2em;</span>
+<span>      margin-left: .5em;</span>
+<span>      margin-bottom: .5em;</span>
+<span>      /* Moves the box to the right edge. The paragraph text wraps around its left side. */</span>
+<span>      float: right;</span>
+<span>      text-align: right;</span>
+<span>      /* A floated box needs a width, or it shrinks to fit its text. */</span>
+<span>      width: 50%;</span>
+<span>    }</span>
+<span></span>
+<span>    div.section { border: 1px solid #bbddff; }</span>
 <span>  &lt;/style&gt;</span>
 <span>&lt;/head&gt;</span>
-<span></span>
 <span>&lt;body&gt;</span>
-<span>  &lt;div class="heading"&gt;&lt;img src="deitel.png" alt="Deitel" /&gt;&lt;/div&gt;</span>
+<span>  &lt;!-- deitel.png has to be a file in the same folder as this page. --&gt;</span>
+<span>  &lt;div class="heading"&gt;&lt;img src="deitel.png" alt="Deitel"&gt;&lt;/div&gt;</span>
 <span>  &lt;div class="section"&gt;</span>
-<span>      &lt;div class="floated"&gt;Corporate Training and Publishing&lt;/div&gt;</span>
-<span>        &lt;p&gt;Deitel &amp; Associates, Inc. is an internationally</span>
-<span>        recognized corporate training and publishing organization</span>
-<span>        specializing in programming languages, Internet/World</span>
-<span>        Wide Web technology and object technology education.</span>
-<span>        The company provides courses on Java, C++, Visual Basic, C,</span>
-<span>        Internet and World Wide Web programming, and Object</span>
-<span>        Technology.&lt;/p&gt;</span>
-<span>    &lt;/div&gt;</span>
+<span>    &lt;!-- The floated box comes first in the HTML, before the text that wraps around it. --&gt;</span>
+<span>    &lt;div class="floated"&gt;Corporate Training and Publishing&lt;/div&gt;</span>
+<span>    &lt;p&gt;Deitel &amp;amp; Associates, Inc. is an internationally</span>
+<span>      recognized corporate training and publishing organization</span>
+<span>      specializing in programming languages, Internet/World</span>
+<span>      Wide Web technology and object technology education.</span>
+<span>      The company provides courses on Java, C++, Visual Basic, C,</span>
+<span>      Internet and World Wide Web programming, and Object</span>
+<span>      Technology.&lt;/p&gt;</span>
+<span>  &lt;/div&gt;</span>
 <span>  &lt;div class="section"&gt;</span>
 <span>    &lt;div class="floated"&gt;Leading-Edge Programming Textbooks&lt;/div&gt;</span>
-<span>      &lt;p&gt;Through its publishing partnership with Prentice Hall,</span>
-<span>      Deitel &amp; Associates, Inc. publishes leading-edge programming</span>
+<span>    &lt;p&gt;Through its publishing partnership with Prentice Hall,</span>
+<span>      Deitel &amp;amp; Associates, Inc. publishes leading-edge programming</span>
 <span>      textbooks, professional books, interactive CD-ROM-based</span>
 <span>      multimedia Cyber Classrooms, satellite courses and</span>
 <span>      World Wide Web courses.&lt;/p&gt;</span>
-<span>&lt;/div&gt;</span>
+<span>  &lt;/div&gt;</span>
 <span>&lt;/body&gt;</span>
 <span>&lt;/html&gt;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> A box with only floated children gets a height of 0, and the next content climbs up beside the float. Put clear: both on the element that should start below it. For a new layout, use flexbox or grid instead of float.</p>
+  </div>
 
   <div class="div_p">
     <p><img src="images/css-float-result.png" alt="Float_result"></p>
   </div>
 
-  <h2>Media Types</h2>
+  <h2 id="media-types">Media Types</h2>
 
 
   <div class="div_p">
@@ -1162,29 +1819,43 @@
   <h3>Media Types</h3>
 
   <pre class="mycodecss">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
 <span>&lt;head&gt;</span>
-<span>  &lt;style type="text/css"&gt;</span>
-<span>    @media all</span>
-<span>    {</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Media Types&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* These rules are used everywhere: on the screen and on paper. */</span>
+<span>    @media all {</span>
 <span>      body  { background-color: #4488aa; }</span>
 <span>      h1    { font-family: verdana, helvetica, sans-serif;</span>
-<span>              color: #aaffcc }</span>
+<span>              color: #aaffcc; }</span>
 <span>      p     { font-size: 12pt;</span>
 <span>              color: white;</span>
-<span>              font-family: arial, sans-serif }</span>
-<span>    } &lt;/* end @media all declaration. */&gt;</span>
+<span>              font-family: arial, sans-serif; }</span>
+<span>    } /* end of @media all */</span>
 <span></span>
-<span>  /*  @media print  */</span>
-<span>  {</span>
-<span>      body  { background-color: white }</span>
-<span>      h1    { color: #008844 }</span>
+<span>    /* These rules are only used when the page is printed. They come later, so they win. */</span>
+<span>    @media print {</span>
+<span>      body  { background-color: white; }</span>
+<span>      h1    { color: #008844; }</span>
 <span>      p     { font-size: 14pt;</span>
 <span>              color: #4488aa;</span>
-<span>              font-family: "times new roman", times, serif }</span>
-<span>  } &lt;/* @media print declaration. */&gt;</span>
+<span>              font-family: "times new roman", times, serif; }</span>
+<span>    } /* end of @media print */</span>
 <span>  &lt;/style&gt;</span>
 <span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;h1&gt;CSS Media Types Example&lt;/h1&gt;</span>
+<span>  &lt;p&gt;This example uses CSS media types to change how the page looks</span>
+<span>    when it is printed. Press Ctrl + P or Cmd + P to see the print version.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Today only all, screen and print are used. handheld, braille, aural, projection, tty and tv were removed from CSS, and browsers ignore them.</p>
+  </div>
 
   <div class="div_p">
     <p><img src="images/css-media-print.png" alt="Media_types_results"></p>
@@ -1202,7 +1873,7 @@
     </p>
   </div>
 
-  <h2>Media Queries</h2>
+  <h2 id="media-queries">Media Queries</h2>
 
   <div class="div_p">
     <p>CSS media queries are a feature of CSS 3 that allow the rendering of content to adapt to different conditions,
@@ -1219,9 +1890,26 @@
   <h3>Syntax and Structure</h3>
 
   <pre class="mycodecss">
-<span>@media <media-type> and (<media-feature-expression>) {</span>
-<span>/* CSS rules to apply */</span>
-<span>}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Media Query Syntax&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* The pattern is: @media &lt;media-type&gt; and (&lt;media-feature&gt;) { rules } */</span>
+<span>    @media screen and (min-width: 600px) {</span>
+<span>      /* CSS rules to apply */</span>
+<span>      body {</span>
+<span>        background-color: lightyellow;</span>
+<span>      }</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;Make the window wider than 600px and the page turns light yellow.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
   <div class="div_p">
@@ -1262,75 +1950,146 @@
   <h3>Applying styles for screens wider than 768px:</h3>
 
   <pre class="mycodecss">
-<span>@media screen and (min-width: 768px) {</span>
-<span>  body {</span>
-<span>  background-color: lightblue;</span>
-<span>   }</span>
-<span>}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Wider Than 768px&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* min-width: 768px means: the window is 768px wide or wider. */</span>
+<span>    @media screen and (min-width: 768px) {</span>
+<span>      body {</span>
+<span>        background-color: lightblue;</span>
+<span>      }</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;The page is light blue when the window is 768px wide or wider.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Media queries need the viewport line in the head: &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;. Without it, a phone pretends to be about 980px wide and your small screen rules never run.</p>
+  </div>
 
   <h3>Applying styles for screens between 480px and 768px wide:</h3>
 
   <pre class="mycodecss">
-<span>@media screen and (min-width: 480px) and (max-width: 768px) {</span>
-<span>   h1 {
-<span> font-size: 1.5em;</span>
-<span>   }</span>
-<span>}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Between 480px And 768px&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* Both conditions have to be true: at least 480px and at most 768px. */</span>
+<span>    @media screen and (min-width: 480px) and (max-width: 768px) {</span>
+<span>      h1 {</span>
+<span>        font-size: 1.5em;</span>
+<span>      }</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;h1&gt;This heading is smaller between 480px and 768px&lt;/h1&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
   <h3>Applying dark mode styles based on user preference:</h3>
 
   <pre class="mycodecss">
-<span>&lt;style&gt;</span>
-<span>  @media (prefers-color-scheme: dark) {</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Dark Mode&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* Used when the computer or phone is set to dark mode. */</span>
+<span>    @media (prefers-color-scheme: dark) {</span>
 <span>      body {</span>
-<span>          background-color: #333;</span>
-<span>          color: #eee;</span>
+<span>        background-color: #333;</span>
+<span>        color: #eee;</span>
 <span>      }</span>
-<span>  }</span>
-<span>&lt;/style&gt;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;Switch your computer to dark mode and this page turns dark.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
   <h3>Change the background-color of the body to lightgreen, if the width of the viewport is 480px, or wider:</h3>
 
   <pre class="mycodecss">
-<span>&lt;style&gt;</span>
-<span>  @media screen and (min-width: 480px) {</span>
-<span>    body {</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Light Green From 480px&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* 480px wide or wider. */</span>
+<span>    @media screen and (min-width: 480px) {</span>
+<span>      body {</span>
 <span>        background-color: lightgreen;</span>
+<span>      }</span>
 <span>    }</span>
-<span>}</span>
-<span>&lt;/style&gt;</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;The page is light green when the window is 480px wide or wider.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
   <h3>Use media queries to change the background color for different viewport widths:</h3>
 
   <pre class="mycodecss">
-<span>&lt;style&gt;</span>
-<span>/* Base style for mobile devices */</span>
-<span>body {</span>
-<span>  background-color: olive;</span>
-<span>  color: white;</span>
-<span>}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Colors For Different Widths&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* Base style for mobile devices */</span>
+<span>    body {</span>
+<span>      background-color: olive;</span>
+<span>      color: white;</span>
+<span>    }</span>
 <span></span>
-<span>/* For devices with a minimum width of 768px (Medium) */</span>
-<span>@media screen and (min-width: 768px) {</span>
-<span>  body {</span>
-<span>    background-color: blue;</span>
-<span>    color: white;</span>
-<span>  }</span>
-<span>}</span>
+<span>    /* For devices with a minimum width of 768px (Medium) */</span>
+<span>    @media screen and (min-width: 768px) {</span>
+<span>      body {</span>
+<span>        background-color: blue;</span>
+<span>        color: white;</span>
+<span>      }</span>
+<span>    }</span>
 <span></span>
-<span>/* For devices with a minimum width of 992px (Large) */</span>
-<span>@media screen and (min-width: 992px) {</span>
-<span>  body {</span>
-<span>    background-color: tan;</span>
-<span>    color: black;</span>
-<span>  }</span>
-<span>}</span>
-<span>&lt;/style&gt;</span>
+<span>    /* For devices with a minimum width of 992px (Large) */</span>
+<span>    @media screen and (min-width: 992px) {</span>
+<span>      body {</span>
+<span>        background-color: tan;</span>
+<span>        color: black;</span>
+<span>      }</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;Drag the edge of the window. The color changes at 768px and again at 992px.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Write the phone styles first, then the min-width queries from smallest to largest. They are equally specific, so a query written above a smaller one gets overruled by it.</p>
+  </div>
 
   <h3>Media Queries For Columns</h3>
 
@@ -1341,37 +2100,54 @@
   </div>
 
   <pre class="mycodecss">
-<span>&lt;style&gt;</span>
-<span>* {</span>
-<span>box-sizing: border-box;</span>
-<span>}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Media Queries For Columns&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* Padding and borders are counted inside the width of every element. */</span>
+<span>    * {</span>
+<span>      box-sizing: border-box;</span>
+<span>    }</span>
 <span></span>
-<span>/* Container for flexboxes */</span>
-<span>.container {</span>
-<span>  display: flex;</span>
-<span>  flex-wrap: wrap;</span>
-<span>}</span>
+<span>    /* Container for flexboxes */</span>
+<span>    .container {</span>
+<span>      display: flex;</span>
+<span>      flex-wrap: wrap;</span>
+<span>    }</span>
 <span></span>
-<span>/* Create four equal columns */</span>
-<span>.column {</span>
-<span>  flex: 25%;</span>
-<span>  padding: 20px;</span>
-<span>}</span>
+<span>    /* Create four equal columns */</span>
+<span>    .column {</span>
+<span>      flex: 25%;</span>
+<span>      padding: 20px;</span>
+<span>    }</span>
 <span></span>
-<span>/* On screens that are 992px wide or less, go from four columns to two columns */</span>
-<span>@media screen and (max-width: 992px) {</span>
-<span>  .column {</span>
-<span>    flex: 50%;</span>
-<span>  }</span>
-<span>}</span>
+<span>    /* On screens that are 992px wide or less, go from four columns to two columns */</span>
+<span>    @media screen and (max-width: 992px) {</span>
+<span>      .column {</span>
+<span>        flex: 50%;</span>
+<span>      }</span>
+<span>    }</span>
 <span></span>
-<span>/* On screens that are 600px wide or less, make the columns stack on top of each other instead of next to each other */</span>
-<span>@media screen and (max-width: 600px) {</span>
-<span>  .container {</span>
-<span>    flex-direction: column;</span>
-<span>  }</span>
-<span>}</span>
-<span>&lt;/style&gt;</span>
+<span>    /* On screens that are 600px wide or less, make the columns stack on top of each other instead of next to each other */</span>
+<span>    @media screen and (max-width: 600px) {</span>
+<span>      .container {</span>
+<span>        flex-direction: column;</span>
+<span>      }</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;div class="container"&gt;</span>
+<span>    &lt;div class="column" style="background-color: #aaa;"&gt;Column 1&lt;/div&gt;</span>
+<span>    &lt;div class="column" style="background-color: #bbb;"&gt;Column 2&lt;/div&gt;</span>
+<span>    &lt;div class="column" style="background-color: #ccc;"&gt;Column 3&lt;/div&gt;</span>
+<span>    &lt;div class="column" style="background-color: #ddd;"&gt;Column 4&lt;/div&gt;</span>
+<span>  &lt;/div&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
 
@@ -1379,16 +2155,22 @@
   <h3>Responsive Website design for Multiple Devices</h3>
 
   <pre class="mycodecss">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
 <span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Responsive Design For Multiple Devices&lt;/title&gt;</span>
 <span>  &lt;style&gt;</span>
+<span>    /* Desktop: four boxes in a row. */</span>
 <span>    .container {</span>
 <span>      display: flex;</span>
 <span>      flex-wrap: wrap;</span>
-<span>   }</span>
+<span>    }</span>
 <span></span>
 <span>    .box {</span>
-<span>    flex: 25%;</span>
-<span>    padding: 20px;</span>
+<span>      flex: 25%;</span>
+<span>      padding: 20px;</span>
 <span>    }</span>
 <span></span>
 <span>    /* Tablet */</span>
@@ -1402,6 +2184,15 @@
 <span>    }</span>
 <span>  &lt;/style&gt;</span>
 <span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;div class="container"&gt;</span>
+<span>    &lt;div class="box" style="background-color: #aaa;"&gt;Box 1&lt;/div&gt;</span>
+<span>    &lt;div class="box" style="background-color: #bbb;"&gt;Box 2&lt;/div&gt;</span>
+<span>    &lt;div class="box" style="background-color: #ccc;"&gt;Box 3&lt;/div&gt;</span>
+<span>    &lt;div class="box" style="background-color: #ddd;"&gt;Box 4&lt;/div&gt;</span>
+<span>  &lt;/div&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
   <h3>Media Queries For Menus</h3>
@@ -1412,80 +2203,127 @@
   </div>
 
   <pre class="mycodecss">
-<span>&lt;style&gt;</span>
-<span>ul {</span>
-<span>  list-style-type: none;</span>
-<span>  margin: 0;</span>
-<span>  padding: 0;</span>
-<span>  background-color: #333333;</span>
-<span>  display: flex;</span>
-<span>}</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Media Queries For Menus&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    ul {</span>
+<span>      /* Takes away the bullets and the default space of a list. */</span>
+<span>      list-style-type: none;</span>
+<span>      margin: 0;</span>
+<span>      padding: 0;</span>
+<span>      background-color: #333333;</span>
+<span>      /* Puts the links side by side. */</span>
+<span>      display: flex;</span>
+<span>    }</span>
 <span></span>
-<span>ul li a {</span>
-<span>  display: block;</span>
-<span>  color: white;</span>
-<span>  padding: 14px 16px;</span>
-<span>  text-decoration: none;</span>
-<span>}</span>
+<span>    ul li a {</span>
+<span>      /* block makes the whole padded area clickable, not only the word. */</span>
+<span>      display: block;</span>
+<span>      color: white;</span>
+<span>      padding: 14px 16px;</span>
+<span>      text-decoration: none;</span>
+<span>    }</span>
 <span></span>
-<span>ul li a:hover {</span>
-<span>  background-color: #111111;</span>
-<span>}</span>
+<span>    ul li a:hover {</span>
+<span>      background-color: #111111;</span>
+<span>    }</span>
 <span></span>
-<span>/* For viewport width 600px or less, make the menu links stack on top of each other */</span>
-<span>@media screen and (max-width: 600px) {</span>
-<span>  ul {flex-direction: column;}</span>
-<span>}</span>
-<span>&lt;/style&gt;</span>
-<span></span>
-<span>&lt;ul&gt;</span>
-<span>  &lt;li&gt;&lt;a href="#home"&gt;Home&lt;/a&gt;&lt;/li&gt;</span>
-<span>  &lt;li&gt;&lt;a href="#news"&gt;News&lt;/a&gt;&lt;/li&gt;</span>
-<span>  &lt;li&gt;&lt;a href="#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;</span>
-<span>  &lt;li&gt;&lt;a href="#about"&gt;About&lt;/a&gt;&lt;/li&gt;</span>
-<span>&lt;/ul&gt;</span>
+<span>    /* For viewport width 600px or less, make the menu links stack on top of each other */</span>
+<span>    @media screen and (max-width: 600px) {</span>
+<span>      ul {flex-direction: column;}</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;ul&gt;</span>
+<span>    &lt;li&gt;&lt;a href="#home"&gt;Home&lt;/a&gt;&lt;/li&gt;</span>
+<span>    &lt;li&gt;&lt;a href="#news"&gt;News&lt;/a&gt;&lt;/li&gt;</span>
+<span>    &lt;li&gt;&lt;a href="#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;</span>
+<span>    &lt;li&gt;&lt;a href="#about"&gt;About&lt;/a&gt;&lt;/li&gt;</span>
+<span>  &lt;/ul&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
   <h3>Hide Elements With Media Queries</h3>
 
   <pre class="mycodecss">
-<span>&lt;style&gt;</span>
-<span>/* Hide element if the viewport width is 600px or less  like tablets or iphones or andriods*/</span>
-<span>@media screen and (max-width: 600px) {</span>
-<span>  #div1 {</span>
-<span>    display: none;</span>
-<span>  }</span>
-<span>}</span>
-<span>&lt;/style&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Hide Elements With Media Queries&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* Hide the element if the viewport width is 600px or less, like a phone */</span>
+<span>    @media screen and (max-width: 600px) {</span>
+<span>      #div1 {</span>
+<span>        display: none;</span>
+<span>      }</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;div id="div1"&gt;This text is hidden on a small screen.&lt;/div&gt;</span>
+<span>  &lt;p&gt;This text always shows.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
   <h3>Change Font Size With Media Queries</h3>
 
   <pre class="mycodecss">
-<span>&lt;style&gt;</span>
-<span>/* If viewport width is 600px or more, set font-size to 80px like a nice flat screen tv or nice big monitor*/</span>
-<span>@media screen and (min-width: 600px) {</span>
-<span>  #div1 {</span>
-<span>    font-size: 80px;</span>
-<span>  }</span>
-<span>}</span>
-<span>&lt;/style&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Change Font Size With Media Queries&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* If the viewport width is 600px or more, set font-size to 80px, like a big monitor or a TV */</span>
+<span>    @media screen and (min-width: 600px) {</span>
+<span>      #div1 {</span>
+<span>        font-size: 80px;</span>
+<span>      }</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;div id="div1"&gt;Big text on a wide screen&lt;/div&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
   <h3>Media Queries for Screen Orientation</h3>
 
   <pre class="mycodecss">
-<span>&lt;style&gt;</span>
-<span>@media only screen and (orientation: landscape) {</span>
-<span>  body {</span>
-<span>    background-color: lightblue;</span>
-<span>  }</span>
-<span>}</span>
-<span>&lt;/style&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Screen Orientation&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* landscape: the screen is wider than it is tall. */</span>
+<span>    @media only screen and (orientation: landscape) {</span>
+<span>      body {</span>
+<span>        background-color: lightblue;</span>
+<span>      }</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;Turn your phone sideways, or make the window wider than it is tall, and the page turns light blue.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
 
-  <h2>Building a CSS Menu:</h2>
+  <h2 id="building-a-css-menu">Building a CSS Menu:</h2>
   <div class="div_p">
     <p>First, create a division with five links, give the division the class menu.</p>
   </div>
@@ -1493,34 +2331,47 @@
   <h3>Building a CSS Menu:</h3>
 
   <pre class="mycodecss">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;CSS Menu&lt;/title&gt;</span>
 <span>  &lt;style&gt;</span>
-<span>      body              { font-family: arial, sans-serif }</span>
-<span>      div.menu          { font-weight: bold;</span>
-<span>                          color: white;</span>
-<span>                          border: 2px solid #225599;</span>
-<span>                          text-align: center;</span>
-<span>                          width: 10em;</span>
-<span>                          background-color: #225599 }</span>
-<span>      div.menu:hover a  { display: block }</span>
-<span>      div.menu a        { display: none;</span>
-<span>                          border-top: 2px solid #225599;</span>
-<span>                          background-color: white;</span>
-<span>                          width: 10em;</span>
-<span>                          text-decoration: none;</span>
-<span>                          color: black }</span>
-<span>      div.menu a:hover  { background-color: #dfeeff }</span>
+<span>    body              { font-family: arial, sans-serif; }</span>
+<span>    div.menu          { font-weight: bold;</span>
+<span>                        color: white;</span>
+<span>                        border: 2px solid #225599;</span>
+<span>                        text-align: center;</span>
+<span>                        width: 10em;</span>
+<span>                        background-color: #225599; }</span>
+<span>    /* While the mouse is over the menu, show the links. */</span>
+<span>    div.menu:hover a  { display: block; }</span>
+<span>    /* The links are hidden until then. */</span>
+<span>    div.menu a        { display: none;</span>
+<span>                        border-top: 2px solid #225599;</span>
+<span>                        background-color: white;</span>
+<span>                        width: 10em;</span>
+<span>                        text-decoration: none;</span>
+<span>                        color: black; }</span>
+<span>    /* The one link the mouse is on gets a light blue background. */</span>
+<span>    div.menu a:hover  { background-color: #dfeeff; }</span>
 <span>  &lt;/style&gt;</span>
-<span></span>
+<span>&lt;/head&gt;</span>
 <span>&lt;body&gt;</span>
-<span>   &lt;div class="menu"&gt;Menu</span>
-<span>      &lt;a href="#"&gt;Home&lt;/a&gt;</span>
-<span>      &lt;a href="#"&gt;News&lt;/a&gt;</span>
-<span>      &lt;a href="#"&gt;Articles&lt;/a&gt;</span>
-<span>      &lt;a href="#"&gt;Blog&lt;/a&gt;</span>
-<span>      &lt;a href="#"&gt;Contact&lt;/a&gt;</span>
-<span>   &lt;/div&gt;</span>
+<span>  &lt;div class="menu"&gt;Menu</span>
+<span>    &lt;a href="#"&gt;Home&lt;/a&gt;</span>
+<span>    &lt;a href="#"&gt;News&lt;/a&gt;</span>
+<span>    &lt;a href="#"&gt;Articles&lt;/a&gt;</span>
+<span>    &lt;a href="#"&gt;Blog&lt;/a&gt;</span>
+<span>    &lt;a href="#"&gt;Contact&lt;/a&gt;</span>
+<span>  &lt;/div&gt;</span>
 <span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> A menu that opens on :hover does not work with a keyboard, and it is unreliable on a touch screen. Add div.menu:focus-within a { display: block; } so that it also opens when a link inside it has the focus.</p>
+  </div>
 
   <div class="div_p">
     <h4>The initial menu</h4>
@@ -1532,7 +2383,7 @@
     <p><img src="images/css-dropdown-menu-closed.png" alt="Full_Drop_down_menu"></p>
   </div>
 
-  <h2>The 4 CSS Rules of Multiplicity</h2>
+  <h2 id="the-4-css-rules-of-multiplicity">The 4 CSS Rules of Multiplicity</h2>
 
   <div class="div_p">
     <p>One quick and easy way to keep your CSS clean and well-structured is to remember the four CSS Rules of
@@ -1546,7 +2397,7 @@
     </p>
   </div>
 
-  <h2>Multiple declarations</h2>
+  <h2 id="multiple-declarations">Multiple declarations</h2>
 
   <div class="div_p">
     <p>In a single rule is the most fundamental of the four CSS Rules of Multiplicity. Simply stated, it means you can
@@ -1556,43 +2407,87 @@
   <h3>Multiple Selectors example 1</h3>
 
   <pre class="mycodecss">
-<span>&lt;style&gt;</span>
-<span>p {</span>
-<span>    font-size: 110%;</span>
-<span>    color: #333;</span>
-<span>}</span>
-<span>ul {</span>
-<span>    font-size: 110%;</span>
-<span>    color: #333;</span>
-<span>}</span>
-<span>&lt;/style&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Multiple Selectors Example 1&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* The same two declarations, written twice. */</span>
+<span>    p {</span>
+<span>      font-size: 110%;</span>
+<span>      color: #333;</span>
+<span>    }</span>
+<span></span>
+<span>    ul {</span>
+<span>      font-size: 110%;</span>
+<span>      color: #333;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;A paragraph.&lt;/p&gt;</span>
+<span>  &lt;ul&gt;</span>
+<span>    &lt;li&gt;A list item&lt;/li&gt;</span>
+<span>  &lt;/ul&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
   <h3>Multiple Selectors example 2</h3>
 
   <pre class="mycodecss">
-<span>&lt;style&gt;</span>
-<span>p, ul {</span>
-<span>    font-size: 110%;</span>
-<span>    color: #333;</span>
-<span>}</span>
-<span>&lt;/style&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Multiple Selectors Example 2&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* The same result as example 1, written once for both selectors. */</span>
+<span>    p, ul {</span>
+<span>      font-size: 110%;</span>
+<span>      color: #333;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;A paragraph.&lt;/p&gt;</span>
+<span>  &lt;ul&gt;</span>
+<span>    &lt;li&gt;A list item&lt;/li&gt;</span>
+<span>  &lt;/ul&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
   <h3>Multiple Selectors Rules</h3>
 
   <pre class="mycodecss">
-<span>&lt;style&gt;</span>
-<span>p {</span>
-<span>    font-size: 110%;</span>
-<span>    color: #333;</span>
-<span>}</span>
-<span>ul {</span>
-<span>    font-size: 110%;</span>
-<span>    color: #333;</span>
-<span>    font-weight: bold;</span>
-<span>}</span>
-<span>&lt;/style&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Multiple Rules&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    p {</span>
+<span>      font-size: 110%;</span>
+<span>      color: #333;</span>
+<span>    }</span>
+<span></span>
+<span>    ul {</span>
+<span>      font-size: 110%;</span>
+<span>      color: #333;</span>
+<span>      /* Only the list is bold, so it needs its own rule. */</span>
+<span>      font-weight: bold;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;A paragraph.&lt;/p&gt;</span>
+<span>  &lt;ul&gt;</span>
+<span>    &lt;li&gt;A list item&lt;/li&gt;</span>
+<span>  &lt;/ul&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
@@ -1607,26 +2502,41 @@
   <h3>Multiple Selectors Classes</h3>
 
   <pre class="mycodecss">
-<span>&lt;style&gt;</span>
-<span>  container {</span>
-<span>  padding: 5px;</span>
-<span>  border: 2px solid #ccc;</span>
-<span>  background-color: #f2f2f2;</span>
-<span>  }</span>
-<span>.strong {</span>
-<span> font-size: 150%;</span>
-<span>  font-weight: bold;</span>
-<span>  }</span>
-<span>&lt;/style&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Multiple Classes&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* A class selector needs the dot in front. */</span>
+<span>    .container {</span>
+<span>      padding: 5px;</span>
+<span>      border: 2px solid #ccc;</span>
+<span>      background-color: #f2f2f2;</span>
+<span>    }</span>
+<span></span>
+<span>    /* Only the differences go in the second class. */</span>
+<span>    .strong {</span>
+<span>      font-size: 150%;</span>
+<span>      font-weight: bold;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
 <span>&lt;body&gt;</span>
+<span>  &lt;!-- Two classes on one element, with a space between them. --&gt;</span>
 <span>  &lt;div class="container strong"&gt;</span>
-<span>  This text is in our container,</span>
-<span>  but is also big and bold.</span>
+<span>    This text is in our container,</span>
+<span>    but is also big and bold.</span>
+<span>  &lt;/div&gt;</span>
+<span></span>
+<span>  &lt;div class="container"&gt;</span>
+<span>    This text is in a plain container.</span>
 <span>  &lt;/div&gt;</span>
 <span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
-  <h2>Using the CSS @import Rule</h2>
+  <h2 id="using-the-css-import-rule">Using the CSS @import Rule</h2>
 
   <div class="div_p">
     <p>The @import rule is another way of loading a CSS file. You can use it in two ways. The simplest is within the
@@ -1635,9 +2545,20 @@
 
   <h3>Using the CSS @import Rule</h3>
   <pre class="mycodecss">
-<span>&lt;style&gt;</span>
-<span>@import url('/css/styles.css');</span>
-<span>&lt;/style&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;The @import Rule&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* Loads /css/styles.css. The / at the start means: from the top folder of the website. */</span>
+<span>    @import url('/css/styles.css');</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;h1&gt;Styled by /css/styles.css&lt;/h1&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
 
   <div class="div_p">
@@ -1649,15 +2570,26 @@
   <h3>Using the CSS @import Rule using another style sheet</h3>
 
   <pre class="mycodecss">
+<span>/* main.css: one file that loads three others. */</span>
+<span>/* Every @import has to come before any other rule in the file. */</span>
 <span>@import url('/css/typography.css');</span>
 <span>@import url('/css/layout.css');</span>
 <span>@import url('/css/color.css');</span>
 <span>/* All three CSS files above will be loaded */</span>
 <span>/* from this single document. */</span>
+<span></span>
+<span>/* Normal rules go after the imports. */</span>
+<span>body {</span>
+<span>  margin: 0;</span>
+<span>}</span>
   </pre>
 
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Each @import is only found after the file before it has loaded, so the files load one after another and the page is slower. Separate &lt;link&gt; tags load at the same time. Also, a comment above an @import is fine in every current browser. What breaks it is a normal rule above it.</p>
+  </div>
 
-  <h2>Issues with the @import rule</h2>
+
+  <h2 id="issues-with-the-import-rule">Issues with the @import rule</h2>
 
   <div class="div_p">
     <p>Like most cool things in CSS, this one comes with a couple of warnings:<br><br></p>
@@ -1678,13 +2610,13 @@
   </div>
 
 
-  <h2>The !important declaration</h2>
+  <h2 id="the-important-declaration">The !important declaration</h2>
 
   <div class="div_p">
     <p>When should !important be used?</p>
   </div>
 
-  <h2>The !important rule should never be used</h2>
+  <h2 id="the-important-rule-should-never-be-used">The !important rule should never be used</h2>
 
   <div class="div_p">
     <p>!important declarations should not be used unless they are absolutely necessary after all other avenues have been
@@ -1697,15 +2629,34 @@
   <h3>!important declaration</h3>
 
   <pre class="mycodecss">
-<span>&lt;style&gt;</span>
-<span>  #example {</span>
-<span>  font-size: 14px !important;</span>    
-<span>  }</span>
-<span>  #container #example {</span>
-<span>font-size: 10px;</span>
-<span> }</span>
-<span>&lt;/style&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;The !important Declaration&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    #example {</span>
+<span>      /* !important makes this declaration win, whatever the other rules say. */</span>
+<span>      font-size: 14px !important;</span>
+<span>    }</span>
+<span></span>
+<span>    /* Two ids are more specific than one, so this rule would normally win. */</span>
+<span>    #container #example {</span>
+<span>      font-size: 10px;</span>
+<span>    }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;div id="container"&gt;</span>
+<span>    &lt;p id="example"&gt;This text is 14px, because of !important.&lt;/p&gt;</span>
+<span>  &lt;/div&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> When a rule does not apply, the reason is almost always specificity or order. Right-click the element, choose Inspect, and the Styles panel shows the losing rule crossed out and the rule that beat it. Fix that instead of adding !important.</p>
+  </div>
 
   <br><br><br><br>
 

@@ -21,14 +21,18 @@
         <li><a href="html_page.html">Html Code</a></li>
         <li><a href="css_page.html">Css Code</a></li>
         <li><a href="tailwind_page.html">Tailwind Code</a></li>
+        <li><a href="photo_effects_page.html">Photo Effects</a></li>
+        <li><a href="blog_page.html">Blog Template</a></li>
         <li><a href="javaScript.html">JavaScript Code</a></li>
         <li><a href="setup_page.html">Setup &amp; .env</a></li>
         <li><a href="react_page.html">React Code</a></li>
+        <li><a href="dashboard_page.html">Dashboard Code</a></li>
         <li><a href="node_page.html">Node Code</a></li>
         <li><a href="mongodb_page.html">MongoDB Code</a></li>
         <li><a href="postgres_page.html">Postgres Code</a></li>
         <li><a href="security_page.html">Security Code</a></li>
         <li><a href="migration_page.html">Switch Databases</a></li>
+        <li><a href="bugs_page.html">Common Bugs</a></li>
       </ul>
     </div>
   </nav>
@@ -74,6 +78,10 @@
 <span>mkdir server       # make a folder</span>
 <span>touch server/.env  # make an empty file</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> On a Mac, the terminal does not skip the # notes unless you turn that on. Run setopt interactive_comments once, or add that line to ~/.zshrc, and then a pasted line with a # note works.</p>
+  </div>
 
   <h3>Check that everything is installed</h3>
 
@@ -153,6 +161,10 @@
 <span>npm install react-router-dom</span>
 <span>npm run dev</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> The newest Vite needs a recent Node, 20.19 or newer. If this command stops with an engine warning, check node -v and update Node first.</p>
+  </div>
 
   <div class="div_p">
     <p>The site opens at http://localhost:5173. Press Ctrl + C to stop it.</p>
@@ -339,6 +351,10 @@
 <span>}</span>
   </pre>
 
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Paste only the scripts part into the package.json that npm init made. If you replace the whole file, the dependencies list is lost and nothing can be imported.</p>
+  </div>
+
   <h3>Start everything</h3>
 
   <pre class="mycodecli">
@@ -468,11 +484,32 @@
 
   <h3>Read the client .env value in React</h3>
 
+  <div class="div_p">
+    <p>This is a whole file. Save it as client/src/services/itemsApi.js and import getItems where you need the list.</p>
+  </div>
+
   <pre class="mycodereact">
+<span>// When VITE_API_URL is not set this is empty text, so the path stays /api/items</span>
+<span>// and the Vite proxy handles it on your own computer.</span>
 <span>const API_URL = import.meta.env.VITE_API_URL ?? "";</span>
 <span></span>
-<span>const response = await fetch(`${API_URL}/api/items`);</span>
+<span>// Gets every item from the API. It throws when the server answers with an error.</span>
+<span>export async function getItems() {</span>
+<span>  const response = await fetch(`${API_URL}/api/items`);</span>
+<span></span>
+<span>  // fetch does not throw on a 404 or a 500, so check it yourself.</span>
+<span>  if (!response.ok) {</span>
+<span>    throw new Error(`Request failed (${response.status}).`);</span>
+<span>  }</span>
+<span></span>
+<span>  // Turns the JSON in the answer into a JavaScript array.</span>
+<span>  return response.json();</span>
+<span>}</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Vite reads .env when it starts. After you change client/.env, stop Vite with Ctrl + C and run npm run dev again, or the old value is still used.</p>
+  </div>
 
   <h3>Generate Secrets</h3>
 
@@ -487,12 +524,32 @@
   <h3>Load .env in the server</h3>
 
   <div class="div_p">
-    <p>Put this line at the top of the first file that needs it. It looks for .env in the folder you started the server from.</p>
+    <p>Put this line at the top of the first file that needs it. It looks for .env in the folder you started the server from. The box is a whole server.js that shows where the line goes.</p>
   </div>
 
   <pre class="mycodenode">
+<span>// This has to be the first import, so every file after it can read process.env.</span>
 <span>import "dotenv/config";</span>
+<span>import express from "express";</span>
+<span></span>
+<span>// PORT now comes from .env. 3000 is used when .env has no PORT line.</span>
+<span>const PORT = process.env.PORT || 3000;</span>
+<span></span>
+<span>const app = express();</span>
+<span></span>
+<span>app.get("/api/health", (req, res) =&gt; {</span>
+<span>  res.status(200).json({ status: "ok" });</span>
+<span>});</span>
+<span></span>
+<span>app.listen(PORT, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
+<span>  console.log(`Server listening on http://localhost:${PORT}`);</span>
+<span>});</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> All the import lines in a file run before any of its other code. If dotenv is imported lower down, the files imported above it read process.env while it is still empty.</p>
+  </div>
 
   <h3>server/config/env.js</h3>
 

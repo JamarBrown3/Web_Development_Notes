@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Jamar Brown">
+  <meta name="description" content="Reusable dashboard code: a print button, descriptive statistics and distribution charts for React and Recharts">
+  <title>Dashboard Page</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand">Final Companion</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="html_page.html">Html Code</a></li>
+        <li><a href="css_page.html">Css Code</a></li>
+        <li><a href="tailwind_page.html">Tailwind Code</a></li>
+        <li><a href="photo_effects_page.html">Photo Effects</a></li>
+        <li><a href="blog_page.html">Blog Template</a></li>
+        <li><a href="javaScript.html">JavaScript Code</a></li>
+        <li><a href="setup_page.html">Setup &amp; .env</a></li>
+        <li><a href="react_page.html">React Code</a></li>
+        <li><a href="dashboard_page.html">Dashboard Code</a></li>
+        <li><a href="node_page.html">Node Code</a></li>
+        <li><a href="mongodb_page.html">MongoDB Code</a></li>
+        <li><a href="postgres_page.html">Postgres Code</a></li>
+        <li><a href="security_page.html">Security Code</a></li>
+        <li><a href="migration_page.html">Switch Databases</a></li>
+        <li><a href="bugs_page.html">Common Bugs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <h2>On This Page</h2>
+
+  <div class="div_p">
+    <ul>
+      <li><a href="#what-is-on-this-page">What Is On This Page</a></li>
+      <li><a href="#install">Install Recharts</a></li>
+      <li><a href="#print-button">Print Button (Copy And Paste)</a></li>
+      <li><a href="#print-test">Test The Printout</a></li>
+      <li><a href="#stats-in-plain-english">Stats In Plain English</a></li>
+      <li><a href="#quartile-methods">Why Q1 And Q3 Can Differ Between Tools</a></li>
+      <li><a href="#stats-js">stats.js</a></li>
+      <li><a href="#reading-a-distribution">Reading A Distribution</a></li>
+      <li><a href="#distribution-chart">Histogram With A Normal Curve</a></li>
+      <li><a href="#box-plot">Box Plot</a></li>
+      <li><a href="#spread-summary">Summary Table And Sentence</a></li>
+      <li><a href="#line-and-bar-charts">Line Chart And Bar Chart</a></li>
+      <li><a href="#full-dashboard">Put It All Together</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ul>
+  </div>
+
+  <h2 id="what-is-on-this-page">What Is On This Page</h2>
+
+  <div class="div_p">
+    <p>Copy and paste pieces for any client dashboard: a print button that makes clean PDFs, and a stats kit that shows how data is spread out (mean, median, standard deviation, IQR, range, outliers) as a histogram with a normal curve, a box plot and a summary table.</p>
+    <p>Every file here was built and tested together on 4 Nov 2026 with React 19, Recharts 3.10.1 and Vite 7: the charts were rendered, hovered, printed to PDF two ways, and checked at phone width. The stats were checked against NumPy and SciPy and matched to 9 decimal places.</p>
+    <p>The whole tested project is also in <b>starters/dashboard-kit</b>, so you can copy the folder instead of pasting files one at a time.</p>
+  </div>
+
+  <pre class="mycodefile">
+<span>src/</span>
+<span>  main.jsx                       imports print.css once</span>
+<span>  dashboard-kit/</span>
+<span>    PrintButton.jsx              the Print or save as PDF button</span>
+<span>    print.css                    makes the printout look right</span>
+<span>    stats.js                     mean, median, SD, quantiles, IQR, outliers, histogram bins</span>
+<span>    DistributionChart.jsx        histogram + normal curve (Recharts)</span>
+<span>    BoxPlot.jsx                  box plot (plain SVG, no library)</span>
+<span>    SpreadSummary.jsx            table of the numbers + one plain English sentence</span></pre>
+  <h2 id="install">Install Recharts</h2>
+
+  <div class="div_p">
+    <p>Run this in the client folder. The print button, print.css, stats.js, BoxPlot and SpreadSummary need nothing installed. Only DistributionChart uses Recharts.</p>
+    <p>DistributionChart uses the <b>responsive</b> prop, which needs Recharts 3.3 or newer. On an older version, wrap the chart in ResponsiveContainer instead.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>npm install recharts</span>
+<span>npm ls recharts</span></pre>
+  <h2 id="print-button">Print Button (Copy And Paste)</h2>
+
+  <div class="div_p">
+    <p>Three steps: add the button file, add print.css, import print.css once. Then put the button on any dashboard.</p>
+    <p>Clients press the button, pick <b>Save as PDF</b> in the print window, and get a clean report named after the business.</p>
+  </div>
+
+  <div class="div_p">
+    <table class="table table-bordered table-condensed">
+      <thead><tr><th>Problem it fixes</th><th>How</th></tr></thead>
+      <tbody>
+        <tr><td>Menus, nav bars and phone tab bars show up on paper</td><td>nav, footer, buttons and anything with class no-print are hidden</td></tr>
+        <tr><td>Bars and colored badges print blank</td><td>print-color-adjust: exact keeps background colors</td></tr>
+        <tr><td>Charts get cut off on the right</td><td>Recharts SVGs shrink to the page width (they have a viewBox, so nothing is lost)</td></tr>
+        <tr><td>A chart prints as an empty space</td><td>ResponsiveContainer's 0 x 0 inner box is opened up for print</td></tr>
+        <tr><td>A card or table row is split across two pages</td><td>break-inside: avoid on cards, charts, figures and rows</td></tr>
+        <tr><td>The PDF is named localhost or Vite App</td><td>the button swaps in a file name while the print window is open</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>src/dashboard-kit/PrintButton.jsx</h3>
+
+  <pre class="mycodereact">
+<span>// PrintButton.jsx: a &quot;Print or save as PDF&quot; button for any dashboard.</span>
+<span>// Needs print.css imported once (in main.jsx) so the printout looks right.</span>
+<span>//</span>
+<span>// Use it:  &lt;PrintButton fileName=&quot;Corner Coffee - October report&quot; /&gt;</span>
+<span>// fileName becomes the suggested name when the client picks &quot;Save as PDF&quot;.</span>
+<span></span>
+<span>export default function PrintButton({ fileName, label = &quot;Print or save as PDF&quot; }) {</span>
+<span>  function handlePrint() {</span>
+<span>    // The browser names the PDF after the page title, so swap it in for a moment.</span>
+<span>    const oldTitle = document.title;</span>
+<span>    if (fileName) document.title = fileName;</span>
+<span></span>
+<span>    // Put the old title back once the print window closes.</span>
+<span>    window.addEventListener(&quot;afterprint&quot;, () =&gt; (document.title = oldTitle), { once: true });</span>
+<span></span>
+<span>    window.print();</span>
+<span>  }</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;button type=&quot;button&quot; className=&quot;print-button no-print&quot; onClick={handlePrint}&gt;</span>
+<span>      {label}</span>
+<span>    &lt;/button&gt;</span>
+<span>  );</span>
+<span>}</span></pre>
+  <h3>src/dashboard-kit/print.css</h3>
+
+  <pre class="mycodecss">
+<span>/* print.css: makes any dashboard print cleanly. Import it once in main.jsx.</span>
+<span>   Everything here only runs when printing or saving as PDF. */</span>
+<span></span>
+<span>/* Text that only shows on paper, like &quot;Printed Nov 4, 2026&quot;. */</span>
+<span>.print-only {</span>
+<span>  display: none;</span>
+<span>}</span>
+<span></span>
+<span>@media print {</span>
+<span>  /* 1. Paper size and margins. Portrait fits dashboards best. */</span>
+<span>  @page {</span>
+<span>    size: letter portrait;</span>
+<span>    margin: 0.5in;</span>
+<span>  }</span>
+<span></span>
+<span>  /* 2. Hide things that make no sense on paper.</span>
+<span>     Add your own nav, footer or menu class names to this list. */</span>
+<span>  .no-print,</span>
+<span>  nav,</span>
+<span>  header nav,</span>
+<span>  footer,</span>
+<span>  button,</span>
+<span>  select,</span>
+<span>  .recharts-tooltip-wrapper {</span>
+<span>    display: none !important;</span>
+<span>  }</span>
+<span></span>
+<span>  /* 3. Show the paper-only text. */</span>
+<span>  .print-only {</span>
+<span>    display: block !important;</span>
+<span>  }</span>
+<span></span>
+<span>  /* 4. White paper, black ink, no shadows (saves toner and reads better). */</span>
+<span>  html,</span>
+<span>  body {</span>
+<span>    background: #ffffff !important;</span>
+<span>    color: #111111 !important;</span>
+<span>  }</span>
+<span></span>
+<span>  * {</span>
+<span>    box-shadow: none !important;</span>
+<span>    text-shadow: none !important;</span>
+<span>  }</span>
+<span></span>
+<span>  /* 5. Keep chart colors. Browsers drop background colors when printing</span>
+<span>     unless told not to, and bars and badges are often background colors. */</span>
+<span>  *,</span>
+<span>  *::before,</span>
+<span>  *::after {</span>
+<span>    -webkit-print-color-adjust: exact;</span>
+<span>    print-color-adjust: exact;</span>
+<span>  }</span>
+<span></span>
+<span>  /* 6. Never cut a chart, card or table row in half across two pages. */</span>
+<span>  .print-keep,</span>
+<span>  .recharts-wrapper,</span>
+<span>  figure,</span>
+<span>  tr {</span>
+<span>    break-inside: avoid;</span>
+<span>  }</span>
+<span></span>
+<span>  /* 7. Charts are drawn at the width of the screen, and paper is narrower.</span>
+<span>     Recharts SVGs have a viewBox, so stretching them to 100% of the page</span>
+<span>     shrinks the whole chart to fit instead of cutting off the right side.</span>
+<span>     ResponsiveContainer wraps the chart in a 0 x 0 box, so that box has to</span>
+<span>     be opened up first or the chart prints as an empty space. */</span>
+<span>  .recharts-responsive-container &gt; div {</span>
+<span>    width: 100% !important;</span>
+<span>    height: auto !important;</span>
+<span>  }</span>
+<span></span>
+<span>  .recharts-wrapper {</span>
+<span>    width: 100% !important;</span>
+<span>    height: auto !important;</span>
+<span>  }</span>
+<span></span>
+<span>  .recharts-surface {</span>
+<span>    width: 100% !important;</span>
+<span>    height: auto !important;</span>
+<span>  }</span>
+<span></span>
+<span>  /* 8. Grids of cards stack into one column so nothing gets squeezed. */</span>
+<span>  .print-stack {</span>
+<span>    display: block !important;</span>
+<span>  }</span>
+<span></span>
+<span>  .print-stack &gt; * {</span>
+<span>    margin-bottom: 16px;</span>
+<span>  }</span>
+<span></span>
+<span>  /* 9. Start a section on a new page: add class=&quot;page-break&quot; to it. */</span>
+<span>  .page-break {</span>
+<span>    break-before: page;</span>
+<span>  }</span>
+<span>}</span></pre>
+  <h3>src/main.jsx (import print.css once)</h3>
+
+  <pre class="mycodereact">
+<span>import { StrictMode } from "react";</span>
+<span>import { createRoot } from "react-dom/client";</span>
+<span>import App from "./App.jsx";</span>
+<span>// Import print.css once, here, so every page gets the print rules.</span>
+<span>import "./dashboard-kit/print.css";</span>
+<span></span>
+<span>createRoot(document.getElementById("root")).render(</span>
+<span>  &lt;StrictMode&gt;</span>
+<span>    &lt;App /&gt;</span>
+<span>  &lt;/StrictMode&gt;,</span>
+<span>);</span></pre>
+  <h3>Put the button on a dashboard</h3>
+
+  <div class="div_p">
+    <p>This is a whole component. Save it as src/Dashboard.jsx, or copy the header and the print-only line into your own page.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import PrintButton from "./dashboard-kit/PrintButton.jsx";</span>
+<span></span>
+<span>export default function Dashboard() {</span>
+<span>  return (</span>
+<span>    &lt;main&gt;</span>
+<span>      &lt;header&gt;</span>
+<span>        &lt;h1&gt;Corner Coffee: October&lt;/h1&gt;</span>
+<span>        {/* fileName becomes the suggested name of the PDF. */}</span>
+<span>        &lt;PrintButton fileName="Corner Coffee - October report" /&gt;</span>
+<span>      &lt;/header&gt;</span>
+<span></span>
+<span>      {/* Only shows on paper */}</span>
+<span>      &lt;p className="print-only"&gt;Printed {new Date().toLocaleDateString("en-US", { dateStyle: "long" })}&lt;/p&gt;</span>
+<span></span>
+<span>      {/* Your charts and tables go here. */}</span>
+<span>    &lt;/main&gt;</span>
+<span>  );</span>
+<span>}</span></pre>
+  <h3>Classes you can add to anything</h3>
+
+  <div class="div_p">
+    <table class="table table-bordered table-condensed">
+      <thead><tr><th>Class</th><th>What it does when printing</th></tr></thead>
+      <tbody>
+        <tr><td>no-print</td><td>hides it</td></tr>
+        <tr><td>print-only</td><td>shows it only on paper (dates, the business name, filter choices)</td></tr>
+        <tr><td>print-keep</td><td>keeps it on one page</td></tr>
+        <tr><td>print-stack</td><td>turns a grid of cards into one column</td></tr>
+        <tr><td>page-break</td><td>starts it on a new page</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="div_p">
+    <p><b>Heads up:</b> print.css hides every button and select on paper. If a dropdown chose what the dashboard shows (like a business or a date range), add a print-only line that says what was picked, so the printout still makes sense.</p>
+  </div>
+
+  <h2 id="print-test">Test The Printout</h2>
+
+  <div class="div_p">
+    <ul>
+      <li>Press the button and look at the preview. Use Portrait. Make sure every chart shows bars and lines, and nothing is cut off.</li>
+      <li>To see print styles without printing: Chrome DevTools, three dots menu, More tools, Rendering, Emulate CSS media type: print.</li>
+      <li>Check it at phone width too (DevTools device toolbar). A printed page is narrow, so it uses your phone layout.</li>
+    </ul>
+  </div>
+
+  <h2 id="stats-in-plain-english">Stats In Plain English</h2>
+
+  <div class="div_p">
+    <p>What each number means and when to use it. The sentence column is how to say it to a business owner.</p>
+  </div>
+
+  <div class="div_p">
+    <table class="table table-bordered table-condensed">
+      <thead><tr><th>Number</th><th>What it is</th><th>Watch out for</th><th>Say it like this</th></tr></thead>
+      <tbody>
+        <tr><td>Mean</td><td>the average: add them up, divide by how many</td><td>one huge order pulls it up</td><td>The average order was $10.65.</td></tr>
+        <tr><td>Median</td><td>the middle value when sorted (50th percentile)</td><td>ignores how big the extremes are</td><td>A typical order is $9.93.</td></tr>
+        <tr><td>Standard deviation (SD)</td><td>average distance from the mean, in the same units as the data</td><td>also pulled by extreme values; only means 68/95/99.7 if the data is roughly normal</td><td>Most orders land within about $5 of the average.</td></tr>
+        <tr><td>Variance</td><td>SD squared</td><td>units are squared (dollars squared), so show SD to people instead</td><td>(use SD)</td></tr>
+        <tr><td>Q1 and Q3</td><td>25th and 75th percentiles</td><td>tools calculate them slightly differently (next section)</td><td>A quarter of orders are under $7.63.</td></tr>
+        <tr><td>IQR</td><td>Q3 minus Q1: the spread of the middle 50%</td><td>says nothing about the extremes</td><td>Half of all orders are between $7.63 and $12.31.</td></tr>
+        <tr><td>Range</td><td>max minus min: the spread of everything</td><td>one strange value changes it a lot</td><td>Orders ran from $3.64 to $52.00.</td></tr>
+        <tr><td>Skewness</td><td>about 0 is balanced; positive = long tail to the right; negative = long tail to the left</td><td>small samples bounce around</td><td>A few big orders stretch things to the right.</td></tr>
+        <tr><td>Outliers (Tukey)</td><td>values below Q1 - 1.5 x IQR or above Q3 + 1.5 x IQR</td><td>an outlier is not a mistake: catering orders are real sales</td><td>11 orders were unusually large.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Sample vs population SD</h3>
+
+  <div class="div_p">
+    <p>stats.js divides by n - 1 by default (the <b>sample</b> SD). That's what R sd(), Excel STDEV.S, pandas and Google Sheets STDEV use. Use <b>{ sample: false }</b> to divide by n (Excel STDEV.P, NumPy's default std) only when you have every value there will ever be. Dashboards almost always want the sample version.</p>
+  </div>
+
+  <pre class="mycodejs">
+<span>// Runs on its own next to the dashboard-kit folder: node sd-check.js</span>
+<span>import { standardDeviation } from "./dashboard-kit/stats.js";</span>
+<span></span>
+<span>const values = [2, 4, 4, 4, 5, 5, 7, 9];</span>
+<span></span>
+<span>// sample: divides by n - 1 (R sd, Excel STDEV.S). Prints 2.138...</span>
+<span>console.log(standardDeviation(values));</span>
+<span></span>
+<span>// population: divides by n (Excel STDEV.P). Prints 2</span>
+<span>console.log(standardDeviation(values, { sample: false }));</span></pre>
+  <h3>Quick checks that use your stats skills</h3>
+
+  <div class="div_p">
+    <ul>
+      <li><b>Mean much bigger than median</b> = right skew (common for money: orders, income, time on page). Report the median as the typical value.</li>
+      <li><b>In a normal distribution</b> about 68% of values are within 1 SD of the mean, 95% within 2 SD, and 99.7% within 3 SD.</li>
+      <li><b>Also in a normal distribution</b> the IQR is about 1.35 x SD. If IQR / SD is far from 1.35, the data is probably not normal.</li>
+      <li>The bell curve on the chart is a <b>comparison</b>, not proof. For a real test, run shapiro.test(x) or qqnorm(x); qqline(x) in R.</li>
+    </ul>
+  </div>
+
+  <h2 id="quartile-methods">Why Q1 And Q3 Can Differ Between Tools</h2>
+
+  <div class="div_p">
+    <p>There is more than one accepted way to calculate a quartile when it falls between two values. Hyndman and Fan (1996) list nine. With big datasets the answers are almost the same. With small ones they can differ, so say which method you used if a client compares with Excel.</p>
+    <p>stats.js uses <b>type 7</b>: the default in R, NumPy and pandas, and the same as Excel QUARTILE.INC and PERCENTILE.INC.</p>
+  </div>
+
+  <div class="div_p">
+    <table class="table table-bordered table-condensed">
+      <thead><tr><th>Tool</th><th>Function</th><th>Method</th></tr></thead>
+      <tbody>
+        <tr><td>R</td><td>quantile(x) (default)</td><td>type 7</td></tr>
+        <tr><td>NumPy / pandas</td><td>np.quantile, Series.quantile (default)</td><td>type 7 (linear)</td></tr>
+        <tr><td>Excel / Google Sheets</td><td>QUARTILE.INC, PERCENTILE.INC, QUARTILE</td><td>type 7</td></tr>
+        <tr><td>Excel</td><td>QUARTILE.EXC, PERCENTILE.EXC</td><td>type 6</td></tr>
+        <tr><td>SPSS, Minitab</td><td>default</td><td>type 6</td></tr>
+        <tr><td>stats.js</td><td>quantile(values, p)</td><td>type 7</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="div_p">
+    <p>Example: for 2, 4, 4, 4, 5, 5, 7, 9, type 7 gives Q1 = 4 and Q3 = 5.5 (R, NumPy and stats.js agree).</p>
+  </div>
+
+  <h2 id="stats-js">stats.js</h2>
+
+  <div class="div_p">
+    <p>Plain JavaScript with no libraries, so it also works in Node or a server route. Every function takes an array of numbers. Run cleanNumbers first (describe does it for you) so blanks, null and NA don't turn everything into NaN.</p>
+    <p>The histogram picks its number of bins with the Freedman-Diaconis rule: bin width = 2 x IQR / cube root of n. It uses the IQR, so a few extreme values don't squash all the bars together. It's the same rule as NumPy's bins='fd' and gave the same bin counts in testing.</p>
+  </div>
+
+  <h3>src/dashboard-kit/stats.js</h3>
+
+  <pre class="mycodejs">
+<span>// stats.js: descriptive statistics for dashboards. Plain JavaScript, no React,</span>
+<span>// no libraries, so it works in React, Node, or a plain &lt;script&gt;.</span>
+<span>// Every function takes an array of numbers. Missing values (null, &quot;&quot;, &quot;NA&quot;, NaN)</span>
+<span>// are removed first by cleanNumbers.</span>
+<span>//</span>
+<span>// Matches R&#x27;s defaults: sd() and var() divide by n - 1, quantile() uses type 7.</span>
+<span></span>
+<span>// ---------- Cleaning ----------</span>
+<span></span>
+<span>// [3, &quot;4&quot;, null, &quot;NA&quot;, NaN, 5]  -&gt;  [3, 4, 5]</span>
+<span>export function cleanNumbers(values) {</span>
+<span>  return values</span>
+<span>    .filter((value) =&gt; value !== null &amp;&amp; value !== &quot;&quot; &amp;&amp; value !== &quot;NA&quot;)</span>
+<span>    .map(Number)</span>
+<span>    .filter(Number.isFinite);</span>
+<span>}</span>
+<span></span>
+<span>// Sorted copy, smallest first (never changes the original array).</span>
+<span>function sorted(values) {</span>
+<span>  return [...values].sort((a, b) =&gt; a - b);</span>
+<span>}</span>
+<span></span>
+<span>// ---------- Center ----------</span>
+<span></span>
+<span>export function mean(values) {</span>
+<span>  return values.reduce((sum, value) =&gt; sum + value, 0) / values.length;</span>
+<span>}</span>
+<span></span>
+<span>export function median(values) {</span>
+<span>  return quantile(values, 0.5);</span>
+<span>}</span>
+<span></span>
+<span>// ---------- Spread ----------</span>
+<span></span>
+<span>// sample: true divides by n - 1 (what R, Excel STDEV.S and pandas use).</span>
+<span>// sample: false divides by n (Excel STDEV.P), for when you have every value there is.</span>
+<span>export function variance(values, { sample = true } = {}) {</span>
+<span>  const m = mean(values);</span>
+<span>  const squares = values.reduce((sum, value) =&gt; sum + (value - m) ** 2, 0);</span>
+<span>  return squares / (values.length - (sample ? 1 : 0));</span>
+<span>}</span>
+<span></span>
+<span>export function standardDeviation(values, options) {</span>
+<span>  return Math.sqrt(variance(values, options));</span>
+<span>}</span>
+<span></span>
+<span>// p between 0 and 1. quantile(x, 0.25) is Q1, quantile(x, 0.75) is Q3.</span>
+<span>// Type 7 (Hyndman and Fan): the default in R, NumPy, pandas and Excel QUARTILE.INC.</span>
+<span>export function quantile(values, p) {</span>
+<span>  const s = sorted(values);</span>
+<span>  const position = (s.length - 1) * p;   // where p falls between the sorted values</span>
+<span>  const below = Math.floor(position);</span>
+<span>  const above = Math.ceil(position);</span>
+<span>  const weight = position - below;       // how far past &quot;below&quot; it sits</span>
+<span>  return s[below] + (s[above] - s[below]) * weight;</span>
+<span>}</span>
+<span></span>
+<span>// The middle 50% of the data: Q3 - Q1. Not pulled around by extreme values.</span>
+<span>export function iqr(values) {</span>
+<span>  return quantile(values, 0.75) - quantile(values, 0.25);</span>
+<span>}</span>
+<span></span>
+<span>// The full spread: biggest minus smallest. One extreme value changes it a lot.</span>
+<span>export function range(values) {</span>
+<span>  return Math.max(...values) - Math.min(...values);</span>
+<span>}</span>
+<span></span>
+<span>// ---------- Shape ----------</span>
+<span></span>
+<span>// Sample skewness (the adjusted Fisher-Pearson version, same as Excel SKEW).</span>
+<span>// About 0 = symmetric. Positive = long tail to the right. Negative = long tail to the left.</span>
+<span>export function skewness(values) {</span>
+<span>  const n = values.length;</span>
+<span>  const m = mean(values);</span>
+<span>  const sd = standardDeviation(values);</span>
+<span>  const cubes = values.reduce((sum, value) =&gt; sum + ((value - m) / sd) ** 3, 0);</span>
+<span>  return (n / ((n - 1) * (n - 2))) * cubes;</span>
+<span>}</span>
+<span></span>
+<span>// How many standard deviations a value is from the mean.</span>
+<span>export function zScore(value, m, sd) {</span>
+<span>  return (value - m) / sd;</span>
+<span>}</span>
+<span></span>
+<span>// ---------- Outliers (Tukey&#x27;s fences, the rule box plots use) ----------</span>
+<span></span>
+<span>export function outlierFences(values, k = 1.5) {</span>
+<span>  const q1 = quantile(values, 0.25);</span>
+<span>  const q3 = quantile(values, 0.75);</span>
+<span>  const spread = q3 - q1;</span>
+<span>  return { low: q1 - k * spread, high: q3 + k * spread };</span>
+<span>}</span>
+<span></span>
+<span>export function outliers(values, k = 1.5) {</span>
+<span>  const { low, high } = outlierFences(values, k);</span>
+<span>  return values.filter((value) =&gt; value &lt; low || value &gt; high);</span>
+<span>}</span>
+<span></span>
+<span>// ---------- Everything at once ----------</span>
+<span></span>
+<span>export function describe(rawValues) {</span>
+<span>  const values = cleanNumbers(rawValues);</span>
+<span>  const fences = outlierFences(values);</span>
+<span>  return {</span>
+<span>    count: values.length,</span>
+<span>    missing: rawValues.length - values.length,</span>
+<span>    mean: mean(values),</span>
+<span>    median: median(values),</span>
+<span>    sd: standardDeviation(values),</span>
+<span>    min: Math.min(...values),</span>
+<span>    q1: quantile(values, 0.25),</span>
+<span>    q3: quantile(values, 0.75),</span>
+<span>    max: Math.max(...values),</span>
+<span>    iqr: iqr(values),</span>
+<span>    range: range(values),</span>
+<span>    skewness: skewness(values),</span>
+<span>    fences,</span>
+<span>    outliers: values.filter((value) =&gt; value &lt; fences.low || value &gt; fences.high),</span>
+<span>  };</span>
+<span>}</span>
+<span></span>
+<span>// ---------- Histogram and normal curve ----------</span>
+<span></span>
+<span>// Bin width from the Freedman-Diaconis rule: 2 * IQR / cube root of n.</span>
+<span>// It uses the IQR, so a few extreme values don&#x27;t wreck the bins.</span>
+<span>// Falls back to Sturges&#x27; rule if the IQR is 0 (lots of identical values).</span>
+<span>export function binCount(values) {</span>
+<span>  const n = values.length;</span>
+<span>  const width = (2 * iqr(values)) / Math.cbrt(n);</span>
+<span>  const spread = range(values);</span>
+<span>  if (width &lt;= 0 || spread === 0) return Math.max(1, Math.ceil(Math.log2(n) + 1));</span>
+<span>  return Math.min(60, Math.max(5, Math.ceil(spread / width)));</span>
+<span>}</span>
+<span></span>
+<span>// Splits the values into equal-width bins.</span>
+<span>// Returns [{ start, end, mid, count }, ...]</span>
+<span>export function histogram(values, bins = binCount(values)) {</span>
+<span>  const min = Math.min(...values);</span>
+<span>  const max = Math.max(...values);</span>
+<span>  const width = (max - min) / bins || 1;</span>
+<span>  const result = Array.from({ length: bins }, (_, i) =&gt; ({</span>
+<span>    start: min + i * width,</span>
+<span>    end: min + (i + 1) * width,</span>
+<span>    mid: min + (i + 0.5) * width,</span>
+<span>    count: 0,</span>
+<span>  }));</span>
+<span>  values.forEach((value) =&gt; {</span>
+<span>    // The max value belongs in the last bin, not one past it.</span>
+<span>    const index = Math.min(bins - 1, Math.floor((value - min) / width));</span>
+<span>    result[index].count += 1;</span>
+<span>  });</span>
+<span>  return result;</span>
+<span>}</span>
+<span></span>
+<span>// Height of the normal (bell) curve at x.</span>
+<span>export function normalPdf(x, m, sd) {</span>
+<span>  return Math.exp(-0.5 * ((x - m) / sd) ** 2) / (sd * Math.sqrt(2 * Math.PI));</span>
+<span>}</span></pre>
+  <h3>Using it</h3>
+
+  <pre class="mycodejs">
+<span>import { describe, quantile, cleanNumbers } from "./dashboard-kit/stats.js";</span>
+<span></span>
+<span>// "NA" and null are missing values. describe takes them out for you.</span>
+<span>const orderTotals = [12.5, 8, "NA", 9.25, 48, null, 11];</span>
+<span></span>
+<span>const s = describe(orderTotals);</span>
+<span>// s.count 5, s.missing 2, s.mean, s.median, s.sd, s.q1, s.q3, s.iqr, s.range, s.outliers ...</span>
+<span>console.log(s.count, s.missing, s.median); // 5 2 11</span>
+<span></span>
+<span>// quantile does not clean the values itself, so run cleanNumbers first.</span>
+<span>const p90 = quantile(cleanNumbers(orderTotals), 0.9); // 90th percentile</span>
+<span>console.log(p90); // about 33.8</span></pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> With no values at all, describe gives back null for the mean, the median, and the quartiles. With only one value, sd is null. Check s.count before you show the numbers, or the page prints the word null.</p>
+  </div>
+  <h3>Check it against R</h3>
+
+  <pre class="mycodecli">
+<span>x &lt;- c(2, 4, 4, 4, 5, 5, 7, 9)</span>
+<span>mean(x); median(x); sd(x); IQR(x); diff(range(x))</span>
+<span>quantile(x, c(0.25, 0.75))   # type 7, same as stats.js</span></pre>
+  <h2 id="reading-a-distribution">Reading A Distribution</h2>
+
+  <div class="div_p">
+    <ul>
+      <li><b>Blue bars:</b> how many values fall in each range (a histogram).</li>
+      <li><b>Orange curve:</b> a normal distribution with the same mean and SD, scaled to counts (density x n x bin width) so it shares the bars' y-axis.</li>
+      <li><b>Solid line = mean, dashed line = median.</b> If they are far apart, the data is skewed.</li>
+      <li><b>Dark band = IQR</b> (Q1 to Q3, the middle 50%). <b>Light band</b> = mean plus or minus 1 SD.</li>
+      <li><b>Bars far from the curve</b> mean the data isn't normal. That's normal for money! Talk in medians and IQRs then.</li>
+    </ul>
+  </div>
+
+  <h2 id="distribution-chart">Histogram With A Normal Curve</h2>
+
+  <div class="div_p">
+    <p>Recharts has no histogram chart, so this one combines two x-axes in a ComposedChart. The bars sit on a hidden category axis (one slot per bin). The curve, the lines and the shaded bands sit on a number axis with the same start and end. With no padding the two line up exactly (tested: within 0.13 pixels).</p>
+    <p>Hover a bar to see its range, its count and its share of all values. Every mark is named in the key under the chart, so nothing depends on color alone.</p>
+  </div>
+
+  <h3>src/dashboard-kit/DistributionChart.jsx</h3>
+
+  <pre class="mycodereact">
+<span>// DistributionChart.jsx: histogram + normal (bell) curve, with the mean, the median,</span>
+<span>// +/- 1 standard deviation and the IQR (middle 50%) marked. Built with Recharts 3.3+.</span>
+<span>//</span>
+<span>// Use it:  &lt;DistributionChart values={orderTotals} unit=&quot;$&quot; label=&quot;Order total&quot; /&gt;</span>
+<span>//</span>
+<span>// How it lines up: the bars use a hidden category axis (one slot per bin) and the</span>
+<span>// curve and markers use a number axis with the same start and end. With no padding,</span>
+<span>// slot i covers exactly the same stretch of the chart as bin i, so they match.</span>
+<span>import {</span>
+<span>  Bar,</span>
+<span>  CartesianGrid,</span>
+<span>  ComposedChart,</span>
+<span>  Line,</span>
+<span>  ReferenceArea,</span>
+<span>  ReferenceLine,</span>
+<span>  Tooltip,</span>
+<span>  XAxis,</span>
+<span>  YAxis,</span>
+<span>} from &quot;recharts&quot;;</span>
+<span>import { cleanNumbers, describe, histogram, normalPdf } from &quot;./stats.js&quot;;</span>
+<span></span>
+<span>const COLORS = {</span>
+<span>  bars: &quot;#3987e5&quot;,    // blue</span>
+<span>  curve: &quot;#eb6834&quot;,   // orange</span>
+<span>  mean: &quot;#111827&quot;,    // near black, solid line</span>
+<span>  median: &quot;#6b7280&quot;,  // gray, dashed line</span>
+<span>  band: &quot;#9ca3af&quot;,    // gray shading</span>
+<span>};</span>
+<span></span>
+<span>export default function DistributionChart({ values, label = &quot;Value&quot;, unit = &quot;&quot;, decimals = 0, height = 320 }) {</span>
+<span>  const data = cleanNumbers(values);</span>
+<span>  if (data.length &lt; 3) return &lt;p&gt;Not enough data to show a distribution (need at least 3 values).&lt;/p&gt;;</span>
+<span></span>
+<span>  const s = describe(data);</span>
+<span>  const bins = histogram(data);</span>
+<span>  const binWidth = bins[0].end - bins[0].start;</span>
+<span>  const start = bins[0].start;</span>
+<span>  const end = bins[bins.length - 1].end;</span>
+<span></span>
+<span>  // Bell curve sampled at 100 points across the same range as the bars.</span>
+<span>  // normalPdf * count * binWidth = &quot;how many values we&#x27;d expect in a bin here&quot;.</span>
+<span>  const curve = Array.from({ length: 100 }, (_, i) =&gt; {</span>
+<span>    const x = start + ((end - start) * i) / 99;</span>
+<span>    return { x, expected: normalPdf(x, s.mean, s.sd) * data.length * binWidth };</span>
+<span>  });</span>
+<span></span>
+<span>  // Round tick values for the bottom axis, like 0, 10, 20, 30.</span>
+<span>  const ticks = niceTicks(start, end);</span>
+<span></span>
+<span>  const format = (n) =&gt; `${unit}${n.toLocaleString(&quot;en-US&quot;, { maximumFractionDigits: decimals })}`;</span>
+<span>  const bars = bins.map((bin, i) =&gt; ({ ...bin, slot: i, label: `${format(bin.start)} to ${format(bin.end)}` }));</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;figure className=&quot;distribution print-keep&quot; style={{ margin: 0 }}&gt;</span>
+<span>      &lt;ComposedChart</span>
+<span>        style={{ width: &quot;100%&quot;, height }}</span>
+<span>        responsive</span>
+<span>        data={bars}</span>
+<span>        margin={{ top: 12, right: 24, bottom: 28, left: 8 }}</span>
+<span>        barCategoryGap={1}</span>
+<span>      &gt;</span>
+<span>        &lt;CartesianGrid vertical={false} stroke=&quot;#e5e7eb&quot; /&gt;</span>
+<span></span>
+<span>        {/* Hidden slot axis for the bars. */}</span>
+<span>        &lt;XAxis xAxisId=&quot;bins&quot; dataKey=&quot;slot&quot; type=&quot;category&quot; hide padding={{ left: 0, right: 0 }} /&gt;</span>
+<span></span>
+<span>        {/* Visible number axis for the curve, the markers and the tick labels. */}</span>
+<span>        &lt;XAxis</span>
+<span>          xAxisId=&quot;num&quot;</span>
+<span>          type=&quot;number&quot;</span>
+<span>          dataKey=&quot;x&quot;</span>
+<span>          domain={[start, end]}</span>
+<span>          allowDataOverflow</span>
+<span>          tickFormatter={format}</span>
+<span>          ticks={ticks}</span>
+<span>          height={30}</span>
+<span>          stroke=&quot;#9ca3af&quot;</span>
+<span>        /&gt;</span>
+<span>        &lt;YAxis allowDecimals={false} stroke=&quot;#9ca3af&quot; width={44} label={{ value: &quot;Count&quot;, angle: -90, position: &quot;insideLeft&quot; }} /&gt;</span>
+<span></span>
+<span>        {/* Shaded bands: middle 50% (IQR), then mean +/- 1 SD as a lighter band. */}</span>
+<span>        &lt;ReferenceArea xAxisId=&quot;num&quot; x1={Math.max(start, s.mean - s.sd)} x2={Math.min(end, s.mean + s.sd)} fill={COLORS.band} fillOpacity={0.12} /&gt;</span>
+<span>        &lt;ReferenceArea xAxisId=&quot;num&quot; x1={s.q1} x2={s.q3} fill={COLORS.band} fillOpacity={0.22} /&gt;</span>
+<span></span>
+<span>        &lt;Bar xAxisId=&quot;bins&quot; dataKey=&quot;count&quot; name=&quot;Count&quot; fill={COLORS.bars} radius={[3, 3, 0, 0]} isAnimationActive={false} /&gt;</span>
+<span></span>
+<span>        &lt;Line</span>
+<span>          xAxisId=&quot;num&quot;</span>
+<span>          data={curve}</span>
+<span>          dataKey=&quot;expected&quot;</span>
+<span>          name=&quot;Normal curve&quot;</span>
+<span>          type=&quot;monotone&quot;</span>
+<span>          stroke={COLORS.curve}</span>
+<span>          strokeWidth={2}</span>
+<span>          dot={false}</span>
+<span>          activeDot={false}</span>
+<span>          isAnimationActive={false}</span>
+<span>        /&gt;</span>
+<span></span>
+<span>                {/* Mean = solid line, median = dashed line. Their values are in the key below,</span>
+<span>            because labels on the lines collide when the two are close together. */}</span>
+<span>        &lt;ReferenceLine xAxisId=&quot;num&quot; x={s.mean} stroke={COLORS.mean} strokeWidth={2} /&gt;</span>
+<span>        &lt;ReferenceLine xAxisId=&quot;num&quot; x={s.median} stroke={COLORS.median} strokeWidth={2} strokeDasharray=&quot;5 4&quot; /&gt;</span>
+<span></span>
+<span>        &lt;Tooltip content={&lt;BinTooltip total={data.length} /&gt;} cursor={{ fill: &quot;rgba(0,0,0,0.05)&quot; }} /&gt;</span>
+<span>      &lt;/ComposedChart&gt;</span>
+<span></span>
+<span>      {/* Key: every mark explained in words, so nothing depends on color alone. */}</span>
+<span>      &lt;figcaption style={{ display: &quot;flex&quot;, flexWrap: &quot;wrap&quot;, gap: &quot;6px 18px&quot;, fontSize: 13, color: &quot;#374151&quot; }}&gt;</span>
+<span>        &lt;span&gt;&lt;Swatch color={COLORS.bars} /&gt; {label} counts&lt;/span&gt;</span>
+<span>        &lt;span&gt;&lt;Swatch color={COLORS.curve} line /&gt; Normal curve (same mean and SD)&lt;/span&gt;</span>
+<span>        &lt;span&gt;&lt;Swatch color={COLORS.mean} line /&gt; Mean {format(s.mean)}&lt;/span&gt;</span>
+<span>        &lt;span&gt;&lt;Swatch color={COLORS.median} line dashed /&gt; Median {format(s.median)}&lt;/span&gt;</span>
+<span>        &lt;span&gt;&lt;Swatch color={COLORS.band} faded={0.45} /&gt; Middle 50% (IQR) {format(s.q1)} to {format(s.q3)}&lt;/span&gt;</span>
+<span>        &lt;span&gt;&lt;Swatch color={COLORS.band} faded={0.2} /&gt; Within 1 SD ({format(s.sd)}) of the mean&lt;/span&gt;</span>
+<span>      &lt;/figcaption&gt;</span>
+<span>    &lt;/figure&gt;</span>
+<span>  );</span>
+<span>}</span>
+<span></span>
+<span>// Small color key used in the caption.</span>
+<span>function Swatch({ color, line = false, dashed = false, faded = 1 }) {</span>
+<span>  const style = line</span>
+<span>    ? { display: &quot;inline-block&quot;, width: 18, height: 0, borderTop: `${dashed ? &quot;2px dashed&quot; : &quot;3px solid&quot;} ${color}`, verticalAlign: &quot;middle&quot; }</span>
+<span>    : { display: &quot;inline-block&quot;, width: 12, height: 12, borderRadius: 2, background: color, opacity: faded, verticalAlign: &quot;middle&quot; };</span>
+<span>  return &lt;span aria-hidden=&quot;true&quot; style={style} /&gt;;</span>
+<span>}</span>
+<span></span>
+<span>// Hover box for one bar: the range, the count, and its share of all values.</span>
+<span>function BinTooltip({ active, payload, total }) {</span>
+<span>  if (!active || !payload?.length) return null;</span>
+<span>  const bin = payload.find((item) =&gt; item.dataKey === &quot;count&quot;)?.payload;</span>
+<span>  if (!bin) return null;</span>
+<span>  return (</span>
+<span>    &lt;div style={{ background: &quot;#fff&quot;, border: &quot;1px solid #d1d5db&quot;, borderRadius: 6, padding: &quot;6px 10px&quot;, fontSize: 13 }}&gt;</span>
+<span>      &lt;strong&gt;{bin.count} values&lt;/strong&gt; ({Math.round((bin.count / total) * 100)}%)</span>
+<span>      &lt;div style={{ color: &quot;#4b5563&quot; }}&gt;{bin.label}&lt;/div&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>}</span>
+<span></span>
+<span>// Picks about 6 round numbers between start and end (steps of 1, 2, 2.5 or 5 x 10^n).</span>
+<span>function niceTicks(start, end, count = 6) {</span>
+<span>  const rough = (end - start) / count;</span>
+<span>  const power = 10 ** Math.floor(Math.log10(rough));</span>
+<span>  const step = [1, 2, 2.5, 5, 10].map((m) =&gt; m * power).find((m) =&gt; m &gt;= rough);</span>
+<span>  const first = Math.ceil(start / step) * step;</span>
+<span>  const ticks = [];</span>
+<span>  for (let t = first; t &lt;= end + step * 1e-9; t += step) ticks.push(Number(t.toFixed(10)));</span>
+<span>  return ticks;</span>
+<span>}</span></pre>
+  <div class="div_p">
+    <table class="table table-bordered table-condensed">
+      <thead><tr><th>Prop</th><th>What it does</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>values</td><td>the numbers (blanks and NA are removed)</td><td>values={orderTotals}</td></tr>
+        <tr><td>label</td><td>name shown in the key</td><td>label="Order total"</td></tr>
+        <tr><td>unit</td><td>put in front of every number</td><td>unit="$"</td></tr>
+        <tr><td>decimals</td><td>decimal places in labels</td><td>decimals={2}</td></tr>
+        <tr><td>height</td><td>chart height in pixels</td><td>height={360}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="box-plot">Box Plot</h2>
+
+  <div class="div_p">
+    <p>Shows the five-number summary in one line: the box is Q1 to Q3 (its width is the IQR), the thick line is the median, the whiskers reach the furthest values that are not outliers, circles are outliers, and the orange diamond is the mean. It's plain SVG with a viewBox, so it needs no library and fits any screen or page.</p>
+  </div>
+
+  <h3>src/dashboard-kit/BoxPlot.jsx</h3>
+
+  <pre class="mycodereact">
+<span>// BoxPlot.jsx: a horizontal box plot in plain SVG (no library needed).</span>
+<span>//   box      = Q1 to Q3, the middle 50% (its width is the IQR)</span>
+<span>//   line     = the median</span>
+<span>//   whiskers = the smallest and largest values that are NOT outliers</span>
+<span>//   dots     = outliers (beyond 1.5 x IQR past the box: Tukey&#x27;s rule)</span>
+<span>//   diamond  = the mean</span>
+<span>//</span>
+<span>// Use it:  &lt;BoxPlot values={orderTotals} unit=&quot;$&quot; /&gt;</span>
+<span>import { cleanNumbers, describe } from &quot;./stats.js&quot;;</span>
+<span></span>
+<span>export default function BoxPlot({ values, unit = &quot;&quot;, decimals = 0, color = &quot;#3987e5&quot; }) {</span>
+<span>  const data = cleanNumbers(values);</span>
+<span>  if (data.length &lt; 3) return null;</span>
+<span>  const s = describe(data);</span>
+<span></span>
+<span>  // Whiskers stop at the last real value inside the fences.</span>
+<span>  const inside = data.filter((v) =&gt; v &gt;= s.fences.low &amp;&amp; v &lt;= s.fences.high);</span>
+<span>  const whiskerLow = Math.min(...inside);</span>
+<span>  const whiskerHigh = Math.max(...inside);</span>
+<span></span>
+<span>  // The SVG is 1000 units wide and stretches to fit its box (viewBox),</span>
+<span>  // so it works at any screen size and on paper.</span>
+<span>  const W = 1000;</span>
+<span>  const pad = 40;</span>
+<span>  const x = (v) =&gt; pad + ((v - s.min) / (s.max - s.min || 1)) * (W - pad * 2);</span>
+<span>  const format = (n) =&gt; `${unit}${n.toLocaleString(&quot;en-US&quot;, { maximumFractionDigits: decimals })}`;</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;figure className=&quot;print-keep&quot; style={{ margin: 0 }}&gt;</span>
+<span>      &lt;svg viewBox={`0 0 ${W} 130`} width=&quot;100%&quot; role=&quot;img&quot; aria-label={`Box plot. Median ${format(s.median)}, middle 50% from ${format(s.q1)} to ${format(s.q3)}.`}&gt;</span>
+<span>        {/* whisker line */}</span>
+<span>        &lt;line x1={x(whiskerLow)} x2={x(whiskerHigh)} y1=&quot;50&quot; y2=&quot;50&quot; stroke=&quot;#6b7280&quot; strokeWidth=&quot;2&quot; /&gt;</span>
+<span>        &lt;line x1={x(whiskerLow)} x2={x(whiskerLow)} y1=&quot;35&quot; y2=&quot;65&quot; stroke=&quot;#6b7280&quot; strokeWidth=&quot;2&quot; /&gt;</span>
+<span>        &lt;line x1={x(whiskerHigh)} x2={x(whiskerHigh)} y1=&quot;35&quot; y2=&quot;65&quot; stroke=&quot;#6b7280&quot; strokeWidth=&quot;2&quot; /&gt;</span>
+<span></span>
+<span>        {/* the box: Q1 to Q3 */}</span>
+<span>        &lt;rect x={x(s.q1)} y=&quot;25&quot; width={x(s.q3) - x(s.q1)} height=&quot;50&quot; rx=&quot;4&quot; fill={color} fillOpacity=&quot;0.25&quot; stroke={color} strokeWidth=&quot;2&quot; /&gt;</span>
+<span></span>
+<span>        {/* median line */}</span>
+<span>        &lt;line x1={x(s.median)} x2={x(s.median)} y1=&quot;25&quot; y2=&quot;75&quot; stroke=&quot;#111827&quot; strokeWidth=&quot;3&quot; /&gt;</span>
+<span></span>
+<span>        {/* mean diamond */}</span>
+<span>        &lt;path d={`M ${x(s.mean)} 40 l 10 10 l -10 10 l -10 -10 z`} fill=&quot;#eb6834&quot; /&gt;</span>
+<span></span>
+<span>        {/* outliers */}</span>
+<span>        {s.outliers.map((v, i) =&gt; (</span>
+<span>          &lt;circle key={i} cx={x(v)} cy=&quot;50&quot; r=&quot;6&quot; fill=&quot;none&quot; stroke=&quot;#111827&quot; strokeWidth=&quot;2&quot; /&gt;</span>
+<span>        ))}</span>
+<span></span>
+<span>        {/* labels under the plot */}</span>
+<span>        &lt;text x={x(s.q1)} y=&quot;100&quot; textAnchor=&quot;middle&quot; fontSize=&quot;20&quot; fill=&quot;#374151&quot;&gt;Q1 {format(s.q1)}&lt;/text&gt;</span>
+<span>        &lt;text x={x(s.q3)} y=&quot;100&quot; textAnchor=&quot;middle&quot; fontSize=&quot;20&quot; fill=&quot;#374151&quot;&gt;Q3 {format(s.q3)}&lt;/text&gt;</span>
+<span>        &lt;text x={x(s.min)} y=&quot;125&quot; textAnchor=&quot;start&quot; fontSize=&quot;18&quot; fill=&quot;#6b7280&quot;&gt;Min {format(s.min)}&lt;/text&gt;</span>
+<span>        &lt;text x={x(s.max)} y=&quot;125&quot; textAnchor=&quot;end&quot; fontSize=&quot;18&quot; fill=&quot;#6b7280&quot;&gt;Max {format(s.max)}&lt;/text&gt;</span>
+<span>      &lt;/svg&gt;</span>
+<span>    &lt;/figure&gt;</span>
+<span>  );</span>
+<span>}</span></pre>
+  <h2 id="spread-summary">Summary Table And Sentence</h2>
+
+  <div class="div_p">
+    <p>The numbers as a table, plus one sentence written by the code (no AI, so it's free and always matches the numbers). The sentence picks its words from the skewness and the quartiles.</p>
+  </div>
+
+  <h3>src/dashboard-kit/SpreadSummary.jsx</h3>
+
+  <pre class="mycodereact">
+<span>// SpreadSummary.jsx: the key numbers as a table, plus one plain-English sentence.</span>
+<span>// Prints well (tables never get cut in half thanks to print.css).</span>
+<span>//</span>
+<span>// Use it:  &lt;SpreadSummary values={orderTotals} unit=&quot;$&quot; decimals={2} /&gt;</span>
+<span>import { cleanNumbers, describe } from &quot;./stats.js&quot;;</span>
+<span></span>
+<span>export default function SpreadSummary({ values, unit = &quot;&quot;, decimals = 0 }) {</span>
+<span>  const data = cleanNumbers(values);</span>
+<span>  if (data.length &lt; 3) return null;</span>
+<span>  const s = describe(data);</span>
+<span>  const f = (n) =&gt; `${unit}${n.toLocaleString(&quot;en-US&quot;, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;</span>
+<span></span>
+<span>  const rows = [</span>
+<span>    [&quot;Count&quot;, s.count.toLocaleString(&quot;en-US&quot;) + (s.missing ? ` (${s.missing} missing left out)` : &quot;&quot;)],</span>
+<span>    [&quot;Mean (average)&quot;, f(s.mean)],</span>
+<span>    [&quot;Median (middle value)&quot;, f(s.median)],</span>
+<span>    [&quot;Standard deviation&quot;, f(s.sd)],</span>
+<span>    [&quot;IQR (middle 50%)&quot;, `${f(s.iqr)}  (${f(s.q1)} to ${f(s.q3)})`],</span>
+<span>    [&quot;Range (all values)&quot;, `${f(s.range)}  (${f(s.min)} to ${f(s.max)})`],</span>
+<span>    [&quot;Skewness&quot;, s.skewness.toFixed(2)],</span>
+<span>    [&quot;Outliers (Tukey 1.5 x IQR)&quot;, s.outliers.length.toString()],</span>
+<span>  ];</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;div className=&quot;print-keep&quot;&gt;</span>
+<span>      &lt;table style={{ width: &quot;100%&quot;, borderCollapse: &quot;collapse&quot;, fontSize: 14 }}&gt;</span>
+<span>        &lt;tbody&gt;</span>
+<span>          {rows.map(([name, value]) =&gt; (</span>
+<span>            &lt;tr key={name} style={{ borderBottom: &quot;1px solid #e5e7eb&quot; }}&gt;</span>
+<span>              &lt;th scope=&quot;row&quot; style={{ textAlign: &quot;left&quot;, padding: &quot;6px 8px&quot;, fontWeight: 600 }}&gt;{name}&lt;/th&gt;</span>
+<span>              &lt;td style={{ textAlign: &quot;right&quot;, padding: &quot;6px 8px&quot;, fontVariantNumeric: &quot;tabular-nums&quot; }}&gt;{value}&lt;/td&gt;</span>
+<span>            &lt;/tr&gt;</span>
+<span>          ))}</span>
+<span>        &lt;/tbody&gt;</span>
+<span>      &lt;/table&gt;</span>
+<span>      &lt;p style={{ fontSize: 14 }}&gt;{explainSpread(s, f)}&lt;/p&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>}</span>
+<span></span>
+<span>// One sentence a business owner can read. No AI: the numbers pick the words.</span>
+<span>export function explainSpread(s, f) {</span>
+<span>  let shape;</span>
+<span>  if (Math.abs(s.skewness) &lt; 0.5) shape = &quot;The values are fairly balanced around the middle&quot;;</span>
+<span>  else if (s.skewness &gt; 0) shape = `A few large values pull the average (${f(s.mean)}) above the typical value (${f(s.median)})`;</span>
+<span>  else shape = `A few small values pull the average (${f(s.mean)}) below the typical value (${f(s.median)})`;</span>
+<span>  const middle = `half of all values fall between ${f(s.q1)} and ${f(s.q3)}`;</span>
+<span>  const extra = s.outliers.length ? `, and ${s.outliers.length} unusual value${s.outliers.length === 1 ? &quot;&quot; : &quot;s&quot;} stand${s.outliers.length === 1 ? &quot;s&quot; : &quot;&quot;} out` : &quot;&quot;;</span>
+<span>  return `${shape}; ${middle}${extra}.`;</span>
+<span>}</span></pre>
+  <h2 id="line-and-bar-charts">Line Chart And Bar Chart</h2>
+
+  <div class="div_p">
+    <p>These are the line chart and bar chart from my REV dashboards, made with Recharts. The line chart shows a number over time, such as daily sales. The bar chart compares a few things, such as sales by category. ChartCard wraps either one with a title and a Show table button, so the same numbers can be read as rows. The What happened box, with its plain-English sentences, is here too.</p>
+    <p>The four chart files are copied from REV with no changes. charts.css and the demo page were written for this starter, then built and checked in the browser on 12 Nov 2026 with React 19.2, Recharts 3.10.1 and Vite 7: light and dark mode, phone width, the hover boxes and the table switch.</p>
+    <p>They are in <b>starters/dashboard-kit/src/charts</b>. The Tailwind version of ChartCard is on the <a href="tailwind_page.html#charts-with-recharts">Tailwind page</a>.</p>
+  </div>
+
+  <pre class="mycodefile">
+<span>src/</span>
+<span>  ChartsDemo.jsx       a page that uses all of them</span>
+<span>  charts/</span>
+<span>    scale.js           axis steps, money, numbers and dates</span>
+<span>    LineChart.jsx      one or more lines over time (Recharts)</span>
+<span>    BarChart.jsx       sideways bars with the value at the end (Recharts)</span>
+<span>    ChartCard.jsx      title, Show table button and the table</span>
+<span>    charts.css         colors and styles for all of them</span>
+<span>    WhatHappened.jsx   the box of plain-English sentences above the charts</span>
+<span>    what-happened.css  styles for that box</span></pre>
+
+  <h3>src/charts/scale.js</h3>
+
+  <div class="div_p">
+    <p>Shared math and formatting. niceTicks picks round steps for the axis, such as $0, $500, $1K, instead of odd numbers.</p>
+  </div>
+
+  <pre class="mycodejs">
+<span>// Math and formatting shared by the charts.</span>
+<span></span>
+<span>// Round axis ticks: niceTicks(0, 1834, 4) -&gt; [0, 500, 1000, 1500, 2000]</span>
+<span>export function niceTicks(min, max, count = 4) {</span>
+<span>  if (max &lt;= min) return [min, min + 1];</span>
+<span>  const rough = (max - min) / count;</span>
+<span>  const power = 10 ** Math.floor(Math.log10(rough));</span>
+<span>  const step = [1, 2, 2.5, 5, 10].map((m) =&gt; m * power).find((candidate) =&gt; candidate &gt;= rough) ?? 10 * power;</span>
+<span>  const start = Math.floor(min / step) * step;</span>
+<span>  const ticks = [];</span>
+<span>  for (let value = start; value &lt; max + step * 0.999; value += step) ticks.push(Number(value.toFixed(10)));</span>
+<span>  return ticks;</span>
+<span>}</span>
+<span></span>
+<span>// 1,284 / 12.9K / 4.2M</span>
+<span>export function compactNumber(value) {</span>
+<span>  return new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 }).format(value);</span>
+<span>}</span>
+<span></span>
+<span>export function fullNumber(value) {</span>
+<span>  return new Intl.NumberFormat("en-US").format(value);</span>
+<span>}</span>
+<span></span>
+<span>export function money(value, { compact = false, cents = false } = {}) {</span>
+<span>  return new Intl.NumberFormat("en-US", {</span>
+<span>    style: "currency",</span>
+<span>    currency: "USD",</span>
+<span>    notation: compact ? "compact" : "standard",</span>
+<span>    maximumFractionDigits: compact ? 1 : cents ? 2 : 0,</span>
+<span>    minimumFractionDigits: cents &amp;&amp; !compact ? 2 : 0,</span>
+<span>  }).format(value);</span>
+<span>}</span>
+<span></span>
+<span>export function shortDate(date) {</span>
+<span>  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });</span>
+<span>}</span>
+<span></span>
+<span>export function longDate(date) {</span>
+<span>  return date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });</span>
+<span>}</span></pre>
+
+  <h3>src/charts/LineChart.jsx</h3>
+
+  <div class="div_p">
+    <p>Give it a list of dates and one or more lines. With two or more lines it adds a legend, so the lines are not told apart by color alone. The left and right arrow keys move through the days.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import {</span>
+<span>  CartesianGrid,</span>
+<span>  Legend,</span>
+<span>  Line,</span>
+<span>  LineChart as RechartsLineChart,</span>
+<span>  Tooltip,</span>
+<span>  XAxis,</span>
+<span>  YAxis,</span>
+<span>} from "recharts";</span>
+<span>import { longDate, niceTicks, shortDate } from "./scale.js";</span>
+<span></span>
+<span>export default function LineChart({</span>
+<span>  dates,</span>
+<span>  series,</span>
+<span>  formatValue,</span>
+<span>  formatTick = formatValue,</span>
+<span>  label,</span>
+<span>}) {</span>
+<span>  if (!dates.length || !series.length) {</span>
+<span>    return &lt;p&gt;No data for this period.&lt;/p&gt;;</span>
+<span>  }</span>
+<span></span>
+<span>  // Recharts wants one row per day, with a property for each line.</span>
+<span>  const rows = dates.map((_, index) =&gt; {</span>
+<span>    const row = { day: index };</span>
+<span></span>
+<span>    for (const line of series) {</span>
+<span>      row[line.key] = line.values[index];</span>
+<span>    }</span>
+<span>    return row;</span>
+<span>  });</span>
+<span></span>
+<span>  // Clean axis steps ($0, $1K, $2K...) instead of whatever Recharts picks.</span>
+<span>  // niceTicks is the same helper the old hand-made chart used.</span>
+<span>  const highest = Math.max(1, ...series.flatMap((line) =&gt; line.values));</span>
+<span>  const ticks = niceTicks(0, highest, 4);</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;RechartsLineChart</span>
+<span>      responsive</span>
+<span>      accessibilityLayer</span>
+<span>      title={label}</span>
+<span>      desc="Use the left and right arrow keys to explore each day."</span>
+<span>      data={rows}</span>
+<span>      style={{ width: "100%", height: 280 }}</span>
+<span>      margin={{ top: 12, right: 24, bottom: 4, left: 0 }}</span>
+<span>    &gt;</span>
+<span>      {/* vertical grid lines are distracting, so turn them off */}</span>
+<span>      &lt;CartesianGrid vertical={false} stroke="var(--grid)" /&gt;</span>
+<span>      &lt;XAxis</span>
+<span>        dataKey="day"</span>
+<span>        tickFormatter={(index) =&gt; shortDate(dates[index])}</span>
+<span>        tick={{ fill: "var(--muted)", fontSize: 12 }}</span>
+<span>        tickLine={false}</span>
+<span>        tickMargin={8}</span>
+<span>        minTickGap={18}</span>
+<span>        interval="preserveStartEnd"</span>
+<span>        axisLine={{ stroke: "var(--axis)" }}</span>
+<span>      /&gt;</span>
+<span>      &lt;YAxis</span>
+<span>        domain={[0, ticks[ticks.length - 1]]}</span>
+<span>        ticks={ticks}</span>
+<span>        width={60}</span>
+<span>        tickFormatter={formatTick}</span>
+<span>        tick={{ fill: "var(--muted)", fontSize: 12 }}</span>
+<span>        tickLine={false}</span>
+<span>        axisLine={false}</span>
+<span>      /&gt;</span>
+<span>      &lt;Tooltip</span>
+<span>        wrapperClassName="no-print"</span>
+<span>        isAnimationActive={false}</span>
+<span>        cursor={{ stroke: "var(--text-2)" }}</span>
+<span>        labelFormatter={(index) =&gt; {</span>
+<span>          const date = dates[index];</span>
+<span>          return date ? longDate(date) : "";</span>
+<span>        }}</span>
+<span>        formatter={(value, name) =&gt; [formatValue(value), name]}</span>
+<span>        separator=": "</span>
+<span>        contentStyle={{</span>
+<span>          backgroundColor: "var(--bg)",</span>
+<span>          border: "1px solid var(--line)",</span>
+<span>          borderRadius: "var(--radius)",</span>
+<span>        }}</span>
+<span>        labelStyle={{ color: "var(--muted)" }}</span>
+<span>        itemStyle={{ color: "var(--text)" }}</span>
+<span>      /&gt;</span>
+<span>      {/* Two or more lines (admin dashboard): a legend names each color,</span>
+<span>          so the lines aren't told apart by color alone. */}</span>
+<span>      {series.length &gt; 1 &amp;&amp; (</span>
+<span>        &lt;Legend</span>
+<span>          verticalAlign="top"</span>
+<span>          formatter={(name) =&gt; &lt;span style={{ color: "var(--text-2)" }}&gt;{name}&lt;/span&gt;}</span>
+<span>        /&gt;</span>
+<span>      )}</span>
+<span>      {series.map((line) =&gt; (</span>
+<span>        &lt;Line</span>
+<span>          key={line.key}</span>
+<span>          dataKey={line.key}</span>
+<span>          name={line.name}</span>
+<span>          type="linear"</span>
+<span>          stroke={line.color}</span>
+<span>          strokeWidth={2}</span>
+<span>          dot={false}</span>
+<span>          activeDot={{ r: 4, stroke: "var(--surface)", strokeWidth: 2 }}</span>
+<span>          isAnimationActive={false}</span>
+<span>        /&gt;</span>
+<span>      ))}</span>
+<span>    &lt;/RechartsLineChart&gt;</span>
+<span>  );</span>
+<span>}</span></pre>
+  <div class="div_p">
+    <table class="table table-bordered table-condensed">
+      <thead><tr><th>Prop</th><th>What it does</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>dates</td><td>one Date for each point</td><td>dates={days.map((day) =&gt; day.date)}</td></tr>
+        <tr><td>series</td><td>the lines: key, name, color and values</td><td>series={[{ key: &quot;sales&quot;, name: &quot;Sales&quot;, color: &quot;var(--series-1)&quot;, values }]}</td></tr>
+        <tr><td>formatValue</td><td>how a number looks in the hover box</td><td>formatValue={(value) =&gt; money(value)}</td></tr>
+        <tr><td>formatTick</td><td>how a number looks on the axis (optional)</td><td>formatTick={(value) =&gt; money(value, { compact: true })}</td></tr>
+        <tr><td>label</td><td>what a screen reader calls the chart</td><td>label=&quot;Daily sales&quot;</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>src/charts/BarChart.jsx</h3>
+
+  <div class="div_p">
+    <p>Give it a list of items, each with a label and a value. Each bar shows its value at the end. The hover box shows the share of the total, or with showShare off, how far it is above or below the average.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>import {</span>
+<span>  Bar,</span>
+<span>  BarChart as RechartsBarChart,</span>
+<span>  LabelList,</span>
+<span>  Tooltip,</span>
+<span>  XAxis,</span>
+<span>  YAxis,</span>
+<span>} from "recharts";</span>
+<span></span>
+<span>export default function BarChart({</span>
+<span>  items,</span>
+<span>  formatValue,</span>
+<span>  color = "var(--series-1)",</span>
+<span>  label,</span>
+<span>  showShare = true,</span>
+<span>}) {</span>
+<span>  if (!items.length) {</span>
+<span>    return &lt;p&gt;No data for this period.&lt;/p&gt;;</span>
+<span>  }</span>
+<span></span>
+<span>  const total = items.reduce((sum, item) =&gt; sum + item.value, 0);</span>
+<span>  const average = total / items.length;</span>
+<span>  const highest = Math.max(...items.map((item) =&gt; item.value));</span>
+<span>  const lowest = Math.min(...items.map((item) =&gt; item.value));</span>
+<span></span>
+<span>  const rows = items.map((item) =&gt; {</span>
+<span>    const share = total ? Math.round((item.value / total) * 100) : 0;</span>
+<span>    const difference = average</span>
+<span>      ? Math.round(((item.value - average) / average) * 100)</span>
+<span>      : 0;</span>
+<span></span>
+<span>    let comparison = "About the average";</span>
+<span>    if (difference &gt; 0) comparison = `${difference}% above the average`;</span>
+<span>    if (difference &lt; 0)</span>
+<span>      comparison = `${Math.abs(difference)}% below the average`;</span>
+<span></span>
+<span>    let rank = "";</span>
+<span></span>
+<span>    if (highest !== lowest &amp;&amp; item.value === highest) {</span>
+<span>      rank = "Highest. ";</span>
+<span>    }</span>
+<span>    if (highest !== lowest &amp;&amp; item.value === lowest) {</span>
+<span>      rank = "Lowest. ";</span>
+<span>    }</span>
+<span></span>
+<span>    return {</span>
+<span>      ...item,</span>
+<span>      detail: showShare ? `${share}% of the total` : `${rank}${comparison}`,</span>
+<span>    };</span>
+<span>  });</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;RechartsBarChart</span>
+<span>      responsive</span>
+<span>      accessibilityLayer</span>
+<span>      title={label}</span>
+<span>      desc="Use the left and right arrow keys to explore the bars."</span>
+<span>      layout="vertical"</span>
+<span>      data={rows}</span>
+<span>      style={{ width: "100%", height: rows.length * 36 + 16 }}</span>
+<span>      margin={{ top: 8, right: 72, bottom: 8, left: 0 }}</span>
+<span>    &gt;</span>
+<span>      &lt;XAxis type="number" domain={[0, "auto"]} hide /&gt;</span>
+<span></span>
+<span>      &lt;YAxis</span>
+<span>        type="category"</span>
+<span>        dataKey="label"</span>
+<span>        width={112}</span>
+<span>        tick={{ fill: "var(--text-2)", fontSize: 12 }}</span>
+<span>        tickLine={false}</span>
+<span>        axisLine={{ stroke: "var(--axis)" }}</span>
+<span>      /&gt;</span>
+<span></span>
+<span>      &lt;Tooltip</span>
+<span>        wrapperClassName="no-print"</span>
+<span>        isAnimationActive={false}</span>
+<span>        cursor={{ fill: "var(--surface-2)" }}</span>
+<span>        content={({ active, payload }) =&gt; {</span>
+<span>          const item = payload?.[0]?.payload;</span>
+<span>          if (!active || !item) return null;</span>
+<span></span>
+<span>          return (</span>
+<span>            &lt;div</span>
+<span>              className="chart-tooltip"</span>
+<span>              style={{ position: "static" }}</span>
+<span>              role="status"</span>
+<span>              aria-atomic="true"</span>
+<span>            &gt;</span>
+<span>              &lt;p className="chart-tooltip__date"&gt;{item.label}&lt;/p&gt;</span>
+<span>              &lt;p&gt;</span>
+<span>                &lt;strong&gt;{formatValue(item.value)}&lt;/strong&gt;</span>
+<span>              &lt;/p&gt;</span>
+<span>              &lt;p&gt;{item.detail}&lt;/p&gt;</span>
+<span>            &lt;/div&gt;</span>
+<span>          );</span>
+<span>        }}</span>
+<span>      /&gt;</span>
+<span></span>
+<span>      &lt;Bar</span>
+<span>        dataKey="value"</span>
+<span>        fill={color}</span>
+<span>        barSize={20}</span>
+<span>        radius={[0, 4, 4, 0]}</span>
+<span>        isAnimationActive={false}</span>
+<span>      &gt;</span>
+<span>        &lt;LabelList</span>
+<span>          dataKey="value"</span>
+<span>          position="right"</span>
+<span>          offset={8}</span>
+<span>          formatter={formatValue}</span>
+<span>          fill="var(--text)"</span>
+<span>          fontSize={12}</span>
+<span>          fontWeight={700}</span>
+<span>        /&gt;</span>
+<span>      &lt;/Bar&gt;</span>
+<span>    &lt;/RechartsBarChart&gt;</span>
+<span>  );</span>
+<span>}</span></pre>
+  <div class="div_p">
+    <table class="table table-bordered table-condensed">
+      <thead><tr><th>Prop</th><th>What it does</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>items</td><td>the bars: label and value</td><td>items={[{ label: &quot;Coffee&quot;, value: 18400 }]}</td></tr>
+        <tr><td>formatValue</td><td>how a number looks</td><td>formatValue={(value) =&gt; money(value)}</td></tr>
+        <tr><td>color</td><td>bar color (optional)</td><td>color=&quot;var(--series-2)&quot;</td></tr>
+        <tr><td>showShare</td><td>false compares each bar to the average instead</td><td>showShare={false}</td></tr>
+        <tr><td>label</td><td>what a screen reader calls the chart</td><td>label=&quot;Sales by category&quot;</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>src/charts/ChartCard.jsx</h3>
+
+  <div class="div_p">
+    <p>Put a chart inside it. columns and rows are the same numbers as a table. The table also prints under the chart, cut to the last 31 rows.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// A chart with a title and a "Show table" switch. The table has the same</span>
+<span>// numbers as the chart, for screen readers, printing and anyone who prefers rows.</span>
+<span>import { useState } from "react";</span>
+<span></span>
+<span>export default function ChartCard({ title, subtitle, columns, rows, children, className = "" }) {</span>
+<span>  const [showTable, setShowTable] = useState(false);</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;section className={`chart-card ${className}`}&gt;</span>
+<span>      &lt;header className="chart-card__head"&gt;</span>
+<span>        &lt;div&gt;</span>
+<span>          &lt;h3 className="chart-card__title"&gt;{title}&lt;/h3&gt;</span>
+<span>          {subtitle &amp;&amp; &lt;p className="chart-card__subtitle"&gt;{subtitle}&lt;/p&gt;}</span>
+<span>        &lt;/div&gt;</span>
+<span>        &lt;button type="button" className="text-button chart-card__switch" aria-pressed={showTable} onClick={() =&gt; setShowTable((on) =&gt; !on)}&gt;</span>
+<span>          {showTable ? "Show chart" : "Show table"}</span>
+<span>        &lt;/button&gt;</span>
+<span>      &lt;/header&gt;</span>
+<span></span>
+<span>      {showTable ? (</span>
+<span>        &lt;div className="table-wrap"&gt;</span>
+<span>          &lt;table className="data-table"&gt;</span>
+<span>            &lt;caption className="visually-hidden"&gt;{title}&lt;/caption&gt;</span>
+<span>            &lt;thead&gt;</span>
+<span>              &lt;tr&gt;{columns.map((column) =&gt; &lt;th key={column} scope="col"&gt;{column}&lt;/th&gt;)}&lt;/tr&gt;</span>
+<span>            &lt;/thead&gt;</span>
+<span>            &lt;tbody&gt;</span>
+<span>              {rows.map((row) =&gt; (</span>
+<span>                &lt;tr key={row[0]}&gt;</span>
+<span>                  {row.map((cell, index) =&gt; (index === 0 ? &lt;th key={index} scope="row"&gt;{cell}&lt;/th&gt; : &lt;td key={index}&gt;{cell}&lt;/td&gt;))}</span>
+<span>                &lt;/tr&gt;</span>
+<span>              ))}</span>
+<span>            &lt;/tbody&gt;</span>
+<span>          &lt;/table&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>      ) : (</span>
+<span>        children</span>
+<span>      )}</span>
+<span>      {/* Printed reports always include the table under the chart. */}</span>
+<span>      {!showTable &amp;&amp; (</span>
+<span>        &lt;div className="print-only table-wrap"&gt;</span>
+<span>          &lt;table className="data-table"&gt;</span>
+<span>            {rows.length &gt; 31 &amp;&amp; &lt;caption&gt;The last 31 rows of {rows.length}&lt;/caption&gt;}</span>
+<span>            &lt;thead&gt;</span>
+<span>              &lt;tr&gt;{columns.map((column) =&gt; &lt;th key={column} scope="col"&gt;{column}&lt;/th&gt;)}&lt;/tr&gt;</span>
+<span>            &lt;/thead&gt;</span>
+<span>            &lt;tbody&gt;</span>
+<span>              {rows.slice(-31).map((row) =&gt; (</span>
+<span>                &lt;tr key={row[0]}&gt;</span>
+<span>                  {row.map((cell, index) =&gt; (index === 0 ? &lt;th key={index} scope="row"&gt;{cell}&lt;/th&gt; : &lt;td key={index}&gt;{cell}&lt;/td&gt;))}</span>
+<span>                &lt;/tr&gt;</span>
+<span>              ))}</span>
+<span>            &lt;/tbody&gt;</span>
+<span>          &lt;/table&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>      )}</span>
+<span>    &lt;/section&gt;</span>
+<span>  );</span>
+<span>}</span></pre>
+
+  <h3>src/charts/charts.css</h3>
+
+  <div class="div_p">
+    <p>The colors at the top are the ones the charts read. Change them to match the client. If the project already has variables with these names, keep yours and delete the ones here.</p>
+  </div>
+
+  <pre class="mycodecss">
+<span>/* Styles for ChartCard, LineChart and BarChart.</span>
+<span>   Import it once:  import "./charts/charts.css";</span>
+<span></span>
+<span>   The charts read these colors. Recharts draws SVG, so it needs real</span>
+<span>   color values. Change them here to match the client's brand. */</span>
+<span>:root {</span>
+<span>  --bg: #eef2f6;         /* page */</span>
+<span>  --surface: #ffffff;    /* cards */</span>
+<span>  --surface-2: #f4f6f9;  /* hover behind a bar */</span>
+<span>  --line: #cbd4df;       /* borders */</span>
+<span>  --text: #121b28;</span>
+<span>  --text-2: #3d4b5c;</span>
+<span>  --muted: #5b6878;</span>
+<span>  --link: #1d4ed8;       /* the Show table button */</span>
+<span>  --series-1: #2a78d6;   /* first line or bar color */</span>
+<span>  --series-2: #eb6834;   /* second line color */</span>
+<span>  --grid: #e3e8ee;</span>
+<span>  --axis: #c3ccd7;</span>
+<span>  --radius: 8px;</span>
+<span>}</span>
+<span></span>
+<span>/* Dark mode follows the visitor's device. */</span>
+<span>@media (prefers-color-scheme: dark) {</span>
+<span>  :root {</span>
+<span>    --bg: #101826;</span>
+<span>    --surface: #172231;</span>
+<span>    --surface-2: #1e2b3d;</span>
+<span>    --line: #2b3b52;</span>
+<span>    --text: #e9eef5;</span>
+<span>    --text-2: #b4c1d1;</span>
+<span>    --muted: #8a9aaf;</span>
+<span>    --link: #93c5fd;</span>
+<span>    --series-1: #3987e5;</span>
+<span>    --series-2: #d95926;</span>
+<span>    --grid: #26354a;</span>
+<span>    --axis: #3b4d68;</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>/* Two cards side by side, one column on a phone */</span>
+<span>.chart-grid {</span>
+<span>  display: grid;</span>
+<span>  grid-template-columns: repeat(2, minmax(0, 1fr));</span>
+<span>  gap: 16px;</span>
+<span>}</span>
+<span></span>
+<span>.chart-card {</span>
+<span>  min-width: 0;</span>
+<span>  padding: 20px;</span>
+<span>  border: 1px solid var(--line);</span>
+<span>  border-radius: 12px;</span>
+<span>  background: var(--surface);</span>
+<span>  color: var(--text);</span>
+<span>}</span>
+<span></span>
+<span>.chart-card--wide {</span>
+<span>  grid-column: 1 / -1;</span>
+<span>}</span>
+<span></span>
+<span>.chart-card__head {</span>
+<span>  display: flex;</span>
+<span>  align-items: flex-start;</span>
+<span>  justify-content: space-between;</span>
+<span>  gap: 16px;</span>
+<span>  margin-bottom: 16px;</span>
+<span>}</span>
+<span></span>
+<span>.chart-card__title {</span>
+<span>  margin: 0;</span>
+<span>  font-size: 1.125rem;</span>
+<span>}</span>
+<span></span>
+<span>.chart-card__subtitle {</span>
+<span>  margin: 4px 0 0;</span>
+<span>  color: var(--muted);</span>
+<span>  font-size: 0.875rem;</span>
+<span>}</span>
+<span></span>
+<span>.chart-card__switch {</span>
+<span>  flex: none;</span>
+<span>  font-size: 0.875rem;</span>
+<span>}</span>
+<span></span>
+<span>.text-button {</span>
+<span>  padding: 4px 2px;</span>
+<span>  border: 0;</span>
+<span>  background: none;</span>
+<span>  color: var(--link);</span>
+<span>  font-weight: 700;</span>
+<span>  text-decoration: underline;</span>
+<span>  text-underline-offset: 3px;</span>
+<span>  cursor: pointer;</span>
+<span>}</span>
+<span></span>
+<span>@media (max-width: 899px) {</span>
+<span>  .chart-grid {</span>
+<span>    grid-template-columns: 1fr;</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>/* The box that shows when you hover a bar */</span>
+<span>.chart-tooltip {</span>
+<span>  min-width: 160px;</span>
+<span>  padding: 8px 12px;</span>
+<span>  border: 1px solid var(--line);</span>
+<span>  border-radius: var(--radius);</span>
+<span>  background: var(--bg);</span>
+<span>  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);</span>
+<span>  color: var(--text);</span>
+<span>  font-size: 0.75rem;</span>
+<span>}</span>
+<span></span>
+<span>.chart-tooltip p {</span>
+<span>  margin: 0;</span>
+<span>}</span>
+<span></span>
+<span>.chart-tooltip__date {</span>
+<span>  margin-bottom: 4px;</span>
+<span>  color: var(--muted);</span>
+<span>}</span>
+<span></span>
+<span>/* The table behind the Show table button */</span>
+<span>.table-wrap {</span>
+<span>  overflow-x: auto;</span>
+<span>}</span>
+<span></span>
+<span>.data-table {</span>
+<span>  width: 100%;</span>
+<span>  border-collapse: collapse;</span>
+<span>  font-size: 0.875rem;</span>
+<span>}</span>
+<span></span>
+<span>.data-table th,</span>
+<span>.data-table td {</span>
+<span>  padding: 10px 12px;</span>
+<span>  border-bottom: 1px solid var(--line);</span>
+<span>  text-align: left;</span>
+<span>  vertical-align: top;</span>
+<span>}</span>
+<span></span>
+<span>.data-table thead th {</span>
+<span>  color: var(--muted);</span>
+<span>  font-size: 0.75rem;</span>
+<span>  font-weight: 700;</span>
+<span>}</span>
+<span></span>
+<span>.data-table tbody th {</span>
+<span>  font-weight: 500;</span>
+<span>}</span>
+<span></span>
+<span>.data-table td {</span>
+<span>  color: var(--text-2);</span>
+<span>}</span>
+<span></span>
+<span>.data-table caption {</span>
+<span>  padding-bottom: 8px;</span>
+<span>  color: var(--muted);</span>
+<span>  font-size: 0.75rem;</span>
+<span>  text-align: left;</span>
+<span>}</span>
+<span></span>
+<span>.visually-hidden {</span>
+<span>  position: absolute !important;</span>
+<span>  width: 1px;</span>
+<span>  height: 1px;</span>
+<span>  overflow: hidden;</span>
+<span>  clip-path: inset(50%);</span>
+<span>  white-space: nowrap;</span>
+<span>}</span>
+<span></span>
+<span>/* Printing: hide the tooltip and the switch, and show the table under each chart.</span>
+<span>   print.css from the Print Button section has the same two classes. */</span>
+<span>.print-only {</span>
+<span>  display: none;</span>
+<span>}</span>
+<span></span>
+<span>@media print {</span>
+<span>  .no-print,</span>
+<span>  .chart-card__switch {</span>
+<span>    display: none !important;</span>
+<span>  }</span>
+<span></span>
+<span>  .print-only {</span>
+<span>    display: block;</span>
+<span>  }</span>
+<span>}</span></pre>
+
+  <h3>src/charts/WhatHappened.jsx</h3>
+
+  <div class="div_p">
+    <p>The What happened box from my REV dashboard: a few plain-English sentences about the numbers. It goes first, above the charts, because it is the part a busy owner reads. In REV this was written straight into Dashboard.jsx. Here it is its own component, so it can go on any page.</p>
+    <p>You give it the sentences. In REV they were written by AI from the sample numbers and saved in the data file, so the demo costs nothing per click. On a client site the server writes new ones each day from the real numbers and sends them with the rest of the data.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// The "What happened" box: a few plain-English sentences about the numbers.</span>
+<span>// It goes first on the dashboard, above the charts, because it is the part</span>
+<span>// a busy owner actually reads.</span>
+<span>//</span>
+<span>// Use it:</span>
+<span>//   &lt;WhatHappened sentences={["Sales were $11,930 this week...", "..."]} note="Updated each morning." /&gt;</span>
+<span>import { useId } from "react";</span>
+<span></span>
+<span>export default function WhatHappened({ sentences, title = "What happened", note }) {</span>
+<span>  const titleId = useId();</span>
+<span></span>
+<span>  if (!sentences.length) return null;</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;section className="summary" aria-labelledby={titleId}&gt;</span>
+<span>      &lt;h2 id={titleId} className="summary__title"&gt;</span>
+<span>        {title}</span>
+<span>      &lt;/h2&gt;</span>
+<span>      &lt;ul className="summary__list"&gt;</span>
+<span>        {sentences.map((sentence) =&gt; (</span>
+<span>          &lt;li key={sentence}&gt;{sentence}&lt;/li&gt;</span>
+<span>        ))}</span>
+<span>      &lt;/ul&gt;</span>
+<span>      {note &amp;&amp; &lt;p className="summary__note"&gt;{note}&lt;/p&gt;}</span>
+<span>    &lt;/section&gt;</span>
+<span>  );</span>
+<span>}</span></pre>
+
+  <h3>src/charts/what-happened.css</h3>
+
+  <div class="div_p">
+    <p>It uses the colors from charts.css. The stripe on the left and the bullets use the first chart color.</p>
+  </div>
+
+  <pre class="mycodecss">
+<span>/* Styles for WhatHappened. It uses the colors from charts.css.</span>
+<span>   Import it once:  import "./charts/what-happened.css"; */</span>
+<span>.summary {</span>
+<span>  margin-bottom: 24px;</span>
+<span>  padding: 24px;</span>
+<span>  border: 1px solid var(--line);</span>
+<span>  border-left: 4px solid var(--series-1);</span>
+<span>  border-radius: 12px;</span>
+<span>  background: var(--surface);</span>
+<span>  color: var(--text);</span>
+<span>}</span>
+<span></span>
+<span>.summary__title {</span>
+<span>  margin: 0 0 16px;</span>
+<span>  font-size: 1.5rem;</span>
+<span>}</span>
+<span></span>
+<span>.summary__list {</span>
+<span>  display: grid;</span>
+<span>  gap: 12px;</span>
+<span>  max-width: 72ch;</span>
+<span>  margin: 0;</span>
+<span>  padding-left: 1.2em;</span>
+<span>  font-size: 1.125rem;</span>
+<span>  line-height: 1.55;</span>
+<span>}</span>
+<span></span>
+<span>.summary__list li::marker {</span>
+<span>  color: var(--series-1);</span>
+<span>}</span>
+<span></span>
+<span>.summary__note {</span>
+<span>  margin: 16px 0 0;</span>
+<span>  color: var(--muted);</span>
+<span>  font-size: 0.8125rem;</span>
+<span>}</span>
+<span></span>
+<span>/* Keep the box on one page when printing. */</span>
+<span>@media print {</span>
+<span>  .summary {</span>
+<span>    break-inside: avoid;</span>
+<span>  }</span>
+<span>}</span></pre>
+
+  <h3>Use the What happened box</h3>
+
+  <pre class="mycodereact">
+<span>&lt;WhatHappened</span>
+<span>  sentences={[</span>
+<span>    "Sales were $11,930 this week, about 2% more than last week, from 1,423 orders.",</span>
+<span>    "Saturday was your best day of the month at $2,179.",</span>
+<span>    "Cold drinks fell to 9% of sales while espresso drinks grew to 41%.",</span>
+<span>  ]}</span>
+<span>  note="Updated each morning from yesterday's sales."</span>
+<span>/&gt;</span></pre>
+
+  <h3>src/ChartsDemo.jsx</h3>
+
+  <div class="div_p">
+    <p>A whole page with the What happened box, one line chart and two bar charts. To see it in the starter, change the import in main.jsx to ./ChartsDemo.jsx.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// Demo page for the charts folder: the What happened box, one line chart and two bar charts.</span>
+<span>// To see it, change the import in main.jsx to:  import App from "./ChartsDemo.jsx";</span>
+<span>import ChartCard from "./charts/ChartCard.jsx";</span>
+<span>import LineChart from "./charts/LineChart.jsx";</span>
+<span>import BarChart from "./charts/BarChart.jsx";</span>
+<span>import WhatHappened from "./charts/WhatHappened.jsx";</span>
+<span>import { fullNumber, longDate, money } from "./charts/scale.js";</span>
+<span>import "./charts/charts.css";</span>
+<span>import "./charts/what-happened.css";</span>
+<span></span>
+<span>// Fake data. In a real project this comes from your API.</span>
+<span>const days = Array.from({ length: 30 }, (_, index) =&gt; ({</span>
+<span>  date: new Date(2026, 9, index + 1),</span>
+<span>  revenue: Math.round(900 + 450 * Math.sin(index / 3) + index * 22),</span>
+<span>  orders: Math.round(40 + 14 * Math.sin(index / 3) + index),</span>
+<span>}));</span>
+<span></span>
+<span>const categories = [</span>
+<span>  { label: "Coffee", value: 18400 },</span>
+<span>  { label: "Pastries", value: 9200 },</span>
+<span>  { label: "Sandwiches", value: 7600 },</span>
+<span>  { label: "Merch", value: 2100 },</span>
+<span>];</span>
+<span></span>
+<span>const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((label, index) =&gt; ({</span>
+<span>  label,</span>
+<span>  value: [1180, 1240, 1310, 1290, 1620, 1890, 1450][index],</span>
+<span>}));</span>
+<span></span>
+<span>export default function ChartsDemo() {</span>
+<span>  return (</span>
+<span>    &lt;main style={{ maxWidth: 1100, margin: "0 auto", padding: 24, fontFamily: "system-ui, sans-serif" }}&gt;</span>
+<span>      &lt;h1&gt;Corner Coffee: October&lt;/h1&gt;</span>
+<span></span>
+<span>      &lt;WhatHappened</span>
+<span>        sentences={[</span>
+<span>          "Sales were $11,930 this week, about 2% more than last week, from 1,423 orders.",</span>
+<span>          "Saturday was your best day of the month at $2,179.",</span>
+<span>          "Cold drinks fell to 9% of sales while espresso drinks grew to 41%.",</span>
+<span>        ]}</span>
+<span>        note="Updated each morning from yesterday's sales."</span>
+<span>      /&gt;</span>
+<span></span>
+<span>      &lt;div className="chart-grid"&gt;</span>
+<span>        &lt;ChartCard</span>
+<span>          className="chart-card--wide"</span>
+<span>          title="Daily sales"</span>
+<span>          subtitle="Each day's sales and orders"</span>
+<span>          columns={["Day", "Sales", "Orders"]}</span>
+<span>          rows={days.map((day) =&gt; [longDate(day.date), money(day.revenue), fullNumber(day.orders)])}</span>
+<span>        &gt;</span>
+<span>          &lt;LineChart</span>
+<span>            label="Daily sales for Corner Coffee"</span>
+<span>            dates={days.map((day) =&gt; day.date)}</span>
+<span>            series={[</span>
+<span>              { key: "sales", name: "Sales", color: "var(--series-1)", values: days.map((day) =&gt; day.revenue) },</span>
+<span>            ]}</span>
+<span>            formatValue={(value) =&gt; money(value)}</span>
+<span>            formatTick={(value) =&gt; money(value, { compact: true })}</span>
+<span>          /&gt;</span>
+<span>        &lt;/ChartCard&gt;</span>
+<span></span>
+<span>        &lt;ChartCard</span>
+<span>          title="Sales by category"</span>
+<span>          subtitle="Where the money came from"</span>
+<span>          columns={["Category", "Sales"]}</span>
+<span>          rows={categories.map((item) =&gt; [item.label, money(item.value)])}</span>
+<span>        &gt;</span>
+<span>          &lt;BarChart label="Sales by category" items={categories} formatValue={(value) =&gt; money(value)} /&gt;</span>
+<span>        &lt;/ChartCard&gt;</span>
+<span></span>
+<span>        &lt;ChartCard</span>
+<span>          title="Average day of the week"</span>
+<span>          subtitle="Average sales for each weekday"</span>
+<span>          columns={["Day", "Sales"]}</span>
+<span>          rows={weekdays.map((item) =&gt; [item.label, money(item.value)])}</span>
+<span>        &gt;</span>
+<span>          &lt;BarChart</span>
+<span>            label="Sales by day of the week"</span>
+<span>            items={weekdays}</span>
+<span>            formatValue={(value) =&gt; money(value)}</span>
+<span>            showShare={false}</span>
+<span>          /&gt;</span>
+<span>        &lt;/ChartCard&gt;</span>
+<span>      &lt;/div&gt;</span>
+<span>    &lt;/main&gt;</span>
+<span>  );</span>
+<span>}</span></pre>
+
+  <h3>Two lines on one chart</h3>
+
+  <div class="div_p">
+    <p>Add a second item to series. Each line needs its own key and color.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>&lt;LineChart</span>
+<span>  label="Sales and refunds"</span>
+<span>  dates={days.map((day) =&gt; day.date)}</span>
+<span>  series={[</span>
+<span>    { key: "sales", name: "Sales", color: "var(--series-1)", values: days.map((day) =&gt; day.revenue) },</span>
+<span>    { key: "refunds", name: "Refunds", color: "var(--series-2)", values: days.map((day) =&gt; day.refunds) },</span>
+<span>  ]}</span>
+<span>  formatValue={(value) =&gt; money(value)}</span>
+<span>  formatTick={(value) =&gt; money(value, { compact: true })}</span>
+<span>/&gt;</span></pre>
+
+  <h2 id="full-dashboard">Put It All Together</h2>
+
+  <div class="div_p">
+    <p>A full dashboard page using every piece. The first chart uses ResponsiveContainer on purpose, to show print.css handles the older sizing method too.</p>
+  </div>
+
+  <h3>src/App.jsx</h3>
+
+  <pre class="mycodereact">
+<span>// Demo dashboard: puts every piece of the kit on one page.</span>
+<span>import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";</span>
+<span>import PrintButton from "./dashboard-kit/PrintButton.jsx";</span>
+<span>import DistributionChart from "./dashboard-kit/DistributionChart.jsx";</span>
+<span>import BoxPlot from "./dashboard-kit/BoxPlot.jsx";</span>
+<span>import SpreadSummary from "./dashboard-kit/SpreadSummary.jsx";</span>
+<span>import { orderTotals, dailySales } from "./sampleData.js";</span>
+<span></span>
+<span>export default function App() {</span>
+<span>  return (</span>
+<span>    &lt;main style={{ maxWidth: 1100, margin: "0 auto", padding: 24, fontFamily: "system-ui, sans-serif" }}&gt;</span>
+<span>      &lt;header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}&gt;</span>
+<span>        &lt;h1&gt;Corner Coffee: October&lt;/h1&gt;</span>
+<span>        &lt;PrintButton fileName="Corner Coffee - October report" /&gt;</span>
+<span>      &lt;/header&gt;</span>
+<span>      {/* print-only shows this line on paper and hides it on the screen. */}</span>
+<span>      &lt;p className="print-only"&gt;Printed {new Date().toLocaleDateString("en-US", { dateStyle: "long" })}&lt;/p&gt;</span>
+<span></span>
+<span>      {/* print-keep keeps a section on one page, so a chart is never cut in half. */}</span>
+<span>      &lt;section className="print-keep"&gt;</span>
+<span>        &lt;h2&gt;Daily sales (ResponsiveContainer)&lt;/h2&gt;</span>
+<span>        &lt;div style={{ height: 280 }}&gt;</span>
+<span>          &lt;ResponsiveContainer width="100%" height="100%"&gt;</span>
+<span>            &lt;LineChart data={dailySales} margin={{ top: 8, right: 24, bottom: 8, left: 8 }}&gt;</span>
+<span>              &lt;CartesianGrid vertical={false} stroke="#e5e7eb" /&gt;</span>
+<span>              &lt;XAxis dataKey="day" /&gt;</span>
+<span>              &lt;YAxis /&gt;</span>
+<span>              &lt;Tooltip /&gt;</span>
+<span>              &lt;Line dataKey="sales" stroke="#3987e5" strokeWidth={2} dot={false} isAnimationActive={false} /&gt;</span>
+<span>            &lt;/LineChart&gt;</span>
+<span>          &lt;/ResponsiveContainer&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>      &lt;/section&gt;</span>
+<span></span>
+<span>      &lt;section className="print-keep"&gt;</span>
+<span>        &lt;h2&gt;How big is a typical order?&lt;/h2&gt;</span>
+<span>        {/* The same values go into all three, so the chart, the box plot, and the table always agree. */}</span>
+<span>        &lt;DistributionChart values={orderTotals} label="Order total" unit="$" /&gt;</span>
+<span>        &lt;BoxPlot values={orderTotals} unit="$" /&gt;</span>
+<span>        &lt;SpreadSummary values={orderTotals} unit="$" decimals={2} /&gt;</span>
+<span>      &lt;/section&gt;</span>
+<span>    &lt;/main&gt;</span>
+<span>  );</span>
+<span>}</span></pre>
+  <h3>src/sampleData.js (fake data for testing)</h3>
+
+  <pre class="mycodejs">
+<span>// Fake data for the demo. Seeded, so it is the same every time.</span>
+<span>function seeded(seed) {</span>
+<span>  let a = seed &gt;&gt;&gt; 0;</span>
+<span>  return () =&gt; {</span>
+<span>    a = (a + 0x6d2b79f5) &gt;&gt;&gt; 0;</span>
+<span>    let t = a;</span>
+<span>    t = Math.imul(t ^ (t &gt;&gt;&gt; 15), t | 1);</span>
+<span>    t ^= t + Math.imul(t ^ (t &gt;&gt;&gt; 7), t | 61);</span>
+<span>    return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 4294967296;</span>
+<span>  };</span>
+<span>}</span>
+<span>const random = seeded(42);</span>
+<span>// Box-Muller: two uniform numbers -&gt; one normal number.</span>
+<span>const normal = () =&gt; Math.sqrt(-2 * Math.log(1 - random())) * Math.cos(2 * Math.PI * random());</span>
+<span></span>
+<span>// 400 order totals, skewed right like real orders (most small, a few big).</span>
+<span>export const orderTotals = Array.from({ length: 400 }, () =&gt; Math.round(Math.exp(2.3 + 0.35 * normal()) * 100) / 100);</span>
+<span>orderTotals.push(48.5, 52, &quot;NA&quot;, null); // two big catering orders + two missing values</span>
+<span></span>
+<span>export const dailySales = Array.from({ length: 31 }, (_, i) =&gt; ({ day: i + 1, sales: Math.round(1400 + i * 8 + 220 * normal()) }));</span></pre>
+  <h3>Run the starter</h3>
+
+  <pre class="mycodecli">
+<span>cd starters/dashboard-kit</span>
+<span>npm install</span>
+<span>npm run dev</span></pre>
+  <h2 id="sources">Sources</h2>
+
+  <div class="div_p">
+    <ul>
+      <li><a href="https://recharts.github.io/guide/sizes">Recharts: Chart size (responsive prop, ResponsiveContainer)</a></li>
+      <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/print-color-adjust">MDN: print-color-adjust</a></li>
+      <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/break-inside">MDN: break-inside</a></li>
+      <li><a href="https://svn.r-project.org/browse/R/trunk/src/library/stats/man/quantile.Rd">R documentation: quantile types 1 to 9 (Hyndman and Fan 1996)</a></li>
+      <li><a href="https://numpy.org/doc/stable/reference/generated/numpy.histogram_bin_edges.html">NumPy: histogram bin rules, including Freedman-Diaconis (fd)</a></li>
+      <li><a href="https://support.microsoft.com/office/quartile-inc-function-1bbacc80-5075-42f1-aed6-47d735c4819d">Microsoft: QUARTILE.INC</a></li>
+      <li><a href="https://itl.nist.gov/div898/handbook/prc/section1/prc16.htm">NIST Engineering Statistics Handbook: box plots and outliers</a></li>
+    </ul>
+  </div>
+
+  <br><br><br><br>
+
+  <footer class="footer"> &copy; By Jamar Brown
+
+    <div class="container">
+      <div id='clock'></div>
+    </div>
+  </footer>
+
+  <script src="js/clock.js"></script>
+  <script src="js/copy.js"></script>
+</body>
+
+</html>

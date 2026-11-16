@@ -1,0 +1,95 @@
+/* print.css: makes any dashboard print cleanly. Import it once in main.jsx.
+   Everything here only runs when printing or saving as PDF. */
+
+/* Text that only shows on paper, like "Printed Nov 4, 2026". */
+.print-only {
+  display: none;
+}
+
+@media print {
+  /* 1. Paper size and margins. Portrait fits dashboards best. */
+  @page {
+    size: letter portrait;
+    margin: 0.5in;
+  }
+
+  /* 2. Hide things that make no sense on paper.
+     Add your own nav, footer or menu class names to this list. */
+  .no-print,
+  nav,
+  header nav,
+  footer,
+  button,
+  select,
+  .recharts-tooltip-wrapper {
+    display: none !important;
+  }
+
+  /* 3. Show the paper-only text. */
+  .print-only {
+    display: block !important;
+  }
+
+  /* 4. White paper, black ink, no shadows (saves toner and reads better). */
+  html,
+  body {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* 5. Keep chart colors. Browsers drop background colors when printing
+     unless told not to, and bars and badges are often background colors. */
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* 6. Never cut a chart, card or table row in half across two pages. */
+  .print-keep,
+  .recharts-wrapper,
+  figure,
+  tr {
+    break-inside: avoid;
+  }
+
+  /* 7. Charts are drawn at the width of the screen, and paper is narrower.
+     Recharts SVGs have a viewBox, so stretching them to 100% of the page
+     shrinks the whole chart to fit instead of cutting off the right side.
+     ResponsiveContainer wraps the chart in a 0 x 0 box, so that box has to
+     be opened up first or the chart prints as an empty space. */
+  .recharts-responsive-container > div {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .recharts-wrapper {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .recharts-surface {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* 8. Grids of cards stack into one column so nothing gets squeezed. */
+  .print-stack {
+    display: block !important;
+  }
+
+  .print-stack > * {
+    margin-bottom: 16px;
+  }
+
+  /* 9. Start a section on a new page: add class="page-break" to it. */
+  .page-break {
+    break-before: page;
+  }
+}

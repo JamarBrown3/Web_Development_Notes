@@ -21,14 +21,18 @@
         <li><a href="html_page.html">Html Code</a></li>
         <li><a href="css_page.html">Css Code</a></li>
         <li><a href="tailwind_page.html">Tailwind Code</a></li>
+        <li><a href="photo_effects_page.html">Photo Effects</a></li>
+        <li><a href="blog_page.html">Blog Template</a></li>
         <li><a href="javaScript.html">JavaScript Code</a></li>
         <li><a href="setup_page.html">Setup &amp; .env</a></li>
         <li><a href="react_page.html">React Code</a></li>
+        <li><a href="dashboard_page.html">Dashboard Code</a></li>
         <li><a href="node_page.html">Node Code</a></li>
         <li><a href="mongodb_page.html">MongoDB Code</a></li>
         <li><a href="postgres_page.html">Postgres Code</a></li>
         <li><a href="security_page.html">Security Code</a></li>
         <li><a href="migration_page.html">Switch Databases</a></li>
+        <li><a href="bugs_page.html">Common Bugs</a></li>
       </ul>
     </div>
   </nav>
@@ -73,7 +77,9 @@
 <span>import App from "./App";</span>
 <span>import "./index.css";</span>
 <span></span>
+<span>// Find the empty div with id root in index.html and let React control it.</span>
 <span>const root = ReactDOM.createRoot(document.getElementById("root"));</span>
+<span>// StrictMode runs extra checks in development. It is why effects run twice there.</span>
 <span>root.render(</span>
 <span>  &lt;React.StrictMode&gt;</span>
 <span>    &lt;BrowserRouter&gt;</span>
@@ -100,12 +106,14 @@
 <span>import NotFound from "./pages/NotFound";</span>
 <span></span>
 <span>const App = () =&gt; {</span>
+<span>  // useRoutes picks the one element whose path matches the URL.</span>
 <span>  let element = useRoutes([</span>
 <span>    {</span>
 <span>      path: "/",</span>
 <span>      element: &lt;Items /&gt;,</span>
 <span>    },</span>
 <span>    {</span>
+<span>      // :id is a placeholder. /items/5 matches, and useParams() reads the 5.</span>
 <span>      path: "/items/:id",</span>
 <span>      element: &lt;ItemDetails /&gt;,</span>
 <span>    },</span>
@@ -118,11 +126,13 @@
 <span>      element: &lt;EditItem /&gt;,</span>
 <span>    },</span>
 <span>    {</span>
+<span>      // * matches anything the routes above did not, so it shows the 404 page.</span>
 <span>      path: "*",</span>
 <span>      element: &lt;NotFound /&gt;,</span>
 <span>    },</span>
 <span>  ]);</span>
 <span></span>
+<span>  // Navigation shows on every page. element is the page for the current URL.</span>
 <span>  return (</span>
 <span>    &lt;div className="app"&gt;</span>
 <span>      &lt;Navigation /&gt;</span>
@@ -150,7 +160,9 @@
 <span>export default function App() {</span>
 <span>  return (</span>
 <span>    &lt;Routes&gt;</span>
+<span>      {/* A Route with no path is a wrapper. Its children show inside its Outlet. */}</span>
 <span>      &lt;Route element={&lt;Layout /&gt;}&gt;</span>
+<span>        {/* index means the path of the parent, which is / here. */}</span>
 <span>        &lt;Route index element={&lt;Items /&gt;} /&gt;</span>
 <span>        &lt;Route path="items/:id" element={&lt;ItemDetails /&gt;} /&gt;</span>
 <span>        &lt;Route path="*" element={&lt;NotFound /&gt;} /&gt;</span>
@@ -171,6 +183,7 @@
 <span>    &lt;div className="site"&gt;</span>
 <span>      &lt;Navigation /&gt;</span>
 <span>      &lt;main&gt;</span>
+<span>        {/* The page for the current URL shows up here. */}</span>
 <span>        &lt;Outlet /&gt;</span>
 <span>      &lt;/main&gt;</span>
 <span>      &lt;footer&gt;Made by me&lt;/footer&gt;</span>
@@ -192,10 +205,13 @@
 <span>export default defineConfig({</span>
 <span>  plugins: [react()],</span>
 <span>  build: {</span>
+<span>    // npm run build puts the finished site here, where Express can serve it.</span>
 <span>    outDir: "../server/public",</span>
+<span>    // Needed because the folder is outside client. It clears the old files first.</span>
 <span>    emptyOutDir: true,</span>
 <span>  },</span>
 <span>  server: {</span>
+<span>    // Any request that starts with /api is passed on to Express on port 3000.</span>
 <span>    proxy: {</span>
 <span>      "/api": {</span>
 <span>        target: "http://localhost:3000",</span>
@@ -204,6 +220,10 @@
 <span>  },</span>
 <span>});</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> The proxy only works while npm run dev is running. Restart Vite after you change this file, because it only reads the config when it starts.</p>
+  </div>
 
   <h2 id="components-and-props">Components And Props</h2>
 
@@ -214,7 +234,9 @@
   </div>
 
   <pre class="mycodereact">
+<span>// color = "black" is the value used when the parent does not pass a color.</span>
 <span>const Greeting = ({ name, color = "black" }) =&gt; {</span>
+<span>  // The outer { } means JavaScript. The inner { } is an object, the same as { color: color }.</span>
 <span>  return &lt;h2 style={{ color }}&gt;Hello, {name}!&lt;/h2&gt;;</span>
 <span>};</span>
 <span></span>
@@ -229,6 +251,7 @@
 <span>const Home = () =&gt; {</span>
 <span>  return (</span>
 <span>    &lt;div&gt;</span>
+<span>      {/* No color is passed, so this one uses the default. */}</span>
 <span>      &lt;Greeting name="Jamar" /&gt;</span>
 <span>      &lt;Greeting name="Rev" color="red" /&gt;</span>
 <span>    &lt;/div&gt;</span>
@@ -249,6 +272,7 @@
 <span>  return (</span>
 <span>    &lt;section className="panel"&gt;</span>
 <span>      &lt;h2&gt;{title}&lt;/h2&gt;</span>
+<span>      {/* Whatever the parent put between the two Panel tags shows here. */}</span>
 <span>      {children}</span>
 <span>    &lt;/section&gt;</span>
 <span>  );</span>
@@ -293,6 +317,7 @@
 <span>const ItemList = ({ items }) =&gt; {</span>
 <span>  return (</span>
 <span>    &lt;ul&gt;</span>
+<span>      {/* map makes one li for each item. The parentheses return the JSX. */}</span>
 <span>      {items.map((item) =&gt; (</span>
 <span>        &lt;li key={item.id}&gt;{item.title}&lt;/li&gt;</span>
 <span>      ))}</span>
@@ -311,9 +336,11 @@
 <span>const Card = ({ id, title, image, description }) =&gt; {</span>
 <span>  return (</span>
 <span>    &lt;article className="card"&gt;</span>
+<span>      {/* Only show the image when there is one. lazy waits until it is near the screen. */}</span>
 <span>      {image &amp;&amp; &lt;img src={image} alt={title} loading="lazy" /&gt;}</span>
 <span>      &lt;h3&gt;{title}&lt;/h3&gt;</span>
 <span>      &lt;p&gt;{description}&lt;/p&gt;</span>
+<span>      {/* Link changes the page without reloading the site. */}</span>
 <span>      &lt;Link to={`/items/${id}`}&gt;Read More&lt;/Link&gt;</span>
 <span>      &lt;Link to={`/edit/${id}`}&gt;Edit&lt;/Link&gt;</span>
 <span>    &lt;/article&gt;</span>
@@ -335,6 +362,7 @@
 <span>import { useState } from "react";</span>
 <span></span>
 <span>const Counter = () =&gt; {</span>
+<span>  // count is the value. setCount changes it and redraws. 0 is the starting value.</span>
 <span>  const [count, setCount] = useState(0);</span>
 <span></span>
 <span>  return (</span>
@@ -356,10 +384,12 @@
 <span>import { useState } from "react";</span>
 <span></span>
 <span>const ShowMore = ({ text }) =&gt; {</span>
+<span>  // false means the text starts hidden.</span>
 <span>  const [open, setOpen] = useState(false);</span>
 <span></span>
 <span>  return (</span>
 <span>    &lt;div&gt;</span>
+<span>      {/* !previous flips true to false and false to true. */}</span>
 <span>      &lt;button type="button" onClick={() =&gt; setOpen((previous) =&gt; !previous)}&gt;</span>
 <span>        {open ? "Hide" : "Show"}</span>
 <span>      &lt;/button&gt;</span>
@@ -383,6 +413,7 @@
 <span>const Search = () =&gt; {</span>
 <span>  const [search, setSearch] = useState("");</span>
 <span></span>
+<span>  // value shows what is in state. onChange saves every key press back into state.</span>
 <span>  return (</span>
 <span>    &lt;input</span>
 <span>      type="text"</span>
@@ -409,8 +440,10 @@
 <span>  const [form, setForm] = useState({ name: "", email: "" });</span>
 <span></span>
 <span>  const handleChange = (event) =&gt; {</span>
+<span>    // name is the name attribute of the input that changed. value is what was typed.</span>
 <span>    const { name, value } = event.target;</span>
 <span></span>
+<span>    // [name] uses the value of name as the key, so this one line updates any field.</span>
 <span>    setForm((previous) =&gt; ({ ...previous, [name]: value }));</span>
 <span>  };</span>
 <span></span>
@@ -450,22 +483,27 @@
 <span></span>
 <span>  const addTodo = (event) =&gt; {</span>
 <span>    event.preventDefault();</span>
+<span>    // Ignore an empty box.</span>
 <span>    if (!text.trim()) return;</span>
 <span></span>
 <span>    setTodos((previous) =&gt; [</span>
 <span>      ...previous,</span>
+<span>      // crypto.randomUUID() makes a unique id to use as the key.</span>
 <span>      { id: crypto.randomUUID(), text: text.trim(), done: false },</span>
 <span>    ]);</span>
+<span>    // Clear the box for the next one.</span>
 <span>    setText("");</span>
 <span>  };</span>
 <span></span>
 <span>  const toggleTodo = (id) =&gt; {</span>
 <span>    setTodos((previous) =&gt;</span>
+<span>      // Copy every todo. Only the one with this id gets its done value flipped.</span>
 <span>      previous.map((todo) =&gt; (todo.id === id ? { ...todo, done: !todo.done } : todo)),</span>
 <span>    );</span>
 <span>  };</span>
 <span></span>
 <span>  const removeTodo = (id) =&gt; {</span>
+<span>    // Keep every todo except the one with this id.</span>
 <span>    setTodos((previous) =&gt; previous.filter((todo) =&gt; todo.id !== id));</span>
 <span>  };</span>
 <span></span>
@@ -497,11 +535,36 @@
   <h3>Start state from a slow calculation</h3>
 
   <div class="div_p">
-    <p>Passing a function means the calculation only runs the first time, not on every redraw.</p>
+    <p>Passing a function means the calculation only runs the first time, not on every redraw. The Countdown further down uses the same idea.</p>
   </div>
 
   <pre class="mycodereact">
-<span>const [timeLeft, setTimeLeft] = useState(() =&gt; getTimeLeft(startsAt));</span>
+<span>import { useState } from "react";</span>
+<span></span>
+<span>// A slow calculation. Imagine it loops over thousands of records.</span>
+<span>const countWords = (text) =&gt; {</span>
+<span>  console.log("Counting...");</span>
+<span>  return text.split(/\s+/).filter(Boolean).length;</span>
+<span>};</span>
+<span></span>
+<span>const WordCount = ({ text }) =&gt; {</span>
+<span>  // The arrow function means countWords only runs for the first draw.</span>
+<span>  // useState(countWords(text)) would run it on every redraw and throw the answer away.</span>
+<span>  const [words] = useState(() =&gt; countWords(text));</span>
+<span>  const [clicks, setClicks] = useState(0);</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;div&gt;</span>
+<span>      &lt;p&gt;{words} words&lt;/p&gt;</span>
+<span>      {/* Each click redraws the component, but Counting... does not log again. */}</span>
+<span>      &lt;button type="button" onClick={() =&gt; setClicks((previous) =&gt; previous + 1)}&gt;</span>
+<span>        Clicked {clicks} times</span>
+<span>      &lt;/button&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default WordCount;</span>
   </pre>
 
   <h2 id="useeffect">useEffect</h2>
@@ -513,23 +576,50 @@
   <h3>The three dependency options</h3>
 
   <pre class="mycodereact">
-<span>import { useEffect } from "react";</span>
+<span>import { useEffect, useState } from "react";</span>
 <span></span>
-<span>// Runs once, when the component first shows up.</span>
-<span>useEffect(() =&gt; {</span>
-<span>  console.log("Page loaded");</span>
-<span>}, []);</span>
+<span>const EffectDemo = () =&gt; {</span>
+<span>  const [id, setId] = useState(1);</span>
+<span>  const [clicks, setClicks] = useState(0);</span>
 <span></span>
-<span>// Runs once, and again every time id changes.</span>
-<span>useEffect(() =&gt; {</span>
-<span>  console.log("New id:", id);</span>
-<span>}, [id]);</span>
+<span>  // Empty array: runs once, when the component first shows up.</span>
+<span>  useEffect(() =&gt; {</span>
+<span>    console.log("Page loaded");</span>
+<span>  }, []);</span>
 <span></span>
-<span>// No array: runs after every redraw. You almost never want this.</span>
-<span>useEffect(() =&gt; {</span>
-<span>  console.log("Redrew");</span>
-<span>});</span>
+<span>  // Runs once, and again every time id changes.</span>
+<span>  useEffect(() =&gt; {</span>
+<span>    console.log("New id:", id);</span>
+<span>  }, [id]);</span>
+<span></span>
+<span>  // No array: runs after every redraw. You almost never want this.</span>
+<span>  useEffect(() =&gt; {</span>
+<span>    console.log("Redrew");</span>
+<span>  });</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;div&gt;</span>
+<span>      &lt;p&gt;</span>
+<span>        id: {id}, clicks: {clicks}</span>
+<span>      &lt;/p&gt;</span>
+<span>      {/* This changes id, so New id and Redrew both log. */}</span>
+<span>      &lt;button type="button" onClick={() =&gt; setId((previous) =&gt; previous + 1)}&gt;</span>
+<span>        Next id</span>
+<span>      &lt;/button&gt;</span>
+<span>      {/* This does not change id, so only Redrew logs. */}</span>
+<span>      &lt;button type="button" onClick={() =&gt; setClicks((previous) =&gt; previous + 1)}&gt;</span>
+<span>        Click</span>
+<span>      &lt;/button&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default EffectDemo;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Every value from the component that the effect reads belongs in the array. If you leave one out, the effect keeps using the old value and nothing warns you.</p>
+  </div>
 
   <h3>Fetch data when the page loads</h3>
 
@@ -542,16 +632,20 @@
 <span></span>
 <span>const Items = () =&gt; {</span>
 <span>  const [items, setItems] = useState([]);</span>
+<span>  // loading starts as true, because the fetch starts right away.</span>
 <span>  const [loading, setLoading] = useState(true);</span>
 <span>  const [error, setError] = useState("");</span>
 <span></span>
 <span>  useEffect(() =&gt; {</span>
+<span>    // The cleanup at the bottom sets this to true.</span>
 <span>    let ignore = false;</span>
 <span></span>
+<span>    // useEffect cannot be async itself, so the async function goes inside it.</span>
 <span>    const fetchItems = async () =&gt; {</span>
 <span>      try {</span>
 <span>        const response = await fetch("/api/items");</span>
 <span></span>
+<span>        // fetch does not throw on a 404 or a 500, so check it yourself.</span>
 <span>        if (!response.ok) {</span>
 <span>          throw new Error(`Request failed (${response.status}).`);</span>
 <span>        }</span>
@@ -563,11 +657,13 @@
 <span>        }</span>
 <span>      } catch (problem) {</span>
 <span>        if (!ignore) {</span>
+<span>          // Log the real problem for yourself, and show the visitor a friendly message.</span>
 <span>          console.error("Error loading items:", problem);</span>
 <span>          setError("Unable to load items. Please try again.");</span>
 <span>        }</span>
 <span>      } finally {</span>
 <span>        if (!ignore) {</span>
+<span>          // This runs after a success and after a failure, so Loading never gets stuck.</span>
 <span>          setLoading(false);</span>
 <span>        }</span>
 <span>      }</span>
@@ -575,11 +671,14 @@
 <span></span>
 <span>    fetchItems();</span>
 <span></span>
+<span>    // The cleanup. React runs it when the component leaves the page.</span>
 <span>    return () =&gt; {</span>
 <span>      ignore = true;</span>
 <span>    };</span>
+<span>  // The empty array means run once, when the page loads.</span>
 <span>  }, []);</span>
 <span></span>
+<span>  // Return early while loading or after an error. The list only draws with real data.</span>
 <span>  if (loading) return &lt;p role="status"&gt;Loading...&lt;/p&gt;;</span>
 <span>  if (error) return &lt;p role="alert"&gt;{error}&lt;/p&gt;;</span>
 <span></span>
@@ -602,27 +701,45 @@
 <span>import { useParams } from "react-router-dom";</span>
 <span></span>
 <span>const ItemPage = () =&gt; {</span>
+<span>  // Reads the :id part of the route. For /items/2 this is "2".</span>
 <span>  const { id } = useParams();</span>
 <span>  const [item, setItem] = useState(null);</span>
+<span>  const [error, setError] = useState("");</span>
 <span></span>
 <span>  useEffect(() =&gt; {</span>
 <span>    let ignore = false;</span>
 <span></span>
 <span>    const fetchItem = async () =&gt; {</span>
-<span>      const response = await fetch(`/api/items/${id}`);</span>
-<span>      const data = await response.json();</span>
+<span>      // Clear the last item, so the old one never shows under a new URL.</span>
+<span>      setItem(null);</span>
+<span>      setError("");</span>
 <span></span>
-<span>      if (!ignore) setItem(data);</span>
+<span>      try {</span>
+<span>        const response = await fetch(`/api/items/${id}`);</span>
+<span></span>
+<span>        // A wrong id gets a 404. Without this check the error JSON is saved as the item.</span>
+<span>        if (!response.ok) {</span>
+<span>          throw new Error(`Request failed (${response.status}).`);</span>
+<span>        }</span>
+<span></span>
+<span>        const data = await response.json();</span>
+<span></span>
+<span>        if (!ignore) setItem(data);</span>
+<span>      } catch (problem) {</span>
+<span>        if (!ignore) setError(problem.message);</span>
+<span>      }</span>
 <span>    };</span>
 <span></span>
 <span>    fetchItem();</span>
 <span></span>
+<span>    // If id changes before the answer arrives, the old answer is dropped.</span>
 <span>    return () =&gt; {</span>
 <span>      ignore = true;</span>
 <span>    };</span>
 <span>  }, [id]); // Runs again when /items/1 becomes /items/2</span>
 <span></span>
-<span>  if (!item) return &lt;p&gt;Loading...&lt;/p&gt;;</span>
+<span>  if (error) return &lt;p role="alert"&gt;{error}&lt;/p&gt;;</span>
+<span>  if (!item) return &lt;p role="status"&gt;Loading...&lt;/p&gt;;</span>
 <span></span>
 <span>  return &lt;h2&gt;{item.title}&lt;/h2&gt;;</span>
 <span>};</span>
@@ -639,11 +756,15 @@
   <pre class="mycodereact">
 <span>import { useEffect, useState } from "react";</span>
 <span></span>
+<span>// Works out how long is left. It gives back null once the time has passed.</span>
 <span>const getTimeLeft = (startsAt) =&gt; {</span>
+<span>  // Both sides are in milliseconds.</span>
 <span>  const diff = new Date(startsAt).getTime() - Date.now();</span>
 <span>  if (diff &lt;= 0) return null;</span>
 <span>  return {</span>
+<span>    // 1000 milliseconds in a second, 60 seconds in a minute, 60 minutes in an hour.</span>
 <span>    days: Math.floor(diff / (1000 * 60 * 60 * 24)),</span>
+<span>    // % 24 keeps what is left over after the full days are taken out.</span>
 <span>    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),</span>
 <span>    minutes: Math.floor((diff / (1000 * 60)) % 60),</span>
 <span>    seconds: Math.floor((diff / 1000) % 60),</span>
@@ -651,10 +772,13 @@
 <span>};</span>
 <span></span>
 <span>const Countdown = ({ startsAt }) =&gt; {</span>
+<span>  // The arrow function means this only runs for the first draw.</span>
 <span>  const [timeLeft, setTimeLeft] = useState(() =&gt; getTimeLeft(startsAt));</span>
 <span></span>
 <span>  useEffect(() =&gt; {</span>
+<span>    // Work it out again every second.</span>
 <span>    const timer = setInterval(() =&gt; setTimeLeft(getTimeLeft(startsAt)), 1000);</span>
+<span>    // The cleanup stops the timer. Without it the timer keeps going after the component is gone.</span>
 <span>    return () =&gt; clearInterval(timer);</span>
 <span>  }, [startsAt]);</span>
 <span></span>
@@ -683,7 +807,9 @@
 <span>  useEffect(() =&gt; {</span>
 <span>    const handleResize = () =&gt; setWidth(window.innerWidth);</span>
 <span></span>
+<span>    // Listen for the window changing size.</span>
 <span>    window.addEventListener("resize", handleResize);</span>
+<span>    // Remove the same function when the component goes away, or listeners pile up.</span>
 <span>    return () =&gt; window.removeEventListener("resize", handleResize);</span>
 <span>  }, []);</span>
 <span></span>
@@ -696,19 +822,38 @@
   <h3>Scroll to the top on a new page</h3>
 
   <div class="div_p">
-    <p>Put this in Layout.jsx. This one came from Rev.</p>
+    <p>This one came from Rev. The box is the whole Layout.jsx from above with the scroll code added.</p>
   </div>
 
   <pre class="mycodereact">
 <span>import { useEffect } from "react";</span>
-<span>import { useLocation } from "react-router-dom";</span>
+<span>import { Outlet, useLocation } from "react-router-dom";</span>
+<span>import Navigation from "./Navigation";</span>
 <span></span>
-<span>const { pathname } = useLocation();</span>
+<span>export default function Layout() {</span>
+<span>  // pathname is the path part of the URL, such as /items/5.</span>
+<span>  const { pathname } = useLocation();</span>
 <span></span>
-<span>useEffect(() =&gt; {</span>
-<span>  window.scrollTo(0, 0);</span>
-<span>}, [pathname]);</span>
+<span>  // Runs every time the path changes, which means a new page was opened.</span>
+<span>  useEffect(() =&gt; {</span>
+<span>    window.scrollTo(0, 0);</span>
+<span>  }, [pathname]);</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;div className="site"&gt;</span>
+<span>      &lt;Navigation /&gt;</span>
+<span>      &lt;main&gt;</span>
+<span>        &lt;Outlet /&gt;</span>
+<span>      &lt;/main&gt;</span>
+<span>      &lt;footer&gt;Made by me&lt;/footer&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>}</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Hooks only work at the top of a component or of another hook. Never call one inside an if, a loop, or a normal function, and never outside a component.</p>
+  </div>
 
   <h2 id="useref">useRef</h2>
 
@@ -727,9 +872,11 @@
 <span></span>
 <span>const SaveButton = ({ onSave }) =&gt; {</span>
 <span>  const [saving, setSaving] = useState(false);</span>
+<span>  // A ref keeps its value between redraws, and changing it does not redraw.</span>
 <span>  const inFlight = useRef(false);</span>
 <span></span>
 <span>  const handleClick = async () =&gt; {</span>
+<span>    // A second click while the first one is still saving stops here.</span>
 <span>    if (inFlight.current) return;</span>
 <span></span>
 <span>    inFlight.current = true;</span>
@@ -738,6 +885,7 @@
 <span>    try {</span>
 <span>      await onSave();</span>
 <span>    } finally {</span>
+<span>      // This runs after a success and after a failure, so the button always comes back.</span>
 <span>      inFlight.current = false;</span>
 <span>      setSaving(false);</span>
 <span>    }</span>
@@ -759,12 +907,15 @@
 <span>import { useEffect, useRef } from "react";</span>
 <span></span>
 <span>const FocusInput = () =&gt; {</span>
+<span>  // It starts as null. React fills it in with the real input element.</span>
 <span>  const input = useRef(null);</span>
 <span></span>
 <span>  useEffect(() =&gt; {</span>
+<span>    // By the time an effect runs, the input is on the page.</span>
 <span>    input.current.focus();</span>
 <span>  }, []);</span>
 <span></span>
+<span>  // ref={input} is what connects the two.</span>
 <span>  return &lt;input ref={input} /&gt;;</span>
 <span>};</span>
 <span></span>
@@ -782,8 +933,10 @@
   <pre class="mycodereact">
 <span>import { createContext, useContext, useState } from "react";</span>
 <span></span>
+<span>// The context is the channel. null is what you get outside of a Provider.</span>
 <span>const CartContext = createContext(null);</span>
 <span></span>
+<span>// The Provider holds the state and shares it with everything inside it.</span>
 <span>export function CartProvider({ children }) {</span>
 <span>  const [cart, setCart] = useState([]);</span>
 <span></span>
@@ -791,24 +944,47 @@
 <span>    setCart((previous) =&gt; [...previous, item]);</span>
 <span>  };</span>
 <span></span>
+<span>  // Everything a component can get from useCart().</span>
 <span>  const value = { cart, addToCart, count: cart.length };</span>
 <span></span>
 <span>  return &lt;CartContext.Provider value={value}&gt;{children}&lt;/CartContext.Provider&gt;;</span>
 <span>}</span>
 <span></span>
+<span>// A short hook, so components do not have to import the context itself.</span>
 <span>export function useCart() {</span>
 <span>  return useContext(CartContext);</span>
 <span>}</span>
   </pre>
 
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> A component that calls useCart() outside of CartProvider gets null, and the page crashes with "Cannot destructure property of null". Check that CartProvider wraps App in main.jsx.</p>
+  </div>
+
   <h3>Wrap the app in main.jsx</h3>
 
+  <div class="div_p">
+    <p>This is the whole main.jsx from the top of the page with CartProvider added.</p>
+  </div>
+
   <pre class="mycodereact">
-<span>&lt;BrowserRouter&gt;</span>
-<span>  &lt;CartProvider&gt;</span>
-<span>    &lt;App /&gt;</span>
-<span>  &lt;/CartProvider&gt;</span>
-<span>&lt;/BrowserRouter&gt;</span>
+<span>import React from "react";</span>
+<span>import ReactDOM from "react-dom/client";</span>
+<span>import { BrowserRouter } from "react-router-dom";</span>
+<span>import App from "./App";</span>
+<span>import { CartProvider } from "./context/CartContext";</span>
+<span>import "./index.css";</span>
+<span></span>
+<span>const root = ReactDOM.createRoot(document.getElementById("root"));</span>
+<span>root.render(</span>
+<span>  &lt;React.StrictMode&gt;</span>
+<span>    &lt;BrowserRouter&gt;</span>
+<span>      {/* Everything inside CartProvider can call useCart(). */}</span>
+<span>      &lt;CartProvider&gt;</span>
+<span>        &lt;App /&gt;</span>
+<span>      &lt;/CartProvider&gt;</span>
+<span>    &lt;/BrowserRouter&gt;</span>
+<span>  &lt;/React.StrictMode&gt;</span>
+<span>);</span>
   </pre>
 
   <h3>Use it in any component</h3>
@@ -817,6 +993,7 @@
 <span>import { useCart } from "../context/CartContext";</span>
 <span></span>
 <span>const CartButton = ({ item }) =&gt; {</span>
+<span>  // Pull out only what this component needs.</span>
 <span>  const { addToCart, count } = useCart();</span>
 <span></span>
 <span>  return &lt;button onClick={() =&gt; addToCart(item)}&gt;Add to cart ({count})&lt;/button&gt;;</span>
@@ -849,12 +1026,14 @@
 <span>    let ignore = false;</span>
 <span></span>
 <span>    const load = async () =&gt; {</span>
+<span>      // Start over every time the url changes.</span>
 <span>      setLoading(true);</span>
 <span>      setError("");</span>
 <span></span>
 <span>      try {</span>
 <span>        const response = await fetch(url);</span>
 <span></span>
+<span>        // fetch does not throw on a 404 or a 500, so check it yourself.</span>
 <span>        if (!response.ok) {</span>
 <span>          throw new Error(`Request failed (${response.status}).`);</span>
 <span>        }</span>
@@ -874,11 +1053,17 @@
 <span>    return () =&gt; {</span>
 <span>      ignore = true;</span>
 <span>    };</span>
+<span>  // Runs again whenever the url changes.</span>
 <span>  }, [url]);</span>
 <span></span>
+<span>  // The page gets these three back.</span>
 <span>  return { data, loading, error };</span>
 <span>}</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> data starts as null, so check loading and error before you read it. Writing data.map before the fetch finishes crashes the page.</p>
+  </div>
 
   <h3>client/src/hooks/usePageTitle.js</h3>
 
@@ -891,6 +1076,7 @@
 <span></span>
 <span>export default function usePageTitle(title) {</span>
 <span>  useEffect(() =&gt; {</span>
+<span>    // document.title is the text on the browser tab.</span>
 <span>    document.title = title ? `${title} | My App` : "My App";</span>
 <span>  }, [title]);</span>
 <span>}</span>
@@ -913,12 +1099,15 @@
 <span></span>
 <span>  useEffect(() =&gt; {</span>
 <span>    const element = ref.current;</span>
+<span>    // There is nothing to measure yet.</span>
 <span>    if (!element) return undefined;</span>
 <span>    setWidth(element.clientWidth || initial);</span>
+<span>    // ResizeObserver calls this function every time the element changes size.</span>
 <span>    const observer = new ResizeObserver(([entry]) =&gt; {</span>
 <span>      setWidth(Math.round(entry.contentRect.width));</span>
 <span>    });</span>
 <span>    observer.observe(element);</span>
+<span>    // Stop watching when the component goes away.</span>
 <span>    return () =&gt; observer.disconnect();</span>
 <span>  }, [initial]);</span>
 <span></span>
@@ -931,6 +1120,7 @@
   <h3>client/src/components/Navigation.jsx</h3>
 
   <pre class="mycodereact">
+<span>// Shows on every page. Link changes the page without reloading the site.</span>
 <span>import { Link } from "react-router-dom";</span>
 <span></span>
 <span>const Navigation = () =&gt; {</span>
@@ -961,6 +1151,7 @@
   <pre class="mycodereact">
 <span>// kind: "loading" | "empty" | "error"</span>
 <span>export default function StatusMessage({ kind = "empty", title, children, action }) {</span>
+<span>  // alert makes a screen reader say it right away. status waits for a pause.</span>
 <span>  const role = kind === "error" ? "alert" : "status";</span>
 <span>  return (</span>
 <span>    &lt;div className={`status status--${kind}`} role={role}&gt;</span>
@@ -986,9 +1177,12 @@
 <span>  const [pending, setPending] = useState(false);</span>
 <span>  const [error, setError] = useState("");</span>
 <span>  const inFlight = useRef(false); // blocks a double click from deleting twice</span>
+<span>  // The Delete button itself, so focus can go back to it.</span>
 <span>  const trigger = useRef(null);</span>
+<span>  // useId makes an id that is unique on the page. It links the box to its message.</span>
 <span>  const messageId = useId();</span>
 <span></span>
+<span>  // Close the box and put focus back on the Delete button.</span>
 <span>  function cancel() {</span>
 <span>    if (inFlight.current) return;</span>
 <span>    setConfirming(false);</span>
@@ -996,6 +1190,7 @@
 <span>    trigger.current?.focus();</span>
 <span>  }</span>
 <span></span>
+<span>  // Runs the delete. When it fails, the box stays open and shows the error.</span>
 <span>  async function confirm() {</span>
 <span>    if (inFlight.current || disabled) return;</span>
 <span>    inFlight.current = true;</span>
@@ -1053,6 +1248,7 @@
   <h3>client/src/pages/NotFound.jsx</h3>
 
   <pre class="mycodereact">
+<span>// Shown by the * route when no other path matched.</span>
 <span>import { Link } from "react-router-dom";</span>
 <span></span>
 <span>export default function NotFound() {</span>
@@ -1072,12 +1268,15 @@
   </div>
 
   <pre class="mycodereact">
+<span>// The name the choice is saved under in localStorage.</span>
 <span>const KEY = "app-theme";</span>
 <span></span>
+<span>// Puts data-theme="dark" or "light" on the html tag, where your CSS can see it.</span>
 <span>function paint(theme) {</span>
 <span>  document.documentElement.dataset.theme = theme;</span>
 <span>}</span>
 <span></span>
+<span>// Call this once in main.jsx, before render, so the page never flashes the wrong theme.</span>
 <span>export function applySavedTheme() {</span>
 <span>  let saved = null;</span>
 <span>  try {</span>
@@ -1088,10 +1287,12 @@
 <span>  paint(saved === "dark" ? "dark" : "light");</span>
 <span>}</span>
 <span></span>
+<span>// Reads which theme is on the page right now.</span>
 <span>export function currentTheme() {</span>
 <span>  return document.documentElement.dataset.theme === "dark" ? "dark" : "light";</span>
 <span>}</span>
 <span></span>
+<span>// Changes the theme and remembers it for the next visit.</span>
 <span>export function saveTheme(theme) {</span>
 <span>  paint(theme);</span>
 <span>  try {</span>
@@ -1109,7 +1310,9 @@
 <span>import { currentTheme, saveTheme } from "../theme";</span>
 <span></span>
 <span>export default function ThemeToggle() {</span>
+<span>  // Passing the function itself, with no (), means React runs it once for the first draw.</span>
 <span>  const [theme, setTheme] = useState(currentTheme);</span>
+<span>  // The theme the button would switch to.</span>
 <span>  const next = theme === "dark" ? "light" : "dark";</span>
 <span></span>
 <span>  const handleClick = () =&gt; {</span>
@@ -1136,9 +1339,28 @@
   <pre class="mycodereact">
 <span>import { Link } from "react-router-dom";</span>
 <span></span>
-<span>&lt;Link to="/items"&gt;All Items&lt;/Link&gt;</span>
-<span>&lt;Link to={`/items/${item.id}`}&gt;{item.title}&lt;/Link&gt;</span>
+<span>const ItemLinks = ({ items }) =&gt; {</span>
+<span>  return (</span>
+<span>    &lt;nav&gt;</span>
+<span>      {/* A fixed path. */}</span>
+<span>      &lt;Link to="/items"&gt;All Items&lt;/Link&gt;</span>
+<span></span>
+<span>      {/* A path built from data. The backticks let the id go inside the text. */}</span>
+<span>      {items.map((item) =&gt; (</span>
+<span>        &lt;Link key={item.id} to={`/items/${item.id}`}&gt;</span>
+<span>          {item.title}</span>
+<span>        &lt;/Link&gt;</span>
+<span>      ))}</span>
+<span>    &lt;/nav&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default ItemLinks;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Link is only for pages inside your own site. For another website, use a normal a tag with the full https address.</p>
+  </div>
 
   <h3>Read the id from the URL</h3>
 
@@ -1149,7 +1371,15 @@
   <pre class="mycodereact">
 <span>import { useParams } from "react-router-dom";</span>
 <span></span>
-<span>const { id } = useParams();</span>
+<span>// Used by a route such as { path: "/items/:id", element: &lt;ItemId /&gt; }.</span>
+<span>const ItemId = () =&gt; {</span>
+<span>  // The name id matches the :id in the route path. The value is always text.</span>
+<span>  const { id } = useParams();</span>
+<span></span>
+<span>  return &lt;p&gt;You are looking at item {id}.&lt;/p&gt;;</span>
+<span>};</span>
+<span></span>
+<span>export default ItemId;</span>
   </pre>
 
   <h3>Go to another page from code</h3>
@@ -1157,18 +1387,57 @@
   <pre class="mycodereact">
 <span>import { useNavigate } from "react-router-dom";</span>
 <span></span>
-<span>const navigate = useNavigate();</span>
+<span>const BackButton = () =&gt; {</span>
+<span>  // Call the hook at the top of the component. It gives back a function.</span>
+<span>  const navigate = useNavigate();</span>
 <span></span>
-<span>navigate("/items");</span>
+<span>  const handleClick = () =&gt; {</span>
+<span>    // Call navigate after something happens, such as a click or a finished save.</span>
+<span>    navigate("/items");</span>
+<span>  };</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;button type="button" onClick={handleClick}&gt;</span>
+<span>      Back to all items</span>
+<span>    &lt;/button&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default BackButton;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> navigate(-1) goes back one page, the same as the Back button in the browser. navigate("/login", { replace: true }) swaps the current page, so Back does not return to it.</p>
+  </div>
 
   <h3>Read ?tab=register from the URL</h3>
 
   <pre class="mycodereact">
 <span>import { useSearchParams } from "react-router-dom";</span>
 <span></span>
-<span>const [searchParams] = useSearchParams();</span>
-<span>const tab = searchParams.get("tab");</span>
+<span>const AccountTabs = () =&gt; {</span>
+<span>  // searchParams reads the part of the URL after the ?.</span>
+<span>  const [searchParams, setSearchParams] = useSearchParams();</span>
+<span></span>
+<span>  // For /account?tab=register this is "register". With no tab in the URL it is "login".</span>
+<span>  const tab = searchParams.get("tab") ?? "login";</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;div&gt;</span>
+<span>      {/* Changing the search params changes the URL, and the component redraws. */}</span>
+<span>      &lt;button type="button" onClick={() =&gt; setSearchParams({ tab: "login" })}&gt;</span>
+<span>        Log in</span>
+<span>      &lt;/button&gt;</span>
+<span>      &lt;button type="button" onClick={() =&gt; setSearchParams({ tab: "register" })}&gt;</span>
+<span>        Register</span>
+<span>      &lt;/button&gt;</span>
+<span></span>
+<span>      {tab === "register" ? &lt;p&gt;The register form goes here.&lt;/p&gt; : &lt;p&gt;The log in form goes here.&lt;/p&gt;}</span>
+<span>    &lt;/div&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default AccountTabs;</span>
   </pre>
 
   <h2 id="talking-to-the-server">Talking To The Server</h2>
@@ -1180,7 +1449,10 @@
   </div>
 
   <pre class="mycodereact">
+<span>// Every request ends here. It turns the answer into data,</span>
+<span>// or throws an error with the message the server sent.</span>
 <span>const readResponse = async (response) =&gt; {</span>
+<span>  // If the answer is not JSON, use null and do not crash.</span>
 <span>  const data = await response.json().catch(() =&gt; null);</span>
 <span></span>
 <span>  if (!response.ok) {</span>
@@ -1200,6 +1472,7 @@
 <span>};</span>
 <span></span>
 <span>const getItemById = async (id) =&gt; {</span>
+<span>  // encodeURIComponent keeps a strange id from changing the path.</span>
 <span>  const response = await fetch(`/api/items/${encodeURIComponent(id)}`);</span>
 <span>  return readResponse(response);</span>
 <span>};</span>
@@ -1207,9 +1480,11 @@
 <span>const createItem = async (item) =&gt; {</span>
 <span>  const response = await fetch("/api/items", {</span>
 <span>    method: "POST",</span>
+<span>    // This tells Express the body is JSON. Without it req.body is undefined.</span>
 <span>    headers: {</span>
 <span>      "Content-Type": "application/json",</span>
 <span>    },</span>
+<span>    // The body has to be text, so turn the object into JSON.</span>
 <span>    body: JSON.stringify(item),</span>
 <span>  });</span>
 <span>  return readResponse(response);</span>
@@ -1241,6 +1516,10 @@
 <span>  deleteItem,</span>
 <span>};</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> These paths start with /api, so on your own computer they depend on the Vite proxy. When the API is live on another address, put VITE_API_URL in front of each path. That is on the <a href="setup_page.html#env-files">Setup page</a>.</p>
+  </div>
 
   <h2 id="full-pages">Full Pages</h2>
 
@@ -1284,7 +1563,9 @@
 <span>  }, []);</span>
 <span></span>
 <span>  const handleDelete = async (item) =&gt; {</span>
+<span>    // Delete on the server first. If that throws, the line below never runs and the card stays.</span>
 <span>    await ItemsAPI.deleteItem(item.id);</span>
+<span>    // Then take it off the screen, without fetching the whole list again.</span>
 <span>    setItems((previous) =&gt; previous.filter((other) =&gt; other.id !== item.id));</span>
 <span>  };</span>
 <span></span>
@@ -1329,6 +1610,7 @@
 <span>    let ignore = false;</span>
 <span></span>
 <span>    const fetchItem = async () =&gt; {</span>
+<span>      // Clear the last item, so the old one never shows under a new URL.</span>
 <span>      setItem(null);</span>
 <span>      setError("");</span>
 <span></span>
@@ -1348,6 +1630,7 @@
 <span>    };</span>
 <span>  }, [id]);</span>
 <span></span>
+<span>  // Check error first. After a failed load, item is still null.</span>
 <span>  if (error) return &lt;p role="alert"&gt;{error}&lt;/p&gt;;</span>
 <span>  if (!item) return &lt;p role="status"&gt;Loading...&lt;/p&gt;;</span>
 <span></span>
@@ -1372,14 +1655,17 @@
   <pre class="mycodereact">
 <span>import { useRef, useState } from "react";</span>
 <span></span>
+<span>// Empty text for every field, so each input is controlled from the start.</span>
 <span>const defaults = { title: "", description: "", image: "" };</span>
 <span></span>
 <span>export default function ItemForm({ initialValues = defaults, heading, submitLabel, onSubmit }) {</span>
 <span>  const [item, setItem] = useState({ ...defaults, ...initialValues });</span>
 <span>  const [error, setError] = useState("");</span>
 <span>  const [saving, setSaving] = useState(false);</span>
+<span>  // Blocks a double click from saving twice.</span>
 <span>  const submitting = useRef(false);</span>
 <span></span>
+<span>  // This pulls name and value straight out of event.target.</span>
 <span>  const handleChange = ({ target: { name, value } }) =&gt; {</span>
 <span>    setItem((previous) =&gt; ({ ...previous, [name]: value }));</span>
 <span>    setError("");</span>
@@ -1389,6 +1675,7 @@
 <span>    event.preventDefault();</span>
 <span>    if (submitting.current) return;</span>
 <span></span>
+<span>    // Check in the browser first. The server checks again, because a request can skip this form.</span>
 <span>    if (!item.title.trim()) {</span>
 <span>      setError("Enter a title.");</span>
 <span>      return;</span>
@@ -1398,6 +1685,7 @@
 <span>    setSaving(true);</span>
 <span></span>
 <span>    try {</span>
+<span>      // The page decides what saving means: create or update.</span>
 <span>      await onSubmit({</span>
 <span>        title: item.title.trim(),</span>
 <span>        description: item.description.trim(),</span>
@@ -1448,6 +1736,7 @@
 <span></span>
 <span>  const saveItem = async (item) =&gt; {</span>
 <span>    await ItemsAPI.createItem(item);</span>
+<span>    // This only runs when the save worked. A failed save throws, and the form shows the error.</span>
 <span>    navigate("/");</span>
 <span>  };</span>
 <span></span>
@@ -1470,6 +1759,7 @@
 <span>export default function EditItem() {</span>
 <span>  const { id } = useParams();</span>
 <span>  const navigate = useNavigate();</span>
+<span>  // One object holds the id that was loaded, plus the item or the error.</span>
 <span>  const [result, setResult] = useState(null);</span>
 <span></span>
 <span>  useEffect(() =&gt; {</span>

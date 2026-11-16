@@ -21,14 +21,18 @@
         <li><a href="html_page.html">Html Code</a></li>
         <li><a href="css_page.html">Css Code</a></li>
         <li><a href="tailwind_page.html">Tailwind Code</a></li>
+        <li><a href="photo_effects_page.html">Photo Effects</a></li>
+        <li><a href="blog_page.html">Blog Template</a></li>
         <li><a href="javaScript.html">JavaScript Code</a></li>
         <li><a href="setup_page.html">Setup &amp; .env</a></li>
         <li><a href="react_page.html">React Code</a></li>
+        <li><a href="dashboard_page.html">Dashboard Code</a></li>
         <li><a href="node_page.html">Node Code</a></li>
         <li><a href="mongodb_page.html">MongoDB Code</a></li>
         <li><a href="postgres_page.html">Postgres Code</a></li>
         <li><a href="security_page.html">Security Code</a></li>
         <li><a href="migration_page.html">Switch Databases</a></li>
+        <li><a href="bugs_page.html">Common Bugs</a></li>
       </ul>
     </div>
   </nav>
@@ -119,6 +123,10 @@
 <span>npm pkg set scripts.admin:create="node scripts/create-admin.js"</span>
 <span>mkdir config models security services scripts</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> argon2 comes with a small program that is built for your computer. If npm install stops on argon2, update Node first. On a Mac, also run xcode-select --install and try again.</p>
+  </div>
 
   <h2 id="step-2-database-and-models">Step 2 Database And Models</h2>
 
@@ -2415,18 +2423,26 @@
 <span>import express from "express";</span>
 <span>import ItemsController from "../controllers/items.js";</span>
 <span></span>
+<span>// auth comes from server.js through mountRoutes. It holds requireAuth and requireAdmin.</span>
 <span>export default function itemRoutes(auth) {</span>
 <span>  const router = express.Router();</span>
 <span></span>
+<span>  // No guard on the two GET routes, so anyone can read.</span>
 <span>  router.get("/", ItemsController.getItems);</span>
 <span>  router.get("/:id", ItemsController.getItemById);</span>
+<span>  // requireAuth runs first. A visitor who is not signed in is turned away before the controller runs.</span>
 <span>  router.post("/", auth.requireAuth, ItemsController.createItem);</span>
 <span>  router.patch("/:id", auth.requireAuth, ItemsController.updateItem);</span>
+<span>  // requireAdmin also checks the role, so a normal member cannot delete.</span>
 <span>  router.delete("/:id", auth.requireAdmin, ItemsController.deleteItem);</span>
 <span></span>
 <span>  return router;</span>
 <span>}</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Hiding a button in React is not protection. Anyone can send the same request with curl, so the guard has to be on the route.</p>
+  </div>
 
   <h3>server/security/access.js</h3>
 
@@ -2490,34 +2506,117 @@
   <h3>Only let the owner change a record</h3>
 
   <div class="div_p">
-    <p>The author always comes from the session, never from what the browser sends.</p>
+    <p>The author always comes from the session, never from what the browser sends. This is a whole controller file. Save it as server/controllers/posts.js. It uses the Post model from the MongoDB page.</p>
   </div>
 
   <pre class="mycodesecurity">
-<span>// Create: the signed-in user is the author.</span>
-<span>const newPost = await Post.create({ ...fields, authorId: req.authUser._id });</span>
+<span>import Post from "../models/Post.js";</span>
+<span>import { HttpError } from "../security/input.js";</span>
+<span>import { findOwned, notFound } from "../security/access.js";</span>
 <span></span>
-<span>// Update and delete: find it only if it belongs to this user.</span>
-<span>const post = await findOwned(Post, {</span>
-<span>  id: req.params.id,</span>
-<span>  ownerId: req.authUser._id,</span>
-<span>  ownerField: "authorId",</span>
-<span>});</span>
+<span>// Only copy the fields a member is allowed to set. authorId is not one of them.</span>
+<span>const pickFields = (body) =&gt; {</span>
+<span>  if (!body || typeof body !== "object" || Array.isArray(body)) {</span>
+<span>    throw new HttpError(400, "Send a JSON object.");</span>
+<span>  }</span>
 <span></span>
-<span>if (!post) throw notFound();</span>
+<span>  if (typeof body.title !== "string" || typeof body.body !== "string") {</span>
+<span>    throw new HttpError(400, "Title and body are required.");</span>
+<span>  }</span>
+<span></span>
+<span>  return { title: body.title, body: body.body };</span>
+<span>};</span>
+<span></span>
+<span>// POST /api/posts. requireAuth runs first, so req.authUser is the signed-in user.</span>
+<span>const createPost = async (req, res) =&gt; {</span>
+<span>  // Create: the signed-in user is the author. The browser never picks the author.</span>
+<span>  const post = await Post.create({</span>
+<span>    ...pickFields(req.body),</span>
+<span>    authorId: req.authUser._id,</span>
+<span>  });</span>
+<span></span>
+<span>  res.status(201).json(post);</span>
+<span>};</span>
+<span></span>
+<span>// PATCH /api/posts/:id</span>
+<span>const updatePost = async (req, res) =&gt; {</span>
+<span>  // Update and delete: find it only if it belongs to this user.</span>
+<span>  const post = await findOwned(Post, {</span>
+<span>    id: req.params.id,</span>
+<span>    ownerId: req.authUser._id,</span>
+<span>    ownerField: "authorId",</span>
+<span>  });</span>
+<span></span>
+<span>  // A post that belongs to someone else gets the same 404 as one that does not exist.</span>
+<span>  if (!post) throw notFound();</span>
+<span></span>
+<span>  Object.assign(post, pickFields(req.body));</span>
+<span>  await post.save();</span>
+<span>  res.status(200).json(post);</span>
+<span>};</span>
+<span></span>
+<span>// DELETE /api/posts/:id</span>
+<span>const deletePost = async (req, res) =&gt; {</span>
+<span>  const post = await findOwned(Post, {</span>
+<span>    id: req.params.id,</span>
+<span>    ownerId: req.authUser._id,</span>
+<span>    ownerField: "authorId",</span>
+<span>  });</span>
+<span></span>
+<span>  if (!post) throw notFound();</span>
+<span></span>
+<span>  await post.deleteOne();</span>
+<span>  res.status(200).json(post);</span>
+<span>};</span>
+<span></span>
+<span>export default { createPost, updatePost, deletePost };</span>
   </pre>
 
   <h3>Postgres version of the same owner check</h3>
 
+  <div class="div_p">
+    <p>This is a whole controller file for a posts table with an author_id column. It uses config/database.js from the Postgres page.</p>
+  </div>
+
   <pre class="mycodesecurity">
-<span>const results = await pool.query(</span>
-<span>  "UPDATE posts SET title = $1 WHERE id = $2 AND author_id = $3 RETURNING *",</span>
-<span>  [title, id, req.authUser.id],</span>
-<span>);</span>
+<span>import { pool } from "../config/database.js";</span>
 <span></span>
-<span>if (results.rows.length === 0) {</span>
-<span>  return res.status(404).json({ error: "Not found." });</span>
-<span>}</span>
+<span>// PATCH /api/posts/:id. requireAuth runs first, so req.authUser is the signed-in user.</span>
+<span>const updatePost = async (req, res) =&gt; {</span>
+<span>  const id = Number(req.params.id);</span>
+<span>  const title = typeof req.body?.title === "string" ? req.body.title.trim() : "";</span>
+<span></span>
+<span>  // A wrong id gets the same 404 as a post that is not yours.</span>
+<span>  if (!Number.isInteger(id) || id &lt; 1 || id &gt; 2147483647) {</span>
+<span>    return res.status(404).json({ error: "Not found." });</span>
+<span>  }</span>
+<span></span>
+<span>  if (!title) {</span>
+<span>    return res.status(400).json({ error: "Title is required." });</span>
+<span>  }</span>
+<span></span>
+<span>  try {</span>
+<span>    // AND author_id = $3 is the owner check. A post that belongs to someone else matches no row.</span>
+<span>    const results = await pool.query(</span>
+<span>      "UPDATE posts SET title = $1 WHERE id = $2 AND author_id = $3 RETURNING *",</span>
+<span>      [title, id, req.authUser.id],</span>
+<span>    );</span>
+<span></span>
+<span>    if (results.rows.length === 0) {</span>
+<span>      return res.status(404).json({ error: "Not found." });</span>
+<span>    }</span>
+<span></span>
+<span>    return res.status(200).json(results.rows[0]);</span>
+<span>  } catch (error) {</span>
+<span>    console.error("Posts database error:", error);</span>
+<span></span>
+<span>    return res.status(500).json({</span>
+<span>      error: "Unable to complete the request. Please try again.",</span>
+<span>    });</span>
+<span>  }</span>
+<span>};</span>
+<span></span>
+<span>export default { updatePost };</span>
   </pre>
 
   <h2 id="step-10-create-the-admin">Step 10 Create The Admin</h2>
@@ -2876,7 +2975,10 @@
 <span>  plugins: [react()],</span>
 <span>  server: {</span>
 <span>    port: 5173,</span>
+<span>    // Stop with an error when 5173 is taken. Without this Vite moves to 5174,</span>
+<span>    // and CLIENT_ORIGIN in server/.env no longer matches.</span>
 <span>    strictPort: true,</span>
+<span>    // Any request that starts with /api is passed on to the API on port 3002.</span>
 <span>    proxy: {</span>
 <span>      "/api": { target: "http://127.0.0.1:3002" },</span>
 <span>    },</span>
@@ -3203,6 +3305,7 @@
 <span>createRoot(document.getElementById("root")).render(</span>
 <span>  &lt;StrictMode&gt;</span>
 <span>    &lt;BrowserRouter&gt;</span>
+<span>      {/* Every page inside AuthProvider can call useAuth(). */}</span>
 <span>      &lt;AuthProvider&gt;</span>
 <span>        &lt;App /&gt;</span>
 <span>      &lt;/AuthProvider&gt;</span>
@@ -3224,6 +3327,7 @@
 <span>import AdminLogin from "./pages/AdminLogin.jsx";</span>
 <span>import NotFound from "./pages/NotFound.jsx";</span>
 <span></span>
+<span>// Placeholders. Replace these three with your real pages.</span>
 <span>const Home = () =&gt; &lt;h1&gt;Home&lt;/h1&gt;;</span>
 <span>const Dashboard = () =&gt; &lt;h1&gt;Members only&lt;/h1&gt;;</span>
 <span>const AdminDashboard = () =&gt; &lt;h1&gt;Admin only&lt;/h1&gt;;</span>
@@ -3234,7 +3338,9 @@
 <span>      &lt;Route index element={&lt;Home /&gt;} /&gt;</span>
 <span>      &lt;Route path="login" element={&lt;Login /&gt;} /&gt;</span>
 <span>      &lt;Route path="admin/login" element={&lt;AdminLogin /&gt;} /&gt;</span>
+<span>      {/* RequireAuth shows the page only to a member who is signed in. */}</span>
 <span>      &lt;Route path="dashboard" element={&lt;RequireAuth&gt;&lt;Dashboard /&gt;&lt;/RequireAuth&gt;} /&gt;</span>
+<span>      {/* RequireAdmin shows the page only to the admin. */}</span>
 <span>      &lt;Route path="admin/dashboard" element={&lt;RequireAdmin&gt;&lt;AdminDashboard /&gt;&lt;/RequireAdmin&gt;} /&gt;</span>
 <span>      &lt;Route path="*" element={&lt;NotFound /&gt;} /&gt;</span>
 <span>    &lt;/Routes&gt;</span>
@@ -3262,6 +3368,8 @@
 <span>// Same rules as server/security/input.js (parseRegistration, readNewPassword).</span>
 <span>const USERNAME_PATTERN = /^[A-Za-z0-9](?:[A-Za-z0-9_.-]*[A-Za-z0-9])?$/;</span>
 <span></span>
+<span>// Fast checks in the browser. It gives back an object with one message</span>
+<span>// for each field that is wrong.</span>
 <span>function checkRegistration({ username, email, password, confirm }) {</span>
 <span>  const problems = {};</span>
 <span>  if (username.length &lt; 3 || username.length &gt; 35) problems.username = "Use 3 to 35 characters.";</span>
@@ -3278,16 +3386,19 @@
 <span>  const navigate = useNavigate();</span>
 <span>  const location = useLocation();</span>
 <span>  const [searchParams] = useSearchParams();</span>
+<span>  // /login?tab=register opens the Register tab first.</span>
 <span>  const [tab, setTab] = useState(searchParams.get("tab") === "register" ? "register" : "login");</span>
 <span>  const tabsId = useId();</span>
 <span>  const loginTab = useRef(null);</span>
 <span>  const registerTab = useRef(null);</span>
 <span></span>
+<span>  // Where to go after signing in: the page that sent them here, when it is a safe path.</span>
 <span>  const returnTo = safeReturnPath(location.state?.from);</span>
 <span></span>
 <span>  // Already signed in? Nothing to do here.</span>
 <span>  if (!checking &amp;&amp; user) return &lt;Navigate to={returnTo} replace /&gt;;</span>
 <span></span>
+<span>  // The left and right arrow keys switch tabs, which keyboard users expect.</span>
 <span>  function onTabKey(event) {</span>
 <span>    if (event.key !== "ArrowLeft" &amp;&amp; event.key !== "ArrowRight") return;</span>
 <span>    const next = tab === "login" ? "register" : "login";</span>
@@ -3330,12 +3441,14 @@
 <span>  );</span>
 <span>}</span>
 <span></span>
+<span>// The Log in tab.</span>
 <span>function LoginForm({ onDone }) {</span>
 <span>  const { login } = useAuth();</span>
 <span>  const [email, setEmail] = useState("");</span>
 <span>  const [password, setPassword] = useState("");</span>
 <span>  const [error, setError] = useState("");</span>
 <span>  const [pending, setPending] = useState(false);</span>
+<span>  // Blocks a double click from sending the form twice.</span>
 <span>  const inFlight = useRef(false);</span>
 <span></span>
 <span>  async function handleSubmit(event) {</span>
@@ -3349,6 +3462,7 @@
 <span>      onDone();</span>
 <span>    } catch (problem) {</span>
 <span>      setError(messageFor(problem, { 401: "That email and password don't match an account." }));</span>
+<span>      // Clear the password after a failed try.</span>
 <span>      setPassword("");</span>
 <span>    } finally {</span>
 <span>      inFlight.current = false;</span>
@@ -3378,6 +3492,7 @@
 <span>  );</span>
 <span>}</span>
 <span></span>
+<span>// The Register tab.</span>
 <span>function RegisterForm({ onDone, onUseLogin }) {</span>
 <span>  const { register, login } = useAuth();</span>
 <span>  const [form, setForm] = useState({ username: "", email: "", password: "", confirm: "" });</span>
@@ -3386,6 +3501,7 @@
 <span>  const [pending, setPending] = useState(false);</span>
 <span>  const inFlight = useRef(false);</span>
 <span></span>
+<span>  // Save the new value and clear the message under that field.</span>
 <span>  function update(name, value) {</span>
 <span>    setForm((previous) =&gt; ({ ...previous, [name]: value }));</span>
 <span>    setProblems((previous) =&gt; ({ ...previous, [name]: undefined }));</span>
@@ -3395,6 +3511,7 @@
 <span>    event.preventDefault();</span>
 <span>    if (inFlight.current) return;</span>
 <span>    const fields = { ...form, username: form.username.trim(), email: form.email.trim() };</span>
+<span>    // Stop here when a field is wrong, before anything is sent.</span>
 <span>    const found = checkRegistration(fields);</span>
 <span>    setProblems(found);</span>
 <span>    if (Object.keys(found).length) return;</span>
@@ -3424,6 +3541,7 @@
 <span>    }</span>
 <span>  }</span>
 <span></span>
+<span>  // Builds the aria-describedby value, so a screen reader reads the hint and the error.</span>
 <span>  const describe = (name, hintId) =&gt; [hintId, problems[name] ? `register-${name}-error` : null].filter(Boolean).join(" ") || undefined;</span>
 <span></span>
 <span>  return (</span>
@@ -3519,11 +3637,13 @@
 <span>  const [pending, setPending] = useState(false);</span>
 <span>  const inFlight = useRef(false);</span>
 <span></span>
+<span>  // Already signed in as the admin, so skip the form.</span>
 <span>  if (!checking &amp;&amp; user?.role === "admin") return &lt;Navigate to="/admin/dashboard" replace /&gt;;</span>
 <span></span>
 <span>  async function handleSubmit(event) {</span>
 <span>    event.preventDefault();</span>
 <span>    if (inFlight.current) return;</span>
+<span>    // Authenticator apps show the code as 123 456, so take the space out.</span>
 <span>    const digits = code.replace(/\s/g, "");</span>
 <span>    if (!/^\d{6}$/.test(digits)) {</span>
 <span>      setError("Enter the 6-digit code from your authenticator app.");</span>
@@ -3541,6 +3661,7 @@
 <span>          401: "That didn't work. Check your email and password, then wait for a new code and try again (each code works once).",</span>
 <span>        }),</span>
 <span>      );</span>
+<span>      // Clear both after a failed try. A code cannot be used twice anyway.</span>
 <span>      setPassword("");</span>
 <span>      setCode("");</span>
 <span>    } finally {</span>
@@ -3592,12 +3713,16 @@
   <h3>client/src/login.css</h3>
 
   <pre class="mycodecss">
+<span>/* Small starter styles for the login pages. Replace them with your own. */</span>
 <span>.access, .page--narrow { max-width: 28rem; margin: 2rem auto; padding: 0 1rem; }</span>
 <span>.tabs { display: flex; gap: .5rem; margin-bottom: 1rem; }</span>
+<span>/* The tab that is open. React sets aria-selected, so no extra class is needed. */</span>
 <span>.tab[aria-selected="true"] { font-weight: 700; border-bottom: 2px solid currentColor; }</span>
+<span>/* Take away the box a browser draws around a fieldset. */</span>
 <span>fieldset { border: 0; padding: 0; margin: 0; }</span>
 <span>.field { margin-bottom: 1rem; }</span>
 <span>.field label { display: block; margin-bottom: .25rem; }</span>
+<span>/* border-box keeps the padding inside the 100% width. */</span>
 <span>.input { width: 100%; padding: .5rem; box-sizing: border-box; }</span>
 <span>.password { display: flex; gap: .5rem; }</span>
 <span>.field__hint { font-size: .85rem; opacity: .75; }</span>

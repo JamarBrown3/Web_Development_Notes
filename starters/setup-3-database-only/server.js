@@ -38,6 +38,7 @@ app.use((error, req, res, next) => {
   res.status(500).json({ error: "An unexpected server error occurred." });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, (error) => {
+  if (error) throw error; // e.g. the port is already in use
   console.log(`🚀 Server listening on http://localhost:${PORT}`);
 });

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About | Build Notes</title>
+  <meta name="description" content="About Jane Doe and Build Notes.">
+  <meta property="og:title" content="About | Build Notes">
+  <meta property="og:description" content="About Jane Doe and Build Notes.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Lets the CSS know JavaScript is on, so the phone menu can fold away. -->
+  <script>document.documentElement.classList.add("js");</script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="index.html">Build<span>Notes</span></a>
+      <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <nav id="site-nav" class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html#latest">Articles</a></li>
+          <li><a href="about.html" aria-current="page">About</a></li>
+          <li><a href="about.html#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="container">
+      <section class="about" aria-labelledby="about-title">
+        <img class="about__photo" src="images/Jane_Doe.jpg" alt="Portrait of Jane Doe" width="768" height="768">
+        <div class="prose about__text">
+          <h1 id="about-title">Hi, I'm Jane Doe</h1>
+          <p>Jane builds custom PCs and writes plain-English guides for people putting together their first computer.</p>
+          <p>Build Notes started as notes from my own builds. Now it is a place for clear, honest guides with no jargon, so anyone can build a computer they are proud of.</p>
+          <h2>What you will find here</h2>
+          <ul>
+            <li>Step-by-step build guides</li>
+            <li>Buying advice for each part</li>
+            <li>Simple fixes for common problems</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="contact" aria-labelledby="contact-title">
+        <div class="contact-card">
+          <h2 id="contact-title">Get in touch</h2>
+          <p>Questions, ideas for a guide, or work together? Send a message.</p>
+          <!-- Connect this to a form service. Replace the action with the
+               address it gives you, or point it at your own server route. -->
+          <form action="https://formspree.io/f/YOUR_FORM_ID" method="post">
+            <div class="form-row">
+              <label for="contact-name">Name</label>
+              <input id="contact-name" name="name" type="text" autocomplete="name" required>
+            </div>
+            <div class="form-row">
+              <label for="contact-email">Email</label>
+              <input id="contact-email" name="email" type="email" autocomplete="email" required>
+            </div>
+            <div class="form-row">
+              <label for="contact-message">Message</label>
+              <textarea id="contact-message" name="message" rows="5" required></textarea>
+            </div>
+            <button class="button" type="submit">Send message</button>
+            <p class="form-note">I usually reply within two business days.</p>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__grid">
+        <div class="site-footer__about">
+          <h2>Build Notes</h2>
+          <p>Plain-English guides for people building and upgrading their own computers.</p>
+        </div>
+        <nav aria-label="Topics">
+          <h2>Topics</h2>
+          <ul>
+            <li><a href="index.html#latest">Builds</a></li>
+            <li><a href="index.html#latest">Guides</a></li>
+            <li><a href="index.html#latest">Reviews</a></li>
+            <li><a href="index.html#latest">How To</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Site">
+          <h2>Site</h2>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="about.html#contact">Contact</a></li>
+            <li><a href="index.html#newsletter">Newsletter</a></li>
+          </ul>
+        </nav>
+      </div>
+      <p class="site-footer__bottom">&copy; 2026 Build Notes. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+
+</html>

@@ -21,14 +21,18 @@
         <li><a href="html_page.html">Html Code</a></li>
         <li><a href="css_page.html">Css Code</a></li>
         <li><a href="tailwind_page.html">Tailwind Code</a></li>
+        <li><a href="photo_effects_page.html">Photo Effects</a></li>
+        <li><a href="blog_page.html">Blog Template</a></li>
         <li><a href="javaScript.html">JavaScript Code</a></li>
         <li><a href="setup_page.html">Setup &amp; .env</a></li>
         <li><a href="react_page.html">React Code</a></li>
+        <li><a href="dashboard_page.html">Dashboard Code</a></li>
         <li><a href="node_page.html">Node Code</a></li>
         <li><a href="mongodb_page.html">MongoDB Code</a></li>
         <li><a href="postgres_page.html">Postgres Code</a></li>
         <li><a href="security_page.html">Security Code</a></li>
         <li><a href="migration_page.html">Switch Databases</a></li>
+        <li><a href="bugs_page.html">Common Bugs</a></li>
       </ul>
     </div>
   </nav>
@@ -79,11 +83,14 @@
   <h3>server/config/database.js</h3>
 
   <pre class="mycodemongo">
+<span>// Reads .env into process.env.</span>
 <span>import "dotenv/config";</span>
 <span>import mongoose from "mongoose";</span>
 <span></span>
+<span>// Call this once, before app.listen.</span>
 <span>export async function connectDatabase() {</span>
 <span>  await mongoose.connect(process.env.MONGODB_URI, {</span>
+<span>    // The database name, not the cluster name.</span>
 <span>    dbName: process.env.MONGODB_DB_NAME,</span>
 <span>    serverSelectionTimeoutMS: 10000, // stop waiting after 10 seconds</span>
 <span>  });</span>
@@ -91,10 +98,15 @@
 <span>  console.log("MongoDB connected.");</span>
 <span>}</span>
 <span></span>
+<span>// Scripts such as reset.js call this at the end, so the terminal gets its prompt back.</span>
 <span>export async function disconnectDatabase() {</span>
 <span>  await mongoose.disconnect();</span>
 <span>}</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> If connecting fails with "The uri parameter to openUri() must be a string", MONGODB_URI is empty, so .env did not load. If it waits 10 seconds and then fails, add your current IP address under Network Access in Atlas.</p>
+  </div>
 
   <h3>server/server.js for MongoDB</h3>
 
@@ -103,6 +115,7 @@
   </div>
 
   <pre class="mycodemongo">
+<span>// Load .env first so everything below can read process.env.</span>
 <span>import "dotenv/config";</span>
 <span>import express from "express";</span>
 <span>import { connectDatabase } from "./config/database.js";</span>
@@ -113,15 +126,20 @@
 <span></span>
 <span>const app = express();</span>
 <span></span>
+<span>// Turns JSON from fetch into req.body.</span>
 <span>app.use(express.json());</span>
 <span></span>
+<span>// Every URL that starts with /api/items goes to the routes file.</span>
 <span>app.use("/api/items", itemsRouter);</span>
 <span></span>
+<span>// No route above matched.</span>
 <span>app.use((req, res) =&gt; {</span>
 <span>  res.status(404).json({ error: "Route not found." });</span>
 <span>});</span>
 <span></span>
+<span>// Express knows this is the error handler because it has four parameters.</span>
 <span>app.use((error, req, res, next) =&gt; {</span>
+<span>  // An error a controller threw on purpose, such as a 404.</span>
 <span>  if (error instanceof HttpError) {</span>
 <span>    return res.status(error.status).json({ error: error.message });</span>
 <span>  }</span>
@@ -131,21 +149,29 @@
 <span>    return res.status(400).json({ error: "The request contains invalid data." });</span>
 <span>  }</span>
 <span></span>
+<span>  // Anything else is a bug. Log the real error, but never send it to the browser.</span>
 <span>  console.error(error);</span>
 <span>  res.status(500).json({ error: "An unexpected server error occurred." });</span>
 <span>});</span>
 <span></span>
+<span>// Connect first. The port only opens once the database is ready.</span>
 <span>try {</span>
 <span>  await connectDatabase();</span>
 <span></span>
-<span>  app.listen(PORT, () =&gt; {</span>
+<span>  app.listen(PORT, (error) =&gt; {</span>
+<span>    if (error) throw error; // e.g. the port is already in use</span>
 <span>    console.log(`🚀 Server listening on http://localhost:${PORT}`);</span>
 <span>  });</span>
 <span>} catch (error) {</span>
+<span>  // The database did not connect, so the port never opens.</span>
 <span>  console.error("Could not connect to MongoDB:", error.message);</span>
 <span>  process.exitCode = 1;</span>
 <span>}</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Saving a value twice in a field marked unique throws an error with error.code === 11000. Add a check for it in this error handler and answer 409, or the visitor gets a 500. The code is on the <a href="migration_page.html#swap-the-server-code">Switch Databases page</a>.</p>
+  </div>
 
   <h2 id="starter-schema-and-crud">Starter Schema And CRUD</h2>
 
@@ -162,8 +188,10 @@
   <pre class="mycodemongo">
 <span>import mongoose from "mongoose";</span>
 <span></span>
+<span>// The schema sets the shape and the rules for every item.</span>
 <span>const itemSchema = new mongoose.Schema(</span>
 <span>  {</span>
+<span>    // required stops a save with no title. trim removes spaces from both ends.</span>
 <span>    title: {</span>
 <span>      type: String,</span>
 <span>      required: true,</span>
@@ -174,6 +202,7 @@
 <span>      type: String,</span>
 <span>      trim: true,</span>
 <span>      maxlength: 10000,</span>
+<span>      // default is used when the field is left out.</span>
 <span>      default: "",</span>
 <span>    },</span>
 <span>    image: {</span>
@@ -185,11 +214,16 @@
 <span>  },</span>
 <span>  {</span>
 <span>    timestamps: true, // adds createdAt and updatedAt</span>
+<span>    // The name of the collection in MongoDB.</span>
 <span>    collection: "items",</span>
+<span>    // toJSON runs every time an item is sent with res.json().</span>
 <span>    toJSON: {</span>
+<span>      // virtuals adds id, which is a text copy of _id.</span>
 <span>      virtuals: true,</span>
+<span>      // Leaves out __v, which Mongoose uses to track changes.</span>
 <span>      versionKey: false,</span>
 <span>      transform(document, result) {</span>
+<span>        // React uses id, so _id is not needed.</span>
 <span>        delete result._id;</span>
 <span>        return result;</span>
 <span>      },</span>
@@ -197,6 +231,7 @@
 <span>  },</span>
 <span>);</span>
 <span></span>
+<span>// The model is what the controller runs queries on.</span>
 <span>const Item = mongoose.model("Item", itemSchema);</span>
 <span></span>
 <span>export default Item;</span>
@@ -212,10 +247,12 @@
 <span>import { HttpError } from "./HttpError.js";</span>
 <span></span>
 <span>export function readObjectId(value) {</span>
+<span>  // A real id is 24 characters, and each one is 0 to 9 or a to f.</span>
 <span>  if (typeof value !== "string" || !/^[a-f0-9]{24}$/i.test(value)) {</span>
 <span>    throw new HttpError(404, "Item not found.");</span>
 <span>  }</span>
 <span></span>
+<span>  // Lowercase, so the same id always looks the same.</span>
 <span>  return value.toLowerCase();</span>
 <span>}</span>
   </pre>
@@ -231,7 +268,9 @@
 <span>import { HttpError } from "../utils/HttpError.js";</span>
 <span>import { readObjectId } from "../utils/readObjectId.js";</span>
 <span></span>
+<span>// Only copy the fields you expect. Never save the whole req.body.</span>
 <span>const pickFields = (body) =&gt; {</span>
+<span>  // The body has to be an object, not text, a number, or a list.</span>
 <span>  if (!body || typeof body !== "object" || Array.isArray(body)) {</span>
 <span>    throw new HttpError(400, "Send a JSON object.");</span>
 <span>  }</span>
@@ -240,6 +279,7 @@
 <span>    throw new HttpError(400, "Title is required.");</span>
 <span>  }</span>
 <span></span>
+<span>  // The schema trims the title and checks the lengths when it saves.</span>
 <span>  return {</span>
 <span>    title: body.title,</span>
 <span>    description: String(body.description ?? ""),</span>
@@ -247,6 +287,7 @@
 <span>  };</span>
 <span>};</span>
 <span></span>
+<span>// Loads one item. It answers 404 when the id is wrong or nothing matched.</span>
 <span>const findItem = async (id) =&gt; {</span>
 <span>  const item = await Item.findById(readObjectId(id));</span>
 <span></span>
@@ -254,22 +295,27 @@
 <span>  return item;</span>
 <span>};</span>
 <span></span>
+<span>// GET /api/items, oldest first.</span>
 <span>const getItems = async (req, res) =&gt; {</span>
 <span>  const items = await Item.find({}).sort({ createdAt: 1 });</span>
 <span></span>
 <span>  res.status(200).json(items);</span>
 <span>};</span>
 <span></span>
+<span>// GET /api/items/:id</span>
 <span>const getItemById = async (req, res) =&gt; {</span>
 <span>  res.status(200).json(await findItem(req.params.id));</span>
 <span>};</span>
 <span></span>
+<span>// POST /api/items</span>
 <span>const createItem = async (req, res) =&gt; {</span>
 <span>  const item = await Item.create(pickFields(req.body));</span>
 <span></span>
+<span>  // 201 means something was created.</span>
 <span>  res.status(201).json(item);</span>
 <span>};</span>
 <span></span>
+<span>// PUT or PATCH /api/items/:id. It replaces every field, so send them all.</span>
 <span>// save() runs the schema rules. findByIdAndUpdate skips them by default.</span>
 <span>const updateItem = async (req, res) =&gt; {</span>
 <span>  const item = await findItem(req.params.id);</span>
@@ -279,6 +325,7 @@
 <span>  res.status(200).json(item);</span>
 <span>};</span>
 <span></span>
+<span>// DELETE /api/items/:id</span>
 <span>const deleteItem = async (req, res) =&gt; {</span>
 <span>  const item = await findItem(req.params.id);</span>
 <span></span>
@@ -286,6 +333,7 @@
 <span>  res.status(200).json(item);</span>
 <span>};</span>
 <span></span>
+<span>// The routes file uses these names, such as ItemsController.getItems.</span>
 <span>export default {</span>
 <span>  getItems,</span>
 <span>  getItemById,</span>
@@ -308,22 +356,32 @@
 <span></span>
 <span>try {</span>
 <span>  await connectDatabase();</span>
+<span>  // {} matches every document, so this empties the collection.</span>
 <span>  await Item.deleteMany({});</span>
+<span>  // insertMany runs the schema rules on every record.</span>
 <span>  await Item.insertMany(itemData);</span>
 <span>  console.log(`🎉 Finished! Saved ${itemData.length} items.`);</span>
 <span>} catch (error) {</span>
 <span>  console.error("⚠️ Reset failed:", error.message);</span>
+<span>  // Tell the terminal that the script failed.</span>
 <span>  process.exitCode = 1;</span>
 <span>} finally {</span>
+<span>  // Always disconnect, or the script never gives the prompt back.</span>
 <span>  await disconnectDatabase();</span>
 <span>}</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> This empties the items collection in whichever database .env points at. Check MONGODB_URI and MONGODB_DB_NAME before you run it, so you never reset a live site by mistake.</p>
+  </div>
 
   <h2 id="schema-field-options">Schema Field Options</h2>
 
   <h3>Every option I use in one place</h3>
 
   <pre class="mycodemongo">
+<span>// Save it as server/models/Example.js.</span>
+<span>import mongoose from "mongoose";</span>
 <span>const exampleSchema = new mongoose.Schema({</span>
 <span>  name: {</span>
 <span>    type: String,</span>
@@ -367,7 +425,14 @@
 <span>    required: true,</span>
 <span>  },</span>
 <span>});</span>
+<span>const Example = mongoose.model("Example", exampleSchema);</span>
+<span></span>
+<span>export default Example;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> unique only works once its index exists. Mongoose builds the index when the app starts, and it fails if the collection already has two documents with the same value. Check the Indexes tab in Atlas after the first run.</p>
+  </div>
 
   <h3>Required only in some cases</h3>
 
@@ -376,27 +441,64 @@
   </div>
 
   <pre class="mycodemongo">
-<span>rating: {</span>
-<span>  type: Number,</span>
-<span>  min: 1,</span>
-<span>  max: 10,</span>
-<span>  required: function () {</span>
-<span>    return this.kind === "review";</span>
+<span>import mongoose from "mongoose";</span>
+<span></span>
+<span>const postSchema = new mongoose.Schema({</span>
+<span>  // This field decides whether rating is needed.</span>
+<span>  kind: {</span>
+<span>    type: String,</span>
+<span>    enum: ["review", "discussion"],</span>
+<span>    default: "discussion",</span>
 <span>  },</span>
-<span>},</span>
+<span>  rating: {</span>
+<span>    type: Number,</span>
+<span>    min: 1,</span>
+<span>    max: 10,</span>
+<span>    // A normal function, so this is the document being saved.</span>
+<span>    // It gives back true only for a review.</span>
+<span>    required: function () {</span>
+<span>      return this.kind === "review";</span>
+<span>    },</span>
+<span>  },</span>
+<span>});</span>
+<span></span>
+<span>const Post = mongoose.model("Post", postSchema);</span>
+<span></span>
+<span>export default Post;</span>
   </pre>
 
   <h3>Hide fields from the browser</h3>
 
   <pre class="mycodemongo">
-<span>toJSON: {</span>
-<span>  transform(document, result) {</span>
-<span>    delete result.passwordHash;</span>
-<span>    delete result.__v;</span>
-<span>    return result;</span>
+<span>import mongoose from "mongoose";</span>
+<span></span>
+<span>const userSchema = new mongoose.Schema(</span>
+<span>  {</span>
+<span>    email: { type: String, required: true },</span>
+<span>    passwordHash: { type: String, required: true },</span>
 <span>  },</span>
-<span>},</span>
+<span>  {</span>
+<span>    toJSON: {</span>
+<span>      // Runs every time a user is sent with res.json().</span>
+<span>      transform(document, result) {</span>
+<span>        // Never send the password hash to the browser.</span>
+<span>        delete result.passwordHash;</span>
+<span>        // __v is how Mongoose tracks changes. React does not need it.</span>
+<span>        delete result.__v;</span>
+<span>        return result;</span>
+<span>      },</span>
+<span>    },</span>
+<span>  },</span>
+<span>);</span>
+<span></span>
+<span>const User = mongoose.model("User", userSchema);</span>
+<span></span>
+<span>export default User;</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> toJSON only runs for full Mongoose documents. A query that ends in .lean() gives back plain objects and skips it, so the hidden fields come back. Add select: false to the field as a second layer.</p>
+  </div>
 
   <h3>Run a check across two fields</h3>
 
@@ -405,11 +507,29 @@
   </div>
 
   <pre class="mycodemongo">
+<span>import mongoose from "mongoose";</span>
+<span></span>
+<span>const postSchema = new mongoose.Schema({</span>
+<span>  kind: {</span>
+<span>    type: String,</span>
+<span>    enum: ["review", "discussion"],</span>
+<span>    default: "discussion",</span>
+<span>  },</span>
+<span>  rating: { type: Number, min: 1, max: 10 },</span>
+<span>});</span>
+<span></span>
+<span>// Runs before the schema rules, on save() and on validate().</span>
+<span>// A normal function, so this is the document. There is no next parameter.</span>
 <span>postSchema.pre("validate", function () {</span>
 <span>  if (this.kind === "discussion" &amp;&amp; this.rating !== undefined) {</span>
+<span>    // invalidate adds a normal validation error for that field.</span>
 <span>    this.invalidate("rating", "Ratings belong to review posts only.");</span>
 <span>  }</span>
 <span>});</span>
+<span></span>
+<span>const Post = mongoose.model("Post", postSchema);</span>
+<span></span>
+<span>export default Post;</span>
   </pre>
 
   <h3>Indexes</h3>
@@ -419,18 +539,49 @@
   </div>
 
   <pre class="mycodemongo">
+<span>import mongoose from "mongoose";</span>
+<span></span>
+<span>const { ObjectId } = mongoose.Schema.Types;</span>
+<span></span>
+<span>const postSchema = new mongoose.Schema(</span>
+<span>  {</span>
+<span>    authorId: { type: ObjectId, ref: "User", required: true },</span>
+<span>    title: { type: String, required: true },</span>
+<span>  },</span>
+<span>  { timestamps: true },</span>
+<span>);</span>
+<span></span>
 <span>// Newest first. _id breaks ties when two have the same time.</span>
 <span>postSchema.index({ createdAt: -1, _id: -1 });</span>
 <span></span>
 <span>// All posts by one author, newest first.</span>
 <span>postSchema.index({ authorId: 1, createdAt: -1 });</span>
 <span></span>
+<span>const voteSchema = new mongoose.Schema({</span>
+<span>  postId: { type: ObjectId, ref: "Post", required: true },</span>
+<span>  userId: { type: ObjectId, ref: "User", required: true },</span>
+<span>  value: { type: Number, enum: [1, -1], required: true },</span>
+<span>});</span>
+<span></span>
 <span>// One vote for each user on each post.</span>
 <span>voteSchema.index({ postId: 1, userId: 1 }, { unique: true });</span>
 <span></span>
+<span>const tokenSchema = new mongoose.Schema({</span>
+<span>  expiresAt: { type: Date, required: true },</span>
+<span>});</span>
+<span></span>
 <span>// MongoDB deletes the document after this date. It can run up to a minute late.</span>
 <span>tokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });</span>
+<span></span>
+<span>// Three models in one file to keep the example short. A real project has one file for each.</span>
+<span>export const Post = mongoose.model("Post", postSchema);</span>
+<span>export const Vote = mongoose.model("Vote", voteSchema);</span>
+<span>export const Token = mongoose.model("Token", tokenSchema);</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Every index makes saving a little slower, because MongoDB updates each one on every write. Only add an index for a search or a sort that a page really runs.</p>
+  </div>
 
   <h2 id="schemas-from-rev">Schemas From Rev</h2>
 
@@ -759,7 +910,7 @@
 <span></span>
 <span>const postSchema = new mongoose.Schema(</span>
 <span>  {</span>
-<span>    // Reference to the User model-not the filename.</span>
+<span>    // Reference to the User model, not the filename.</span>
 <span>    authorId: {</span>
 <span>      type: mongoose.Schema.Types.ObjectId,</span>
 <span>      ref: "User",</span>
@@ -828,7 +979,7 @@
 <span>  },</span>
 <span>);</span>
 <span></span>
-<span>// Cross-field rule: disucssions should not contain review-only fields.</span>
+<span>// Cross-field rule: discussions should not contain review-only fields.</span>
 <span>// This runs during document validation, including before save().</span>
 <span>postSchema.pre("validate", function () {</span>
 <span>  if (this.kind === "discussion") {</span>
@@ -968,36 +1119,102 @@
 
   <h2 id="query-reference">Query Reference</h2>
 
+  <div class="div_p">
+    <p>Each box in this section is a whole file. The scripts use config/database.js and the models from this page, and they change real data, so point .env at a practice database first.</p>
+  </div>
+
   <h3>Create</h3>
 
   <pre class="mycodemongo">
-<span>const item = await Item.create({ title: "New item" });</span>
-<span>await Item.insertMany([{ title: "One" }, { title: "Two" }]);</span>
+<span>// Save it as server/scripts/tryCreate.js, then run it from the server folder: node scripts/tryCreate.js</span>
+<span>import { connectDatabase, disconnectDatabase } from "../config/database.js";</span>
+<span>import Item from "../models/Item.js";</span>
+<span></span>
+<span>try {</span>
+<span>  await connectDatabase();</span>
+<span></span>
+<span>  // One document. create runs the schema rules and gives back the saved item.</span>
+<span>  const item = await Item.create({ title: "New item" });</span>
+<span></span>
+<span>  // Many documents in one request.</span>
+<span>  const many = await Item.insertMany([{ title: "One" }, { title: "Two" }]);</span>
+<span></span>
+<span>  console.log(item.id, many.length);</span>
+<span>} catch (error) {</span>
+<span>  console.error("Failed:", error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>} finally {</span>
+<span>  // Always disconnect, or the script never gives the prompt back.</span>
+<span>  await disconnectDatabase();</span>
+<span>}</span>
   </pre>
 
   <h3>Read</h3>
 
   <pre class="mycodemongo">
-<span>await Item.find({});                              // everything</span>
-<span>await Item.find({ kind: "review" });              // with a filter</span>
-<span>await Item.findById(id);                          // one by id, or null</span>
-<span>await Item.findOne({ email });                    // first match, or null</span>
-<span>await Item.countDocuments({ kind: "review" });    // how many</span>
-<span>await Item.exists({ title: "New item" });         // found or null</span>
-<span>await User.findOne({ email }).select("+passwordHash"); // include a hidden field</span>
-<span>await Item.find({}).select("title image");        // only these fields</span>
+<span>// Save it as server/scripts/tryRead.js, then run it from the server folder: node scripts/tryRead.js</span>
+<span>import { connectDatabase, disconnectDatabase } from "../config/database.js";</span>
+<span>import Item from "../models/Item.js";</span>
+<span></span>
+<span>try {</span>
+<span>  await connectDatabase();</span>
+<span></span>
+<span>  const all = await Item.find({});                               // everything, as an array</span>
+<span>  const some = await Item.find({ title: "First Item" });         // with a filter</span>
+<span>  const first = await Item.findOne({ title: "First Item" });     // first match, or null</span>
+<span>  const count = await Item.countDocuments({});                   // how many</span>
+<span>  const found = await Item.exists({ title: "First Item" });      // { _id } when found, or null</span>
+<span>  const short = await Item.find({}).select("title image");       // only these fields</span>
+<span></span>
+<span>  // One by id, or null. This uses the id of the first item it found.</span>
+<span>  const byId = all[0] ? await Item.findById(all[0].id) : null;</span>
+<span></span>
+<span>  console.log({ all: all.length, some: some.length, first: first?.title, count, found, short: short.length, byId: byId?.title });</span>
+<span></span>
+<span>  // A field with select: false in its schema is left out unless you ask for it with a +.</span>
+<span>  // With the User model from the Security page:</span>
+<span>  // const user = await User.findOne({ email }).select("+passwordHash");</span>
+<span>} catch (error) {</span>
+<span>  console.error("Failed:", error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>} finally {</span>
+<span>  // Always disconnect, or the script never gives the prompt back.</span>
+<span>  await disconnectDatabase();</span>
+<span>}</span>
   </pre>
 
   <h3>Sort and pages</h3>
 
   <pre class="mycodemongo">
-<span>const limit = 24;</span>
+<span>// Save it as server/scripts/tryPages.js, then run it from the server folder: node scripts/tryPages.js</span>
+<span>import { connectDatabase, disconnectDatabase } from "../config/database.js";</span>
+<span>import Item from "../models/Item.js";</span>
 <span></span>
-<span>const items = await Item.find({})</span>
-<span>  .sort({ createdAt: -1 }) // -1 is newest first, 1 is oldest first</span>
-<span>  .skip((page - 1) * limit)</span>
-<span>  .limit(limit);</span>
+<span>try {</span>
+<span>  await connectDatabase();</span>
+<span></span>
+<span>  // The page to show. In a controller this comes from req.query.page, after you check it.</span>
+<span>  const page = 1;</span>
+<span>  const limit = 24;</span>
+<span></span>
+<span>  const items = await Item.find({})</span>
+<span>    .sort({ createdAt: -1, _id: -1 }) // -1 is newest first, 1 is oldest first. _id breaks ties.</span>
+<span>    .skip((page - 1) * limit)         // page 1 skips 0, page 2 skips 24</span>
+<span>    .limit(limit);</span>
+<span></span>
+<span>  console.log(items.map((item) =&gt; item.title));</span>
+<span>} catch (error) {</span>
+<span>  console.error("Failed:", error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>} finally {</span>
+<span>  // Always disconnect, or the script never gives the prompt back.</span>
+<span>  await disconnectDatabase();</span>
+<span>}</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Check the page number before you use it. The code for that is on the <a href="node_page.html#reading-a-request">Node page</a>, under Page number from the query string.</p>
+  </div>
 
   <h3>Filter operators</h3>
 
@@ -1006,12 +1223,32 @@
   </div>
 
   <pre class="mycodemongo">
+<span>// Save it as server/scripts/tryOperators.js, then run it from the server folder: node scripts/tryOperators.js</span>
+<span>import { connectDatabase, disconnectDatabase } from "../config/database.js";</span>
+<span>import Post from "../models/Post.js";</span>
 <span>import { trusted } from "../config/mongooseSecurity.js";</span>
 <span></span>
-<span>await Post.find({ rating: trusted({ $gte: 8 }) });          // 8 or higher</span>
-<span>await Post.find({ kind: trusted({ $in: ["review"] }) });    // any of these</span>
-<span>await Post.find({ imageUrl: trusted({ $exists: true }) });  // field is there</span>
+<span>try {</span>
+<span>  await connectDatabase();</span>
+<span></span>
+<span>  // An operator starts with $. trusted() marks one that you wrote yourself as safe.</span>
+<span>  const high = await Post.find({ rating: trusted({ $gte: 8 }) });             // 8 or higher</span>
+<span>  const reviews = await Post.find({ kind: trusted({ $in: ["review"] }) });    // any of these</span>
+<span>  const withImage = await Post.find({ imageUrl: trusted({ $exists: true }) }); // the field is there</span>
+<span></span>
+<span>  console.log(high.length, reviews.length, withImage.length);</span>
+<span>} catch (error) {</span>
+<span>  console.error("Failed:", error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>} finally {</span>
+<span>  // Always disconnect, or the script never gives the prompt back.</span>
+<span>  await disconnectDatabase();</span>
+<span>}</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Never pass req.body or req.query straight into find(). A visitor could send { "$ne": null } in place of a value and match every document. Read each value out, check that it is text or a number, and build the filter yourself.</p>
+  </div>
 
   <h3>Fill in linked documents with populate</h3>
 
@@ -1020,56 +1257,183 @@
   </div>
 
   <pre class="mycodemongo">
-<span>const posts = await Post.find({}).populate("authorId", "username");</span>
+<span>// Save it as server/scripts/tryPopulate.js, then run it from the server folder: node scripts/tryPopulate.js</span>
+<span>import { connectDatabase, disconnectDatabase } from "../config/database.js";</span>
+<span>import Post from "../models/Post.js";</span>
+<span>// populate needs the model it points at to be loaded. User.js is on the Security page.</span>
+<span>import "../models/User.js";</span>
+<span></span>
+<span>try {</span>
+<span>  await connectDatabase();</span>
+<span></span>
+<span>  // "authorId" is the ref field. "username" is the only user field that comes back.</span>
+<span>  const posts = await Post.find({}).populate("authorId", "username");</span>
+<span></span>
+<span>  // After populate, authorId is the user document, not an id.</span>
+<span>  // ?. covers a post whose author was deleted.</span>
+<span>  console.log(posts.map((post) =&gt; `${post.title} by ${post.authorId?.username}`));</span>
+<span>} catch (error) {</span>
+<span>  console.error("Failed:", error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>} finally {</span>
+<span>  // Always disconnect, or the script never gives the prompt back.</span>
+<span>  await disconnectDatabase();</span>
+<span>}</span>
   </pre>
 
   <h3>Update</h3>
 
   <pre class="mycodemongo">
-<span>// Best: load it, change it, save it. This runs every schema rule.</span>
-<span>const item = await Item.findById(id);</span>
-<span>item.title = "Changed";</span>
-<span>await item.save();</span>
+<span>// Save it as server/scripts/tryUpdate.js, then run it from the server folder: node scripts/tryUpdate.js</span>
+<span>import { connectDatabase, disconnectDatabase } from "../config/database.js";</span>
+<span>import Item from "../models/Item.js";</span>
+<span>import Game from "../models/Game.js";</span>
 <span></span>
-<span>// One step, for counters. $inc adds to the number.</span>
-<span>await User.updateOne({ _id: id }, { $inc: { sessionVersion: 1 } });</span>
-<span>await User.updateOne({ _id: id }, { $set: { status: "banned" } }, { runValidators: true });</span>
+<span>try {</span>
+<span>  await connectDatabase();</span>
+<span></span>
+<span>  // Best: load it, change it, save it. This runs every schema rule.</span>
+<span>  const item = await Item.findOne({});</span>
+<span></span>
+<span>  if (item) {</span>
+<span>    item.title = "Changed";</span>
+<span>    await item.save();</span>
+<span></span>
+<span>    // One step, without loading it first. Update queries skip the schema rules</span>
+<span>    // unless you add runValidators.</span>
+<span>    await Item.updateOne(</span>
+<span>      { _id: item._id },</span>
+<span>      { $set: { description: "Updated in one step." } },</span>
+<span>      { runValidators: true },</span>
+<span>    );</span>
+<span>  }</span>
+<span></span>
+<span>  // One step, for counters. $inc adds to the number that is already saved.</span>
+<span>  const game = await Game.findOne({});</span>
+<span></span>
+<span>  if (game) {</span>
+<span>    await Game.updateOne({ _id: game._id }, { $inc: { playtimeHours: 1 } });</span>
+<span>  }</span>
+<span></span>
+<span>  console.log("Updated.");</span>
+<span>} catch (error) {</span>
+<span>  console.error("Failed:", error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>} finally {</span>
+<span>  // Always disconnect, or the script never gives the prompt back.</span>
+<span>  await disconnectDatabase();</span>
+<span>}</span>
   </pre>
 
   <h3>Delete</h3>
 
   <pre class="mycodemongo">
-<span>await item.deleteOne();</span>
-<span>await Item.deleteOne({ _id: id });</span>
-<span>await Comment.deleteMany({ postId: id }); // clean up records that point at it</span>
+<span>// Save it as server/scripts/tryDelete.js, then run it from the server folder: node scripts/tryDelete.js</span>
+<span>import { connectDatabase, disconnectDatabase } from "../config/database.js";</span>
+<span>import Item from "../models/Item.js";</span>
+<span></span>
+<span>try {</span>
+<span>  await connectDatabase();</span>
+<span></span>
+<span>  // From a document you already loaded.</span>
+<span>  const first = await Item.create({ title: "Delete me" });</span>
+<span>  await first.deleteOne();</span>
+<span></span>
+<span>  // By id, without loading it first.</span>
+<span>  const second = await Item.create({ title: "Delete me too" });</span>
+<span>  const result = await Item.deleteOne({ _id: second._id });</span>
+<span></span>
+<span>  // deletedCount is 0 when nothing matched.</span>
+<span>  console.log(result.deletedCount);</span>
+<span></span>
+<span>  // Clean up the records that pointed at what you deleted. With the Comment model:</span>
+<span>  // await Comment.deleteMany({ postId: post._id });</span>
+<span>} catch (error) {</span>
+<span>  console.error("Failed:", error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>} finally {</span>
+<span>  // Always disconnect, or the script never gives the prompt back.</span>
+<span>  await disconnectDatabase();</span>
+<span>}</span>
   </pre>
 
   <h3>Block a delete when records still point at it</h3>
 
+  <div class="div_p">
+    <p>This is a whole controller file for the Rev Game model. Save it as server/controllers/games.js.</p>
+  </div>
+
   <pre class="mycodemongo">
-<span>if (await Post.exists({ gameId: id })) {</span>
-<span>  throw new HttpError(409, "This game still has reviews. Delete the reviews first.");</span>
-<span>}</span>
+<span>import Game from "../models/Game.js";</span>
+<span>import Post from "../models/Post.js";</span>
+<span>import { HttpError } from "../utils/HttpError.js";</span>
+<span>import { readObjectId } from "../utils/readObjectId.js";</span>
+<span></span>
+<span>// DELETE /api/games/:id</span>
+<span>const deleteGame = async (req, res) =&gt; {</span>
+<span>  const id = readObjectId(req.params.id);</span>
+<span></span>
+<span>  // exists gives back { _id } for the first match, or null. It is faster than find.</span>
+<span>  if (await Post.exists({ gameId: id })) {</span>
+<span>    // 409 Conflict: the request was fine, but other records block it.</span>
+<span>    throw new HttpError(409, "This game still has reviews. Delete the reviews first.");</span>
+<span>  }</span>
+<span></span>
+<span>  // Gives back the deleted game, or null when no game had that id.</span>
+<span>  const game = await Game.findByIdAndDelete(id);</span>
+<span></span>
+<span>  if (!game) throw new HttpError(404, "Game not found.");</span>
+<span>  res.status(200).json(game);</span>
+<span>};</span>
+<span></span>
+<span>export default { deleteGame };</span>
   </pre>
 
   <h3>Change several documents together with a transaction</h3>
 
   <div class="div_p">
-    <p>All of it saves or none of it does. Atlas supports this. A plain local mongod needs to run as a replica set first.</p>
+    <p>All of it saves or none of it does. Atlas supports this. A plain local mongod needs to run as a replica set first. This is a whole controller file. Save it as server/controllers/posts.js.</p>
   </div>
 
   <pre class="mycodemongo">
-<span>const session = await mongoose.startSession();</span>
+<span>import mongoose from "mongoose";</span>
+<span>import Comment from "../models/Comment.js";</span>
+<span>import Post from "../models/Post.js";</span>
+<span>import { HttpError } from "../utils/HttpError.js";</span>
+<span>import { readObjectId } from "../utils/readObjectId.js";</span>
 <span></span>
-<span>try {</span>
-<span>  await session.withTransaction(async () =&gt; {</span>
-<span>    await Comment.deleteMany({ postId: id }, { session });</span>
-<span>    await Post.deleteOne({ _id: id }, { session });</span>
-<span>  });</span>
-<span>} finally {</span>
-<span>  await session.endSession();</span>
-<span>}</span>
+<span>// DELETE /api/posts/:id deletes a post and every comment on it.</span>
+<span>const deletePost = async (req, res) =&gt; {</span>
+<span>  const id = readObjectId(req.params.id);</span>
+<span>  // A session ties the queries together.</span>
+<span>  const session = await mongoose.startSession();</span>
+<span>  let deletedCount = 0;</span>
+<span></span>
+<span>  try {</span>
+<span>    // Everything inside saves together, or none of it does.</span>
+<span>    await session.withTransaction(async () =&gt; {</span>
+<span>      // Each query has to be given the session, or it runs outside the transaction.</span>
+<span>      await Comment.deleteMany({ postId: id }, { session });</span>
+<span></span>
+<span>      const result = await Post.deleteOne({ _id: id }, { session });</span>
+<span></span>
+<span>      deletedCount = result.deletedCount;</span>
+<span>    });</span>
+<span>  } finally {</span>
+<span>    // Always end the session, even after an error.</span>
+<span>    await session.endSession();</span>
+<span>  }</span>
+<span></span>
+<span>  if (deletedCount === 0) throw new HttpError(404, "Post not found.");</span>
+<span>  res.status(200).json({ deleted: true });</span>
+<span>};</span>
+<span></span>
+<span>export default { deletePost };</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> MongoDB can run the function inside withTransaction more than once when it hits a short network problem. Only put database calls in it. Never send an email or call res.json from inside.</p>
+  </div>
 
   <h3>SQL to MongoDB</h3>
 
@@ -1096,6 +1460,10 @@
   <pre class="mycodecli">
 <span>mongosh "mongodb+srv://your_user:your_password@your_cluster.mongodb.net/my_project"</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> This address has your password in it, and the terminal keeps it in its history. Never paste it into a file that goes on GitHub.</p>
+  </div>
 
   <h3>Commands inside mongosh</h3>
 

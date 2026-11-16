@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Jamar Brown">
+  <meta name="description" content="Simple bugs that keep popping up in React and Express, what causes them, and the fix">
+  <title>Common Bugs</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand">Final Companion</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="html_page.html">Html Code</a></li>
+        <li><a href="css_page.html">Css Code</a></li>
+        <li><a href="tailwind_page.html">Tailwind Code</a></li>
+        <li><a href="photo_effects_page.html">Photo Effects</a></li>
+        <li><a href="blog_page.html">Blog Template</a></li>
+        <li><a href="javaScript.html">JavaScript Code</a></li>
+        <li><a href="setup_page.html">Setup &amp; .env</a></li>
+        <li><a href="react_page.html">React Code</a></li>
+        <li><a href="dashboard_page.html">Dashboard Code</a></li>
+        <li><a href="node_page.html">Node Code</a></li>
+        <li><a href="mongodb_page.html">MongoDB Code</a></li>
+        <li><a href="postgres_page.html">Postgres Code</a></li>
+        <li><a href="security_page.html">Security Code</a></li>
+        <li><a href="migration_page.html">Switch Databases</a></li>
+        <li><a href="bugs_page.html">Common Bugs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <h2>On This Page</h2>
+
+  <div class="div_p">
+    <ul>
+      <li><a href="#find-a-bug-fast">Find A Bug Fast</a></li>
+      <li><a href="#error-lookup">Error Message Lookup</a></li>
+      <li><a href="#server-and-proxy">Server And Proxy</a></li>
+      <li><a href="#fetching-data">Fetching Data</a></li>
+      <li><a href="#props-and-components">Props And Components</a></li>
+      <li><a href="#lists-and-map">Lists And map</a></li>
+      <li><a href="#state">State</a></li>
+      <li><a href="#jsx">JSX</a></li>
+      <li><a href="#express-routes">Express Routes</a></li>
+      <li><a href="#data-env-and-images">Data, .env And Images</a></li>
+    </ul>
+  </div>
+
+  <div class="div_p">
+    <p>These are the simple bugs that eat an hour. The ones marked <strong>I hit this</strong> are bugs I actually ran into. Each one shows the broken code, the fix, and a link to the right version in my notes. Install and setup errors (type module, missing packages, wrong folder) are on the <a href="setup_page.html#setup-node-and-express">Setup page</a>.</p>
+  </div>
+
+  <h2 id="find-a-bug-fast">Find A Bug Fast</h2>
+
+  <div class="div_p">
+    <p>Check in this order. Each step tells you which half of the app is broken before you touch any code.</p>
+  </div>
+
+  <pre class="mycodefile">
+<span>1. Is the server running?   Look for 🚀 in the terminal. If you see "Completed running"</span>
+<span>                             right after it, the server already stopped.</span>
+<span>2. Does the proxy work?      Open http://localhost:5173/api/health</span>
+<span>                             {"status":"ok"} = server and proxy are fine, the bug is in React.</span>
+<span>                             502 or a blank page = the server is not running.</span>
+<span>3. Does the data look right? Open http://localhost:3000/api/items and read the JSON.</span>
+<span>                             Is it an array? Do the field names match what React reads?</span>
+<span>4. Browser console           Red errors. The first one is the real one, the rest follow from it.</span>
+<span>5. Network tab               Click the request. Check the status and the Response tab.</span>
+<span>6. console.log the value     Right before the line that breaks: console.log(pizza)</span>
+  </pre>
+
+  <h2 id="error-lookup">Error Message Lookup</h2>
+
+  <div class="div_p">
+    <table class="table table-bordered table-striped table-condensed text-left">
+      <thead>
+        <tr><th>What you see</th><th>Jump to</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>GET /api/items 502 (Bad Gateway)</td><td><a href="#bug-502">Server is not running</a></td></tr>
+        <tr><td>Unexpected end of JSON input</td><td><a href="#bug-502">Server is not running</a></td></tr>
+        <tr><td>Unexpected token '&lt;', "&lt;!doctype "... is not valid JSON</td><td><a href="#bug-html-not-json">Got HTML instead of JSON</a></td></tr>
+        <tr><td>🚀 Server listening, then "Completed running 'server.js'"</td><td><a href="#bug-port-taken">Port already taken</a></td></tr>
+        <tr><td>EADDRINUSE: address already in use</td><td><a href="#bug-port-taken">Port already taken</a></td></tr>
+        <tr><td>Blocked by CORS policy</td><td><a href="#bug-cors">CORS</a></td></tr>
+        <tr><td>destroy is not a function / effect returned a Promise</td><td><a href="#bug-async-effect">async useEffect</a></td></tr>
+        <tr><td>res is not defined</td><td><a href="#bug-fetch-not-saved">fetch result not saved</a></td></tr>
+        <tr><td>$undefined or blank cards</td><td><a href="#bug-props">Props not destructured</a></td></tr>
+        <tr><td>Broken image icon</td><td><a href="#bug-typo">Field name typo</a> or <a href="#bug-image-path">Image path</a></td></tr>
+        <tr><td>useState is not defined</td><td><a href="#bug-missing-import">Missing import</a></td></tr>
+        <tr><td>items.map is not a function</td><td><a href="#bug-not-array">Data is not an array</a></td></tr>
+        <tr><td>Cannot read properties of undefined (reading 'map')</td><td><a href="#bug-no-start-value">No starting value</a></td></tr>
+        <tr><td>Each child in a list should have a unique "key" prop</td><td><a href="#bug-key">Missing key</a></td></tr>
+        <tr><td>Too many re-renders</td><td><a href="#bug-onclick">Calling the function in onClick</a></td></tr>
+        <tr><td>Requests repeat forever in the Network tab</td><td><a href="#bug-effect-loop">useEffect with no array</a></td></tr>
+        <tr><td>Objects are not valid as a React child</td><td><a href="#bug-object-child">Rendering an object</a></td></tr>
+        <tr><td>A random 0 on the page</td><td><a href="#bug-zero">&amp;&amp; with a number</a></td></tr>
+        <tr><td>Fetch runs twice in development</td><td><a href="#bug-twice">StrictMode</a></td></tr>
+        <tr><td>req.body is undefined</td><td><a href="#bug-body">Missing express.json or header</a></td></tr>
+        <tr><td>Request stays pending forever</td><td><a href="#bug-no-response">No response sent</a></td></tr>
+        <tr><td>Cannot set headers after they are sent</td><td><a href="#bug-headers-sent">Missing return</a></td></tr>
+        <tr><td>GET /api/items/1 returns 404 but the item exists</td><td><a href="#bug-no-id">No id in the data</a> or <a href="#bug-string-id">id is a string</a></td></tr>
+        <tr><td>process.env.SOMETHING is undefined</td><td><a href="#bug-env">.env not loaded</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="server-and-proxy">Server And Proxy</h2>
+
+  <h3 id="bug-502">502 Bad Gateway and "Unexpected end of JSON input"</h3>
+
+  <div class="div_p">
+    <p><strong>I hit this.</strong> The 502 comes from the Vite proxy. It sent /api/items to port 3000 and nobody answered. No answer means no JSON, so response.json() throws "Unexpected end of JSON input". The second error is only a side effect of the first. The usual cause is running npm run dev inside client, which only starts Vite.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span># ❌ only starts React</span>
+<span>cd client &amp;&amp; npm run dev</span>
+<span></span>
+<span># ✅ starts React and Express together with concurrently</span>
+<span>cd pizza-menu &amp;&amp; npm run dev</span>
+<span></span>
+<span># Check what is on each port</span>
+<span>lsof -i :3000</span>
+<span>lsof -i :5173</span>
+  </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Do not paste this whole box into the terminal. It shows the wrong command and the right one side by side, so type only the one you need. A Mac terminal also does not skip a line that starts with # unless you run setopt interactive_comments first.</p>
+  </div>
+
+  <div class="div_p">
+    <p>Right version: <a href="setup_page.html#run-react-and-node-together">Setup page, Run React And Node Together</a></p>
+  </div>
+
+  <h3 id="bug-port-taken">🚀 Server listening, then "Completed running"</h3>
+
+  <div class="div_p">
+    <p><strong>I hit this.</strong> Another server already had port 3000. In Express 5, app.listen does not crash when the port is taken. It hands the error to your callback. If the callback ignores the error, it prints 🚀 anyway and Node exits because nothing is listening.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>// ❌ prints success even when the port is taken</span>
+<span>app.listen(PORT, () =&gt; {</span>
+<span>  console.log(`🚀 Server listening on http://localhost:${PORT}`);</span>
+<span>});</span>
+<span></span>
+<span>// ✅ shows the real error: EADDRINUSE</span>
+<span>app.listen(PORT, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
+<span>  console.log(`🚀 Server listening on http://localhost:${PORT}`);</span>
+<span>});</span>
+  </pre>
+
+  <pre class="mycodecli">
+<span># Find and stop whatever is on the port</span>
+<span>lsof -ti :3000 | xargs kill</span>
+  </pre>
+
+  <div class="div_p">
+    <p>Right version: <a href="node_page.html#files-every-setup-uses">Node page, server/server.js</a>. All three starters already have the fix.</p>
+  </div>
+
+  <h3 id="bug-html-not-json">Unexpected token '&lt;', "&lt;!doctype "... is not valid JSON</h3>
+
+  <div class="div_p">
+    <p>The request reached Vite instead of Express, and Vite answered with index.html. The &lt; is the start of &lt;!doctype html&gt;. Either the proxy is missing from vite.config.js, or the fetch path does not start with /api.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// client/vite.config.js</span>
+<span>import { defineConfig } from "vite";</span>
+<span>import react from "@vitejs/plugin-react";</span>
+<span></span>
+<span>export default defineConfig({</span>
+<span>  plugins: [react()],</span>
+<span>  server: {</span>
+<span>    // Any request that starts with /api is passed on to Express on port 3000.</span>
+<span>    proxy: { "/api": "http://localhost:3000" },</span>
+<span>  },</span>
+<span>});</span>
+  </pre>
+
+  <pre class="mycodereact">
+<span>// ❌ no /api, so the proxy never sees it</span>
+<span>fetch("/items");</span>
+<span></span>
+<span>// ✅ starts with /api, so the proxy passes it on to Express</span>
+<span>fetch("/api/items");</span>
+  </pre>
+
+  <div class="div_p">
+    <p>Restart Vite after you change vite.config.js. It does not reload the config while it runs. Right version: <a href="react_page.html#starting-files">React page, client/vite.config.js</a></p>
+  </div>
+
+  <h3 id="bug-cors">Blocked by CORS policy</h3>
+
+  <div class="div_p">
+    <p>You fetched the full address http://localhost:3000/api/items from port 5173. The browser treats a different port as a different site and blocks it. Use the proxy and a short path, so the browser only ever talks to 5173.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ❌ different port, so the browser blocks it</span>
+<span>fetch("http://localhost:3000/api/items");</span>
+<span></span>
+<span>// ✅ goes through the Vite proxy</span>
+<span>fetch("/api/items");</span>
+  </pre>
+
+  <div class="div_p">
+    <p>Right version: <a href="react_page.html#starting-files">React page, client/vite.config.js</a></p>
+  </div>
+
+  <h2 id="fetching-data">Fetching Data</h2>
+
+  <h3 id="bug-async-effect">useEffect(async () =&gt; ...)</h3>
+
+  <div class="div_p">
+    <p><strong>I hit this.</strong> The function passed to useEffect cannot be async. React expects it to return nothing or a cleanup function, and an async function always returns a Promise. Put an async function inside the effect and call it.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ❌</span>
+<span>useEffect(async () =&gt; {</span>
+<span>  const response = await fetch("/api/items");</span>
+<span>}, []);</span>
+<span></span>
+<span>// ✅ async function inside, then call it</span>
+<span>useEffect(() =&gt; {</span>
+<span>  const fetchItems = async () =&gt; {</span>
+<span>    const response = await fetch("/api/items");</span>
+<span>    const data = await response.json();</span>
+<span>    setItems(data);</span>
+<span>  };</span>
+<span></span>
+<span>  fetchItems();</span>
+<span>}, []);</span>
+  </pre>
+
+  <div class="div_p">
+    <p>Way to remember it: useEffect can't be async, so put an async function inside and call it. Right version: <a href="react_page.html#useeffect">React page, Fetch data when the page loads</a></p>
+  </div>
+
+  <h3 id="bug-fetch-not-saved">await fetch() not saved, then res is not defined</h3>
+
+  <div class="div_p">
+    <p><strong>I hit this.</strong> await fetch() gives back a response, but only if you store it. Using a name that was never made gives "res is not defined".</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ❌</span>
+<span>await fetch("/api/items");</span>
+<span>const data = await res.json();</span>
+<span></span>
+<span>// ✅</span>
+<span>const response = await fetch("/api/items");</span>
+<span>const data = await response.json();</span>
+  </pre>
+
+  <h3 id="bug-response-ok">Not checking response.ok</h3>
+
+  <div class="div_p">
+    <p>fetch only throws when the network fails. A 404 or 500 still counts as success, so the error JSON from the server ends up in state. Then items.map breaks because { error: "..." } is not an array.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ✅ check response.ok before you read the JSON</span>
+<span>const response = await fetch("/api/items");</span>
+<span></span>
+<span>if (!response.ok) {</span>
+<span>  throw new Error(`Request failed (${response.status}).`);</span>
+<span>}</span>
+<span></span>
+<span>const data = await response.json();</span>
+  </pre>
+
+  <div class="div_p">
+    <p>Right version, with loading, error and the ignore flag: <a href="react_page.html#useeffect">React page, Fetch data when the page loads</a></p>
+  </div>
+
+  <h3 id="bug-effect-loop">useEffect with no array fetches forever</h3>
+
+  <div class="div_p">
+    <p>With no dependency array, the effect runs after every redraw. The fetch sets state, setting state redraws, and the redraw runs the fetch again.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ❌ runs after every redraw</span>
+<span>useEffect(() =&gt; {</span>
+<span>  fetchItems();</span>
+<span>});</span>
+<span></span>
+<span>// ✅ runs once when the page loads</span>
+<span>useEffect(() =&gt; {</span>
+<span>  fetchItems();</span>
+<span>}, []);</span>
+  </pre>
+
+  <div class="div_p">
+    <p>Right version: <a href="react_page.html#useeffect">React page, The three dependency options</a></p>
+  </div>
+
+  <h3 id="bug-twice">Fetch runs twice in development</h3>
+
+  <div class="div_p">
+    <p>Not a bug. StrictMode in main.jsx runs every effect twice in development to catch missing cleanup. It only runs once in the built site. Keep the ignore flag so the extra response is dropped.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>useEffect(() =&gt; {</span>
+<span>  // The cleanup at the bottom sets this to true.</span>
+<span>  let ignore = false;</span>
+<span></span>
+<span>  const fetchItems = async () =&gt; {</span>
+<span>    const response = await fetch("/api/items");</span>
+<span>    const data = await response.json();</span>
+<span>    // Skip the answer from the run that React threw away.</span>
+<span>    if (!ignore) setItems(data);</span>
+<span>  };</span>
+<span></span>
+<span>  fetchItems();</span>
+<span>  // The cleanup. React runs it when the effect is thrown away.</span>
+<span>  return () =&gt; {</span>
+<span>    ignore = true;</span>
+<span>  };</span>
+<span>}, []);</span>
+  </pre>
+
+  <h3 id="fetch-fixes-together">Every fetch fix in one working component</h3>
+
+  <div class="div_p">
+    <p>The boxes above show each bug next to its fix. This is a whole file with every fix from this section in place, so you can copy it and run it. It reads item.title, so change that to a field your own data has.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// client/src/pages/Items.jsx</span>
+<span>// Fix: hooks have to be imported in every file that uses them.</span>
+<span>import { useEffect, useState } from "react";</span>
+<span></span>
+<span>function Items() {</span>
+<span>  // Fix: a list starts as an empty array, so map never runs on undefined.</span>
+<span>  const [items, setItems] = useState([]);</span>
+<span>  const [loading, setLoading] = useState(true);</span>
+<span>  const [error, setError] = useState("");</span>
+<span></span>
+<span>  // Fix: the function given to useEffect is not async.</span>
+<span>  useEffect(() =&gt; {</span>
+<span>    // Fix: StrictMode runs this twice in development. ignore drops the extra answer.</span>
+<span>    let ignore = false;</span>
+<span></span>
+<span>    // Fix: the async function goes inside the effect.</span>
+<span>    const fetchItems = async () =&gt; {</span>
+<span>      try {</span>
+<span>        // Fix: a short path that starts with /api, so the Vite proxy handles it.</span>
+<span>        // Fix: save what fetch gives back.</span>
+<span>        const response = await fetch("/api/items");</span>
+<span></span>
+<span>        // Fix: fetch does not throw on a 404 or a 500, so check it yourself.</span>
+<span>        if (!response.ok) {</span>
+<span>          throw new Error(`Request failed (${response.status}).`);</span>
+<span>        }</span>
+<span></span>
+<span>        const data = await response.json();</span>
+<span></span>
+<span>        if (!ignore) setItems(data);</span>
+<span>      } catch (caught) {</span>
+<span>        // A failed request ends up here and not as a red error in the console.</span>
+<span>        if (!ignore) setError(caught.message);</span>
+<span>      } finally {</span>
+<span>        if (!ignore) setLoading(false);</span>
+<span>      }</span>
+<span>    };</span>
+<span></span>
+<span>    fetchItems();</span>
+<span></span>
+<span>    // The cleanup. React runs it when the component leaves the page.</span>
+<span>    return () =&gt; {</span>
+<span>      ignore = true;</span>
+<span>    };</span>
+<span>    // Fix: the empty array means run once, when the page loads.</span>
+<span>  }, []);</span>
+<span></span>
+<span>  if (loading) return &lt;p&gt;Loading...&lt;/p&gt;;</span>
+<span>  if (error) return &lt;p&gt;{error}&lt;/p&gt;;</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;ul&gt;</span>
+<span>      {items.map((item) =&gt; (</span>
+<span>        &lt;li key={item.id}&gt;{item.title}&lt;/li&gt;</span>
+<span>      ))}</span>
+<span>    &lt;/ul&gt;</span>
+<span>  );</span>
+<span>}</span>
+<span></span>
+<span>export default Items;</span>
+  </pre>
+
+  <h2 id="props-and-components">Props And Components</h2>
+
+  <h3 id="bug-props">$undefined or blank cards: props not destructured</h3>
+
+  <div class="div_p">
+    <p><strong>I hit this.</strong> React passes a component one object that holds every prop. With &lt;Pizza pizza={pizza} /&gt; the component gets { pizza: { name, price, ... } }. Without curly braces, the variable named pizza is that whole props object, so pizza.name is undefined and the price shows as $undefined.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ❌ pizza is the whole props object</span>
+<span>function Pizza(pizza) {</span>
+<span>  return &lt;span&gt;${pizza.price}&lt;/span&gt;; // $undefined</span>
+<span>}</span>
+<span></span>
+<span>// ✅ pull the pizza key out of props</span>
+<span>function Pizza({ pizza }) {</span>
+<span>  return &lt;span&gt;${pizza.price}&lt;/span&gt;;</span>
+<span>}</span>
+<span></span>
+<span>// ✅ the same thing without destructuring</span>
+<span>function Pizza(props) {</span>
+<span>  return &lt;span&gt;${props.pizza.price}&lt;/span&gt;;</span>
+<span>}</span>
+  </pre>
+
+  <div class="div_p">
+    <p>Way to remember it: props always arrive as one object. Right version: <a href="react_page.html#components-and-props">React page, Components And Props</a></p>
+  </div>
+
+  <h3 id="bug-typo">Field name typo gives undefined with no error</h3>
+
+  <div class="div_p">
+    <p><strong>I hit this.</strong> pizza.photName instead of pizza.photoName. JavaScript does not warn about a missing key. It just gives undefined, so the image breaks quietly. Open /api/items and copy the field names from the real JSON.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ❌</span>
+<span>&lt;img src={pizza.photName} alt={pizza.name} /&gt;</span>
+<span></span>
+<span>// ✅</span>
+<span>&lt;img src={pizza.photoName} alt={pizza.name} /&gt;</span>
+<span></span>
+<span>// Quick check: log the object and read the real keys</span>
+<span>console.log(pizza);</span>
+  </pre>
+
+  <h3 id="bug-missing-import">useState is not defined</h3>
+
+  <div class="div_p">
+    <p><strong>I hit this.</strong> Hooks have to be imported at the top of every file that uses them.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ✅ at the top of every file that uses a hook</span>
+<span>import { useState, useEffect } from "react";</span>
+  </pre>
+
+  <h3 id="bug-lowercase">Component name starts with a lowercase letter</h3>
+
+  <div class="div_p">
+    <p>JSX treats &lt;pizza /&gt; as an unknown HTML tag, so nothing shows and there is no clear error. Component names must start with a capital letter.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ❌</span>
+<span>function pizza() { ... }</span>
+<span>&lt;pizza /&gt;</span>
+<span></span>
+<span>// ✅</span>
+<span>function Pizza() { ... }</span>
+<span>&lt;Pizza /&gt;</span>
+  </pre>
+
+  <h3 id="bug-export">Default vs named import</h3>
+
+  <div class="div_p">
+    <p>The import has to match how the other file exports. A mismatch gives "does not provide an export named" or undefined.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// Default export: one per file, no braces when importing</span>
+<span>export default Pizza;</span>
+<span>import Pizza from "./components/Pizza.jsx";</span>
+<span></span>
+<span>// Named export: braces when importing, same exact name</span>
+<span>export const Pizza = () =&gt; { ... };</span>
+<span>import { Pizza } from "./components/Pizza.jsx";</span>
+  </pre>
+
+  <h2 id="lists-and-map">Lists And map</h2>
+
+  <h3 id="bug-map-braces">map with curly braces and no return shows nothing</h3>
+
+  <div class="div_p">
+    <p>Parentheses return the JSX automatically. Curly braces start a function body, so you have to write return yourself, or map gives back a list of undefined.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ❌ curly braces, no return, empty list</span>
+<span>{pizzas.map((pizza) =&gt; {</span>
+<span>  &lt;Pizza key={pizza.id} pizza={pizza} /&gt;</span>
+<span>})}</span>
+<span></span>
+<span>// ✅ parentheses return it for you</span>
+<span>{pizzas.map((pizza) =&gt; (</span>
+<span>  &lt;Pizza key={pizza.id} pizza={pizza} /&gt;</span>
+<span>))}</span>
+<span></span>
+<span>// ✅ curly braces with return</span>
+<span>{pizzas.map((pizza) =&gt; {</span>
+<span>  return &lt;Pizza key={pizza.id} pizza={pizza} /&gt;;</span>
+<span>})}</span>
+  </pre>
+
+  <div class="div_p">
+    <p>Right version: <a href="react_page.html#components-and-props">React page, Show a list with map</a></p>
+  </div>
+
+  <h3 id="bug-key">Each child in a list should have a unique "key" prop</h3>
+
+  <div class="div_p">
+    <p>The key goes on the outer element that map returns, not inside the component. Use an id from the data. The array index works only for a list that never changes order, gets filtered, or has items removed.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ❌ no key</span>
+<span>{pizzas.map((pizza) =&gt; &lt;Pizza pizza={pizza} /&gt;)}</span>
+<span></span>
+<span>// ✅ id from the data</span>
+<span>{pizzas.map((pizza) =&gt; &lt;Pizza key={pizza.id} pizza={pizza} /&gt;)}</span>
+  </pre>
+
+  <h3 id="bug-not-array">items.map is not a function</h3>
+
+  <div class="div_p">
+    <p>The value is not an array. Usually the server sent an object, like { items: [...] } or { error: "..." }. Open the API in the browser and look at the outer shape.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// Server sends { items: [...] }</span>
+<span>const data = await response.json();</span>
+<span>setItems(data.items);</span>
+<span></span>
+<span>// Server sent { error: "..." } because the request failed: check response.ok first</span>
+  </pre>
+
+  <div class="div_p">
+    <p>See <a href="#bug-response-ok">Not checking response.ok</a>.</p>
+  </div>
+
+  <h3 id="bug-no-start-value">Cannot read properties of undefined (reading 'map')</h3>
+
+  <div class="div_p">
+    <p>The first draw happens before the fetch finishes. If state starts as undefined, map runs on undefined. Start lists as an empty array.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ❌</span>
+<span>const [items, setItems] = useState();</span>
+<span></span>
+<span>// ✅</span>
+<span>const [items, setItems] = useState([]);</span>
+<span></span>
+<span>// For one item that starts as null, check before reading it</span>
+<span>const [item, setItem] = useState(null);</span>
+<span>if (!item) return &lt;p&gt;Loading...&lt;/p&gt;;</span>
+  </pre>
+
+  <h2 id="state">State</h2>
+
+  <h3 id="bug-old-value">console.log shows the old value right after setState</h3>
+
+  <div class="div_p">
+    <p>Not a bug. setState schedules a redraw. The variable keeps its old value until the component runs again.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>setCount(count + 1);</span>
+<span>console.log(count); // still the old number</span>
+<span></span>
+<span>// When the new value depends on the old one, use the function form</span>
+<span>setCount((current) =&gt; current + 1);</span>
+  </pre>
+
+  <h3 id="bug-mutate">Changing the array or object directly does not redraw</h3>
+
+  <div class="div_p">
+    <p>React compares the old and new value. push and direct edits change the same array, so React sees no change. Always make a new array or object.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ❌</span>
+<span>items.push(newItem);</span>
+<span>setItems(items);</span>
+<span></span>
+<span>// ✅ add</span>
+<span>setItems((current) =&gt; [...current, newItem]);</span>
+<span></span>
+<span>// ✅ update one</span>
+<span>setItems((current) =&gt; current.map((item) =&gt; (item.id === id ? { ...item, ...changes } : item)));</span>
+<span></span>
+<span>// ✅ remove one</span>
+<span>setItems((current) =&gt; current.filter((item) =&gt; item.id !== id));</span>
+  </pre>
+
+  <div class="div_p">
+    <p>Right version: <a href="react_page.html#usestate">React page, Add, update, and remove in an array</a></p>
+  </div>
+
+  <h3 id="bug-onclick">Too many re-renders: calling the function in onClick</h3>
+
+  <div class="div_p">
+    <p>onClick={handleDelete(id)} runs the function while the page draws, not when it is clicked. If it sets state, that redraws, which runs it again.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ❌ runs during the draw</span>
+<span>&lt;button onClick={handleDelete(pizza.id)}&gt;Delete&lt;/button&gt;</span>
+<span></span>
+<span>// ✅ runs on click</span>
+<span>&lt;button onClick={() =&gt; handleDelete(pizza.id)}&gt;Delete&lt;/button&gt;</span>
+<span></span>
+<span>// ✅ no arguments: pass the function itself</span>
+<span>&lt;button onClick={handleClick}&gt;Click&lt;/button&gt;</span>
+  </pre>
+
+  <h2 id="jsx">JSX</h2>
+
+  <h3 id="bug-object-child">Objects are not valid as a React child</h3>
+
+  <div class="div_p">
+    <p>You put a whole object or the props object between tags. JSX can show strings, numbers and elements, not objects.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ❌</span>
+<span>&lt;p&gt;{pizza}&lt;/p&gt;</span>
+<span></span>
+<span>// ✅ pick a field</span>
+<span>&lt;p&gt;{pizza.name}&lt;/p&gt;</span>
+<span></span>
+<span>// ✅ to look at the whole thing while debugging</span>
+<span>&lt;pre&gt;{JSON.stringify(pizza, null, 2)}&lt;/pre&gt;</span>
+  </pre>
+
+  <h3 id="bug-zero">A random 0 shows up on the page</h3>
+
+  <div class="div_p">
+    <p>With &amp;&amp;, React draws the left side when it is falsy. false shows nothing, but 0 is a number, so it shows 0.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ❌ shows 0 when the list is empty</span>
+<span>{items.length &amp;&amp; &lt;ItemList items={items} /&gt;}</span>
+<span></span>
+<span>// ✅</span>
+<span>{items.length &gt; 0 &amp;&amp; &lt;ItemList items={items} /&gt;}</span>
+  </pre>
+
+  <h3 id="bug-html-attrs">HTML attributes that are different in JSX</h3>
+
+  <pre class="mycodereact">
+<span>class="card"            -&gt;  className="card"</span>
+<span>for="email"             -&gt;  htmlFor="email"</span>
+<span>style="color: red"      -&gt;  style={{ color: "red" }}</span>
+<span>onclick="go()"          -&gt;  onClick={go}</span>
+<span>&lt;img&gt; &lt;br&gt; &lt;input&gt;     -&gt;  &lt;img /&gt; &lt;br /&gt; &lt;input /&gt;</span>
+<span>&lt;!-- comment --&gt;        -&gt;  {/* comment */}</span>
+  </pre>
+
+  <h3 id="bug-one-parent">Adjacent JSX elements must be wrapped</h3>
+
+  <div class="div_p">
+    <p>A component returns one thing. Wrap siblings in a div or an empty fragment.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ✅ &lt;&gt; and &lt;/&gt; wrap the two siblings without adding a div</span>
+<span>return (</span>
+<span>  &lt;&gt;</span>
+<span>    &lt;h1&gt;Pizza Menu&lt;/h1&gt;</span>
+<span>    &lt;p&gt;Fresh every day&lt;/p&gt;</span>
+<span>  &lt;/&gt;</span>
+<span>);</span>
+  </pre>
+
+  <h3 id="react-fixes-together">Props, lists, state, and JSX fixes in one working App.jsx</h3>
+
+  <div class="div_p">
+    <p>This is a whole file with the fixes from Props And Components, Lists And map, State, and JSX in place. Each comment that starts with Fix names the bug it avoids.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// client/src/App.jsx. It needs no server, so it runs in any new Vite project.</span>
+<span>import { useState } from "react";</span>
+<span></span>
+<span>const starterPizzas = [</span>
+<span>  { id: 1, name: "Focaccia", price: 6 },</span>
+<span>  { id: 2, name: "Pizza Margherita", price: 10 },</span>
+<span>];</span>
+<span></span>
+<span>// Fix: the name starts with a capital letter.</span>
+<span>// Fix: { pizza, onDelete } pulls the props out of the one props object.</span>
+<span>function Pizza({ pizza, onDelete }) {</span>
+<span>  return (</span>
+<span>    &lt;li&gt;</span>
+<span>      {/* Fix: show fields from the object, not the whole object. */}</span>
+<span>      &lt;strong&gt;{pizza.name}&lt;/strong&gt; ${pizza.price}{" "}</span>
+<span>      {/* Fix: the arrow function makes this run on click, not while the page draws. */}</span>
+<span>      &lt;button onClick={() =&gt; onDelete(pizza.id)}&gt;Delete&lt;/button&gt;</span>
+<span>    &lt;/li&gt;</span>
+<span>  );</span>
+<span>}</span>
+<span></span>
+<span>function App() {</span>
+<span>  const [pizzas, setPizzas] = useState(starterPizzas);</span>
+<span></span>
+<span>  const handleAdd = () =&gt; {</span>
+<span>    // Fix: build a new array. push changes the old one and React does not redraw.</span>
+<span>    // Fix: the function form always gets the newest value.</span>
+<span>    setPizzas((current) =&gt; [</span>
+<span>      ...current,</span>
+<span>      { id: Date.now(), name: "New Pizza", price: 12 },</span>
+<span>    ]);</span>
+<span>  };</span>
+<span></span>
+<span>  const handleDelete = (id) =&gt; {</span>
+<span>    // filter gives back a new array without the one that was deleted.</span>
+<span>    setPizzas((current) =&gt; current.filter((pizza) =&gt; pizza.id !== id));</span>
+<span>  };</span>
+<span></span>
+<span>  return (</span>
+<span>    // Fix: an empty fragment wraps the siblings, so the component returns one thing.</span>
+<span>    &lt;&gt;</span>
+<span>      &lt;h1&gt;Pizza Menu&lt;/h1&gt;</span>
+<span>      {/* Fix: there are no arguments, so pass the function itself. */}</span>
+<span>      &lt;button onClick={handleAdd}&gt;Add a pizza&lt;/button&gt;</span>
+<span></span>
+<span>      {/* Fix: &gt; 0 gives true or false, so a 0 never shows on the page. */}</span>
+<span>      {pizzas.length &gt; 0 &amp;&amp; (</span>
+<span>        &lt;ul&gt;</span>
+<span>          {/* Fix: parentheses return the JSX. The key is an id from the data. */}</span>
+<span>          {pizzas.map((pizza) =&gt; (</span>
+<span>            &lt;Pizza key={pizza.id} pizza={pizza} onDelete={handleDelete} /&gt;</span>
+<span>          ))}</span>
+<span>        &lt;/ul&gt;</span>
+<span>      )}</span>
+<span></span>
+<span>      {pizzas.length === 0 &amp;&amp; &lt;p&gt;No pizzas left.&lt;/p&gt;}</span>
+<span>    &lt;/&gt;</span>
+<span>  );</span>
+<span>}</span>
+<span></span>
+<span>export default App;</span>
+  </pre>
+
+  <h2 id="express-routes">Express Routes</h2>
+
+  <h3 id="bug-no-id">GET /api/items/1 returns 404: the data has no id</h3>
+
+  <div class="div_p">
+    <p><strong>I hit this.</strong> getItemById searches for item.id, but the pizza data had no id fields, so every lookup failed. Give every record an id. React keys need it too.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>// server/data/items.js</span>
+<span>const items = [</span>
+<span>  { id: 1, name: "Focaccia", price: 6 },</span>
+<span>  { id: 2, name: "Pizza Margherita", price: 10 },</span>
+<span>];</span>
+  </pre>
+
+  <div class="div_p">
+    <p>Right version: <a href="node_page.html#setup-2-data-folder-only">Node page, Setup 2 server/data/items.js</a></p>
+  </div>
+
+  <h3 id="bug-string-id">req.params.id is always a string</h3>
+
+  <div class="div_p">
+    <p>"1" === 1 is false, so find never matches. Turn it into a number first.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>// ❌</span>
+<span>items.find((item) =&gt; item.id === req.params.id);</span>
+<span></span>
+<span>// ✅</span>
+<span>items.find((item) =&gt; item.id === Number(req.params.id));</span>
+  </pre>
+
+  <h3 id="bug-body">req.body is undefined</h3>
+
+  <div class="div_p">
+    <p>Two causes. The server is missing express.json(), or the fetch did not send the Content-Type header, so Express does not know the body is JSON.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>// server/server.js, before the routes</span>
+<span>app.use(express.json());</span>
+  </pre>
+
+  <pre class="mycodereact">
+<span>// client fetch</span>
+<span>await fetch("/api/items", {</span>
+<span>  method: "POST",</span>
+<span>  headers: { "Content-Type": "application/json" },</span>
+<span>  body: JSON.stringify(newItem),</span>
+<span>});</span>
+  </pre>
+
+  <div class="div_p">
+    <p>Right version: <a href="react_page.html#talking-to-the-server">React page, Talking To The Server</a> and <a href="node_page.html#middleware">Node page, Middleware</a></p>
+  </div>
+
+  <h3 id="bug-route-order">A route like /new gets caught by /:id</h3>
+
+  <div class="div_p">
+    <p>Express checks routes from top to bottom. /:id matches anything, including "new". Put fixed paths above paths with params.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>// ✅ fixed path first</span>
+<span>router.get("/featured", ItemsController.getFeatured);</span>
+<span>router.get("/:id", ItemsController.getItemById);</span>
+  </pre>
+
+  <h3 id="bug-no-response">Request stays pending forever</h3>
+
+  <div class="div_p">
+    <p>The controller never sent a response. Every path through the function has to end in res.json, res.send, res.sendStatus, or a thrown error.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>// ❌ found the item and never sent it</span>
+<span>const getItemById = (req, res) =&gt; {</span>
+<span>  const item = items.find((other) =&gt; other.id === Number(req.params.id));</span>
+<span>};</span>
+<span></span>
+<span>// ✅</span>
+<span>const getItemById = (req, res) =&gt; {</span>
+<span>  const item = items.find((other) =&gt; other.id === Number(req.params.id));</span>
+<span>  if (!item) throw new HttpError(404, "Item not found.");</span>
+<span>  res.status(200).json(item);</span>
+<span>};</span>
+  </pre>
+
+  <h3 id="bug-headers-sent">Cannot set headers after they are sent</h3>
+
+  <div class="div_p">
+    <p>The code sent two responses. res.json does not stop the function, so add return to the early one.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>// ❌ sends the 404, then keeps going and sends again</span>
+<span>if (!item) res.status(404).json({ error: "Item not found." });</span>
+<span>res.json(item);</span>
+<span></span>
+<span>// ✅</span>
+<span>if (!item) return res.status(404).json({ error: "Item not found." });</span>
+<span>res.json(item);</span>
+  </pre>
+
+  <h3 id="express-fixes-together">Every Express route fix in one working server.js</h3>
+
+  <div class="div_p">
+    <p>This is a whole file with every fix from this section in place. Each comment that starts with Fix names the bug it avoids.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>// Runs on its own. Save it as server.js, then run: node server.js</span>
+<span>import express from "express";</span>
+<span></span>
+<span>const app = express();</span>
+<span></span>
+<span>// Fix: every record has an id, and the id is a number.</span>
+<span>const items = [</span>
+<span>  { id: 1, name: "Focaccia", price: 6 },</span>
+<span>  { id: 2, name: "Pizza Margherita", price: 10 },</span>
+<span>];</span>
+<span></span>
+<span>// Fix: express.json() goes above the routes, or req.body is undefined.</span>
+<span>app.use(express.json({ limit: "100kb" }));</span>
+<span></span>
+<span>app.get("/api/items", (req, res) =&gt; {</span>
+<span>  res.status(200).json(items);</span>
+<span>});</span>
+<span></span>
+<span>// Fix: the fixed path goes above /:id, or /:id catches the word featured.</span>
+<span>app.get("/api/items/featured", (req, res) =&gt; {</span>
+<span>  res.status(200).json(items[0]);</span>
+<span>});</span>
+<span></span>
+<span>app.get("/api/items/:id", (req, res) =&gt; {</span>
+<span>  // Fix: req.params.id is text, so turn it into a number before comparing.</span>
+<span>  const item = items.find((other) =&gt; other.id === Number(req.params.id));</span>
+<span></span>
+<span>  // Fix: return stops the function, so only one response is sent.</span>
+<span>  if (!item) return res.status(404).json({ error: "Item not found." });</span>
+<span></span>
+<span>  // Fix: every path through the function ends in a response.</span>
+<span>  res.status(200).json(item);</span>
+<span>});</span>
+<span></span>
+<span>app.post("/api/items", (req, res) =&gt; {</span>
+<span>  // req.body is still undefined when the request did not send the JSON header.</span>
+<span>  if (typeof req.body?.name !== "string") {</span>
+<span>    return res.status(400).json({ error: "Name is required." });</span>
+<span>  }</span>
+<span></span>
+<span>  const item = {</span>
+<span>    id: items.length + 1,</span>
+<span>    name: req.body.name,</span>
+<span>    price: Number(req.body.price) || 0,</span>
+<span>  };</span>
+<span></span>
+<span>  items.push(item);</span>
+<span>  res.status(201).json(item);</span>
+<span>});</span>
+<span></span>
+<span>// Fix: check the error, so a taken port shows EADDRINUSE and not a false 🚀.</span>
+<span>app.listen(3000, (error) =&gt; {</span>
+<span>  if (error) throw error;</span>
+<span>  console.log("🚀 Server listening on http://localhost:3000");</span>
+<span>});</span>
+  </pre>
+
+  <h3 id="bug-express-4-async">Express 4: an error in an async route crashes or hangs</h3>
+
+  <div class="div_p">
+    <p>Express 5 sends errors from async routes to the error handler on its own. Express 4 does not, so old projects need try/catch and next(error). Check the express version in package.json before reusing code.</p>
+  </div>
+
+  <div class="div_p">
+    <p>Right version: <a href="node_page.html#errors-in-express-4-and-5">Node page, Errors In Express 4 And 5</a></p>
+  </div>
+
+  <h2 id="data-env-and-images">Data, .env And Images</h2>
+
+  <h3 id="bug-env">process.env.SOMETHING is undefined</h3>
+
+  <div class="div_p">
+    <p>The .env file is not being loaded, it is in the wrong folder, or the server was not restarted after the change. In pizza-menu, import "dotenv/config" is commented out at the top of server.js, so anything in a .env file is ignored. Only PORT works there, because it falls back to 3000.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>// First line of server/server.js</span>
+<span>import "dotenv/config";</span>
+  </pre>
+
+  <div class="div_p">
+    <p>In React, only variables that start with VITE_ reach the browser, read as import.meta.env.VITE_API_URL. Never put secrets in client/.env. Right version: <a href="setup_page.html#env-files">Setup page, .env files</a></p>
+  </div>
+
+  <h3 id="bug-image-path">Images break on some pages</h3>
+
+  <div class="div_p">
+    <p>Files in client/public are served from the root of the site. A path with no leading slash is relative to the current URL, so "pizzas/focaccia.jpg" works on / but looks for /menu/pizzas/focaccia.jpg on /menu. Start public paths with a slash.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// ❌ breaks on nested routes</span>
+<span>photoName: "pizzas/focaccia.jpg"</span>
+<span></span>
+<span>// ✅ always from the site root (client/public/pizzas/focaccia.jpg)</span>
+<span>photoName: "/pizzas/focaccia.jpg"</span>
+  </pre>
+
+  <h3 id="bug-node-import-path">Node: Cannot find module, but the file is there</h3>
+
+  <div class="div_p">
+    <p>With type module, Node needs the full file name, including .js. Vite lets you skip it in React, Node does not.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>// ❌</span>
+<span>import itemsRouter from "./routes/items";</span>
+<span></span>
+<span>// ✅</span>
+<span>import itemsRouter from "./routes/items.js";</span>
+  </pre>
+
+  <div class="div_p">
+    <p>More install and startup errors: <a href="setup_page.html#setup-node-and-express">Setup page, Errors you will see during setup</a></p>
+  </div>
+
+  <br><br><br><br>
+
+  <footer class="footer"> &copy; By Jamar Brown
+
+    <div class="container">
+      <div id='clock'></div>
+    </div>
+  </footer>
+
+  <script src="js/clock.js"></script>
+  <script src="js/copy.js"></script>
+</body>
+
+</html>

@@ -21,14 +21,18 @@
         <li><a href="html_page.html">Html Code</a></li>
         <li><a href="css_page.html">Css Code</a></li>
         <li><a href="tailwind_page.html">Tailwind Code</a></li>
+        <li><a href="photo_effects_page.html">Photo Effects</a></li>
+        <li><a href="blog_page.html">Blog Template</a></li>
         <li><a href="javaScript.html">JavaScript Code</a></li>
         <li><a href="setup_page.html">Setup &amp; .env</a></li>
         <li><a href="react_page.html">React Code</a></li>
+        <li><a href="dashboard_page.html">Dashboard Code</a></li>
         <li><a href="node_page.html">Node Code</a></li>
         <li><a href="mongodb_page.html">MongoDB Code</a></li>
         <li><a href="postgres_page.html">Postgres Code</a></li>
         <li><a href="security_page.html">Security Code</a></li>
         <li><a href="migration_page.html">Switch Databases</a></li>
+        <li><a href="bugs_page.html">Common Bugs</a></li>
       </ul>
     </div>
   </nav>
@@ -53,15 +57,37 @@
       <li><a href="#serve-react-from-express">Serve React From Express</a></li>
       <li><a href="#split-app-and-server-for-testing">Split App And Server For Testing</a></li>
       <li><a href="#try-routes-from-the-terminal">Try Routes From The Terminal</a></li>
-      <li><a href="#node-built-in-tools">Node Built In Tools</a></li>
+      <li><a href="#node-built-in-tools">Node Built-In Tools</a></li>
     </ul>
   </div>
 
   <h2 id="what-is-node-and-express">What Is Node And Express</h2>
 
   <div class="div_p">
-    <p>Node runs JavaScript outside of the browser. Express is a package that turns Node into a web server. A request comes in, goes down the list of app.use and route lines in order, and the first one that sends a response ends it. Terminal setup is on the Setup page.</p>
+    <p>Node runs JavaScript outside of the browser. Express is a package that turns Node into a web server. A request comes in, goes down the list of app.use and route lines in order, and the first one that sends a response ends it. Terminal setup is on the <a href="setup_page.html">Setup page</a>.</p>
   </div>
+
+  <div class="div_p">
+    <p>There are two kinds of code boxes on this page:</p>
+    <ul>
+      <li><strong>A box named after a file</strong>, such as server/server.js, belongs to one of the three setups. It runs once the other files from that setup are in place.</li>
+      <li><strong>Every other Node box</strong> runs on its own. Its first comment says "Runs on its own".</li>
+    </ul>
+  </div>
+
+  <h3>A practice folder for the boxes that run on their own</h3>
+
+  <div class="div_p">
+    <p>Make this folder once. After that, save any box that runs on its own as server.js inside it and run node server.js.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>mkdir try-it</span>
+<span>cd try-it</span>
+<span>npm init -y</span>
+<span>npm pkg set type=module</span>
+<span>npm install express cors</span>
+  </pre>
 
   <h2 id="pick-your-setup">Pick Your Setup</h2>
 
@@ -171,24 +197,36 @@
   <h3>server/server.js</h3>
 
   <div class="div_p">
-    <p>This is the Setup 2 version, and it needs no .env. For Setup 1 and Setup 3, add import "dotenv/config"; as the very first line. MongoDB also has to connect before listening, which is on the <a href="mongodb_page.html#project-setup">MongoDB page</a>. The two handlers at the bottom have to stay after every route.</p>
+    <p>This is the <strong>Setup 2</strong> version, and it needs no .env.</p>
+    <ul>
+      <li><strong>Setup 1 and Setup 3:</strong> add import "dotenv/config"; as the very first line.</li>
+      <li><strong>MongoDB:</strong> it also has to connect before listening, which is on the <a href="mongodb_page.html#project-setup">MongoDB page</a>.</li>
+      <li><strong>Order:</strong> the two handlers at the bottom have to stay after every route.</li>
+    </ul>
   </div>
 
   <pre class="mycodenode">
+<span>// Express is the web server package. Install it with: npm install express</span>
 <span>import express from "express";</span>
+<span>// Your own files need ./ at the start and .js on the end.</span>
 <span>import itemsRouter from "./routes/items.js";</span>
 <span>import { HttpError } from "./utils/HttpError.js";</span>
 <span></span>
+<span>// The host sets PORT when the site is live. 3000 is for your own computer.</span>
 <span>const PORT = process.env.PORT || 3000;</span>
 <span></span>
+<span>// Create the app. Everything below is added to it in order.</span>
 <span>const app = express();</span>
 <span></span>
+<span>// Turns JSON from fetch into req.body. A body over 100kb is refused.</span>
 <span>app.use(express.json({ limit: "100kb" }));</span>
 <span></span>
+<span>// A quick route to prove the server is running.</span>
 <span>app.get("/api/health", (req, res) =&gt; {</span>
 <span>  res.status(200).json({ status: "ok" });</span>
 <span>});</span>
 <span></span>
+<span>// Every URL that starts with /api/items goes to the routes file.</span>
 <span>app.use("/api/items", itemsRouter);</span>
 <span></span>
 <span>// No route above matched.</span>
@@ -198,6 +236,7 @@
 <span></span>
 <span>// Express knows this is the error handler because it has four parameters.</span>
 <span>app.use((error, req, res, next) =&gt; {</span>
+<span>  // An error a controller threw on purpose, such as a 404.</span>
 <span>  if (error instanceof HttpError) {</span>
 <span>    return res.status(error.status).json({ error: error.message });</span>
 <span>  }</span>
@@ -206,18 +245,26 @@
 <span>  if (error.type === "entity.parse.failed") {</span>
 <span>    return res.status(400).json({ error: "Invalid JSON." });</span>
 <span>  }</span>
+<span>  // The body was bigger than the 100kb limit.</span>
 <span>  if (error.type === "entity.too.large") {</span>
 <span>    return res.status(413).json({ error: "Request body is too large." });</span>
 <span>  }</span>
 <span></span>
+<span>  // Anything else is a bug. Log the real error, but never send it to the browser.</span>
 <span>  console.error(error);</span>
 <span>  res.status(500).json({ error: "An unexpected server error occurred." });</span>
 <span>});</span>
 <span></span>
-<span>app.listen(PORT, () =&gt; {</span>
+<span>// Start the server last, after every route and handler is added.</span>
+<span>app.listen(PORT, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
 <span>  console.log(`🚀 Server listening on http://localhost:${PORT}`);</span>
 <span>});</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> The controllers on this page throw errors inside async functions. Only Express 5 sends those to the error handler. On Express 4 the error never gets there and the server crashes. Run npm ls express to check, and see <a href="#errors-in-express-4-and-5">Errors In Express 4 And 5</a>.</p>
+  </div>
 
   <h3>server/utils/HttpError.js</h3>
 
@@ -226,9 +273,13 @@
   </div>
 
   <pre class="mycodenode">
+<span>// A normal Error only has a message. This one also carries a status code,</span>
+<span>// so the error handler in server.js knows which status to send back.</span>
 <span>export class HttpError extends Error {</span>
 <span>  constructor(status, message) {</span>
+<span>    // super() runs the normal Error setup and saves the message.</span>
 <span>    super(message);</span>
+<span>    // Save the status code, such as 400 or 404.</span>
 <span>    this.status = status;</span>
 <span>  }</span>
 <span>}</span>
@@ -242,16 +293,24 @@
 
   <pre class="mycodenode">
 <span>import express from "express";</span>
+<span>// The controller has the functions that do the real work.</span>
 <span>import ItemsController from "../controllers/items.js";</span>
 <span></span>
+<span>// A router is a small app that only holds routes.</span>
 <span>const router = express.Router();</span>
 <span></span>
+<span>// GET /api/items sends back every item.</span>
 <span>router.get("/", ItemsController.getItems);</span>
+<span>// GET /api/items/5 sends back one item.</span>
 <span>router.get("/:id", ItemsController.getItemById);</span>
+<span>// POST /api/items makes a new item.</span>
 <span>router.post("/", ItemsController.createItem);</span>
+<span>// PATCH /api/items/5 changes part of an item.</span>
 <span>router.patch("/:id", ItemsController.updateItem);</span>
+<span>// DELETE /api/items/5 removes an item.</span>
 <span>router.delete("/:id", ItemsController.deleteItem);</span>
 <span></span>
+<span>// server.js imports this as itemsRouter.</span>
 <span>export default router;</span>
   </pre>
 
@@ -263,13 +322,18 @@
 
   <pre class="mycodenode">
 <span>import express from "express";</span>
+<span>// The controller has the functions that do the real work.</span>
 <span>import ItemsController from "../controllers/items.js";</span>
 <span></span>
+<span>// A router is a small app that only holds routes.</span>
 <span>const router = express.Router();</span>
 <span></span>
+<span>// GET /api/items sends back every item.</span>
 <span>router.get("/", ItemsController.getItems);</span>
+<span>// GET /api/items/5 sends back one item.</span>
 <span>router.get("/:id", ItemsController.getItemById);</span>
 <span></span>
+<span>// server.js imports this as itemsRouter.</span>
 <span>export default router;</span>
   </pre>
 
@@ -329,6 +393,10 @@
 <span>PORT=3000</span>
   </pre>
 
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Never commit .env. Add it to .gitignore before your first commit, which is on the <a href="setup_page.html#gitignore">Setup page</a>. dotenv reads the .env in the folder you run the command from, so run npm from the folder that has it.</p>
+  </div>
+
   <h3>Setup 1 server/data/items.js</h3>
 
   <pre class="mycodenode">
@@ -357,20 +425,29 @@
   </div>
 
   <pre class="mycodepg">
+<span>// Reads .env into process.env. It is here as well as in server.js,</span>
+<span>// because reset.js and createTable.js run this file without server.js.</span>
 <span>import "dotenv/config";</span>
 <span>import pg from "pg";</span>
 <span></span>
+<span>// A database on your own computer does not use SSL. A hosted one does.</span>
 <span>const isLocal = ["localhost", "127.0.0.1"].includes(process.env.PGHOST);</span>
 <span></span>
+<span>// A pool keeps a few connections open and reuses them for every query.</span>
 <span>export const pool = new pg.Pool({</span>
 <span>  user: process.env.PGUSER,</span>
 <span>  password: process.env.PGPASSWORD,</span>
 <span>  host: process.env.PGHOST,</span>
 <span>  port: process.env.PGPORT,</span>
 <span>  database: process.env.PGDATABASE,</span>
+<span>  // Encrypt the connection when the database is hosted.</span>
 <span>  ssl: isLocal ? false : { rejectUnauthorized: false },</span>
 <span>});</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> If you see ECONNREFUSED 127.0.0.1:5432 while using a hosted database, .env did not load. When PGHOST is empty, pg tries a database on your own computer instead.</p>
+  </div>
 
   <h3>Setup 1 server/config/reset.js</h3>
 
@@ -382,6 +459,8 @@
 <span>import { pool } from "./database.js";</span>
 <span>import itemData from "../data/items.js";</span>
 <span></span>
+<span>// Delete the old table, then make a new empty one.</span>
+<span>// SERIAL makes the id count up by itself. TIMESTAMPTZ saves the date and time.</span>
 <span>const createTableQuery = `</span>
 <span>  DROP TABLE IF EXISTS items;</span>
 <span></span>
@@ -394,6 +473,7 @@
 <span>  );</span>
 <span>`;</span>
 <span></span>
+<span>// $1, $2, and $3 are placeholders. The database fills them in safely.</span>
 <span>const insertQuery = `</span>
 <span>  INSERT INTO items (title, description, image)</span>
 <span>  VALUES ($1, $2, $3);</span>
@@ -402,18 +482,26 @@
 <span>try {</span>
 <span>  await pool.query(createTableQuery);</span>
 <span></span>
+<span>  // Save one row for each record in the data folder.</span>
+<span>  // The array order has to match $1, $2, $3 above.</span>
 <span>  for (const item of itemData) {</span>
 <span>    await pool.query(insertQuery, [item.title, item.description, item.image]);</span>
 <span>  }</span>
 <span></span>
 <span>  console.log(`🎉 Finished! Saved ${itemData.length} items.`);</span>
 <span>} catch (error) {</span>
+<span>  // Show what went wrong, and tell the terminal that the script failed.</span>
 <span>  console.error("⚠️ Reset failed:", error.code || error.message);</span>
 <span>  process.exitCode = 1;</span>
 <span>} finally {</span>
+<span>  // Always close the pool, or the script never gives the prompt back.</span>
 <span>  await pool.end();</span>
 <span>}</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> This deletes the items table in whichever database .env points at. Check PGHOST and PGDATABASE before you run it, so you never reset a live site by mistake.</p>
+  </div>
 
   <h3 id="controller-setup-1">Setup 1 server/controllers/items.js</h3>
 
@@ -426,6 +514,7 @@
 <span>import { HttpError } from "../utils/HttpError.js";</span>
 <span></span>
 <span>// An id has to be a whole number before it goes to the database.</span>
+<span>// 1 to 9 digits also keeps it small enough for the id column.</span>
 <span>const readId = (value) =&gt; {</span>
 <span>  if (!/^\d{1,9}$/.test(value)) throw new HttpError(404, "Item not found.");</span>
 <span>  return Number(value);</span>
@@ -433,14 +522,18 @@
 <span></span>
 <span>// Only copy the fields you expect. Never save the whole req.body.</span>
 <span>const pickFields = (body) =&gt; {</span>
+<span>  // The title has to be text with at least one real character in it.</span>
 <span>  if (typeof body?.title !== "string" || !body.title.trim()) {</span>
 <span>    throw new HttpError(400, "Title is required.");</span>
 <span>  }</span>
 <span></span>
+<span>  // The title column is VARCHAR(255), so longer text would fail in the database.</span>
 <span>  if (body.title.trim().length &gt; 255) {</span>
 <span>    throw new HttpError(400, "Title must be 255 characters or fewer.");</span>
 <span>  }</span>
 <span></span>
+<span>  // This order has to match $1, $2, $3 in the queries below.</span>
+<span>  // ?? "" saves a field that was left out as empty text.</span>
 <span>  return [</span>
 <span>    body.title.trim(),</span>
 <span>    String(body.description ?? ""),</span>
@@ -448,22 +541,29 @@
 <span>  ];</span>
 <span>};</span>
 <span></span>
+<span>// GET /api/items</span>
 <span>const getItems = async (req, res) =&gt; {</span>
 <span>  const results = await pool.query("SELECT * FROM items ORDER BY id ASC");</span>
 <span></span>
+<span>  // results.rows is an array with one object for each row.</span>
 <span>  res.status(200).json(results.rows);</span>
 <span>};</span>
 <span></span>
+<span>// GET /api/items/:id</span>
 <span>const getItemById = async (req, res) =&gt; {</span>
+<span>  // $1 is filled in from the array, so the id never becomes part of the SQL text.</span>
 <span>  const results = await pool.query("SELECT * FROM items WHERE id = $1", [</span>
 <span>    readId(req.params.id),</span>
 <span>  ]);</span>
 <span></span>
+<span>  // No row came back, so that id does not exist.</span>
 <span>  if (results.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
 <span>  res.status(200).json(results.rows[0]);</span>
 <span>};</span>
 <span></span>
+<span>// POST /api/items</span>
 <span>const createItem = async (req, res) =&gt; {</span>
+<span>  // RETURNING * sends back the new row, with the id the database made.</span>
 <span>  const results = await pool.query(</span>
 <span>    `INSERT INTO items (title, description, image)</span>
 <span>    VALUES ($1, $2, $3)</span>
@@ -471,16 +571,20 @@
 <span>    pickFields(req.body),</span>
 <span>  );</span>
 <span></span>
+<span>  // 201 means something was created.</span>
 <span>  res.status(201).json(results.rows[0]);</span>
 <span>};</span>
 <span></span>
+<span>// PATCH /api/items/:id</span>
 <span>const updateItem = async (req, res) =&gt; {</span>
 <span>  const id = readId(req.params.id);</span>
+<span>  // Get the saved row first, so fields the request left out can be kept.</span>
 <span>  const found = await pool.query("SELECT * FROM items WHERE id = $1", [id]);</span>
 <span></span>
 <span>  if (found.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
 <span></span>
 <span>  // PATCH keeps any field the request left out.</span>
+<span>  // The saved row goes first and req.body second, so the new values win.</span>
 <span>  const results = await pool.query(</span>
 <span>    `UPDATE items SET title = $1, description = $2, image = $3</span>
 <span>    WHERE id = $4</span>
@@ -488,11 +592,14 @@
 <span>    [...pickFields({ ...found.rows[0], ...req.body }), id],</span>
 <span>  );</span>
 <span></span>
+<span>  // The row could have been deleted between the two queries.</span>
 <span>  if (results.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
 <span>  res.status(200).json(results.rows[0]);</span>
 <span>};</span>
 <span></span>
+<span>// DELETE /api/items/:id</span>
 <span>const deleteItem = async (req, res) =&gt; {</span>
+<span>  // RETURNING * sends back the row that was deleted.</span>
 <span>  const results = await pool.query(</span>
 <span>    "DELETE FROM items WHERE id = $1 RETURNING *",</span>
 <span>    [readId(req.params.id)],</span>
@@ -502,8 +609,13 @@
 <span>  res.status(200).json(results.rows[0]);</span>
 <span>};</span>
 <span></span>
+<span>// The routes file uses these names, such as ItemsController.getItems.</span>
 <span>export default { getItems, getItemById, createItem, updateItem, deleteItem };</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Keep every value in the array, as $1, $2, and $3. Never put req.params or req.body into the SQL text with ${ }, because that lets a visitor run their own SQL. This is called SQL injection.</p>
+  </div>
 
   <h3>Setup 1 run it</h3>
 
@@ -511,7 +623,11 @@
     <p>Terminal 1 starts the server and stays running, so it will not give you the prompt back. Press Ctrl + C to stop it. Open a second terminal with the + button in the VS Code terminal for the curl lines. curl works from any folder.</p>
   </div>
 
-  <h4>Terminal 1: from the server folder. With one package.json for the whole project, skip the cd and run npm run dev in the main folder, which starts React too.</h4>
+  <h4>Terminal 1: from the server folder</h4>
+
+  <div class="div_p">
+    <p>With one package.json for the whole project, skip the cd and run npm run dev in the main folder, which starts React too.</p>
+  </div>
 
   <pre class="mycodecli">
 <span>cd server</span>
@@ -592,7 +708,7 @@
   <h3>Setup 2 server/data/items.json instead</h3>
 
   <div class="div_p">
-    <p>A real .json file works too. Every key needs double quotes, there are no comments, and there is no export. Use the import line below in the controller instead of the items.js one.</p>
+    <p>A real .json file works too. Every key needs double quotes, there are no comments, and there is no export. The controller below is the reading only controller with the import line changed for a .json file.</p>
   </div>
 
   <pre class="mycodenode">
@@ -602,9 +718,35 @@
 <span>]</span>
   </pre>
 
+  <h3>Setup 2 server/controllers/items.js for a .json file</h3>
+
   <pre class="mycodenode">
+<span>// with { type: "json" } tells Node the file is data, not code.</span>
 <span>import itemData from "../data/items.json" with { type: "json" };</span>
+<span>import { HttpError } from "../utils/HttpError.js";</span>
+<span></span>
+<span>// GET /api/items</span>
+<span>const getItems = (req, res) =&gt; {</span>
+<span>  res.status(200).json(itemData);</span>
+<span>};</span>
+<span></span>
+<span>// GET /api/items/:id</span>
+<span>// req.params.id is always text, so turn it into a number before comparing.</span>
+<span>const getItemById = (req, res) =&gt; {</span>
+<span>  const item = itemData.find((other) =&gt; other.id === Number(req.params.id));</span>
+<span></span>
+<span>  // find gives back undefined when nothing matched.</span>
+<span>  if (!item) throw new HttpError(404, "Item not found.");</span>
+<span>  res.status(200).json(item);</span>
+<span>};</span>
+<span></span>
+<span>// The routes file uses these names, such as ItemsController.getItems.</span>
+<span>export default { getItems, getItemById };</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> The with { type: "json" } part needs Node 20.10 or newer, so check with node -v. Old tutorials write assert instead of with, and that no longer runs on new versions of Node.</p>
+  </div>
 
   <h3 id="controller-setup-2-read">Setup 2 server/controllers/items.js for reading only</h3>
 
@@ -616,18 +758,22 @@
 <span>import itemData from "../data/items.js";</span>
 <span>import { HttpError } from "../utils/HttpError.js";</span>
 <span></span>
+<span>// GET /api/items</span>
 <span>const getItems = (req, res) =&gt; {</span>
 <span>  res.status(200).json(itemData);</span>
 <span>};</span>
 <span></span>
+<span>// GET /api/items/:id</span>
 <span>// req.params.id is always text, so turn it into a number before comparing.</span>
 <span>const getItemById = (req, res) =&gt; {</span>
 <span>  const item = itemData.find((other) =&gt; other.id === Number(req.params.id));</span>
 <span></span>
+<span>  // find gives back undefined when nothing matched.</span>
 <span>  if (!item) throw new HttpError(404, "Item not found.");</span>
 <span>  res.status(200).json(item);</span>
 <span>};</span>
 <span></span>
+<span>// The routes file uses these names, such as ItemsController.getItems.</span>
 <span>export default { getItems, getItemById };</span>
   </pre>
 
@@ -643,10 +789,12 @@
 <span></span>
 <span>// Work on a copy of the array from the data folder.</span>
 <span>let items = [...itemData];</span>
+<span>// The next id is one more than the biggest id in the data. The 0 covers an empty array.</span>
 <span>let nextId = Math.max(0, ...items.map((item) =&gt; item.id)) + 1;</span>
 <span></span>
 <span>// Only copy the fields you expect. Never save the whole req.body.</span>
 <span>const pickFields = (body) =&gt; {</span>
+<span>  // The title has to be text with at least one real character in it.</span>
 <span>  if (typeof body?.title !== "string" || !body.title.trim()) {</span>
 <span>    throw new HttpError(400, "Title is required.");</span>
 <span>  }</span>
@@ -655,6 +803,7 @@
 <span>    throw new HttpError(400, "Title must be 255 characters or fewer.");</span>
 <span>  }</span>
 <span></span>
+<span>  // ?? "" saves a field that was left out as empty text.</span>
 <span>  return {</span>
 <span>    title: body.title.trim(),</span>
 <span>    description: String(body.description ?? ""),</span>
@@ -666,43 +815,58 @@
 <span>const findItem = (id) =&gt; {</span>
 <span>  const item = items.find((other) =&gt; other.id === Number(id));</span>
 <span></span>
+<span>  // find gives back undefined when nothing matched.</span>
 <span>  if (!item) throw new HttpError(404, "Item not found.");</span>
 <span>  return item;</span>
 <span>};</span>
 <span></span>
+<span>// GET /api/items</span>
 <span>const getItems = (req, res) =&gt; {</span>
 <span>  res.status(200).json(items);</span>
 <span>};</span>
 <span></span>
+<span>// GET /api/items/:id</span>
 <span>const getItemById = (req, res) =&gt; {</span>
 <span>  res.status(200).json(findItem(req.params.id));</span>
 <span>};</span>
 <span></span>
+<span>// POST /api/items</span>
 <span>const createItem = (req, res) =&gt; {</span>
+<span>  // The server picks the id. An id sent in the request is ignored.</span>
 <span>  const item = { id: nextId, ...pickFields(req.body) };</span>
 <span></span>
 <span>  nextId += 1;</span>
 <span>  items.push(item);</span>
+<span>  // 201 means something was created.</span>
 <span>  res.status(201).json(item);</span>
 <span>};</span>
 <span></span>
+<span>// PATCH /api/items/:id</span>
 <span>const updateItem = (req, res) =&gt; {</span>
 <span>  const item = findItem(req.params.id);</span>
 <span></span>
 <span>  // PATCH keeps any field the request left out.</span>
+<span>  // The saved item goes first and req.body second, so the new values win.</span>
 <span>  Object.assign(item, pickFields({ ...item, ...req.body }));</span>
 <span>  res.status(200).json(item);</span>
 <span>};</span>
 <span></span>
+<span>// DELETE /api/items/:id</span>
 <span>const deleteItem = (req, res) =&gt; {</span>
 <span>  const item = findItem(req.params.id);</span>
 <span></span>
+<span>  // Keep every item except the one being deleted.</span>
 <span>  items = items.filter((other) =&gt; other.id !== item.id);</span>
 <span>  res.status(200).json(item);</span>
 <span>};</span>
 <span></span>
+<span>// The routes file uses these names, such as ItemsController.getItems.</span>
 <span>export default { getItems, getItemById, createItem, updateItem, deleteItem };</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> node --watch restarts the server every time you save a file. Each restart loads the data folder again, so anything you added with POST is gone. That is normal for this setup.</p>
+  </div>
 
   <h3>Setup 2 run it</h3>
 
@@ -710,7 +874,11 @@
     <p>Terminal 1 starts the server and stays running, so it will not give you the prompt back. Press Ctrl + C to stop it. Open a second terminal with the + button in the VS Code terminal for the curl lines. curl works from any folder.</p>
   </div>
 
-  <h4>Terminal 1: from the server folder. With one package.json for the whole project, skip the cd and run npm run dev in the main folder, which starts React too.</h4>
+  <h4>Terminal 1: from the server folder</h4>
+
+  <div class="div_p">
+    <p>With one package.json for the whole project, skip the cd and run npm run dev in the main folder, which starts React too.</p>
+  </div>
 
   <pre class="mycodecli">
 <span>cd server</span>
@@ -781,6 +949,10 @@
 <span>PORT=3000</span>
   </pre>
 
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Never commit .env. Add it to .gitignore before your first commit, which is on the <a href="setup_page.html#gitignore">Setup page</a>. dotenv reads the .env in the folder you run the command from, so run npm from the folder that has it.</p>
+  </div>
+
   <h3>Setup 3 server/config/database.js</h3>
 
   <div class="div_p">
@@ -788,20 +960,29 @@
   </div>
 
   <pre class="mycodepg">
+<span>// Reads .env into process.env. It is here as well as in server.js,</span>
+<span>// because reset.js and createTable.js run this file without server.js.</span>
 <span>import "dotenv/config";</span>
 <span>import pg from "pg";</span>
 <span></span>
+<span>// A database on your own computer does not use SSL. A hosted one does.</span>
 <span>const isLocal = ["localhost", "127.0.0.1"].includes(process.env.PGHOST);</span>
 <span></span>
+<span>// A pool keeps a few connections open and reuses them for every query.</span>
 <span>export const pool = new pg.Pool({</span>
 <span>  user: process.env.PGUSER,</span>
 <span>  password: process.env.PGPASSWORD,</span>
 <span>  host: process.env.PGHOST,</span>
 <span>  port: process.env.PGPORT,</span>
 <span>  database: process.env.PGDATABASE,</span>
+<span>  // Encrypt the connection when the database is hosted.</span>
 <span>  ssl: isLocal ? false : { rejectUnauthorized: false },</span>
 <span>});</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> If you see ECONNREFUSED 127.0.0.1:5432 while using a hosted database, .env did not load. When PGHOST is empty, pg tries a database on your own computer instead.</p>
+  </div>
 
   <h3>Setup 3 server/config/createTable.js</h3>
 
@@ -809,6 +990,7 @@
 <span>import { pool } from "./database.js";</span>
 <span></span>
 <span>// IF NOT EXISTS means this never deletes rows, so it is safe to run again.</span>
+<span>// SERIAL makes the id count up by itself. TIMESTAMPTZ saves the date and time.</span>
 <span>const createTableQuery = `</span>
 <span>  CREATE TABLE IF NOT EXISTS items (</span>
 <span>    id SERIAL PRIMARY KEY,</span>
@@ -823,9 +1005,11 @@
 <span>  await pool.query(createTableQuery);</span>
 <span>  console.log("🎉 Items table is ready.");</span>
 <span>} catch (error) {</span>
+<span>  // Show what went wrong, and tell the terminal that the script failed.</span>
 <span>  console.error("⚠️ Could not create the table:", error.code || error.message);</span>
 <span>  process.exitCode = 1;</span>
 <span>} finally {</span>
+<span>  // Always close the pool, or the script never gives the prompt back.</span>
 <span>  await pool.end();</span>
 <span>}</span>
   </pre>
@@ -841,6 +1025,7 @@
 <span>import { HttpError } from "../utils/HttpError.js";</span>
 <span></span>
 <span>// An id has to be a whole number before it goes to the database.</span>
+<span>// 1 to 9 digits also keeps it small enough for the id column.</span>
 <span>const readId = (value) =&gt; {</span>
 <span>  if (!/^\d{1,9}$/.test(value)) throw new HttpError(404, "Item not found.");</span>
 <span>  return Number(value);</span>
@@ -848,14 +1033,18 @@
 <span></span>
 <span>// Only copy the fields you expect. Never save the whole req.body.</span>
 <span>const pickFields = (body) =&gt; {</span>
+<span>  // The title has to be text with at least one real character in it.</span>
 <span>  if (typeof body?.title !== "string" || !body.title.trim()) {</span>
 <span>    throw new HttpError(400, "Title is required.");</span>
 <span>  }</span>
 <span></span>
+<span>  // The title column is VARCHAR(255), so longer text would fail in the database.</span>
 <span>  if (body.title.trim().length &gt; 255) {</span>
 <span>    throw new HttpError(400, "Title must be 255 characters or fewer.");</span>
 <span>  }</span>
 <span></span>
+<span>  // This order has to match $1, $2, $3 in the queries below.</span>
+<span>  // ?? "" saves a field that was left out as empty text.</span>
 <span>  return [</span>
 <span>    body.title.trim(),</span>
 <span>    String(body.description ?? ""),</span>
@@ -863,22 +1052,29 @@
 <span>  ];</span>
 <span>};</span>
 <span></span>
+<span>// GET /api/items</span>
 <span>const getItems = async (req, res) =&gt; {</span>
 <span>  const results = await pool.query("SELECT * FROM items ORDER BY id ASC");</span>
 <span></span>
+<span>  // results.rows is an array with one object for each row.</span>
 <span>  res.status(200).json(results.rows);</span>
 <span>};</span>
 <span></span>
+<span>// GET /api/items/:id</span>
 <span>const getItemById = async (req, res) =&gt; {</span>
+<span>  // $1 is filled in from the array, so the id never becomes part of the SQL text.</span>
 <span>  const results = await pool.query("SELECT * FROM items WHERE id = $1", [</span>
 <span>    readId(req.params.id),</span>
 <span>  ]);</span>
 <span></span>
+<span>  // No row came back, so that id does not exist.</span>
 <span>  if (results.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
 <span>  res.status(200).json(results.rows[0]);</span>
 <span>};</span>
 <span></span>
+<span>// POST /api/items</span>
 <span>const createItem = async (req, res) =&gt; {</span>
+<span>  // RETURNING * sends back the new row, with the id the database made.</span>
 <span>  const results = await pool.query(</span>
 <span>    `INSERT INTO items (title, description, image)</span>
 <span>    VALUES ($1, $2, $3)</span>
@@ -886,16 +1082,20 @@
 <span>    pickFields(req.body),</span>
 <span>  );</span>
 <span></span>
+<span>  // 201 means something was created.</span>
 <span>  res.status(201).json(results.rows[0]);</span>
 <span>};</span>
 <span></span>
+<span>// PATCH /api/items/:id</span>
 <span>const updateItem = async (req, res) =&gt; {</span>
 <span>  const id = readId(req.params.id);</span>
+<span>  // Get the saved row first, so fields the request left out can be kept.</span>
 <span>  const found = await pool.query("SELECT * FROM items WHERE id = $1", [id]);</span>
 <span></span>
 <span>  if (found.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
 <span></span>
 <span>  // PATCH keeps any field the request left out.</span>
+<span>  // The saved row goes first and req.body second, so the new values win.</span>
 <span>  const results = await pool.query(</span>
 <span>    `UPDATE items SET title = $1, description = $2, image = $3</span>
 <span>    WHERE id = $4</span>
@@ -903,11 +1103,14 @@
 <span>    [...pickFields({ ...found.rows[0], ...req.body }), id],</span>
 <span>  );</span>
 <span></span>
+<span>  // The row could have been deleted between the two queries.</span>
 <span>  if (results.rows.length === 0) throw new HttpError(404, "Item not found.");</span>
 <span>  res.status(200).json(results.rows[0]);</span>
 <span>};</span>
 <span></span>
+<span>// DELETE /api/items/:id</span>
 <span>const deleteItem = async (req, res) =&gt; {</span>
+<span>  // RETURNING * sends back the row that was deleted.</span>
 <span>  const results = await pool.query(</span>
 <span>    "DELETE FROM items WHERE id = $1 RETURNING *",</span>
 <span>    [readId(req.params.id)],</span>
@@ -917,8 +1120,13 @@
 <span>  res.status(200).json(results.rows[0]);</span>
 <span>};</span>
 <span></span>
+<span>// The routes file uses these names, such as ItemsController.getItems.</span>
 <span>export default { getItems, getItemById, createItem, updateItem, deleteItem };</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Keep every value in the array, as $1, $2, and $3. Never put req.params or req.body into the SQL text with ${ }, because that lets a visitor run their own SQL. This is called SQL injection.</p>
+  </div>
 
   <h3>Setup 3 run it</h3>
 
@@ -926,7 +1134,11 @@
     <p>Terminal 1 starts the server and stays running, so it will not give you the prompt back. Press Ctrl + C to stop it. Open a second terminal with the + button in the VS Code terminal for the curl lines. curl works from any folder.</p>
   </div>
 
-  <h4>Terminal 1: from the server folder. With one package.json for the whole project, skip the cd and run npm run dev in the main folder, which starts React too.</h4>
+  <h4>Terminal 1: from the server folder</h4>
+
+  <div class="div_p">
+    <p>With one package.json for the whole project, skip the cd and run npm run dev in the main folder, which starts React too.</p>
+  </div>
 
   <pre class="mycodecli">
 <span>cd server</span>
@@ -1006,15 +1218,20 @@
   </div>
 
   <pre class="mycodenode">
+<span>// Runs on its own. Save it as server.js, then run: node server.js</span>
 <span>import express from "express";</span>
 <span></span>
+<span>// Create the app.</span>
 <span>const app = express();</span>
 <span></span>
+<span>// One route. A GET request to /api/health gets this JSON back.</span>
 <span>app.get("/api/health", (req, res) =&gt; {</span>
 <span>  res.status(200).json({ status: "ok" });</span>
 <span>});</span>
 <span></span>
-<span>app.listen(3000, () =&gt; {</span>
+<span>// Open port 3000 and wait for requests.</span>
+<span>app.listen(3000, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
 <span>  console.log("Server listening on http://localhost:3000");</span>
 <span>});</span>
   </pre>
@@ -1032,7 +1249,7 @@
 <span>res                        What goes back: res.status(200).json(data)</span>
 <span>next                       Passes the request to the next function</span>
 <span>next(error)                Skips ahead to the error handler</span>
-<span>app.listen(PORT, fn)       Opens the port and runs fn once it is ready</span>
+<span>app.listen(PORT, fn)       Opens the port, then runs fn(error). Check error: Express 5 hands it to fn instead of crashing</span>
   </pre>
 
   <h3>Mistakes caused by the wrong order</h3>
@@ -1051,8 +1268,22 @@
   <h2 id="regular-server-js">A Regular server.js</h2>
 
   <div class="div_p">
-    <p>This is what a normal server.js looks like once the project is real. It has comments for each part and works with the HttpError, routes, and controller files from any setup above. For Setup 2, leave out the dotenv line. If you use the Vite proxy from the <a href="react_page.html">React page</a>, leave out the two cors lines and run the server without that package.</p>
+    <p>This is what a normal server.js looks like once the project is real. It has comments for each part and works with the HttpError, routes, and controller files from any setup above.</p>
+    <ul>
+      <li><strong>Setup 2:</strong> leave out the dotenv line.</li>
+      <li><strong>Vite proxy:</strong> if you use the proxy from the <a href="react_page.html">React page</a>, leave out the two cors lines and run the server without that package.</li>
+    </ul>
   </div>
+
+  <h3>Install what this server.js imports</h3>
+
+  <div class="div_p">
+    <p>Run this in the server folder first. A package that is imported but not installed stops the server with ERR_MODULE_NOT_FOUND.</p>
+  </div>
+
+  <pre class="mycodecli">
+<span>npm install express cors dotenv</span>
+  </pre>
 
   <h3>server/server.js with every part explained</h3>
 
@@ -1114,7 +1345,8 @@
 <span>});</span>
 <span></span>
 <span>// 9. Start the server last.</span>
-<span>app.listen(PORT, () =&gt; {</span>
+<span>app.listen(PORT, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
 <span>  console.log(`🚀 Server listening on http://localhost:${PORT}`);</span>
 <span>});</span>
   </pre>
@@ -1122,54 +1354,201 @@
   <h3>Add a route for another resource</h3>
 
   <div class="div_p">
-    <p>Each resource gets its own routes file and controller file, then one import and one app.use line in server.js. The app.use line goes above the 404 handler.</p>
+    <p>Each resource gets its own routes file and controller file, then one import and one app.use line in server.js. The app.use line goes above the 404 handler. This box keeps both routers in one file so that it runs on its own, and the comments show the import lines a real project uses.</p>
   </div>
 
   <pre class="mycodenode">
-<span>import pizzasRouter from "./routes/pizzas.js";</span>
+<span>// Runs on its own. Save it as server.js, then run: node server.js</span>
+<span>import express from "express";</span>
 <span></span>
+<span>const PORT = process.env.PORT || 3000;</span>
+<span></span>
+<span>const app = express();</span>
+<span></span>
+<span>app.use(express.json({ limit: "100kb" }));</span>
+<span></span>
+<span>// In a real project this router is the file routes/items.js, and server.js has:</span>
+<span>// import itemsRouter from "./routes/items.js";</span>
+<span>const itemsRouter = express.Router();</span>
+<span></span>
+<span>itemsRouter.get("/", (req, res) =&gt; {</span>
+<span>  res.status(200).json([{ id: 1, title: "First Item" }]);</span>
+<span>});</span>
+<span></span>
+<span>// The new resource gets its own router the same way. In a real project it is</span>
+<span>// routes/pizzas.js, and server.js has:</span>
+<span>// import pizzasRouter from "./routes/pizzas.js";</span>
+<span>const pizzasRouter = express.Router();</span>
+<span></span>
+<span>pizzasRouter.get("/", (req, res) =&gt; {</span>
+<span>  res.status(200).json([{ id: 1, name: "Margherita" }]);</span>
+<span>});</span>
+<span></span>
+<span>// One app.use line for each resource. They all go above the 404 handler.</span>
+<span>app.use("/api/items", itemsRouter);</span>
 <span>app.use("/api/pizzas", pizzasRouter);</span>
+<span></span>
+<span>// No route above matched.</span>
+<span>app.use((req, res) =&gt; {</span>
+<span>  res.status(404).json({ error: "Route not found." });</span>
+<span>});</span>
+<span></span>
+<span>app.listen(PORT, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
+<span>  console.log(`Server listening on http://localhost:${PORT}`);</span>
+<span>});</span>
+<span></span>
+<span>// Try it from a second terminal:</span>
+<span>// curl http://localhost:3000/api/items</span>
+<span>// curl http://localhost:3000/api/pizzas</span>
   </pre>
 
   <h3>Start the server after the database connects</h3>
 
   <div class="div_p">
-    <p>With a database, replace step 9 with this so the server only opens once the connection works. The connectDatabase code is on the <a href="mongodb_page.html">MongoDB page</a>.</p>
+    <p>With a database, replace step 9 with this so the server only opens once the connection works. The connectDatabase code is on the <a href="mongodb_page.html">MongoDB page</a>. This box uses a pretend connectDatabase so that it runs on its own.</p>
   </div>
 
   <pre class="mycodenode">
-<span>import { connectDatabase } from "./config/database.js";</span>
+<span>// Runs on its own. Save it as server.js, then run: node server.js</span>
+<span>import express from "express";</span>
 <span></span>
-<span>await connectDatabase();</span>
+<span>const PORT = process.env.PORT || 3000;</span>
 <span></span>
-<span>app.listen(PORT, () =&gt; {</span>
-<span>  console.log(`🚀 Server listening on http://localhost:${PORT}`);</span>
+<span>const app = express();</span>
+<span></span>
+<span>// This stands in for the real connectDatabase in config/database.js.</span>
+<span>// MongoDB:  await mongoose.connect(process.env.MONGODB_URI);</span>
+<span>// Postgres: await pool.query("SELECT 1");</span>
+<span>async function connectDatabase() {</span>
+<span>  // Pretend the database takes half a second to answer.</span>
+<span>  await new Promise((resolve) =&gt; setTimeout(resolve, 500));</span>
+<span>  console.log("Database connected.");</span>
+<span>}</span>
+<span></span>
+<span>app.get("/api/health", (req, res) =&gt; {</span>
+<span>  res.status(200).json({ status: "ok" });</span>
 <span>});</span>
+<span></span>
+<span>try {</span>
+<span>  // Wait here until the database answers. Nothing below runs before that.</span>
+<span>  await connectDatabase();</span>
+<span></span>
+<span>  // The port only opens once the database is ready.</span>
+<span>  app.listen(PORT, (error) =&gt; {</span>
+<span>    if (error) throw error; // e.g. the port is already in use</span>
+<span>    console.log(`🚀 Server listening on http://localhost:${PORT}`);</span>
+<span>  });</span>
+<span>} catch (error) {</span>
+<span>  // The database did not connect, so the port never opens.</span>
+<span>  console.error("Could not connect to the database:", error.message);</span>
+<span>  process.exitCode = 1;</span>
+<span>}</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Keep the try and catch. Without it, a wrong password or a database that is down stops the server with a long error instead of one clear line.</p>
+  </div>
 
   <h2 id="reading-a-request">Reading A Request</h2>
 
   <h3>The four places data comes from</h3>
 
   <pre class="mycodenode">
+<span>// Runs on its own. Save it as server.js, then run: node server.js</span>
+<span>import express from "express";</span>
+<span></span>
+<span>const app = express();</span>
+<span></span>
+<span>// Without this line req.body is undefined.</span>
+<span>app.use(express.json({ limit: "100kb" }));</span>
+<span></span>
 <span>app.post("/api/items/:id", (req, res) =&gt; {</span>
-<span>  req.params.id;            // /api/items/5           gives "5"</span>
-<span>  req.query.page;           // /api/items?page=2      gives "2"</span>
-<span>  req.body.title;           // JSON sent by fetch     needs express.json()</span>
-<span>  req.get("Authorization"); // a request header</span>
+<span>  // 1. params: the :id part of the path.   /api/items/5         gives "5"</span>
+<span>  const id = req.params.id;</span>
+<span>  // 2. query: what comes after the ?.      /api/items/5?page=2  gives "2"</span>
+<span>  const page = req.query.page;</span>
+<span>  // 3. body: JSON sent by fetch. The ?. stops a crash when no body was sent.</span>
+<span>  const title = req.body?.title;</span>
+<span>  // 4. headers: extra information sent along with the request.</span>
+<span>  const authorization = req.get("Authorization");</span>
+<span></span>
+<span>  // Send all four back so you can see what arrived.</span>
+<span>  res.status(200).json({ id, page, title, authorization });</span>
 <span>});</span>
+<span></span>
+<span>app.listen(3000, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
+<span>  console.log("Server listening on http://localhost:3000");</span>
+<span>});</span>
+<span></span>
+<span>// Try it from a second terminal. This is one long line:</span>
+<span>// curl -X POST "http://localhost:3000/api/items/5?page=2" -H "Content-Type: application/json" -H "Authorization: Bearer abc" -d '{"title":"Hi"}'</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> params, query, and headers are always text or missing, and the body can be anything a visitor sends. Check the type before you use any of them. On Express 5, req.body is undefined when no JSON was sent, which is why the box reads req.body?.title.</p>
+  </div>
 
   <h3>Sending a response</h3>
 
   <pre class="mycodenode">
-<span>res.status(200).json(data);                      // send JSON</span>
-<span>res.status(201).json(newItem);                   // something was created</span>
-<span>res.status(204).end();                           // worked, nothing to send back</span>
-<span>res.status(400).json({ error: "Bad input." });   // the request was wrong</span>
-<span>res.status(404).json({ error: "Not found." });   // no such record</span>
-<span>res.status(500).json({ error: "Server error." }); // our code failed</span>
+<span>// Runs on its own. Save it as server.js, then run: node server.js</span>
+<span>import express from "express";</span>
+<span></span>
+<span>const app = express();</span>
+<span></span>
+<span>app.use(express.json({ limit: "100kb" }));</span>
+<span></span>
+<span>const items = [{ id: 1, title: "First Item" }];</span>
+<span></span>
+<span>app.get("/api/items", (req, res) =&gt; {</span>
+<span>  res.status(200).json(items); // send JSON</span>
+<span>});</span>
+<span></span>
+<span>app.get("/api/items/:id", (req, res) =&gt; {</span>
+<span>  const item = items.find((other) =&gt; other.id === Number(req.params.id));</span>
+<span></span>
+<span>  // return stops the function here, so only one response is sent.</span>
+<span>  if (!item) {</span>
+<span>    return res.status(404).json({ error: "Not found." }); // no such record</span>
+<span>  }</span>
+<span></span>
+<span>  res.status(200).json(item);</span>
+<span>});</span>
+<span></span>
+<span>app.post("/api/items", (req, res) =&gt; {</span>
+<span>  if (typeof req.body?.title !== "string") {</span>
+<span>    return res.status(400).json({ error: "Bad input." }); // the request was wrong</span>
+<span>  }</span>
+<span></span>
+<span>  const newItem = { id: items.length + 1, title: req.body.title };</span>
+<span></span>
+<span>  items.push(newItem);</span>
+<span>  res.status(201).json(newItem); // something was created</span>
+<span>});</span>
+<span></span>
+<span>app.delete("/api/items/:id", (req, res) =&gt; {</span>
+<span>  res.status(204).end(); // worked, nothing to send back</span>
+<span>});</span>
+<span></span>
+<span>app.get("/api/broken", (req, res) =&gt; {</span>
+<span>  res.status(500).json({ error: "Server error." }); // our code failed</span>
+<span>});</span>
+<span></span>
+<span>app.listen(3000, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
+<span>  console.log("Server listening on http://localhost:3000");</span>
+<span>});</span>
+<span></span>
+<span>// Try it from a second terminal. -i shows the status code too:</span>
+<span>// curl -i http://localhost:3000/api/items/99</span>
+<span>// curl -i -X DELETE http://localhost:3000/api/items/1</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Send one response for each request. Put return in front of an early response, or the function keeps going and you get "Cannot set headers after they are sent".</p>
+  </div>
 
   <h3>Status codes</h3>
 
@@ -1191,20 +1570,76 @@
   <h3>Page number from the query string</h3>
 
   <div class="div_p">
-    <p>Everything in req.query is text or missing, so check it before using it. This came from the Rev games controller.</p>
+    <p>Everything in req.query is text or missing, so check it before using it. This came from the Rev games controller. The range check after Number is there because the pattern alone still lets 0 and 9999 through.</p>
   </div>
 
   <pre class="mycodenode">
-<span>const limit = 24;</span>
-<span>const raw = req.query.page ?? "1";</span>
+<span>// Runs on its own. Save it as server.js, then run: node server.js</span>
+<span>import express from "express";</span>
 <span></span>
-<span>if (typeof raw !== "string" || !/^\d{1,4}$/.test(raw)) {</span>
-<span>  throw new HttpError(400, "Page must be a whole number between 1 and 1000.");</span>
+<span>const app = express();</span>
+<span></span>
+<span>// In a project, import this from utils/HttpError.js instead.</span>
+<span>class HttpError extends Error {</span>
+<span>  constructor(status, message) {</span>
+<span>    super(message);</span>
+<span>    this.status = status;</span>
+<span>  }</span>
 <span>}</span>
 <span></span>
-<span>const page = Number(raw);</span>
-<span>const skip = (page - 1) * limit;</span>
+<span>// 100 made up items, so there is something to page through.</span>
+<span>const items = Array.from({ length: 100 }, (unused, index) =&gt; ({</span>
+<span>  id: index + 1,</span>
+<span>  title: `Item ${index + 1}`,</span>
+<span>}));</span>
+<span></span>
+<span>app.get("/api/items", (req, res) =&gt; {</span>
+<span>  // How many items go on one page.</span>
+<span>  const limit = 24;</span>
+<span>  // No ?page= in the URL means page 1.</span>
+<span>  const raw = req.query.page ?? "1";</span>
+<span></span>
+<span>  // ?page=1&amp;page=2 arrives as an array, and ?page=abc is not a number.</span>
+<span>  if (typeof raw !== "string" || !/^\d{1,4}$/.test(raw)) {</span>
+<span>    throw new HttpError(400, "Page must be a whole number between 1 and 1000.");</span>
+<span>  }</span>
+<span></span>
+<span>  const page = Number(raw);</span>
+<span></span>
+<span>  // The pattern above still lets 0 and 9999 through, so check the range too.</span>
+<span>  if (page &lt; 1 || page &gt; 1000) {</span>
+<span>    throw new HttpError(400, "Page must be a whole number between 1 and 1000.");</span>
+<span>  }</span>
+<span></span>
+<span>  // Page 1 skips 0 items, page 2 skips 24, page 3 skips 48.</span>
+<span>  const skip = (page - 1) * limit;</span>
+<span></span>
+<span>  res.status(200).json({ page, items: items.slice(skip, skip + limit) });</span>
+<span>});</span>
+<span></span>
+<span>// Turns a thrown HttpError into a JSON answer.</span>
+<span>app.use((error, req, res, next) =&gt; {</span>
+<span>  if (error instanceof HttpError) {</span>
+<span>    return res.status(error.status).json({ error: error.message });</span>
+<span>  }</span>
+<span></span>
+<span>  console.error(error);</span>
+<span>  res.status(500).json({ error: "An unexpected server error occurred." });</span>
+<span>});</span>
+<span></span>
+<span>app.listen(3000, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
+<span>  console.log("Server listening on http://localhost:3000");</span>
+<span>});</span>
+<span></span>
+<span>// Try it from a second terminal:</span>
+<span>// curl "http://localhost:3000/api/items?page=2"</span>
+<span>// curl "http://localhost:3000/api/items?page=0"</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> With a database, use the same two numbers in the query: LIMIT $1 OFFSET $2 in Postgres, or .skip(skip).limit(limit) in Mongoose. Always sort the query too, or the same record can show up on two pages.</p>
+  </div>
 
   <h2 id="middleware">Middleware</h2>
 
@@ -1215,28 +1650,93 @@
   <h3>Log every request</h3>
 
   <pre class="mycodenode">
+<span>// Runs on its own. Save it as server.js, then run: node server.js</span>
+<span>import express from "express";</span>
+<span></span>
+<span>const app = express();</span>
+<span></span>
+<span>// There is no path, so this runs on every request. It goes above the routes.</span>
 <span>app.use((req, res, next) =&gt; {</span>
+<span>  // Prints a line such as: GET /api/health</span>
 <span>  console.log(`${req.method} ${req.path}`);</span>
+<span>  // Pass the request along. Without next() the request hangs forever.</span>
 <span>  next();</span>
 <span>});</span>
+<span></span>
+<span>app.get("/api/health", (req, res) =&gt; {</span>
+<span>  res.status(200).json({ status: "ok" });</span>
+<span>});</span>
+<span></span>
+<span>app.listen(3000, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
+<span>  console.log("Server listening on http://localhost:3000");</span>
+<span>});</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Log the method and the path only. Never log req.body or the headers, because passwords and login tokens would end up in your logs.</p>
+  </div>
 
   <h3>Protect one route</h3>
 
   <div class="div_p">
-    <p>Put the middleware between the path and the controller. The Security page has the real version.</p>
+    <p>Put the middleware between the path and the controller. The <a href="security_page.html">Security page</a> has the real version.</p>
   </div>
 
   <pre class="mycodenode">
+<span>// Runs on its own. Save it as server.js, then run: API_KEY=my-secret-key node server.js</span>
+<span>import express from "express";</span>
+<span></span>
+<span>// Stop right away when the key is missing. Without this check, a request</span>
+<span>// with no key would match the missing API_KEY and get in.</span>
+<span>if (!process.env.API_KEY) {</span>
+<span>  throw new Error("API_KEY is not set. Add it to .env first.");</span>
+<span>}</span>
+<span></span>
+<span>const app = express();</span>
+<span>const router = express.Router();</span>
+<span></span>
+<span>app.use(express.json({ limit: "100kb" }));</span>
+<span></span>
+<span>// Middleware gets req, res, and next, the same as any route function.</span>
 <span>const requireKey = (req, res, next) =&gt; {</span>
+<span>  // req.get reads a request header.</span>
 <span>  if (req.get("X-Api-Key") !== process.env.API_KEY) {</span>
+<span>    // return stops here, so the controller never runs.</span>
 <span>    return res.status(401).json({ error: "Missing or wrong key." });</span>
 <span>  }</span>
+<span>  // The key matched, so move on to the controller.</span>
 <span>  next();</span>
 <span>};</span>
 <span></span>
-<span>router.post("/", requireKey, ItemsController.createItem);</span>
+<span>// This stands in for ItemsController.createItem.</span>
+<span>const createItem = (req, res) =&gt; {</span>
+<span>  res.status(201).json({ id: 1, title: String(req.body?.title ?? "") });</span>
+<span>};</span>
+<span></span>
+<span>// Anyone can read.</span>
+<span>router.get("/", (req, res) =&gt; {</span>
+<span>  res.status(200).json([]);</span>
+<span>});</span>
+<span></span>
+<span>// The middleware goes between the path and the controller. Only POST needs the key.</span>
+<span>router.post("/", requireKey, createItem);</span>
+<span></span>
+<span>app.use("/api/items", router);</span>
+<span></span>
+<span>app.listen(3000, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
+<span>  console.log("Server listening on http://localhost:3000");</span>
+<span>});</span>
+<span></span>
+<span>// Try it from a second terminal. The first one gets a 401 and the second a 201:</span>
+<span>// curl -i -X POST http://localhost:3000/api/items -H "Content-Type: application/json" -d '{"title":"Hi"}'</span>
+<span>// curl -i -X POST http://localhost:3000/api/items -H "Content-Type: application/json" -H "X-Api-Key: my-secret-key" -d '{"title":"Hi"}'</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> When API_KEY is missing from .env, a request with no key matches it and gets in. That is why the box stops at the top if the key is not set. One shared key is fine for practice. For real secrets, compare with timingSafeEqual from node:crypto, the way the Security page does.</p>
+  </div>
 
   <h3>Allow a frontend on another address with CORS</h3>
 
@@ -1245,16 +1745,79 @@
   </div>
 
   <pre class="mycodenode">
+<span>// Runs on its own. Install both first: npm install express cors</span>
+<span>import express from "express";</span>
 <span>import cors from "cors";</span>
 <span></span>
-<span>app.use(cors({ origin: process.env.CLIENT_ORIGIN }));</span>
+<span>// The address of your React site. Vite uses 5173 on your own computer.</span>
+<span>// Keep the fallback: when origin is missing, no site is allowed at all.</span>
+<span>const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5173";</span>
+<span></span>
+<span>const app = express();</span>
+<span></span>
+<span>// cors() goes above the routes. Only CLIENT_ORIGIN may read the answers.</span>
+<span>app.use(cors({ origin: CLIENT_ORIGIN }));</span>
+<span></span>
+<span>app.get("/api/health", (req, res) =&gt; {</span>
+<span>  res.status(200).json({ status: "ok" });</span>
+<span>});</span>
+<span></span>
+<span>app.listen(3000, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
+<span>  console.log("Server listening on http://localhost:3000");</span>
+<span>});</span>
+<span></span>
+<span>// Try it from a second terminal:</span>
+<span>// curl -i http://localhost:3000/api/health</span>
+<span>// The answer has this line: Access-Control-Allow-Origin: http://localhost:5173</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> CORS only stops browsers. curl and other servers can still call your API, so it does not replace a login. The origin has to match exactly: http or https, the port, and no / on the end. cors() with nothing inside the brackets lets every site in.</p>
+  </div>
 
   <h3>Limit the body size</h3>
 
   <pre class="mycodenode">
+<span>// Runs on its own. Save it as server.js, then run: node server.js</span>
+<span>import express from "express";</span>
+<span></span>
+<span>const app = express();</span>
+<span></span>
+<span>// A body over 100kb is refused before your route runs.</span>
 <span>app.use(express.json({ limit: "100kb" }));</span>
+<span></span>
+<span>app.post("/api/items", (req, res) =&gt; {</span>
+<span>  res.status(201).json({ received: req.body });</span>
+<span>});</span>
+<span></span>
+<span>// express.json() sends its errors here. Four parameters make it the error handler.</span>
+<span>app.use((error, req, res, next) =&gt; {</span>
+<span>  // The body was bigger than the limit.</span>
+<span>  if (error.type === "entity.too.large") {</span>
+<span>    return res.status(413).json({ error: "Request body is too large." });</span>
+<span>  }</span>
+<span>  // The body was not valid JSON.</span>
+<span>  if (error.type === "entity.parse.failed") {</span>
+<span>    return res.status(400).json({ error: "Invalid JSON." });</span>
+<span>  }</span>
+<span></span>
+<span>  console.error(error);</span>
+<span>  res.status(500).json({ error: "An unexpected server error occurred." });</span>
+<span>});</span>
+<span></span>
+<span>app.listen(3000, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
+<span>  console.log("Server listening on http://localhost:3000");</span>
+<span>});</span>
+<span></span>
+<span>// Try it from a second terminal. The missing } gives a 400:</span>
+<span>// curl -i -X POST http://localhost:3000/api/items -H "Content-Type: application/json" -d '{"title":"Hi"'</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Keep the error handler with it. Without one, Express answers a body that is too large with an HTML error page instead of JSON.</p>
+  </div>
 
   <h2 id="errors-in-express-4-and-5">Errors In Express 4 And 5</h2>
 
@@ -1265,28 +1828,111 @@
   <h3>Express 5: a thrown error reaches the error handler</h3>
 
   <pre class="mycodenode">
-<span>const getItem = async (req, res) =&gt; {</span>
-<span>  const item = await Item.findById(req.params.id);</span>
+<span>// Runs on its own with Express 5. Check your version with: npm ls express</span>
+<span>import express from "express";</span>
 <span></span>
+<span>const app = express();</span>
+<span></span>
+<span>// In a project, import this from utils/HttpError.js instead.</span>
+<span>class HttpError extends Error {</span>
+<span>  constructor(status, message) {</span>
+<span>    super(message);</span>
+<span>    this.status = status;</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>const items = [{ id: 1, title: "First Item" }];</span>
+<span></span>
+<span>// This stands in for a database call such as Item.findById(id).</span>
+<span>const findById = async (id) =&gt; items.find((item) =&gt; item.id === Number(id));</span>
+<span></span>
+<span>const getItem = async (req, res) =&gt; {</span>
+<span>  const item = await findById(req.params.id);</span>
+<span></span>
+<span>  // Express 5 catches this throw and sends it to the error handler below.</span>
 <span>  if (!item) throw new HttpError(404, "Item not found.");</span>
 <span>  res.status(200).json(item);</span>
 <span>};</span>
+<span></span>
+<span>app.get("/api/items/:id", getItem);</span>
+<span></span>
+<span>app.use((error, req, res, next) =&gt; {</span>
+<span>  if (error instanceof HttpError) {</span>
+<span>    return res.status(error.status).json({ error: error.message });</span>
+<span>  }</span>
+<span></span>
+<span>  console.error(error);</span>
+<span>  res.status(500).json({ error: "An unexpected server error occurred." });</span>
+<span>});</span>
+<span></span>
+<span>app.listen(3000, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
+<span>  console.log("Server listening on http://localhost:3000");</span>
+<span>});</span>
+<span></span>
+<span>// Try it from a second terminal:</span>
+<span>// curl -i http://localhost:3000/api/items/1</span>
+<span>// curl -i http://localhost:3000/api/items/99</span>
   </pre>
 
   <h3>Express 4: async functions need try and catch</h3>
 
   <pre class="mycodenode">
+<span>// Runs on its own. This version works on Express 4 and on Express 5.</span>
+<span>import express from "express";</span>
+<span></span>
+<span>const app = express();</span>
+<span></span>
+<span>// In a project, import this from utils/HttpError.js instead.</span>
+<span>class HttpError extends Error {</span>
+<span>  constructor(status, message) {</span>
+<span>    super(message);</span>
+<span>    this.status = status;</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>const items = [{ id: 1, title: "First Item" }];</span>
+<span></span>
+<span>// This stands in for a database call such as Item.findById(id).</span>
+<span>const findById = async (id) =&gt; items.find((item) =&gt; item.id === Number(id));</span>
+<span></span>
+<span>// Express 4 needs next here, so the catch can hand the error over.</span>
 <span>const getItem = async (req, res, next) =&gt; {</span>
 <span>  try {</span>
-<span>    const item = await Item.findById(req.params.id);</span>
+<span>    const item = await findById(req.params.id);</span>
 <span></span>
 <span>    if (!item) throw new HttpError(404, "Item not found.");</span>
 <span>    res.status(200).json(item);</span>
 <span>  } catch (error) {</span>
+<span>    // Express 4 does not catch errors in async functions. Pass them on by hand.</span>
 <span>    next(error);</span>
 <span>  }</span>
 <span>};</span>
+<span></span>
+<span>app.get("/api/items/:id", getItem);</span>
+<span></span>
+<span>app.use((error, req, res, next) =&gt; {</span>
+<span>  if (error instanceof HttpError) {</span>
+<span>    return res.status(error.status).json({ error: error.message });</span>
+<span>  }</span>
+<span></span>
+<span>  console.error(error);</span>
+<span>  res.status(500).json({ error: "An unexpected server error occurred." });</span>
+<span>});</span>
+<span></span>
+<span>app.listen(3000, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
+<span>  console.log("Server listening on http://localhost:3000");</span>
+<span>});</span>
+<span></span>
+<span>// Try it from a second terminal:</span>
+<span>// curl -i http://localhost:3000/api/items/1</span>
+<span>// curl -i http://localhost:3000/api/items/99</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> On Express 4, an error thrown in an async function with no try and catch never reaches the error handler, and on current versions of Node it stops the whole server. Run npm ls express before you copy an old controller.</p>
+  </div>
 
   <h2 id="serve-react-from-express">Serve React From Express</h2>
 
@@ -1294,21 +1940,68 @@
     <p>This is for going live, when Express serves the finished React site. Run npm run build first, which puts the site in server/public because of the outDir in vite.config.js. The old app.get("/*") line from my class projects crashes on Express 5, so this version uses app.use instead.</p>
   </div>
 
-  <h3>Add to server.js after the API routes</h3>
+  <h3>A full server.js with the React block after the API routes</h3>
+
+  <div class="div_p">
+    <p>In your own server.js, the part to add is the if block. It goes after the API routes and above the 404 handler.</p>
+  </div>
 
   <pre class="mycodenode">
-<span>import path from "path";</span>
+<span>// Runs on its own. Save it as server.js, then run: NODE_ENV=production node server.js</span>
+<span>import express from "express";</span>
+<span>import path from "node:path";</span>
+<span>import { fileURLToPath } from "node:url";</span>
 <span></span>
+<span>const PORT = process.env.PORT || 3000;</span>
+<span></span>
+<span>// The public folder that sits next to this file. It is built from this file's</span>
+<span>// own address, so it works no matter which folder you run node from.</span>
+<span>const publicDir = fileURLToPath(new URL("./public", import.meta.url));</span>
+<span></span>
+<span>const app = express();</span>
+<span></span>
+<span>app.use(express.json({ limit: "100kb" }));</span>
+<span></span>
+<span>// The API routes go first.</span>
+<span>app.get("/api/health", (req, res) =&gt; {</span>
+<span>  res.status(200).json({ status: "ok" });</span>
+<span>});</span>
+<span></span>
+<span>// Only when the site is live. On your own computer Vite serves React instead.</span>
 <span>if (process.env.NODE_ENV === "production") {</span>
-<span>  app.use(express.static("public"));</span>
+<span>  // Serves the built files: index.html, JavaScript, CSS, and images.</span>
+<span>  app.use(express.static(publicDir));</span>
 <span></span>
-<span>  // Unknown /api paths still get a JSON 404 from the handler below this block.</span>
 <span>  app.use((req, res, next) =&gt; {</span>
+<span>    // Unknown /api paths still get a JSON 404 from the handler below this block.</span>
 <span>    if (req.path.startsWith("/api")) return next();</span>
-<span>    res.sendFile(path.resolve("public", "index.html"));</span>
+<span>    // Only page loads get index.html. A POST to a wrong URL is still a 404.</span>
+<span>    if (req.method !== "GET") return next();</span>
+<span>    // Every other URL gets index.html, and React Router picks the page.</span>
+<span>    res.sendFile(path.join(publicDir, "index.html"));</span>
 <span>  });</span>
 <span>}</span>
+<span></span>
+<span>// No route above matched.</span>
+<span>app.use((req, res) =&gt; {</span>
+<span>  res.status(404).json({ error: "Route not found." });</span>
+<span>});</span>
+<span></span>
+<span>// sendFile ends up here when public/index.html does not exist yet.</span>
+<span>app.use((error, req, res, next) =&gt; {</span>
+<span>  console.error(error);</span>
+<span>  res.status(500).json({ error: "An unexpected server error occurred." });</span>
+<span>});</span>
+<span></span>
+<span>app.listen(PORT, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
+<span>  console.log(`🚀 Server listening on http://localhost:${PORT}`);</span>
+<span>});</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Run npm run build before you start it. Until then public/index.html does not exist and every page gives a 500. The host also has to set NODE_ENV to production, or the whole block is skipped.</p>
+  </div>
 
   <h2 id="split-app-and-server-for-testing">Split App And Server For Testing</h2>
 
@@ -1321,40 +2014,73 @@
   <pre class="mycodenode">
 <span>import express from "express";</span>
 <span></span>
+<span>// A function that builds the app and hands it back without starting it.</span>
+<span>// There is no app.listen in this file on purpose.</span>
 <span>export function createApp() {</span>
 <span>  const app = express();</span>
 <span></span>
-<span>  app.use(express.json());</span>
+<span>  app.use(express.json({ limit: "100kb" }));</span>
 <span></span>
 <span>  app.get("/api/health", (req, res) =&gt; {</span>
 <span>    res.status(200).json({ status: "ok" });</span>
 <span>  });</span>
 <span></span>
+<span>  // No route above matched.</span>
 <span>  app.use((req, res) =&gt; {</span>
 <span>    res.status(404).json({ error: "Route not found." });</span>
 <span>  });</span>
 <span></span>
+<span>  // server.js and the tests both get the same app from here.</span>
 <span>  return app;</span>
 <span>}</span>
+  </pre>
+
+  <h3>server/server.js for the split</h3>
+
+  <div class="div_p">
+    <p>This is the whole file. It only builds the app and opens the port.</p>
+  </div>
+
+  <pre class="mycodenode">
+<span>import { createApp } from "./app.js";</span>
+<span></span>
+<span>const PORT = process.env.PORT || 3000;</span>
+<span></span>
+<span>// Build the app, then open the port. Tests import app.js and skip this file.</span>
+<span>const app = createApp();</span>
+<span></span>
+<span>app.listen(PORT, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
+<span>  console.log(`🚀 Server listening on http://localhost:${PORT}`);</span>
+<span>});</span>
   </pre>
 
   <h3>server/test/health.test.js</h3>
 
   <pre class="mycodenode">
+<span>// node:test, node:assert, and node:events come with Node. Nothing to install.</span>
 <span>import test from "node:test";</span>
 <span>import assert from "node:assert/strict";</span>
+<span>import { once } from "node:events";</span>
 <span>import { createApp } from "../app.js";</span>
 <span></span>
 <span>test("GET /api/health answers ok", async () =&gt; {</span>
+<span>  // Port 0 means any free port, so the test never clashes with a running server.</span>
 <span>  const server = createApp().listen(0);</span>
+<span></span>
+<span>  // Wait until the port is really open before asking which one it is.</span>
+<span>  await once(server, "listening");</span>
 <span>  const { port } = server.address();</span>
 <span></span>
 <span>  try {</span>
+<span>    // fetch comes with Node 18 and newer.</span>
 <span>    const response = await fetch(`http://127.0.0.1:${port}/api/health`);</span>
 <span></span>
 <span>    assert.equal(response.status, 200);</span>
+<span>    // deepEqual compares what is inside the two objects.</span>
 <span>    assert.deepEqual(await response.json(), { status: "ok" });</span>
 <span>  } finally {</span>
+<span>    // Always close the server, even when a check fails, or the test never ends.</span>
 <span>    server.close();</span>
 <span>  }</span>
 <span>});</span>
@@ -1383,6 +2109,10 @@
 <span>curl -X DELETE http://localhost:3000/api/items/1</span>
   </pre>
 
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Add -i to any curl line to see the status code, such as 201 or 404, along with the answer.</p>
+  </div>
+
   <h3>A port is already in use</h3>
 
   <div class="div_p">
@@ -1393,32 +2123,75 @@
 <span>lsof -ti :3000 | xargs kill</span>
   </pre>
 
-  <h2 id="node-built-in-tools">Node Built In Tools</h2>
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> This stops whatever is on port 3000 without asking. To see what it is first, run lsof -i :3000.</p>
+  </div>
+
+  <h2 id="node-built-in-tools">Node Built-In Tools</h2>
 
   <h3>Random values and IDs</h3>
 
   <pre class="mycodenode">
+<span>// Runs on its own. node:crypto comes with Node, so there is nothing to install.</span>
 <span>import { randomBytes, randomUUID } from "node:crypto";</span>
 <span></span>
-<span>randomUUID();                       // a unique ID</span>
-<span>randomBytes(32).toString("hex");    // a 64 character secret</span>
+<span>// A unique ID, such as 3b241101-e2bb-4255-8caf-4136c566a962.</span>
+<span>const id = randomUUID();</span>
+<span></span>
+<span>// 32 random bytes written as hex is a 64 character secret.</span>
+<span>const secret = randomBytes(32).toString("hex");</span>
+<span></span>
+<span>console.log("ID:", id);</span>
+<span>console.log("Secret:", secret);</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Never use Math.random() for a secret, a token, or a password reset link. Its values can be guessed. randomBytes and randomUUID are made for this.</p>
+  </div>
 
   <h3>Get a file path relative to the current file</h3>
 
   <pre class="mycodenode">
+<span>// Runs on its own. node:url comes with Node, so there is nothing to install.</span>
 <span>import { fileURLToPath } from "node:url";</span>
 <span></span>
+<span>// import.meta.url is the address of this file, such as file:///Users/you/project/server/config/env.js</span>
+<span>// new URL("../.env", ...) goes up one folder from this file and points at .env.</span>
+<span>// fileURLToPath turns that address into a normal path.</span>
 <span>const envPath = fileURLToPath(new URL("../.env", import.meta.url));</span>
+<span></span>
+<span>console.log(envPath);</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> A plain path such as "./.env" is read from the folder you ran node in, not from the folder the file is in. This way always starts from the file itself.</p>
+  </div>
 
   <h3>Read a file</h3>
 
   <pre class="mycodenode">
+<span>// Runs on its own. node:fs comes with Node, so there is nothing to install.</span>
 <span>import { readFile } from "node:fs/promises";</span>
 <span></span>
-<span>const text = await readFile("notes.txt", "utf8");</span>
+<span>try {</span>
+<span>  // "utf8" gives you text. Without it you get raw bytes.</span>
+<span>  const text = await readFile("notes.txt", "utf8");</span>
+<span></span>
+<span>  console.log(text);</span>
+<span>} catch (error) {</span>
+<span>  // ENOENT means there is no file with that name.</span>
+<span>  if (error.code === "ENOENT") {</span>
+<span>    console.error("notes.txt was not found in this folder.");</span>
+<span>  } else {</span>
+<span>    // Any other problem is unexpected, so let it stop the script.</span>
+<span>    throw error;</span>
+<span>  }</span>
+<span>}</span>
   </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Never build the file name from something a visitor sent, such as req.params.name. A name like ../../.env would let them read any file on the server.</p>
+  </div>
 
   <h3>Shut down cleanly</h3>
 
@@ -1427,15 +2200,46 @@
   </div>
 
   <pre class="mycodenode">
-<span>const server = app.listen(PORT);</span>
+<span>// Runs on its own. Save it as server.js, run node server.js, then press Ctrl + C.</span>
+<span>import express from "express";</span>
 <span></span>
-<span>const shutdown = () =&gt; {</span>
-<span>  server.close(async () =&gt; {</span>
-<span>    await pool.end(); // or await mongoose.disconnect();</span>
-<span>    process.exit(0);</span>
-<span>  });</span>
+<span>const PORT = process.env.PORT || 3000;</span>
+<span></span>
+<span>const app = express();</span>
+<span></span>
+<span>app.get("/api/health", (req, res) =&gt; {</span>
+<span>  res.status(200).json({ status: "ok" });</span>
+<span>});</span>
+<span></span>
+<span>// This stands in for closing the database.</span>
+<span>// Postgres: await pool.end();</span>
+<span>// MongoDB:  await mongoose.disconnect();</span>
+<span>const closeDatabase = async () =&gt; {</span>
+<span>  console.log("Database closed.");</span>
 <span>};</span>
 <span></span>
+<span>// Keep what app.listen gives back, because that is the thing you close.</span>
+<span>const server = app.listen(PORT, (error) =&gt; {</span>
+<span>  if (error) throw error; // e.g. the port is already in use</span>
+<span>  console.log(`🚀 Server listening on http://localhost:${PORT}`);</span>
+<span>});</span>
+<span></span>
+<span>const shutdown = () =&gt; {</span>
+<span>  console.log("Shutting down...");</span>
+<span></span>
+<span>  // Stop taking new requests. The function inside runs once the open ones finish.</span>
+<span>  server.close(async () =&gt; {</span>
+<span>    await closeDatabase();</span>
+<span>    process.exit(0);</span>
+<span>  });</span>
+<span></span>
+<span>  // If a request never finishes, stop anyway after 10 seconds.</span>
+<span>  // unref() means this timer alone does not keep the process running.</span>
+<span>  setTimeout(() =&gt; process.exit(1), 10000).unref();</span>
+<span>};</span>
+<span></span>
+<span>// SIGINT is Ctrl + C. SIGTERM is what a host sends before it stops the server.</span>
+<span>// once means a second Ctrl + C is not caught, so it stops the process right away.</span>
 <span>process.once("SIGINT", shutdown);</span>
 <span>process.once("SIGTERM", shutdown);</span>
   </pre>

@@ -21,14 +21,18 @@
         <li><a href="html_page.html">Html Code</a></li>
         <li><a href="css_page.html">Css Code</a></li>
         <li><a href="tailwind_page.html">Tailwind Code</a></li>
+        <li><a href="photo_effects_page.html">Photo Effects</a></li>
+        <li><a href="blog_page.html">Blog Template</a></li>
         <li><a href="javaScript.html">JavaScript Code</a></li>
         <li><a href="setup_page.html">Setup &amp; .env</a></li>
         <li><a href="react_page.html">React Code</a></li>
+        <li><a href="dashboard_page.html">Dashboard Code</a></li>
         <li><a href="node_page.html">Node Code</a></li>
         <li><a href="mongodb_page.html">MongoDB Code</a></li>
         <li><a href="postgres_page.html">Postgres Code</a></li>
         <li><a href="security_page.html">Security Code</a></li>
         <li><a href="migration_page.html">Switch Databases</a></li>
+        <li><a href="bugs_page.html">Common Bugs</a></li>
       </ul>
     </div>
   </nav>
@@ -68,6 +72,7 @@
       <li><a href="#client-website-sections">Client Website Sections</a></li>
       <li><a href="#store-sections">Store Sections</a></li>
       <li><a href="#react-components-with-tailwind">React Components With Tailwind</a></li>
+      <li><a href="#charts-with-recharts">Charts With Recharts</a></li>
       <li><a href="#accessibility">Accessibility</a></li>
       <li><a href="#before-you-launch">Before You Launch</a></li>
       <li><a href="#fix-common-problems">Fix Common Problems</a></li>
@@ -4267,6 +4272,249 @@
 <span>};</span>
 <span></span>
 <span>export default ProgressBar;</span>
+  </pre>
+
+  <h2 id="charts-with-recharts">Charts With Recharts</h2>
+
+  <div class="div_p">
+    <p>My line chart and bar chart from REV work in a Tailwind project. LineChart.jsx, BarChart.jsx and scale.js do not change, so copy them from the <a href="dashboard_page.html#line-and-bar-charts">Dashboard page</a>. Only two things are different here: the colors go in index.css, and ChartCard uses Tailwind classes.</p>
+  </div>
+
+  <h3>Install Recharts</h3>
+
+  <pre class="mycodecli">
+<span>npm install recharts</span>
+  </pre>
+
+  <h3>client/src/index.css with the chart colors</h3>
+
+  <div class="div_p">
+    <p>Recharts draws SVG, so it needs real color values and cannot read classes. The charts read these variables. The three classes at the bottom are names LineChart and BarChart already use.</p>
+  </div>
+
+  <pre class="mycodecss">
+<span>@import "tailwindcss";</span>
+<span></span>
+<span>/* The charts read these colors. Recharts draws SVG, so it needs real</span>
+<span>   color values, not classes. Change them to match the client's brand. */</span>
+<span>:root {</span>
+<span>  --bg: #eef2f6;</span>
+<span>  --surface: #ffffff;</span>
+<span>  --surface-2: #f4f6f9;</span>
+<span>  --line: #cbd4df;</span>
+<span>  --text: #121b28;</span>
+<span>  --text-2: #3d4b5c;</span>
+<span>  --muted: #5b6878;</span>
+<span>  --link: #1d4ed8;</span>
+<span>  --series-1: #2a78d6;</span>
+<span>  --series-2: #eb6834;</span>
+<span>  --grid: #e3e8ee;</span>
+<span>  --axis: #c3ccd7;</span>
+<span>  --radius: 8px;</span>
+<span>}</span>
+<span></span>
+<span>@media (prefers-color-scheme: dark) {</span>
+<span>  :root {</span>
+<span>    --bg: #101826;</span>
+<span>    --surface: #172231;</span>
+<span>    --surface-2: #1e2b3d;</span>
+<span>    --line: #2b3b52;</span>
+<span>    --text: #e9eef5;</span>
+<span>    --text-2: #b4c1d1;</span>
+<span>    --muted: #8a9aaf;</span>
+<span>    --link: #93c5fd;</span>
+<span>    --series-1: #3987e5;</span>
+<span>    --series-2: #d95926;</span>
+<span>    --grid: #26354a;</span>
+<span>    --axis: #3b4d68;</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>/* Class names that LineChart and BarChart already use */</span>
+<span>@layer components {</span>
+<span>  .chart-tooltip {</span>
+<span>    @apply min-w-40 rounded-lg border border-(--line) bg-(--bg) px-3 py-2 text-xs text-(--text) shadow-xl;</span>
+<span>  }</span>
+<span></span>
+<span>  .chart-tooltip__date {</span>
+<span>    @apply mb-1 text-(--muted);</span>
+<span>  }</span>
+<span></span>
+<span>  .no-print {</span>
+<span>    @apply print:hidden;</span>
+<span>  }</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/components/charts/ChartCard.jsx</h3>
+
+  <div class="div_p">
+    <p>The same card as the Dashboard page, with Tailwind classes. A class like border-(--line) reads the variable from index.css, so dark mode works with no dark: classes.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// A chart with a title and a "Show table" switch, styled with Tailwind.</span>
+<span>// The table has the same numbers as the chart, for screen readers,</span>
+<span>// printing and anyone who prefers rows.</span>
+<span>import { useState } from "react";</span>
+<span></span>
+<span>const DataTable = ({ title, columns, rows, caption }) =&gt; (</span>
+<span>  &lt;div className="overflow-x-auto"&gt;</span>
+<span>    &lt;table className="w-full border-collapse text-left text-sm"&gt;</span>
+<span>      {caption ? (</span>
+<span>        &lt;caption className="pb-2 text-left text-xs text-(--muted)"&gt;{caption}&lt;/caption&gt;</span>
+<span>      ) : (</span>
+<span>        &lt;caption className="sr-only"&gt;{title}&lt;/caption&gt;</span>
+<span>      )}</span>
+<span>      &lt;thead&gt;</span>
+<span>        &lt;tr&gt;</span>
+<span>          {columns.map((column) =&gt; (</span>
+<span>            &lt;th key={column} scope="col" className="border-b border-(--line) px-3 py-2.5 text-xs font-bold text-(--muted)"&gt;</span>
+<span>              {column}</span>
+<span>            &lt;/th&gt;</span>
+<span>          ))}</span>
+<span>        &lt;/tr&gt;</span>
+<span>      &lt;/thead&gt;</span>
+<span>      &lt;tbody&gt;</span>
+<span>        {rows.map((row) =&gt; (</span>
+<span>          &lt;tr key={row[0]}&gt;</span>
+<span>            {row.map((cell, index) =&gt;</span>
+<span>              index === 0 ? (</span>
+<span>                &lt;th key={index} scope="row" className="border-b border-(--line) px-3 py-2.5 font-medium"&gt;</span>
+<span>                  {cell}</span>
+<span>                &lt;/th&gt;</span>
+<span>              ) : (</span>
+<span>                &lt;td key={index} className="border-b border-(--line) px-3 py-2.5 text-(--text-2)"&gt;</span>
+<span>                  {cell}</span>
+<span>                &lt;/td&gt;</span>
+<span>              ),</span>
+<span>            )}</span>
+<span>          &lt;/tr&gt;</span>
+<span>        ))}</span>
+<span>      &lt;/tbody&gt;</span>
+<span>    &lt;/table&gt;</span>
+<span>  &lt;/div&gt;</span>
+<span>);</span>
+<span></span>
+<span>export default function ChartCard({ title, subtitle, columns, rows, children, className = "" }) {</span>
+<span>  const [showTable, setShowTable] = useState(false);</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;section className={`min-w-0 rounded-xl border border-(--line) bg-(--surface) p-5 text-(--text) ${className}`}&gt;</span>
+<span>      &lt;header className="mb-4 flex items-start justify-between gap-4"&gt;</span>
+<span>        &lt;div&gt;</span>
+<span>          &lt;h3 className="text-lg font-semibold"&gt;{title}&lt;/h3&gt;</span>
+<span>          {subtitle &amp;&amp; &lt;p className="text-sm text-(--muted)"&gt;{subtitle}&lt;/p&gt;}</span>
+<span>        &lt;/div&gt;</span>
+<span>        &lt;button</span>
+<span>          type="button"</span>
+<span>          aria-pressed={showTable}</span>
+<span>          onClick={() =&gt; setShowTable((on) =&gt; !on)}</span>
+<span>          className="shrink-0 cursor-pointer text-sm font-bold text-(--link) underline underline-offset-4 print:hidden"</span>
+<span>        &gt;</span>
+<span>          {showTable ? "Show chart" : "Show table"}</span>
+<span>        &lt;/button&gt;</span>
+<span>      &lt;/header&gt;</span>
+<span></span>
+<span>      {showTable ? &lt;DataTable title={title} columns={columns} rows={rows} /&gt; : children}</span>
+<span></span>
+<span>      {/* Printed reports always include the table under the chart. */}</span>
+<span>      {!showTable &amp;&amp; (</span>
+<span>        &lt;div className="hidden print:block"&gt;</span>
+<span>          &lt;DataTable</span>
+<span>            title={title}</span>
+<span>            columns={columns}</span>
+<span>            rows={rows.slice(-31)}</span>
+<span>            caption={rows.length &gt; 31 ? `The last 31 rows of ${rows.length}` : ""}</span>
+<span>          /&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>      )}</span>
+<span>    &lt;/section&gt;</span>
+<span>  );</span>
+<span>}</span>
+  </pre>
+
+  <h3>client/src/components/charts/WhatHappened.jsx</h3>
+
+  <div class="div_p">
+    <p>The What happened box from my REV dashboard, with Tailwind classes. It needs the colors from the index.css above. Put it above the charts.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// The "What happened" box, styled with Tailwind: a few plain-English</span>
+<span>// sentences about the numbers. Put it above the charts.</span>
+<span>import { useId } from "react";</span>
+<span></span>
+<span>export default function WhatHappened({ sentences, title = "What happened", note }) {</span>
+<span>  const titleId = useId();</span>
+<span></span>
+<span>  if (!sentences.length) return null;</span>
+<span></span>
+<span>  return (</span>
+<span>    &lt;section</span>
+<span>      aria-labelledby={titleId}</span>
+<span>      className="mb-6 break-inside-avoid rounded-xl border border-l-4 border-(--line) border-l-(--series-1) bg-(--surface) p-6 text-(--text)"</span>
+<span>    &gt;</span>
+<span>      &lt;h2 id={titleId} className="mb-4 text-2xl font-semibold"&gt;</span>
+<span>        {title}</span>
+<span>      &lt;/h2&gt;</span>
+<span>      &lt;ul className="grid max-w-[72ch] list-disc gap-3 pl-5 text-lg/7 marker:text-(--series-1)"&gt;</span>
+<span>        {sentences.map((sentence) =&gt; (</span>
+<span>          &lt;li key={sentence}&gt;{sentence}&lt;/li&gt;</span>
+<span>        ))}</span>
+<span>      &lt;/ul&gt;</span>
+<span>      {note &amp;&amp; &lt;p className="mt-4 text-xs text-(--muted)"&gt;{note}&lt;/p&gt;}</span>
+<span>    &lt;/section&gt;</span>
+<span>  );</span>
+<span>}</span>
+  </pre>
+
+  <h3>Use the What happened box</h3>
+
+  <pre class="mycodereact">
+<span>&lt;WhatHappened</span>
+<span>  sentences={[</span>
+<span>    "Sales were $11,930 this week, about 2% more than last week, from 1,423 orders.",</span>
+<span>    "Saturday was your best day of the month at $2,179.",</span>
+<span>    "Cold drinks fell to 9% of sales while espresso drinks grew to 41%.",</span>
+<span>  ]}</span>
+<span>  note="Updated each morning from yesterday's sales."</span>
+<span>/&gt;</span>
+  </pre>
+
+  <h3>Put the charts on a page</h3>
+
+  <div class="div_p">
+    <p>One column on a phone and two on a computer. The line chart takes the full width.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>&lt;div className="grid gap-4 lg:grid-cols-2"&gt;</span>
+<span>  &lt;ChartCard</span>
+<span>    className="lg:col-span-2"</span>
+<span>    title="Daily sales"</span>
+<span>    subtitle="Each day's sales and orders"</span>
+<span>    columns={["Day", "Sales", "Orders"]}</span>
+<span>    rows={days.map((day) =&gt; [longDate(day.date), money(day.revenue), fullNumber(day.orders)])}</span>
+<span>  &gt;</span>
+<span>    &lt;LineChart</span>
+<span>      label="Daily sales"</span>
+<span>      dates={days.map((day) =&gt; day.date)}</span>
+<span>      series={[{ key: "sales", name: "Sales", color: "var(--series-1)", values: days.map((day) =&gt; day.revenue) }]}</span>
+<span>      formatValue={(value) =&gt; money(value)}</span>
+<span>      formatTick={(value) =&gt; money(value, { compact: true })}</span>
+<span>    /&gt;</span>
+<span>  &lt;/ChartCard&gt;</span>
+<span></span>
+<span>  &lt;ChartCard</span>
+<span>    title="Sales by category"</span>
+<span>    subtitle="Where the money came from"</span>
+<span>    columns={["Category", "Sales"]}</span>
+<span>    rows={categories.map((item) =&gt; [item.label, money(item.value)])}</span>
+<span>  &gt;</span>
+<span>    &lt;BarChart label="Sales by category" items={categories} formatValue={(value) =&gt; money(value)} /&gt;</span>
+<span>  &lt;/ChartCard&gt;</span>
+<span>&lt;/div&gt;</span>
   </pre>
 
   <h2 id="accessibility">Accessibility</h2>

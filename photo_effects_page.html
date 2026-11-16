@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Jamar Brown">
+  <meta name="description" content="This is the page that has accessible photo and avatar effects to copy and paste">
+  <title>Photo Effects Page</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+
+<body class="wrap-code">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand">Final Companion</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="html_page.html">Html Code</a></li>
+        <li><a href="css_page.html">Css Code</a></li>
+        <li><a href="tailwind_page.html">Tailwind Code</a></li>
+        <li><a href="photo_effects_page.html">Photo Effects</a></li>
+        <li><a href="blog_page.html">Blog Template</a></li>
+        <li><a href="javaScript.html">JavaScript Code</a></li>
+        <li><a href="setup_page.html">Setup &amp; .env</a></li>
+        <li><a href="react_page.html">React Code</a></li>
+        <li><a href="dashboard_page.html">Dashboard Code</a></li>
+        <li><a href="node_page.html">Node Code</a></li>
+        <li><a href="mongodb_page.html">MongoDB Code</a></li>
+        <li><a href="postgres_page.html">Postgres Code</a></li>
+        <li><a href="security_page.html">Security Code</a></li>
+        <li><a href="migration_page.html">Switch Databases</a></li>
+        <li><a href="bugs_page.html">Common Bugs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <h2>On This Page</h2>
+
+  <div class="div_p">
+    <ul>
+      <li><a href="#how-to-use-these">How To Use These</a></li>
+      <li><a href="#effect-glow">1 Breathing Glow Ring</a></li>
+      <li><a href="#effect-spin">2 Rotating Gradient Border</a></li>
+      <li><a href="#effect-halo">3 Soft Pulse Halo</a></li>
+      <li><a href="#effect-glint">4 Corner Glint</a></li>
+      <li><a href="#effect-scan">5 Scan Line</a></li>
+      <li><a href="#effect-tilt">6 Tilt And Lift</a></li>
+      <li><a href="#effect-zoom">7 Zoom In Frame</a></li>
+      <li><a href="#effect-color">8 Grayscale To Color</a></li>
+      <li><a href="#effect-corners">9 Corner Frame Draw-In</a></li>
+      <li><a href="#effect-offset">10 Offset Frame Slide</a></li>
+      <li><a href="#pause-all-button">Pause All Button</a></li>
+      <li><a href="#wcag-2-2-2-in-plain-words">WCAG 2.2.2 In Plain Words</a></li>
+      <li><a href="#things-i-am-unsure-about">Things I Am Unsure About</a></li>
+      <li><a href="#review-checklist">Review Checklist</a></li>
+    </ul>
+  </div>
+
+  <h2 id="how-to-use-these">How To Use These</h2>
+
+  <div class="div_p">
+    <p>Ten small effects that make an avatar or photo feel alive without getting in the way. Effects 1 to 5 play on their own for under 2 seconds, then rest. Effects 6 to 10 only react when someone hovers over the photo or reaches it with the Tab key.</p>
+  </div>
+
+  <div class="div_p">
+    <p><a href="photo_effects_demo.html">Open the demo page</a> to see all ten on a dark and a light background.</p>
+  </div>
+
+  <div class="div_p">
+    <p><strong>Every effect uses the same markup</strong></p>
+    <ul>
+      <li>An outer <code>.fx</code> box that does not clip, so a frame or halo can sit outside the photo.</li>
+      <li>An inner <code>.fx__clip</code> wrapper that clips the photo to a circle or rounded rectangle.</li>
+      <li>The <code>img</code> with real alt text.</li>
+      <li>Hover effects go on a link, because only links and buttons can get Tab focus. Do not add tabindex to a plain photo just for an effect.</li>
+      <li>Only transform and opacity animate, so the browser can run them smoothly.</li>
+    </ul>
+  </div>
+
+  <h3>css/fx-base.css</h3>
+
+  <div class="div_p">
+    <p>Paste this once. Then add the CSS for each effect you want.</p>
+  </div>
+
+  <pre class="mycodecss">
+<span>/* Shared base for every photo effect. Paste this once. */</span>
+<span>.fx {</span>
+<span>  --fx-size: 120px;       /* width of the photo: works from 40px to 400px */</span>
+<span>  --fx-ratio: 1;          /* 1 = square or circle, 4 / 3 = landscape */</span>
+<span>  --fx-radius: 50%;       /* 50% = circle, 16px = rounded rectangle */</span>
+<span>  --fx-color: #5b8cff;    /* accent color for rings, lines and glows */</span>
+<span>  --fx-speed: 12s;        /* one idle loop: about 1.7s of motion, then rest */</span>
+<span>  --fx-loops: infinite;   /* how many times an idle effect plays */</span>
+<span>  --fx-hover-speed: 300ms; /* how fast hover and focus effects react */</span>
+<span>  --fx-focus: #2563eb;    /* focus ring: 3:1 on white and on #101826 */</span>
+<span>  position: relative;</span>
+<span>  display: inline-block;</span>
+<span>  width: var(--fx-size);</span>
+<span>  max-width: 100%;        /* shrinks to fit on a phone */</span>
+<span>  aspect-ratio: var(--fx-ratio);</span>
+<span>  border-radius: var(--fx-radius);</span>
+<span>  vertical-align: middle;</span>
+<span>  color: inherit;</span>
+<span>  text-decoration: none;</span>
+<span>}</span>
+<span></span>
+<span>/* The inner wrapper clips the photo. The outer box does not clip,</span>
+<span>   so an effect can draw a frame or halo outside the photo. */</span>
+<span>.fx__clip {</span>
+<span>  position: relative;</span>
+<span>  display: block;</span>
+<span>  width: 100%;</span>
+<span>  height: 100%;</span>
+<span>  border-radius: inherit;</span>
+<span>  overflow: hidden;</span>
+<span>  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);</span>
+<span>}</span>
+<span></span>
+<span>.fx__img {</span>
+<span>  display: block;</span>
+<span>  width: 100%;</span>
+<span>  height: 100%;</span>
+<span>  object-fit: cover;</span>
+<span>}</span>
+<span></span>
+<span>/* Effects are decoration only: they never catch clicks. */</span>
+<span>.fx::before,</span>
+<span>.fx::after,</span>
+<span>.fx__clip::before,</span>
+<span>.fx__clip::after {</span>
+<span>  pointer-events: none;</span>
+<span>}</span>
+<span></span>
+<span>/* A photo that is a link gets a clear focus ring for keyboard users. */</span>
+<span>a.fx:focus-visible {</span>
+<span>  outline: 3px solid var(--fx-focus);</span>
+<span>  outline-offset: 6px;</span>
+<span>}</span>
+<span></span>
+<span>/* Less motion: idle effects stop after three loops. */</span>
+<span>.fx--limited {</span>
+<span>  --fx-loops: 3;</span>
+<span>}</span>
+<span></span>
+<span>/* The pause button adds this class to body. It stops every idle effect</span>
+<span>   and puts it back in its resting look. */</span>
+<span>.fx-paused .fx,</span>
+<span>.fx-paused .fx *,</span>
+<span>.fx-paused .fx::before,</span>
+<span>.fx-paused .fx::after,</span>
+<span>.fx-paused .fx *::before,</span>
+<span>.fx-paused .fx *::after {</span>
+<span>  animation: none !important;</span>
+<span>}</span>
+  </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> If an effect does nothing, check the three class names first: fx on the outer box, fx__clip on the wrapper, and fx__img on the image. Every effect is built on those three, and one typo switches it off without any error.</p>
+  </div>
+
+  <h3>A circle and a rounded rectangle</h3>
+
+  <div class="div_p">
+    <p>Change the size and shape on each photo with a style attribute. The same effect works from 40px to 400px.</p>
+  </div>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;A Circle And A Rounded Rectangle&lt;/title&gt;</span>
+<span>  &lt;!-- css/fx-base.css holds the shared base from the top of this page,</span>
+<span>       with the CSS for this effect pasted under it. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/fx-base.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- --fx-size makes this one small. With nothing else set, the shape is a circle. --&gt;</span>
+<span>  &lt;span class="fx fx-glow" style="--fx-size: 48px"&gt;</span>
+<span>    &lt;span class="fx__clip"&gt;</span>
+<span>      &lt;img class="fx__img" src="images/jah.jpg" alt="Jah smiling in a blue jacket"&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  &lt;/span&gt;</span>
+<span></span>
+<span>  &lt;!-- --fx-ratio and --fx-radius turn the circle into a 4 by 3 rounded rectangle. --&gt;</span>
+<span>  &lt;span class="fx fx-scan" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 320px"&gt;</span>
+<span>    &lt;span class="fx__clip"&gt;</span>
+<span>      &lt;img class="fx__img" src="images/weather-app.png" alt="Screenshot of the Weather App home page"&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  &lt;/span&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>The same thing in React</h3>
+
+  <div class="div_p">
+    <p>React accepts CSS variables in the style object as long as the name is in quotes.</p>
+  </div>
+
+  <pre class="mycodereact">
+<span>// src/components/SmallGlowPhoto.jsx</span>
+<span>// The image is imported, so Vite can find the file and give back its address.</span>
+<span>import photo from "../assets/jah.jpg";</span>
+<span></span>
+<span>const SmallGlowPhoto = () =&gt; {</span>
+<span>  return (</span>
+<span>    // The name of a CSS variable has dashes in it, so it goes in quotes inside the style object.</span>
+<span>    &lt;span className="fx fx-glow" style={{ "--fx-size": "48px" }}&gt;</span>
+<span>      &lt;span className="fx__clip"&gt;</span>
+<span>        &lt;img className="fx__img" src={photo} alt="Jah smiling in a blue jacket" /&gt;</span>
+<span>      &lt;/span&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default SmallGlowPhoto;</span>
+  </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> In React, a path typed as plain text, such as src="images/jah.jpg", only works for a file in the public folder. For an image inside src, import it at the top of the file the way this box does.</p>
+  </div>
+
+  <h2 id="effect-glow">1 Breathing Glow Ring</h2>
+
+  <div class="div_p">
+    <p>A soft ring around the photo brightens and grows a little, then rests.</p>
+    <p><strong>Type:</strong> Idle: plays on its own. <strong>Shape:</strong> made for circles.</p>
+    <p><strong>Best used for:</strong> Avatars, a profile photo in a hero, an online status for a team member.</p>
+  </div>
+
+  <h3>Breathing Glow Ring CSS</h3>
+
+  <pre class="mycodecss">
+<span>/* 1. Breathing Glow Ring */</span>
+<span>.fx-glow::before {</span>
+<span>  content: "";</span>
+<span>  position: absolute;</span>
+<span>  inset: calc(var(--fx-size) * -0.05);</span>
+<span>  border-radius: inherit;</span>
+<span>  /* The glow is drawn once. Only its opacity and size animate. */</span>
+<span>  box-shadow:</span>
+<span>    0 0 0 2px var(--fx-color),</span>
+<span>    0 0 calc(var(--fx-size) * 0.12) var(--fx-color);</span>
+<span>  opacity: 0.35;</span>
+<span>  animation: fx-glow var(--fx-speed) ease-in-out var(--fx-loops);</span>
+<span>}</span>
+<span></span>
+<span>/* Moves for the first 14% of the loop (1.7s of 12s), then rests. */</span>
+<span>@keyframes fx-glow {</span>
+<span>  0%, 14%, 100% { opacity: 0.35; transform: scale(1); }</span>
+<span>  7%            { opacity: 0.9;  transform: scale(1.03); }</span>
+<span>}</span>
+<span></span>
+<span>/* Still version: a steady ring with no breathing. */</span>
+<span>@media (prefers-reduced-motion: reduce) {</span>
+<span>  .fx-glow::before {</span>
+<span>    animation: none;</span>
+<span>    opacity: 0.6;</span>
+<span>  }</span>
+<span>}</span>
+  </pre>
+
+  <h3>Breathing Glow Ring HTML</h3>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Breathing Glow Ring&lt;/title&gt;</span>
+<span>  &lt;!-- css/fx-base.css holds the shared base from the top of this page,</span>
+<span>       with the CSS for this effect pasted under it. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/fx-base.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- fx is the shared base. fx-glow adds this effect. --&gt;</span>
+<span>  &lt;span class="fx fx-glow"&gt;</span>
+<span>    &lt;span class="fx__clip"&gt;</span>
+<span>      &lt;img class="fx__img" src="images/photo.jpg" alt="Jah smiling in a blue jacket"&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  &lt;/span&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>Breathing Glow Ring React</h3>
+
+  <pre class="mycodereact">
+<span>// src/components/BreathingGlowRingPhoto.jsx</span>
+<span>// Load the fx CSS once for the whole app, for example with import "./fx-base.css"; in main.jsx.</span>
+<span>// src is the address of the image. The page that uses this component passes it in.</span>
+<span>const BreathingGlowRingPhoto = ({ src }) =&gt; {</span>
+<span>  // className is how JSX writes the HTML class attribute.</span>
+<span>  return (</span>
+<span>    &lt;span className="fx fx-glow"&gt;</span>
+<span>      &lt;span className="fx__clip"&gt;</span>
+<span>        &lt;img className="fx__img" src={src} alt="Jah smiling in a blue jacket" /&gt;</span>
+<span>      &lt;/span&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>// Lets other files import the component.</span>
+<span>// Use it like this: &lt;BreathingGlowRingPhoto src={photo} /&gt;</span>
+<span>export default BreathingGlowRingPhoto;</span>
+  </pre>
+
+  <div class="div_p">
+    <p><strong>Accessibility</strong></p>
+    <ul>
+      <li>Reduced motion: the ring stays on at a steady 60% and does not move.</li>
+      <li>Keyboard: nothing to do. The photo is not a link.</li>
+      <li>Screen readers: the ring is a pseudo-element, so only the alt text is read.</li>
+      <li>Flashing: one soft brightening every 12 seconds, far under 3 per second.</li>
+    </ul>
+  </div>
+
+  <div class="div_p">
+    <p><strong>Knobs to change</strong></p>
+    <table class="table table-bordered table-striped table-condensed text-left">
+      <thead>
+        <tr><th>Variable</th><th>What it changes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>--fx-color</code></td><td>Ring and glow color</td></tr>
+        <tr><td><code>--fx-speed</code></td><td>Time between breaths</td></tr>
+        <tr><td><code>opacity: 0.9 in the keyframes</code></td><td>How bright the breath gets. Keep it under 1.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="effect-spin">2 Rotating Gradient Border</h2>
+
+  <div class="div_p">
+    <p>A colored gradient border makes one full turn, then holds still.</p>
+    <p><strong>Type:</strong> Idle: plays on its own. <strong>Shape:</strong> made for circles and rounded rectangles.</p>
+    <p><strong>Best used for:</strong> A featured avatar, a 'new team member' card, a creator profile.</p>
+  </div>
+
+  <h3>Rotating Gradient Border CSS</h3>
+
+  <pre class="mycodecss">
+<span>/* 2. Rotating Gradient Border */</span>
+<span>.fx-spin {</span>
+<span>  --fx-border: max(2px, calc(var(--fx-size) * 0.03));</span>
+<span>  --fx-color-2: #ff7ad9;</span>
+<span>  padding: var(--fx-border);</span>
+<span>  overflow: hidden;       /* clips the spinning square into a ring */</span>
+<span>  isolation: isolate;     /* keeps the gradient behind the photo */</span>
+<span>}</span>
+<span></span>
+<span>/* A big square of gradient spins behind the photo. Only the strip</span>
+<span>   showing through the padding is visible. */</span>
+<span>.fx-spin::before {</span>
+<span>  content: "";</span>
+<span>  position: absolute;</span>
+<span>  inset: -100%;</span>
+<span>  z-index: -1;</span>
+<span>  background: conic-gradient(</span>
+<span>    var(--fx-color),</span>
+<span>    transparent 30%,</span>
+<span>    var(--fx-color-2) 55%,</span>
+<span>    transparent 80%,</span>
+<span>    var(--fx-color)</span>
+<span>  );</span>
+<span>  animation: fx-spin var(--fx-speed) ease-in-out var(--fx-loops);</span>
+<span>}</span>
+<span></span>
+<span>/* One turn in the first 14% of the loop, then rest. */</span>
+<span>@keyframes fx-spin {</span>
+<span>  0%         { transform: rotate(0deg); }</span>
+<span>  14%, 100%  { transform: rotate(360deg); }</span>
+<span>}</span>
+<span></span>
+<span>/* Still version: the gradient border stays, it just does not turn. */</span>
+<span>@media (prefers-reduced-motion: reduce) {</span>
+<span>  .fx-spin::before {</span>
+<span>    animation: none;</span>
+<span>  }</span>
+<span>}</span>
+  </pre>
+
+  <h3>Rotating Gradient Border HTML</h3>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Rotating Gradient Border&lt;/title&gt;</span>
+<span>  &lt;!-- css/fx-base.css holds the shared base from the top of this page,</span>
+<span>       with the CSS for this effect pasted under it. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/fx-base.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- fx is the shared base. fx-spin adds this effect. --&gt;</span>
+<span>  &lt;span class="fx fx-spin"&gt;</span>
+<span>    &lt;span class="fx__clip"&gt;</span>
+<span>      &lt;img class="fx__img" src="images/photo.jpg" alt="Portrait of Ana Cruz, lead designer"&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  &lt;/span&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>Rotating Gradient Border React</h3>
+
+  <pre class="mycodereact">
+<span>// src/components/RotatingGradientBorderPhoto.jsx</span>
+<span>// Load the fx CSS once for the whole app, for example with import "./fx-base.css"; in main.jsx.</span>
+<span>// src is the address of the image. The page that uses this component passes it in.</span>
+<span>const RotatingGradientBorderPhoto = ({ src }) =&gt; {</span>
+<span>  // className is how JSX writes the HTML class attribute.</span>
+<span>  return (</span>
+<span>    &lt;span className="fx fx-spin"&gt;</span>
+<span>      &lt;span className="fx__clip"&gt;</span>
+<span>        &lt;img className="fx__img" src={src} alt="Portrait of Ana Cruz, lead designer" /&gt;</span>
+<span>      &lt;/span&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>// Lets other files import the component.</span>
+<span>// Use it like this: &lt;RotatingGradientBorderPhoto src={photo} /&gt;</span>
+<span>export default RotatingGradientBorderPhoto;</span>
+  </pre>
+
+  <div class="div_p">
+    <p><strong>Accessibility</strong></p>
+    <ul>
+      <li>Reduced motion: the gradient border stays, but it never turns.</li>
+      <li>Keyboard: nothing to do. The photo is not a link.</li>
+      <li>Screen readers: only the alt text is read.</li>
+      <li>Works on circles and rounded rectangles. On a rectangle, the inner corner curve is a little tighter than the outer one.</li>
+    </ul>
+  </div>
+
+  <div class="div_p">
+    <p><strong>Knobs to change</strong></p>
+    <table class="table table-bordered table-striped table-condensed text-left">
+      <thead>
+        <tr><th>Variable</th><th>What it changes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>--fx-border</code></td><td>Border thickness</td></tr>
+        <tr><td><code>--fx-color, --fx-color-2</code></td><td>The two gradient colors</td></tr>
+        <tr><td><code>--fx-speed</code></td><td>Time between turns</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="effect-halo">3 Soft Pulse Halo</h2>
+
+  <div class="div_p">
+    <p>One thin ring drifts out from the photo and fades away. It is drawn outside the photo without being cut off.</p>
+    <p><strong>Type:</strong> Idle: plays on its own. <strong>Shape:</strong> made for circles.</p>
+    <p><strong>Best used for:</strong> An 'available for work' avatar, a live or on-call status, a contact photo.</p>
+  </div>
+
+  <h3>Soft Pulse Halo CSS</h3>
+
+  <pre class="mycodecss">
+<span>/* 3. Soft Pulse Halo */</span>
+<span>/* Leave about 15% of the photo size as free space around it,</span>
+<span>   because the halo grows outside the photo. */</span>
+<span>.fx-halo::after {</span>
+<span>  content: "";</span>
+<span>  position: absolute;</span>
+<span>  inset: 0;</span>
+<span>  border-radius: inherit;</span>
+<span>  border: max(1px, calc(var(--fx-size) * 0.015)) solid var(--fx-color);</span>
+<span>  opacity: 0;</span>
+<span>  animation: fx-halo var(--fx-speed) ease-out var(--fx-loops);</span>
+<span>}</span>
+<span></span>
+<span>/* One ring grows and fades in the first 15% of the loop. */</span>
+<span>@keyframes fx-halo {</span>
+<span>  0%         { opacity: 0.7; transform: scale(1); }</span>
+<span>  15%, 100%  { opacity: 0;   transform: scale(1.25); }</span>
+<span>}</span>
+<span></span>
+<span>/* Still version: a faint steady ring, no movement. */</span>
+<span>@media (prefers-reduced-motion: reduce) {</span>
+<span>  .fx-halo::after {</span>
+<span>    animation: none;</span>
+<span>    opacity: 0.5;</span>
+<span>    transform: scale(1.08);</span>
+<span>  }</span>
+<span>}</span>
+  </pre>
+
+  <h3>Soft Pulse Halo HTML</h3>
+
+  <div class="div_p">
+    <p>This example uses alt="" because the person's name is written right next to the photo. Use real alt text if the photo stands alone.</p>
+  </div>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Soft Pulse Halo&lt;/title&gt;</span>
+<span>  &lt;!-- css/fx-base.css holds the shared base from the top of this page,</span>
+<span>       with the CSS for this effect pasted under it. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/fx-base.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- Leave some free space around the photo, because the halo grows outside it. --&gt;</span>
+<span>  &lt;p class="team-member"&gt;</span>
+<span>    &lt;span class="fx fx-halo"&gt;</span>
+<span>      &lt;span class="fx__clip"&gt;</span>
+<span>        &lt;img class="fx__img" src="images/photo.jpg" alt=""&gt;</span>
+<span>      &lt;/span&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>    Ana Cruz, Lead Designer</span>
+<span>  &lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>Soft Pulse Halo React</h3>
+
+  <pre class="mycodereact">
+<span>// src/components/SoftPulseHaloPhoto.jsx</span>
+<span>// Load the fx CSS once for the whole app, for example with import "./fx-base.css"; in main.jsx.</span>
+<span>// src is the address of the image and name is the text shown next to it.</span>
+<span>const SoftPulseHaloPhoto = ({ src, name }) =&gt; {</span>
+<span>  // className is how JSX writes the HTML class attribute.</span>
+<span>  return (</span>
+<span>    &lt;p className="team-member"&gt;</span>
+<span>      &lt;span className="fx fx-halo"&gt;</span>
+<span>        &lt;span className="fx__clip"&gt;</span>
+<span>          &lt;img className="fx__img" src={src} alt="" /&gt;</span>
+<span>        &lt;/span&gt;</span>
+<span>      &lt;/span&gt;</span>
+<span>      {name}</span>
+<span>    &lt;/p&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>// Lets other files import the component.</span>
+<span>// Use it like this: &lt;SoftPulseHaloPhoto src={photo} name="Ana Cruz, Lead Designer" /&gt;</span>
+<span>export default SoftPulseHaloPhoto;</span>
+  </pre>
+
+  <div class="div_p">
+    <p><strong>Accessibility</strong></p>
+    <ul>
+      <li>Reduced motion: a faint ring stays just outside the photo and never moves.</li>
+      <li>Keyboard: nothing to do. The photo is not a link.</li>
+      <li>Screen readers: with alt="" the photo is skipped, which is right when the name is already next to it.</li>
+      <li>The ring is drawn by the outer box, which does not clip, so it is never cut off.</li>
+    </ul>
+  </div>
+
+  <div class="div_p">
+    <p><strong>Knobs to change</strong></p>
+    <table class="table table-bordered table-striped table-condensed text-left">
+      <thead>
+        <tr><th>Variable</th><th>What it changes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>--fx-color</code></td><td>Ring color</td></tr>
+        <tr><td><code>scale(1.25) in the keyframes</code></td><td>How far the ring travels</td></tr>
+        <tr><td><code>--fx-speed</code></td><td>Time between pulses</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="effect-glint">4 Corner Glint</h2>
+
+  <div class="div_p">
+    <p>A small four-point sparkle grows and turns on the edge of the photo, then disappears.</p>
+    <p><strong>Type:</strong> Idle: plays on its own. <strong>Shape:</strong> made for circles.</p>
+    <p><strong>Best used for:</strong> A profile photo on a portfolio hero, an award winner, a featured testimonial.</p>
+  </div>
+
+  <h3>Corner Glint CSS</h3>
+
+  <pre class="mycodecss">
+<span>/* 4. Corner Glint */</span>
+<span>.fx-glint {</span>
+<span>  --fx-glint-size: 22%;  /* sparkle size, as a share of the photo */</span>
+<span>  --fx-glint-spot: 10%;  /* distance from the top right corner. Use 2% on a rectangle. */</span>
+<span>}</span>
+<span></span>
+<span>.fx-glint::after {</span>
+<span>  content: "";</span>
+<span>  position: absolute;</span>
+<span>  top: var(--fx-glint-spot);</span>
+<span>  right: var(--fx-glint-spot);</span>
+<span>  width: var(--fx-glint-size);</span>
+<span>  aspect-ratio: 1;</span>
+<span>  background: radial-gradient(circle, #ffffff 0 25%, #fff4c2 60%);</span>
+<span>  /* A four-point star */</span>
+<span>  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);</span>
+<span>  opacity: 0;</span>
+<span>  transform: scale(0) rotate(0deg);</span>
+<span>  animation: fx-glint var(--fx-speed) ease-in-out var(--fx-loops);</span>
+<span>}</span>
+<span></span>
+<span>/* Grows, turns and fades in the first 8% of the loop (about 1s). */</span>
+<span>@keyframes fx-glint {</span>
+<span>  0%, 8%, 100% { opacity: 0;   transform: scale(0) rotate(0deg); }</span>
+<span>  4%           { opacity: 0.9; transform: scale(1) rotate(45deg); }</span>
+<span>}</span>
+<span></span>
+<span>/* Reduced motion: no sparkle at all. */</span>
+<span>@media (prefers-reduced-motion: reduce) {</span>
+<span>  .fx-glint::after {</span>
+<span>    display: none;</span>
+<span>  }</span>
+<span>}</span>
+  </pre>
+
+  <h3>Corner Glint HTML</h3>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Corner Glint&lt;/title&gt;</span>
+<span>  &lt;!-- css/fx-base.css holds the shared base from the top of this page,</span>
+<span>       with the CSS for this effect pasted under it. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/fx-base.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- fx is the shared base. fx-glint adds this effect. --&gt;</span>
+<span>  &lt;span class="fx fx-glint"&gt;</span>
+<span>    &lt;span class="fx__clip"&gt;</span>
+<span>      &lt;img class="fx__img" src="images/photo.jpg" alt="Headshot of Sam Lee, award winner"&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  &lt;/span&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>Corner Glint React</h3>
+
+  <pre class="mycodereact">
+<span>// src/components/CornerGlintPhoto.jsx</span>
+<span>// Load the fx CSS once for the whole app, for example with import "./fx-base.css"; in main.jsx.</span>
+<span>// src is the address of the image. The page that uses this component passes it in.</span>
+<span>const CornerGlintPhoto = ({ src }) =&gt; {</span>
+<span>  // className is how JSX writes the HTML class attribute.</span>
+<span>  return (</span>
+<span>    &lt;span className="fx fx-glint"&gt;</span>
+<span>      &lt;span className="fx__clip"&gt;</span>
+<span>        &lt;img className="fx__img" src={src} alt="Headshot of Sam Lee, award winner" /&gt;</span>
+<span>      &lt;/span&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>// Lets other files import the component.</span>
+<span>// Use it like this: &lt;CornerGlintPhoto src={photo} /&gt;</span>
+<span>export default CornerGlintPhoto;</span>
+  </pre>
+
+  <div class="div_p">
+    <p><strong>Accessibility</strong></p>
+    <ul>
+      <li>Reduced motion: the sparkle is removed.</li>
+      <li>Keyboard: nothing to do. The photo is not a link.</li>
+      <li>Screen readers: only the alt text is read.</li>
+      <li>Flashing: one sparkle every 12 seconds that fades in and out over about 1 second, so it is soft and not a flash.</li>
+      <li>At 40px the sparkle is about 9px, which is still visible but small.</li>
+    </ul>
+  </div>
+
+  <div class="div_p">
+    <p><strong>Knobs to change</strong></p>
+    <table class="table table-bordered table-striped table-condensed text-left">
+      <thead>
+        <tr><th>Variable</th><th>What it changes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>--fx-glint-size</code></td><td>Sparkle size</td></tr>
+        <tr><td><code>--fx-glint-spot</code></td><td>Where the sparkle sits</td></tr>
+        <tr><td><code>--fx-speed</code></td><td>Time between sparkles</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="effect-scan">5 Scan Line</h2>
+
+  <div class="div_p">
+    <p>A soft band of light slides down over the photo once, then rests.</p>
+    <p><strong>Type:</strong> Idle: plays on its own. <strong>Shape:</strong> made for rounded rectangles.</p>
+    <p><strong>Best used for:</strong> Project screenshots, tech portfolio cards, a 'case study' photo.</p>
+  </div>
+
+  <h3>Scan Line CSS</h3>
+
+  <pre class="mycodecss">
+<span>/* 5. Scan Line */</span>
+<span>/* The band lives inside the clip wrapper, so it never leaves the photo. */</span>
+<span>.fx-scan .fx__clip::after {</span>
+<span>  content: "";</span>
+<span>  position: absolute;</span>
+<span>  inset: 0 0 auto 0;</span>
+<span>  height: 30%;</span>
+<span>  background: linear-gradient(</span>
+<span>    transparent,</span>
+<span>    color-mix(in srgb, var(--fx-color) 35%, transparent),</span>
+<span>    transparent</span>
+<span>  );</span>
+<span>  transform: translateY(-100%);</span>
+<span>  animation: fx-scan var(--fx-speed) ease-in-out var(--fx-loops);</span>
+<span>}</span>
+<span></span>
+<span>/* Top to bottom in the first 14% of the loop, then rest out of sight. */</span>
+<span>@keyframes fx-scan {</span>
+<span>  0%         { transform: translateY(-100%); }</span>
+<span>  14%, 100%  { transform: translateY(340%); }</span>
+<span>}</span>
+<span></span>
+<span>/* Reduced motion: no band at all. */</span>
+<span>@media (prefers-reduced-motion: reduce) {</span>
+<span>  .fx-scan .fx__clip::after {</span>
+<span>    display: none;</span>
+<span>  }</span>
+<span>}</span>
+  </pre>
+
+  <h3>Scan Line HTML</h3>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Scan Line&lt;/title&gt;</span>
+<span>  &lt;!-- css/fx-base.css holds the shared base from the top of this page,</span>
+<span>       with the CSS for this effect pasted under it. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/fx-base.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- The style attribute turns the circle into a 4 by 3 rounded rectangle that is 240px wide. --&gt;</span>
+<span>  &lt;span class="fx fx-scan" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 240px"&gt;</span>
+<span>    &lt;span class="fx__clip"&gt;</span>
+<span>      &lt;img class="fx__img" src="images/photo.jpg" alt="Screenshot of the Weather App home page"&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  &lt;/span&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>Scan Line React</h3>
+
+  <pre class="mycodereact">
+<span>// src/components/ScanLinePhoto.jsx</span>
+<span>// Load the fx CSS once for the whole app, for example with import "./fx-base.css"; in main.jsx.</span>
+<span>// src is the address of the image. The page that uses this component passes it in.</span>
+<span>const ScanLinePhoto = ({ src }) =&gt; {</span>
+<span>  // className is how JSX writes the HTML class attribute.</span>
+<span>  return (</span>
+<span>    &lt;span className="fx fx-scan" style={{ "--fx-ratio": "4 / 3", "--fx-radius": "16px", "--fx-size": "240px" }}&gt;</span>
+<span>      &lt;span className="fx__clip"&gt;</span>
+<span>        &lt;img className="fx__img" src={src} alt="Screenshot of the Weather App home page" /&gt;</span>
+<span>      &lt;/span&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>// Lets other files import the component.</span>
+<span>// Use it like this: &lt;ScanLinePhoto src={photo} /&gt;</span>
+<span>export default ScanLinePhoto;</span>
+  </pre>
+
+  <div class="div_p">
+    <p><strong>Accessibility</strong></p>
+    <ul>
+      <li>Reduced motion: the band is removed.</li>
+      <li>Keyboard: nothing to do. The photo is not a link.</li>
+      <li>Screen readers: only the alt text is read.</li>
+      <li>The band is mostly see-through, so a screenshot with text in it stays readable.</li>
+    </ul>
+  </div>
+
+  <div class="div_p">
+    <p><strong>Knobs to change</strong></p>
+    <table class="table table-bordered table-striped table-condensed text-left">
+      <thead>
+        <tr><th>Variable</th><th>What it changes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>--fx-color</code></td><td>Band color</td></tr>
+        <tr><td><code>35% in color-mix</code></td><td>How strong the band is. Keep it under 50% so the photo stays clear.</td></tr>
+        <tr><td><code>--fx-speed</code></td><td>Time between passes</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="effect-tilt">6 Tilt And Lift</h2>
+
+  <div class="div_p">
+    <p>The photo tips toward you and rises, and a shadow fades in under it.</p>
+    <p><strong>Type:</strong> Hover and focus: reacts when someone points at it or tabs to it. <strong>Shape:</strong> made for rounded rectangles.</p>
+    <p><strong>Best used for:</strong> Portfolio project cards, product images, blog post covers.</p>
+  </div>
+
+  <h3>Tilt And Lift CSS</h3>
+
+  <pre class="mycodecss">
+<span>/* 6. Tilt And Lift */</span>
+<span>.fx-tilt {</span>
+<span>  --fx-tilt: 6deg;</span>
+<span>  transform: perspective(600px) rotateX(0deg) rotateY(0deg);</span>
+<span>  transition: transform var(--fx-hover-speed) ease-out;</span>
+<span>}</span>
+<span></span>
+<span>/* The shadow is drawn once and only fades, which is cheaper than</span>
+<span>   animating box-shadow. */</span>
+<span>.fx-tilt::after {</span>
+<span>  content: "";</span>
+<span>  position: absolute;</span>
+<span>  inset: 0;</span>
+<span>  z-index: -1;</span>
+<span>  border-radius: inherit;</span>
+<span>  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.35);</span>
+<span>  opacity: 0;</span>
+<span>  transition: opacity var(--fx-hover-speed) ease-out;</span>
+<span>}</span>
+<span></span>
+<span>.fx-tilt:is(:hover, :focus-visible, :focus-within) {</span>
+<span>  transform: perspective(600px) rotateX(var(--fx-tilt)) rotateY(calc(var(--fx-tilt) * -1)) translateY(-4px);</span>
+<span>}</span>
+<span></span>
+<span>.fx-tilt:is(:hover, :focus-visible, :focus-within)::after {</span>
+<span>  opacity: 1;</span>
+<span>}</span>
+<span></span>
+<span>/* Reduced motion: no tilt. The shadow still fades in, which is not motion. */</span>
+<span>@media (prefers-reduced-motion: reduce) {</span>
+<span>  .fx-tilt,</span>
+<span>  .fx-tilt:is(:hover, :focus-visible, :focus-within) {</span>
+<span>    transform: none;</span>
+<span>  }</span>
+<span>}</span>
+  </pre>
+
+  <h3>Tilt And Lift HTML</h3>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Tilt And Lift&lt;/title&gt;</span>
+<span>  &lt;!-- css/fx-base.css holds the shared base from the top of this page,</span>
+<span>       with the CSS for this effect pasted under it. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/fx-base.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- The outer box is a link, so the effect also works with the Tab key. --&gt;</span>
+<span>  &lt;a class="fx fx-tilt" href="projects/weather.html" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 240px"&gt;</span>
+<span>    &lt;span class="fx__clip"&gt;</span>
+<span>      &lt;img class="fx__img" src="images/photo.jpg" alt="Weather App project"&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  &lt;/a&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> The link needs a real href. An &lt;a&gt; with no href cannot get Tab focus, so the effect would only work with a mouse.</p>
+  </div>
+
+  <h3>Tilt And Lift React</h3>
+
+  <pre class="mycodereact">
+<span>// src/components/TiltAndLiftPhoto.jsx</span>
+<span>// Load the fx CSS once for the whole app, for example with import "./fx-base.css"; in main.jsx.</span>
+<span>// src is the address of the image and href is where the link goes.</span>
+<span>const TiltAndLiftPhoto = ({ src, href }) =&gt; {</span>
+<span>  // className is how JSX writes the HTML class attribute.</span>
+<span>  return (</span>
+<span>    &lt;a className="fx fx-tilt" href={href} style={{ "--fx-ratio": "4 / 3", "--fx-radius": "16px", "--fx-size": "240px" }}&gt;</span>
+<span>      &lt;span className="fx__clip"&gt;</span>
+<span>        &lt;img className="fx__img" src={src} alt="Weather App project" /&gt;</span>
+<span>      &lt;/span&gt;</span>
+<span>    &lt;/a&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>// Lets other files import the component.</span>
+<span>// Use it like this: &lt;TiltAndLiftPhoto src={photo} href="/projects/weather" /&gt;</span>
+<span>export default TiltAndLiftPhoto;</span>
+  </pre>
+
+  <div class="div_p">
+    <p><strong>Accessibility</strong></p>
+    <ul>
+      <li>Reduced motion: no tilt or rise. The shadow still fades in so there is still feedback.</li>
+      <li>Keyboard: works on Tab focus, with the blue focus ring.</li>
+      <li>Screen readers: the alt text names the project, because the photo is the link.</li>
+      <li>Nothing is hidden or replaced. The photo only moves.</li>
+    </ul>
+  </div>
+
+  <div class="div_p">
+    <p><strong>Knobs to change</strong></p>
+    <table class="table table-bordered table-striped table-condensed text-left">
+      <thead>
+        <tr><th>Variable</th><th>What it changes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>--fx-tilt</code></td><td>How far it tips. Keep it under 10deg.</td></tr>
+        <tr><td><code>--fx-hover-speed</code></td><td>How fast it reacts</td></tr>
+        <tr><td><code>translateY(-4px)</code></td><td>How far it rises</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="effect-zoom">7 Zoom In Frame</h2>
+
+  <div class="div_p">
+    <p>The photo grows a little inside its frame, so the frame stays still.</p>
+    <p><strong>Type:</strong> Hover and focus: reacts when someone points at it or tabs to it. <strong>Shape:</strong> made for rounded rectangles.</p>
+    <p><strong>Best used for:</strong> Gallery photos, product grids, team page cards.</p>
+  </div>
+
+  <h3>Zoom In Frame CSS</h3>
+
+  <pre class="mycodecss">
+<span>/* 7. Zoom In Frame */</span>
+<span>.fx-zoom .fx__img {</span>
+<span>  transition: transform var(--fx-hover-speed) ease-out;</span>
+<span>}</span>
+<span></span>
+<span>/* The clip wrapper hides the edges, so the frame keeps its size. */</span>
+<span>.fx-zoom:is(:hover, :focus-visible, :focus-within) .fx__img {</span>
+<span>  transform: scale(var(--fx-zoom, 1.08));</span>
+<span>}</span>
+<span></span>
+<span>/* Reduced motion: no zoom. */</span>
+<span>@media (prefers-reduced-motion: reduce) {</span>
+<span>  .fx-zoom:is(:hover, :focus-visible, :focus-within) .fx__img {</span>
+<span>    transform: none;</span>
+<span>  }</span>
+<span>}</span>
+  </pre>
+
+  <h3>Zoom In Frame HTML</h3>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Zoom In Frame&lt;/title&gt;</span>
+<span>  &lt;!-- css/fx-base.css holds the shared base from the top of this page,</span>
+<span>       with the CSS for this effect pasted under it. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/fx-base.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- The outer box is a link, so the effect also works with the Tab key. --&gt;</span>
+<span>  &lt;a class="fx fx-zoom" href="projects/weather.html" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 240px"&gt;</span>
+<span>    &lt;span class="fx__clip"&gt;</span>
+<span>      &lt;img class="fx__img" src="images/photo.jpg" alt="Blue running shoe, side view"&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  &lt;/a&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>Zoom In Frame React</h3>
+
+  <pre class="mycodereact">
+<span>// src/components/ZoomInFramePhoto.jsx</span>
+<span>// Load the fx CSS once for the whole app, for example with import "./fx-base.css"; in main.jsx.</span>
+<span>// src is the address of the image and href is where the link goes.</span>
+<span>const ZoomInFramePhoto = ({ src, href }) =&gt; {</span>
+<span>  // className is how JSX writes the HTML class attribute.</span>
+<span>  return (</span>
+<span>    &lt;a className="fx fx-zoom" href={href} style={{ "--fx-ratio": "4 / 3", "--fx-radius": "16px", "--fx-size": "240px" }}&gt;</span>
+<span>      &lt;span className="fx__clip"&gt;</span>
+<span>        &lt;img className="fx__img" src={src} alt="Blue running shoe, side view" /&gt;</span>
+<span>      &lt;/span&gt;</span>
+<span>    &lt;/a&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>// Lets other files import the component.</span>
+<span>// Use it like this: &lt;ZoomInFramePhoto src={photo} href="/projects/weather" /&gt;</span>
+<span>export default ZoomInFramePhoto;</span>
+  </pre>
+
+  <div class="div_p">
+    <p><strong>Accessibility</strong></p>
+    <ul>
+      <li>Reduced motion: no zoom. The focus ring still shows on Tab.</li>
+      <li>Keyboard: works on Tab focus.</li>
+      <li>Screen readers: only the alt text is read.</li>
+      <li>The edges of the photo get cut off while zoomed. Do not use it on a photo with important text near the edge.</li>
+    </ul>
+  </div>
+
+  <div class="div_p">
+    <p><strong>Knobs to change</strong></p>
+    <table class="table table-bordered table-striped table-condensed text-left">
+      <thead>
+        <tr><th>Variable</th><th>What it changes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>--fx-zoom</code></td><td>How much it grows. 1.05 to 1.1 looks best.</td></tr>
+        <tr><td><code>--fx-hover-speed</code></td><td>How fast it grows</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="effect-color">8 Grayscale To Color</h2>
+
+  <div class="div_p">
+    <p>The photo starts in black and white and fades to full color.</p>
+    <p><strong>Type:</strong> Hover and focus: reacts when someone points at it or tabs to it. <strong>Shape:</strong> made for circles and rounded rectangles.</p>
+    <p><strong>Best used for:</strong> Team pages, client logos, a 'meet the staff' grid.</p>
+  </div>
+
+  <h3>Grayscale To Color CSS</h3>
+
+  <pre class="mycodecss">
+<span>/* 8. Grayscale To Color */</span>
+<span>/* A gray layer with mix-blend-mode: saturation removes the color.</span>
+<span>   Fading that layer out brings the color back. Only opacity animates,</span>
+<span>   which is much cheaper than animating filter: grayscale(). */</span>
+<span>.fx-color .fx__clip {</span>
+<span>  isolation: isolate;  /* blend with the photo only */</span>
+<span>}</span>
+<span></span>
+<span>.fx-color .fx__clip::after {</span>
+<span>  content: "";</span>
+<span>  position: absolute;</span>
+<span>  inset: 0;</span>
+<span>  background: #808080;</span>
+<span>  mix-blend-mode: saturation;</span>
+<span>  opacity: 1;</span>
+<span>  transition: opacity var(--fx-hover-speed) ease-out;</span>
+<span>}</span>
+<span></span>
+<span>.fx-color:is(:hover, :focus-visible, :focus-within) .fx__clip::after {</span>
+<span>  opacity: 0;</span>
+<span>}</span>
+  </pre>
+
+  <h3>Grayscale To Color HTML</h3>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Grayscale To Color&lt;/title&gt;</span>
+<span>  &lt;!-- css/fx-base.css holds the shared base from the top of this page,</span>
+<span>       with the CSS for this effect pasted under it. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/fx-base.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- The outer box is a link, so the effect also works with the Tab key. --&gt;</span>
+<span>  &lt;a class="fx fx-color" href="projects/weather.html"&gt;</span>
+<span>    &lt;span class="fx__clip"&gt;</span>
+<span>      &lt;img class="fx__img" src="images/photo.jpg" alt="Portrait of Dana Kim, office manager"&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  &lt;/a&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>Grayscale To Color React</h3>
+
+  <pre class="mycodereact">
+<span>// src/components/GrayscaleToColorPhoto.jsx</span>
+<span>// Load the fx CSS once for the whole app, for example with import "./fx-base.css"; in main.jsx.</span>
+<span>// src is the address of the image and href is where the link goes.</span>
+<span>const GrayscaleToColorPhoto = ({ src, href }) =&gt; {</span>
+<span>  // className is how JSX writes the HTML class attribute.</span>
+<span>  return (</span>
+<span>    &lt;a className="fx fx-color" href={href}&gt;</span>
+<span>      &lt;span className="fx__clip"&gt;</span>
+<span>        &lt;img className="fx__img" src={src} alt="Portrait of Dana Kim, office manager" /&gt;</span>
+<span>      &lt;/span&gt;</span>
+<span>    &lt;/a&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>// Lets other files import the component.</span>
+<span>// Use it like this: &lt;GrayscaleToColorPhoto src={photo} href="/projects/weather" /&gt;</span>
+<span>export default GrayscaleToColorPhoto;</span>
+  </pre>
+
+  <div class="div_p">
+    <p><strong>Accessibility</strong></p>
+    <ul>
+      <li>Reduced motion: no change needed. A fade is not motion.</li>
+      <li>Keyboard: works on Tab focus.</li>
+      <li>Screen readers: only the alt text is read.</li>
+      <li>Do not use this on product photos where the color matters, such as a shirt in five colors. Gray would hide that information.</li>
+      <li>On a phone there is no hover, so people see the gray photo until they tap it.</li>
+    </ul>
+  </div>
+
+  <div class="div_p">
+    <p><strong>Knobs to change</strong></p>
+    <table class="table table-bordered table-striped table-condensed text-left">
+      <thead>
+        <tr><th>Variable</th><th>What it changes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>--fx-hover-speed</code></td><td>How fast the color comes in</td></tr>
+        <tr><td><code>opacity: 1 on the layer</code></td><td>Use 0.7 to start with a little color left</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="effect-corners">9 Corner Frame Draw-In</h2>
+
+  <div class="div_p">
+    <p>Two corner brackets grow in from the corners, outside the photo.</p>
+    <p><strong>Type:</strong> Hover and focus: reacts when someone points at it or tabs to it. <strong>Shape:</strong> made for rounded rectangles.</p>
+    <p><strong>Best used for:</strong> Portfolio case studies, a featured product, a photo in an 'about' section.</p>
+  </div>
+
+  <h3>Corner Frame Draw-In CSS</h3>
+
+  <pre class="mycodecss">
+<span>/* 9. Corner Frame Draw-In */</span>
+<span>.fx-corners {</span>
+<span>  --fx-gap: max(4px, calc(var(--fx-size) * 0.05));   /* space between photo and frame */</span>
+<span>  --fx-line: max(2px, calc(var(--fx-size) * 0.012)); /* line thickness */</span>
+<span>}</span>
+<span></span>
+<span>.fx-corners::before,</span>
+<span>.fx-corners::after {</span>
+<span>  content: "";</span>
+<span>  position: absolute;</span>
+<span>  width: 35%;</span>
+<span>  height: 35%;</span>
+<span>  border: 0 solid var(--fx-color);</span>
+<span>  opacity: 0;</span>
+<span>  transform: scale(0.4);</span>
+<span>  transition:</span>
+<span>    transform var(--fx-hover-speed) ease-out,</span>
+<span>    opacity var(--fx-hover-speed) ease-out;</span>
+<span>}</span>
+<span></span>
+<span>/* Top left bracket */</span>
+<span>.fx-corners::before {</span>
+<span>  top: calc(var(--fx-gap) * -1);</span>
+<span>  left: calc(var(--fx-gap) * -1);</span>
+<span>  border-top-width: var(--fx-line);</span>
+<span>  border-left-width: var(--fx-line);</span>
+<span>  transform-origin: top left;</span>
+<span>}</span>
+<span></span>
+<span>/* Bottom right bracket */</span>
+<span>.fx-corners::after {</span>
+<span>  bottom: calc(var(--fx-gap) * -1);</span>
+<span>  right: calc(var(--fx-gap) * -1);</span>
+<span>  border-bottom-width: var(--fx-line);</span>
+<span>  border-right-width: var(--fx-line);</span>
+<span>  transform-origin: bottom right;</span>
+<span>}</span>
+<span></span>
+<span>.fx-corners:is(:hover, :focus-visible, :focus-within)::before,</span>
+<span>.fx-corners:is(:hover, :focus-visible, :focus-within)::after {</span>
+<span>  opacity: 1;</span>
+<span>  transform: scale(1);</span>
+<span>}</span>
+<span></span>
+<span>/* Reduced motion: the brackets appear right away instead of growing. */</span>
+<span>@media (prefers-reduced-motion: reduce) {</span>
+<span>  .fx-corners::before,</span>
+<span>  .fx-corners::after {</span>
+<span>    transition: none;</span>
+<span>  }</span>
+<span>}</span>
+  </pre>
+
+  <h3>Corner Frame Draw-In HTML</h3>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Corner Frame Draw-In&lt;/title&gt;</span>
+<span>  &lt;!-- css/fx-base.css holds the shared base from the top of this page,</span>
+<span>       with the CSS for this effect pasted under it. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/fx-base.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- The outer box is a link, so the effect also works with the Tab key. --&gt;</span>
+<span>  &lt;a class="fx fx-corners" href="projects/weather.html" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 240px"&gt;</span>
+<span>    &lt;span class="fx__clip"&gt;</span>
+<span>      &lt;img class="fx__img" src="images/photo.jpg" alt="Bakery storefront project"&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  &lt;/a&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>Corner Frame Draw-In React</h3>
+
+  <pre class="mycodereact">
+<span>// src/components/CornerFrameDrawInPhoto.jsx</span>
+<span>// Load the fx CSS once for the whole app, for example with import "./fx-base.css"; in main.jsx.</span>
+<span>// src is the address of the image and href is where the link goes.</span>
+<span>const CornerFrameDrawInPhoto = ({ src, href }) =&gt; {</span>
+<span>  // className is how JSX writes the HTML class attribute.</span>
+<span>  return (</span>
+<span>    &lt;a className="fx fx-corners" href={href} style={{ "--fx-ratio": "4 / 3", "--fx-radius": "16px", "--fx-size": "240px" }}&gt;</span>
+<span>      &lt;span className="fx__clip"&gt;</span>
+<span>        &lt;img className="fx__img" src={src} alt="Bakery storefront project" /&gt;</span>
+<span>      &lt;/span&gt;</span>
+<span>    &lt;/a&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>// Lets other files import the component.</span>
+<span>// Use it like this: &lt;CornerFrameDrawInPhoto src={photo} href="/projects/weather" /&gt;</span>
+<span>export default CornerFrameDrawInPhoto;</span>
+  </pre>
+
+  <div class="div_p">
+    <p><strong>Accessibility</strong></p>
+    <ul>
+      <li>Reduced motion: the brackets appear at once, with no growing.</li>
+      <li>Keyboard: works on Tab focus. The brackets are extra, the blue focus ring is the real focus sign.</li>
+      <li>Screen readers: only the alt text is read.</li>
+      <li>Leave room around the photo equal to --fx-gap, because the brackets sit outside it.</li>
+      <li>Made for rectangles. On a circle the square brackets look a little odd.</li>
+    </ul>
+  </div>
+
+  <div class="div_p">
+    <p><strong>Knobs to change</strong></p>
+    <table class="table table-bordered table-striped table-condensed text-left">
+      <thead>
+        <tr><th>Variable</th><th>What it changes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>--fx-color</code></td><td>Bracket color</td></tr>
+        <tr><td><code>--fx-gap</code></td><td>Space between the photo and the brackets</td></tr>
+        <tr><td><code>--fx-line</code></td><td>Line thickness</td></tr>
+        <tr><td><code>width and height: 35%</code></td><td>Bracket length</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="effect-offset">10 Offset Frame Slide</h2>
+
+  <div class="div_p">
+    <p>An outline frame sits behind the photo, a little to the side. On hover the photo and frame slide apart.</p>
+    <p><strong>Type:</strong> Hover and focus: reacts when someone points at it or tabs to it. <strong>Shape:</strong> made for rounded rectangles.</p>
+    <p><strong>Best used for:</strong> An 'about me' photo, a portfolio hero image, a team lead photo.</p>
+  </div>
+
+  <h3>Offset Frame Slide CSS</h3>
+
+  <pre class="mycodecss">
+<span>/* 10. Offset Frame Slide */</span>
+<span>.fx-offset {</span>
+<span>  --fx-offset: max(6px, calc(var(--fx-size) * 0.05));</span>
+<span>  isolation: isolate;  /* keeps the frame behind the photo */</span>
+<span>}</span>
+<span></span>
+<span>/* The frame is drawn by the outer box, which does not clip,</span>
+<span>   so it can sit outside the photo. */</span>
+<span>.fx-offset::before {</span>
+<span>  content: "";</span>
+<span>  position: absolute;</span>
+<span>  inset: 0;</span>
+<span>  z-index: -1;</span>
+<span>  border: max(2px, calc(var(--fx-size) * 0.012)) solid var(--fx-color);</span>
+<span>  border-radius: inherit;</span>
+<span>  transform: translate(var(--fx-offset), var(--fx-offset));</span>
+<span>  transition: transform var(--fx-hover-speed) ease-out;</span>
+<span>}</span>
+<span></span>
+<span>.fx-offset .fx__clip {</span>
+<span>  transition: transform var(--fx-hover-speed) ease-out;</span>
+<span>}</span>
+<span></span>
+<span>.fx-offset:is(:hover, :focus-visible, :focus-within)::before {</span>
+<span>  transform: translate(calc(var(--fx-offset) * 1.6), calc(var(--fx-offset) * 1.6));</span>
+<span>}</span>
+<span></span>
+<span>.fx-offset:is(:hover, :focus-visible, :focus-within) .fx__clip {</span>
+<span>  transform: translate(calc(var(--fx-offset) * -0.4), calc(var(--fx-offset) * -0.4));</span>
+<span>}</span>
+<span></span>
+<span>/* Reduced motion: the frame stays where it is and nothing slides. */</span>
+<span>@media (prefers-reduced-motion: reduce) {</span>
+<span>  .fx-offset:is(:hover, :focus-visible, :focus-within)::before {</span>
+<span>    transform: translate(var(--fx-offset), var(--fx-offset));</span>
+<span>  }</span>
+<span></span>
+<span>  .fx-offset:is(:hover, :focus-visible, :focus-within) .fx__clip {</span>
+<span>    transform: none;</span>
+<span>  }</span>
+<span>}</span>
+  </pre>
+
+  <h3>Offset Frame Slide HTML</h3>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Offset Frame Slide&lt;/title&gt;</span>
+<span>  &lt;!-- css/fx-base.css holds the shared base from the top of this page,</span>
+<span>       with the CSS for this effect pasted under it. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/fx-base.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- The outer box is a link, so the effect also works with the Tab key. --&gt;</span>
+<span>  &lt;a class="fx fx-offset" href="projects/weather.html" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 240px"&gt;</span>
+<span>    &lt;span class="fx__clip"&gt;</span>
+<span>      &lt;img class="fx__img" src="images/photo.jpg" alt="Jah at a desk with two monitors"&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  &lt;/a&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>Offset Frame Slide React</h3>
+
+  <pre class="mycodereact">
+<span>// src/components/OffsetFrameSlidePhoto.jsx</span>
+<span>// Load the fx CSS once for the whole app, for example with import "./fx-base.css"; in main.jsx.</span>
+<span>// src is the address of the image and href is where the link goes.</span>
+<span>const OffsetFrameSlidePhoto = ({ src, href }) =&gt; {</span>
+<span>  // className is how JSX writes the HTML class attribute.</span>
+<span>  return (</span>
+<span>    &lt;a className="fx fx-offset" href={href} style={{ "--fx-ratio": "4 / 3", "--fx-radius": "16px", "--fx-size": "240px" }}&gt;</span>
+<span>      &lt;span className="fx__clip"&gt;</span>
+<span>        &lt;img className="fx__img" src={src} alt="Jah at a desk with two monitors" /&gt;</span>
+<span>      &lt;/span&gt;</span>
+<span>    &lt;/a&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>// Lets other files import the component.</span>
+<span>// Use it like this: &lt;OffsetFrameSlidePhoto src={photo} href="/projects/weather" /&gt;</span>
+<span>export default OffsetFrameSlidePhoto;</span>
+  </pre>
+
+  <div class="div_p">
+    <p><strong>Accessibility</strong></p>
+    <ul>
+      <li>Reduced motion: the frame stays in its resting spot and nothing slides.</li>
+      <li>Keyboard: works on Tab focus, with the blue focus ring.</li>
+      <li>Screen readers: only the alt text is read.</li>
+      <li>Leave room on the right and bottom equal to about 1.6 times --fx-offset.</li>
+    </ul>
+  </div>
+
+  <div class="div_p">
+    <p><strong>Knobs to change</strong></p>
+    <table class="table table-bordered table-striped table-condensed text-left">
+      <thead>
+        <tr><th>Variable</th><th>What it changes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>--fx-offset</code></td><td>How far the frame sits from the photo</td></tr>
+        <tr><td><code>--fx-color</code></td><td>Frame color</td></tr>
+        <tr><td><code>--fx-hover-speed</code></td><td>How fast they slide</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="pause-all-button">Pause All Button</h2>
+
+  <div class="div_p">
+    <p>Put this button near the top of any page with idle effects. It adds the fx-paused class to body, and the base CSS stops every idle effect. This is under 15 lines because a page cannot pause animations with CSS alone.</p>
+  </div>
+
+  <h3>Pause button HTML</h3>
+
+  <div class="div_p">
+    <p>This is a whole page with the button, one idle effect to pause, and the script from the next box saved as js/pause-button.js.</p>
+  </div>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Pause All Button&lt;/title&gt;</span>
+<span>  &lt;!-- css/fx-base.css holds the shared base from the top of this page,</span>
+<span>       with the CSS for this effect pasted under it. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/fx-base.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- aria-pressed="false" tells screen readers that the button starts switched off. --&gt;</span>
+<span>  &lt;button id="pause-button" class="pause-button" type="button" aria-pressed="false"&gt;</span>
+<span>    Pause all animations</span>
+<span>  &lt;/button&gt;</span>
+<span></span>
+<span>  &lt;span class="fx fx-glow"&gt;</span>
+<span>    &lt;span class="fx__clip"&gt;</span>
+<span>      &lt;img class="fx__img" src="images/photo.jpg" alt="Jah smiling in a blue jacket"&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  &lt;/span&gt;</span>
+<span></span>
+<span>  &lt;!-- Last in the body, so the button already exists when the script looks for it. --&gt;</span>
+<span>  &lt;script src="js/pause-button.js"&gt;&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>Pause button JavaScript</h3>
+
+  <pre class="mycodejs">
+<span>// js/pause-button.js</span>
+<span>// Stops every idle effect on the page. aria-pressed tells screen</span>
+<span>// readers whether the button is on.</span>
+<span>const pauseButton = document.getElementById("pause-button");</span>
+<span></span>
+<span>pauseButton.addEventListener("click", () =&gt; {</span>
+<span>  // toggle adds the class when it is missing and removes it when it is there.</span>
+<span>  // It gives back true when the class is now on the body.</span>
+<span>  const paused = document.body.classList.toggle("fx-paused");</span>
+<span>  // setAttribute needs text, so true or false is turned into "true" or "false".</span>
+<span>  pauseButton.setAttribute("aria-pressed", String(paused));</span>
+<span>});</span>
+  </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> If nothing happens on a click, open the Console. "Cannot read properties of null" means the script ran before the button existed. Keep the script tag at the end of the body, or add defer to it.</p>
+  </div>
+
+  <h3>Pause button in React</h3>
+
+  <pre class="mycodereact">
+<span>// src/components/PauseButton.jsx</span>
+<span>import { useEffect, useState } from "react";</span>
+<span></span>
+<span>const PauseButton = () =&gt; {</span>
+<span>  // paused is true or false. setPaused changes it and draws the button again.</span>
+<span>  const [paused, setPaused] = useState(false);</span>
+<span></span>
+<span>  // Runs after the button is drawn, every time paused changes.</span>
+<span>  // The body is outside React, so the class is added to it by hand here.</span>
+<span>  useEffect(() =&gt; {</span>
+<span>    document.body.classList.toggle("fx-paused", paused);</span>
+<span>  }, [paused]);</span>
+<span></span>
+<span>  return (</span>
+<span>    // aria-pressed tells screen readers whether the button is on.</span>
+<span>    // Each click flips paused to the opposite value.</span>
+<span>    &lt;button type="button" aria-pressed={paused} onClick={() =&gt; setPaused(!paused)}&gt;</span>
+<span>      Pause all animations</span>
+<span>    &lt;/button&gt;</span>
+<span>  );</span>
+<span>};</span>
+<span></span>
+<span>export default PauseButton;</span>
+  </pre>
+
+  <h2 id="wcag-2-2-2-in-plain-words">WCAG 2.2.2 In Plain Words</h2>
+
+  <div class="div_p">
+    <p>WCAG 2.2.2, Pause, Stop, Hide, says that anything that moves on its own for more than 5 seconds next to other content needs a way for the user to pause, stop or hide it. A pause button does this, and so does stopping the motion on its own before 5 seconds are up.</p>
+  </div>
+
+  <div class="div_p">
+    <p>To use less motion, add the fx--limited class next to fx, so an idle effect plays three times and stops. See the first item under Things I Am Unsure About before relying on that alone.</p>
+  </div>
+
+  <h3>Stop after three loops</h3>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Stop After Three Loops&lt;/title&gt;</span>
+<span>  &lt;!-- css/fx-base.css holds the shared base from the top of this page,</span>
+<span>       with the CSS for this effect pasted under it. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/fx-base.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- fx--limited makes the idle effect play three times and then stop. --&gt;</span>
+<span>  &lt;span class="fx fx--limited fx-glow"&gt;</span>
+<span>    &lt;span class="fx__clip"&gt;</span>
+<span>      &lt;img class="fx__img" src="images/jah.jpg" alt="Jah smiling in a blue jacket"&gt;</span>
+<span>    &lt;/span&gt;</span>
+<span>  &lt;/span&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h2 id="things-i-am-unsure-about">Things I Am Unsure About</h2>
+
+  <div class="div_p">
+    <ul>
+      <li>WCAG 2.2.2 and the 3-loop version: each burst of motion is under 2 seconds, but three 12-second loops cover about 36 seconds. A strict reading treats that as motion lasting more than 5 seconds, so the 3-loop version alone may not be enough. The pause button covers it either way.</li>
+      <li>Grayscale To Color uses mix-blend-mode: saturation. I tested it in Chromium only, not Safari or Firefox.</li>
+      <li>The Scan Line uses color-mix(), which needs a browser from 2023 or newer. Older browsers show no band, which is harmless.</li>
+      <li>I tested reduced motion by switching the reduced motion rules on in Chromium, not with the real setting on a phone or a Mac.</li>
+      <li>Tilt And Lift tips in one fixed direction. Following the mouse would need JavaScript, so I left it out.</li>
+      <li>Corner Glint at 40px is a 9px sparkle. It works, but it is hard to notice at that size.</li>
+    </ul>
+  </div>
+
+  <h2 id="review-checklist">Review Checklist</h2>
+
+  <div class="div_p">
+    <p>Check every new effect against this list before it goes on a client site.</p>
+  </div>
+
+  <div class="div_p">
+    <ul>
+      <li>It turns off, or becomes a still version, under prefers-reduced-motion.</li>
+      <li>Nothing flashes more than 3 times in one second, and brightness changes are soft.</li>
+      <li>An idle loop moves for under about 2 seconds, then rests, and the page has a way to pause it.</li>
+      <li>A hover effect also works on Tab focus, and the focus ring has 3:1 contrast with the page.</li>
+      <li>Hover never hides or replaces information, such as the color of a product.</li>
+      <li>Pseudo-elements have pointer-events: none, and no text is placed inside the effect.</li>
+      <li>The image has real alt text, or alt="" only when the same words are right next to it.</li>
+      <li>Overlays do not make text near or on the photo hard to read.</li>
+      <li>Only transform and opacity animate. Anything else has a reason written in a comment.</li>
+      <li>It looks right at 40px and at 400px, on a circle and on a rounded rectangle.</li>
+      <li>It looks right on a dark page and a light page.</li>
+      <li>Effects that draw outside the photo have room around them, so nothing gets cut off.</li>
+    </ul>
+  </div>
+
+  <br><br><br><br>
+
+  <footer class="footer"> &copy; By Jamar Brown
+
+    <div class="container">
+      <div id='clock'></div>
+    </div>
+  </footer>
+
+  <script src="js/clock.js"></script>
+  <script src="js/copy.js"></script>
+</body>
+
+</html>

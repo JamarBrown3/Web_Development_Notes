@@ -22,59 +22,103 @@
                 <li><a href="html_page.html">Html Code</a></li>
                 <li><a href="css_page.html">Css Code</a></li>
                 <li><a href="tailwind_page.html">Tailwind Code</a></li>
+                <li><a href="photo_effects_page.html">Photo Effects</a></li>
+                <li><a href="blog_page.html">Blog Template</a></li>
                 <li><a href="javaScript.html">JavaScript Code</a></li>
                 <li><a href="setup_page.html">Setup &amp; .env</a></li>
                 <li><a href="react_page.html">React Code</a></li>
+                <li><a href="dashboard_page.html">Dashboard Code</a></li>
                 <li><a href="node_page.html">Node Code</a></li>
                 <li><a href="mongodb_page.html">MongoDB Code</a></li>
                 <li><a href="postgres_page.html">Postgres Code</a></li>
                 <li><a href="security_page.html">Security Code</a></li>
                 <li><a href="migration_page.html">Switch Databases</a></li>
+                <li><a href="bugs_page.html">Common Bugs</a></li>
             </ul>
         </div>
     </nav>
 
-    <h2>What is HTML</h2>
+    <h2>On This Page</h2>
+
+    <div class="div_p">
+        <ul>
+            <li><a href="#what-is-html">What is HTML</a></li>
+            <li><a href="#document-structure">Document Structure</a></li>
+            <li><a href="#basic-text-elements">Basic Text Elements</a></li>
+            <li><a href="#block-elements-vs-inline-elements">Block Elements vs Inline elements</a></li>
+            <li><a href="#container-elements">Container Elements</a></li>
+            <li><a href="#list-elements">List Elements</a></li>
+            <li><a href="#links-navigation">Links & Navigation</a></li>
+            <li><a href="#images-media">Images & Media</a></li>
+            <li><a href="#html-entities-special-characters">HTML Entities (Special Characters)</a></li>
+            <li><a href="#external-resources">External Resources</a></li>
+            <li><a href="#html-5-structure-elements">HTML 5 Structure Elements</a></li>
+            <li><a href="#advanced-features">Advanced Features</a></li>
+            <li><a href="#tables">Tables</a></li>
+            <li><a href="#forms">Forms</a></li>
+            <li><a href="#new-html-5-elements">New HTML 5 Elements</a></li>
+        </ul>
+    </div>
+
+    <h2 id="what-is-html">What is HTML</h2>
 
     <div class="div_p">
         <p>Web pages are created using HyperText Markup Language (HTML), which is the authoring language used to create
             documents on the World Wide Web.
             HTML uses a set of special instructions called tags or markup to define the structure and layout of a Web
             document and specify how the page is displayed in a browser.
-            every element in an html always has an opening tag and a closing tag. For example:</p>
+            Most elements have an opening tag and a closing tag, with the content between them. For example:</p>
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;b&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Opening And Closing Tags&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- &lt;b&gt; is the opening tag and &lt;/b&gt; is the closing tag. The text between them is the content. --&gt;</span>
+<span>  &lt;b&gt;This text is bold&lt;/b&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <div class="div_p">
         <p>
             Not all elements consist of opening and closing tags. Some elements simply receive their content or behavior
             from attributes within a single tag.
-            for example the &lt;meta&gt; tag has self inclosing tag like &lt;br&gt; and other self enclosing enclosing
-            tags are: &lt;embed&gt;, &lt;hr&gt;, &lt;img&gt;, &lt;input&gt;, &lt;link&gt;, &lt;param&gt;,
+            For example, &lt;meta&gt; and &lt;br&gt; are self-closing tags. Other self-closing tags are: &lt;embed&gt;, &lt;hr&gt;, &lt;img&gt;, &lt;input&gt;, &lt;link&gt;, &lt;param&gt;,
             &lt;source&gt;, &lt;wbr&gt;.
         </p>
     </div>
 
-    <h2>Document Structure</h2>
+    <h2 id="document-structure">Document Structure</h2>
 
 
     <h3>DOCTYPE Declaration</h3>
     <div class="div_p">
         <p> The &lt;!DOCTYPE html&gt; is a modern declaration to tell the browser: "This document uses HTML5".
-            It ensures browsers render the page in standarded mode and it also makes sure that you have it is modern.
+            It makes browsers render the page in standards mode, which is the modern way, instead of the old quirks mode.
         </p>
     </div>
     <pre class="mycodehtml">
 <span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;!-- The line above is the DOCTYPE. It is always line 1, and it tells the browser this is an HTML5 page. --&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;DOCTYPE Declaration&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;This page starts with a DOCTYPE.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>HTML Root Element</h3>
 
     <div class="div_p">
-        <p>
         <p>The &lt;html lang="en"&gt; tag serves as the root container for the entire HTML
             document. It should be the first element (after the DOCTYPE declaration) and wraps
             all other content on the page.
@@ -83,8 +127,16 @@
 
 
     <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;!-- The root element. Everything else on the page goes inside it. lang="en" says the page is in English. --&gt;</span>
 <span>&lt;html lang="en"&gt;</span>
-<span>  &lt;All content goes here for the page&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;HTML Root Element&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;All the content for the page goes in here.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
 <span>&lt;/html&gt;</span>
     </pre>
 
@@ -101,14 +153,29 @@
 
 
     <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
 <span>&lt;head&gt;</span>
+<span>  &lt;!-- The character set. UTF-8 covers every language and symbols such as © and €. --&gt;</span>
 <span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;!-- Makes the page fit the width of a phone screen. --&gt;</span>
 <span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;!-- Who wrote the page. --&gt;</span>
 <span>  &lt;meta name="author" content="Your name"&gt;</span>
-<span>  &lt;meta name="description" content="Description of the page"</span>
+<span>  &lt;!-- The short text a search engine shows under the page title. --&gt;</span>
+<span>  &lt;meta name="description" content="Description of the page"&gt;</span>
+<span>  &lt;!-- The text on the browser tab. --&gt;</span>
 <span>  &lt;title&gt;Page Title&lt;/title&gt;</span>
 <span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;Nothing in the head shows on the page itself.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Check that every tag ends with a &gt;. One missing &gt; in the head can hide the whole page, because the browser reads everything after it as part of that tag.</p>
+  </div>
 
 
     <h3>Body Section</h3>
@@ -122,28 +189,40 @@
     </div>
 
     <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Body Section&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;!-- Everything a visitor sees goes between &lt;body&gt; and &lt;/body&gt;. --&gt;</span>
 <span>&lt;body&gt;</span>
 <span>  &lt;!-- Visible content goes here --&gt;</span>
+<span>  &lt;p&gt;This text is visible on the page.&lt;/p&gt;</span>
 <span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
-    <h2>Basic Text Elements</h2>
+    <h2 id="basic-text-elements">Basic Text Elements</h2>
 
     <h3>Paragraph</h3>
 
     <div class="div_p">
-        <p>Any document starts with a heading. You can use different sizes for your headings. HTML provides six headings
-            (h1
-            through h6) for specifying the relative importance of information. Heading element h1 is considered the most
-            significant heading and is rendered in a larger font than the other five headings. Each successive heading
-            element
-            (i.e., h2, h3, etc.) is rendered in a progressively smaller font. While displaying any heading, browser adds
-            one
-            line before and one line after that heading. </p>
+        <p>The &lt;p&gt; tag defines a paragraph of text. The browser adds space before and after each paragraph. Extra spaces and line breaks inside a paragraph are shown as one single space. </p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;p&gt;This is a paragraph of text.&lt;/p&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Paragraph&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- One paragraph. The browser adds space above and below it. --&gt;</span>
+<span>  &lt;p&gt;This is a paragraph of text.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
@@ -153,18 +232,33 @@
         <p>
             The &lt;h1&gt; through &lt;h6&gt; tags define HTML headings, with &lt;h1&gt; being the highest (most
             important) level and &lt;h6&gt; being the lowest. They create a visual and structural hierarchy for your
-            content, similar to chapters and subchapters in a book.
+            content, similar to chapters and subchapters in a book. Each heading is shown in a smaller font than the one before it, and the browser adds one line before and one line after every heading.
         </p>
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;h1&gt;Main Title&lt;/h1&gt;</span>
-<span>&lt;h2&gt;Section Title&lt;/h2&gt;</span>
-<span>&lt;h3&gt;Subsection Title&lt;/h3&gt;</span>
-<span>&lt;h4&gt;Subsection Title&lt;/h4&gt;</span>
-<span>&lt;h5&gt;Subsection Title&lt;/h5&gt;</span>
-<span>&lt;h6&gt;Subsection Title&lt;/h6&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Headings&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- Use one &lt;h1&gt; on a page, for the main title. --&gt;</span>
+<span>  &lt;h1&gt;Main Title&lt;/h1&gt;</span>
+<span>  &lt;!-- Go down one level at a time and do not skip a level. --&gt;</span>
+<span>  &lt;h2&gt;Section Title&lt;/h2&gt;</span>
+<span>  &lt;h3&gt;Subsection Title&lt;/h3&gt;</span>
+<span>  &lt;h4&gt;Subsection Title&lt;/h4&gt;</span>
+<span>  &lt;h5&gt;Subsection Title&lt;/h5&gt;</span>
+<span>  &lt;h6&gt;Subsection Title&lt;/h6&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Pick a heading by its meaning, not by its size. Screen readers and search engines use h1 to h6 as the outline of the page. Change the size with CSS instead.</p>
+  </div>
 
 
     <h3>Bold Text</h3>
@@ -177,11 +271,25 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;b&gt;This text is bold&lt;/b&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Bold Text&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- Bold for looks only. It adds no extra meaning. --&gt;</span>
+<span>  &lt;b&gt;This text is bold&lt;/b&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
     <h3>Strong Text</h3>
+    <div class="div_p">
+        <p>The &lt;strong&gt; tag marks text as important. Browsers show it in bold, the same as &lt;b&gt;, but screen
+            readers and search engines also know that it matters.</p>
+    </div>
 
     <div class="div_p">
         The &lt;strong&gt; element indicates that its contents have strong importance, seriousness, or urgency. Browsers
@@ -189,7 +297,17 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;strong&gt;This text is important!&lt;/strong&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Strong Text&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- Looks bold too, but also tells screen readers that this text is important. --&gt;</span>
+<span>  &lt;strong&gt;This text is important!&lt;/strong&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
@@ -203,7 +321,17 @@
         </p>
     </div>
     <pre class="mycodehtml">
-<span>First line&lt;br&gt;Second line</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Line Break&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- &lt;br&gt; has no closing tag. The text after it starts on a new line. --&gt;</span>
+<span>  &lt;p&gt;First line&lt;br&gt;Second line&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Italic text or Emphasis</h3>
@@ -213,18 +341,39 @@
             importance for screen readers and search engines, unlike &lt;i&gt; which is purely presentational.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;i&gt;This text is italicized&lt;/i&gt;</span>
-<span>&lt;em&gt;Emphasized text&lt;/em&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Italic And Emphasis&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- Italic for looks only. --&gt;</span>
+<span>  &lt;i&gt;This text is italicized&lt;/i&gt;</span>
+<span>  &lt;!-- Looks italic too, but also tells screen readers to stress this text. --&gt;</span>
+<span>  &lt;em&gt;Emphasized text&lt;/em&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
-    <h3>strikethrough</h3>
+    <h3>Strikethrough</h3>
 
     <div class="div_p">
         <p>The &lt;s&gt; HTML element renders text with a strikethrough line to indicate content that is no longer
             accurate or relevant.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;s&gt;This text is no longer accurated for reading or writing&lt;/s&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Strikethrough&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- Draws a line through the text. --&gt;</span>
+<span>  &lt;s&gt;This text is no longer accurate&lt;/s&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Underlined Text</h3>
@@ -235,7 +384,17 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;u&gt;This is a paragraph&lt;/u&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Underlined Text&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- Underlines the text. Visitors can mistake underlined text for a link. --&gt;</span>
+<span>  &lt;u&gt;This is a paragraph&lt;/u&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
@@ -249,9 +408,19 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;p&gt;Section one content&lt;/p&gt;</span>
-<span>&lt;hr&gt;</span>
-<span>&lt;p&gt;Section two content&lt;/p&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Horizontal Rule&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;Section one content&lt;/p&gt;</span>
+<span>  &lt;!-- Draws a line across the page. &lt;hr&gt; has no closing tag. --&gt;</span>
+<span>  &lt;hr&gt;</span>
+<span>  &lt;p&gt;Section two content&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Link with Href Attribute</h3>
@@ -262,23 +431,38 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;a href="http://www.bmcc.cuny.edu"&gt;BMCC&lt;/a&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Link With Href Attribute&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- href is the attribute name and the address in quotes is the attribute value. --&gt;</span>
+<span>  &lt;a href="https://www.bmcc.cuny.edu"&gt;BMCC&lt;/a&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
-    <h2>Block Elements vs Inline elements</h2>
+    <h2 id="block-elements-vs-inline-elements">Block Elements vs Inline elements</h2>
 
     <div class="div_p">
         <p>
-            One major concept to grasp in HTML is the difference between block elements and inline elements.<br><br>
-            Block elements are those that take up the full width available on a web page, effectively blocking out any
-            other elements from sitting next to it on the left or right.<br><br>
-            Inline elements are those who only take up as much width as is needed to display the contents of the
-            element, thereby allowing other elements to be in line with the inline element.<br><br>
-            Common block elements: Paragraphs (&lt;p&gt;), Headers (&lt;h1&gt; through &lt;h6&gt;), Divisions
-            (&lt;div&gt;), List and List Items (&lt;ol&gt;, &lt;ul&gt;, &lt;li&gt;), Forms (&lt;form&gt;)<br><br>
-            Common inline elements: Spans (&lt;span&gt;), Images (&lt;img&gt;), Anchors (&lt;a&gt;)<br><br>
-            When you're first getting into positioning and layout with HTML and CSS, it can be confusing as to why some
-            things are placed on the screen the way they are.<br><br>
+            One major concept to grasp in HTML is the difference between block elements and inline elements. When you're
+            first getting into positioning and layout with HTML and CSS, it can be confusing as to why some things are
+            placed on the screen the way they are.</p>
+        <ul>
+            <li><strong>Block elements</strong> take up the full width available on a web page, effectively blocking
+                out any other elements from sitting next to them on the left or right.</li>
+            <li><strong>Inline elements</strong> only take up as much width as is needed to display their contents,
+                so other elements can sit in line with them.</li>
+            <li><strong>Common block elements:</strong> Paragraphs (&lt;p&gt;), Headers (&lt;h1&gt; through
+                &lt;h6&gt;), Divisions (&lt;div&gt;), Lists and List Items (&lt;ol&gt;, &lt;ul&gt;, &lt;li&gt;), Forms
+                (&lt;form&gt;).</li>
+            <li><strong>Common inline elements:</strong> Spans (&lt;span&gt;), Images (&lt;img&gt;), Anchors
+                (&lt;a&gt;).</li>
+        </ul>
+        <p>
         </p>
     </div>
 
@@ -291,6 +475,7 @@
 <span>    &lt;title&gt;Block Elements&lt;/title&gt;</span>
 <span>&lt;/head&gt;</span>
 <span>&lt;body&gt;</span>
+<span>    &lt;!-- Each &lt;div&gt; is a block element, so the three land on three separate lines. --&gt;</span>
 <span>    &lt;div&gt;First&lt;/div&gt;&lt;div&gt;Second&lt;/div&gt;&lt;div&gt;Third&lt;/div&gt;</span>
 <span>&lt;/body&gt;</span>
 <span>&lt;/html&gt;</span>
@@ -305,14 +490,19 @@
 <span> &lt;title&gt;Inline Element&lt;/title&gt;</span>
 <span>&lt;/head&gt;</span>
 <span>&lt;body&gt;</span>
-<span> &lt;img src="http://placekitten.com/300/450" alt="Kitten 1"&gt;</span>
-<span> &lt;img src="http://placekitten.com/300/500" alt="Kitten 2"&gt;</span>
-<span> &lt;img src="http://placekitten.com/350/600" alt="Kitten 3"&gt;</span>
+<span> &lt;!-- &lt;img&gt; is an inline element, so the three images sit side by side on one line. --&gt;</span>
+<span> &lt;img src="https://placehold.co/300x450" alt="Placeholder 1"&gt;</span>
+<span> &lt;img src="https://placehold.co/300x500" alt="Placeholder 2"&gt;</span>
+<span> &lt;img src="https://placehold.co/350x600" alt="Placeholder 3"&gt;</span>
 <span>&lt;/body&gt;</span>
 <span>&lt;/html&gt;</span>
     </pre>
 
-    <h2>Container Elements</h2>
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> This box used to load its pictures from placekitten.com, which kept going down, so it now uses placehold.co. Any outside image site can stop working. In a real project, keep the images in your own project folder.</p>
+  </div>
+
+    <h2 id="container-elements">Container Elements</h2>
 
     <h3>Division (div)</h3>
     <div class="div_p">
@@ -322,9 +512,19 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;div class="container"&gt;</span>
-<span>  &lt;p&gt;Content inside a div&lt;/p&gt;</span>
-<span>&lt;/div&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Division&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- A box with no meaning of its own. The class name is what CSS and JavaScript use to find it. --&gt;</span>
+<span>  &lt;div class="container"&gt;</span>
+<span>    &lt;p&gt;Content inside a div&lt;/p&gt;</span>
+<span>  &lt;/div&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Span</h3>
@@ -335,7 +535,17 @@
             layout.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;p&gt;This is &lt;span class="highlight"&gt;highlighted&lt;/span&gt; text.&lt;/p&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Span&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- &lt;span&gt; wraps only the one word, and the sentence stays on one line. --&gt;</span>
+<span>  &lt;p&gt;This is &lt;span class="highlight"&gt;highlighted&lt;/span&gt; text.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Code Element</h3>
@@ -345,7 +555,17 @@
             (fixed-width) font like Courier, making it distinct from surrounding content.</p>
     </div>
     <pre class="mycodehtml">
-<span>Use &lt;code&gt;console.log()&lt;/code&gt; for debugging.</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Code Element&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- The text inside &lt;code&gt; is shown in a fixed-width font. --&gt;</span>
+<span>  &lt;p&gt;Use &lt;code&gt;console.log()&lt;/code&gt; for debugging.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Preformatted Text</h3>
@@ -355,15 +575,25 @@
             breaks are preserved, unlike regular HTML where whitespace is collapsed.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;pre&gt;</span>
-<span>  This text</span>
-<span>  keeps    its</span>
-<span>  formatting.</span>
-<span>&lt;/pre&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Preformatted Text&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- Spaces and line breaks inside &lt;pre&gt; are kept exactly as typed. --&gt;</span>
+<span>  &lt;pre&gt;</span>
+<span>    This text</span>
+<span>    keeps    its</span>
+<span>    formatting.</span>
+<span>  &lt;/pre&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
-    <h2>List Elements</h2>
+    <h2 id="list-elements">List Elements</h2>
 
     <h3>List Item</h3>
     <div class="div_p">
@@ -372,7 +602,19 @@
             the actual list content, with browsers automatically adding bullets or numbers.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;li&gt;List item content&lt;/li&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;List Item&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;ul&gt;</span>
+<span>    &lt;!-- An &lt;li&gt; always goes inside a &lt;ul&gt; or an &lt;ol&gt;. --&gt;</span>
+<span>    &lt;li&gt;List item content&lt;/li&gt;</span>
+<span>  &lt;/ul&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Unordered List</h3>
@@ -382,10 +624,20 @@
             matter semantically.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;ul&gt;</span>
-<span>  &lt;li&gt;First item&lt;/li&gt;</span>
-<span>  &lt;li&gt;Second item&lt;/li&gt;</span>
-<span>&lt;/ul&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Unordered List&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- A bulleted list. The order of the items does not matter. --&gt;</span>
+<span>  &lt;ul&gt;</span>
+<span>    &lt;li&gt;First item&lt;/li&gt;</span>
+<span>    &lt;li&gt;Second item&lt;/li&gt;</span>
+<span>  &lt;/ul&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
@@ -396,10 +648,20 @@
             step-by-step procedures.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;ol&gt;</span>
-<span>  &lt;li&gt;First step&lt;/li&gt;</span>
-<span>  &lt;li&gt;Second step&lt;/li&gt;</span>
-<span>&lt;/ol&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Ordered List&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- A numbered list. The browser adds the numbers for you. --&gt;</span>
+<span>  &lt;ol&gt;</span>
+<span>    &lt;li&gt;First step&lt;/li&gt;</span>
+<span>    &lt;li&gt;Second step&lt;/li&gt;</span>
+<span>  &lt;/ol&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Description List</h3>
@@ -409,14 +671,25 @@
             listings where terms need associated explanations.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;dl&gt;</span>
-<span>  &lt;dt&gt;HTML&lt;/dt&gt;</span>
-<span>  &lt;dd&gt;HyperText Markup Language&lt;/dd&gt;</span>
-<span>&lt;/dl&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Description List&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;dl&gt;</span>
+<span>    &lt;!-- &lt;dt&gt; is the term. --&gt;</span>
+<span>    &lt;dt&gt;HTML&lt;/dt&gt;</span>
+<span>    &lt;!-- &lt;dd&gt; is the description of that term. --&gt;</span>
+<span>    &lt;dd&gt;HyperText Markup Language&lt;/dd&gt;</span>
+<span>  &lt;/dl&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
-    <h2>Links & Navigation</h2>
+    <h2 id="links-navigation">Links & Navigation</h2>
 
     <h3>Anchor (Link)</h3>
     <div class="div_p">
@@ -425,7 +698,17 @@
             link text appears between the opening and closing tags.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;a href="page.html"&gt;Click here&lt;/a&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Anchor Link&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- page.html has to be a file in the same folder as this page. --&gt;</span>
+<span>  &lt;a href="page.html"&gt;Click here&lt;/a&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>External Link with Target</h3>
@@ -435,8 +718,22 @@
             for external references, documentation, or resources.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;a href="https://example.com" target="_blank"&gt;Visit Example&lt;/a&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;External Link With Target&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- target="_blank" opens the link in a new tab. rel="noopener noreferrer" keeps the new tab away from this page. --&gt;</span>
+<span>  &lt;a href="https://example.com" target="_blank" rel="noopener noreferrer"&gt;Visit Example&lt;/a&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Add rel="noopener noreferrer" whenever target="_blank" points at a site you do not control. It stops the new tab from reaching back into your page.</p>
+  </div>
 
     <h3>Email Link</h3>
     <div class="div_p">
@@ -445,7 +742,17 @@
             subject, body, and CC/BCC fields using URL parameters.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;a href="mailto:email@example.com"&gt;Send Email&lt;/a&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Email Link&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- mailto: opens the visitor's email app with this address filled in. --&gt;</span>
+<span>  &lt;a href="mailto:email@example.com"&gt;Send Email&lt;/a&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Internal Bookmarks</h3>
@@ -455,13 +762,26 @@
             to that location without scrolling manually.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;a href="#section1"&gt;Go to Section 1&lt;/a&gt;</span>
-<span>...</span>
-<span>&lt;h2 id="section1"&gt;Section 1&lt;/h2&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Internal Bookmarks&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- The # means: jump to the element on this page with that id. --&gt;</span>
+<span>  &lt;a href="#section1"&gt;Go to Section 1&lt;/a&gt;</span>
+<span></span>
+<span>  &lt;!-- The rest of the page goes here. --&gt;</span>
+<span></span>
+<span>  &lt;!-- The id has to match the text after the # exactly. --&gt;</span>
+<span>  &lt;h2 id="section1"&gt;Section 1&lt;/h2&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
-    <h2>Images & Media</h2>
+    <h2 id="images-media">Images & Media</h2>
 
     <h3>Image Element</h3>
     <div class="div_p">
@@ -470,8 +790,22 @@
             accessibility, screen readers, and when images cannot load.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;img src="image.jpg" alt="Description of image"&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Image Element&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- src is where the image file is. alt is read out by screen readers and shown when the image does not load. --&gt;</span>
+<span>  &lt;img src="image.jpg" alt="Description of image"&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Never leave alt out. For a picture that is only decoration, write alt="" so that screen readers skip it.</p>
+  </div>
 
     <h3>Image as Link</h3>
     <div class="div_p">
@@ -480,11 +814,21 @@
             text for accessibility since the image serves as interactive content.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;a href="page.html"&gt;&lt;img src="button.jpg" alt="Click me"&gt;&lt;/a&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Image As Link&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- The image is the clickable part, so the alt text should say where the link goes. --&gt;</span>
+<span>  &lt;a href="page.html"&gt;&lt;img src="button.jpg" alt="Click me"&gt;&lt;/a&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
-    <h2>HTML Entities (Special Characters)</h2>
+    <h2 id="html-entities-special-characters">HTML Entities (Special Characters)</h2>
 
     <h3>Non-breaking Space</h3>
     <div class="div_p">
@@ -493,7 +837,17 @@
             together on the same line, maintaining readability and preventing awkward line breaks.</p>
     </div>
     <pre class="mycodehtml">
-<span>Price: $10&nbsp;USD</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Non-breaking Space&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- &amp;nbsp; is a space that never breaks, so $10 and USD always stay on the same line. --&gt;</span>
+<span>  &lt;p&gt;Price: $10&amp;nbsp;USD&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Less Than & Greater Than</h3>
@@ -503,8 +857,22 @@
             (&gt;) when displaying code examples or mathematical expressions.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt; for &lt; and &gt; for &gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Less Than And Greater Than&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- &amp;lt; shows &lt; and &amp;gt; shows &gt;. Typed as plain &lt; and &gt;, the browser would read them as a tag. --&gt;</span>
+<span>  &lt;p&gt;5 &amp;lt; 10 and 10 &amp;gt; 5&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> A plain &lt; in your text can break the page, because the browser thinks a tag is starting. Write &amp;lt; and &amp;amp; in the HTML file when you want the symbols themselves to show.</p>
+  </div>
 
     <h3>Ampersand</h3>
     <div class="div_p">
@@ -513,7 +881,17 @@
             show a literal ampersand character in your content.</p>
     </div>
     <pre class="mycodehtml">
-<span>Company &amp; Co.</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Ampersand&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- &amp;amp; shows a plain &amp; on the page. --&gt;</span>
+<span>  &lt;p&gt;Company &amp;amp; Co.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Copyright & Trademark</h3>
@@ -523,7 +901,17 @@
             proper legal symbols appear consistently across all browsers and devices.</p>
     </div>
     <pre class="mycodehtml">
-<span>&copy; 2024 &amp; &reg; BrandName</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Copyright And Trademark&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- &amp;copy; shows © and &amp;reg; shows ®. --&gt;</span>
+<span>  &lt;p&gt;&amp;copy; 2024 &amp;amp; &amp;reg; BrandName&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Currency Symbols</h3>
@@ -534,11 +922,21 @@
         </p>
     </div>
     <pre class="mycodehtml">
-<span>Price: &dollar;100 &amp; &euro;90 &amp; &pound;80</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Currency Symbols&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- &amp;dollar; shows $, &amp;euro; shows € and &amp;pound; shows £. --&gt;</span>
+<span>  &lt;p&gt;Price: &amp;dollar;100 &amp;amp; &amp;euro;90 &amp;amp; &amp;pound;80&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
-    <h2>External Resources</h2>
+    <h2 id="external-resources">External Resources</h2>
 
     <h3>Linking CSS</h3>
         <div class="div_p">
@@ -547,7 +945,18 @@
             allowing you to separate styling from HTML structure for cleaner, more maintainable code.</p>
         </div>
     <pre class="mycodehtml">
-<span>&lt;link rel="stylesheet" href="styles.css"&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Linking CSS&lt;/title&gt;</span>
+<span>  &lt;!-- Goes in the head. styles.css has to be a file in the same folder as this page. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="styles.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;This page is styled by styles.css.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Linking Bootstrap</h3>
@@ -557,7 +966,21 @@
             Bootstrap's grid system, components, and utilities while ensuring faster loading times.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;link rel="stylesheet" href="bootstrap.min.css"&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Linking Bootstrap&lt;/title&gt;</span>
+<span>  &lt;!-- Bootstrap goes first. bootstrap.min.css has to be a file in the same folder as this page. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="bootstrap.min.css"&gt;</span>
+<span>  &lt;!-- Your own CSS goes after Bootstrap, so that your rules win. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="styles.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- btn and btn-primary are Bootstrap classes. --&gt;</span>
+<span>  &lt;button class="btn btn-primary"&gt;A Bootstrap button&lt;/button&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Script</h3>
@@ -568,73 +991,113 @@
                 tag for better page loading performance.</p>
             </div>
     <pre class="mycodehtml">
-<span>&lt;script src="yourscriptfile.js"&gt;&lt;/script&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Script&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p id="message"&gt;The script can change this text.&lt;/p&gt;</span>
+<span></span>
+<span>  &lt;!-- Goes last in the body, so the elements above already exist when the script runs. --&gt;</span>
+<span>  &lt;script src="yourscriptfile.js"&gt;&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
-    <h2>HTML 5 Structure elements</h2>
+    <h2 id="html-5-structure-elements">HTML 5 Structure Elements</h2>
 
     <div class="div_p">
         <p>
             Semantic HTML elements provide meaningful structure to web documents, helping both browsers and developers
-            understand content organization. The &lt;section&gt; element serves as a generic container for thematic
-            groupings of content, often used with heading tags (&lt;h1&gt;-&lt;h6&gt;) to define document hierarchy.
-            Within sections, &lt;article&gt; encapsulates self-contained, independently distributable content like blog
-            posts or news stories. The &lt;aside&gt; element houses supplementary material that's tangentially related
-            to the main content, such as sidebars or pull quotes. Each section typically features a &lt;header&gt; at
-            its beginning for introductory content and navigation, with &lt;nav&gt; specifically designating navigation
-            link collections. For multimedia content, &lt;figure&gt; pairs embedded media like images or videos with
-            captions using &lt;figcaption&gt;. Conversations and dialog interfaces can be marked up using the
-            &lt;dialog&gt; element. Finally, &lt;footer&gt; elements conclude sections with metadata like author
-            information, copyright notices, or related links. Together, these semantic tags create a clearly defined,
+            understand content organization. </p>
+        <ul>
+            <li><strong>&lt;section&gt;</strong> is a generic container for thematic groupings of content, often used
+                with heading tags (&lt;h1&gt;-&lt;h6&gt;) to define document hierarchy.</li>
+            <li><strong>&lt;article&gt;</strong> holds self-contained content that could stand on its own, like a blog
+                post or a news story.</li>
+            <li><strong>&lt;aside&gt;</strong> holds supplementary material that is loosely related to the main
+                content, such as a sidebar or a pull quote.</li>
+            <li><strong>&lt;header&gt;</strong> goes at the beginning of a section for introductory content and
+                navigation.</li>
+            <li><strong>&lt;nav&gt;</strong> marks a collection of navigation links.</li>
+            <li><strong>&lt;figure&gt;</strong> pairs media like an image or a video with a caption in
+                &lt;figcaption&gt;.</li>
+            <li><strong>&lt;dialog&gt;</strong> marks up a dialog box or a pop-up window.</li>
+            <li><strong>&lt;footer&gt;</strong> ends a section with metadata like author information, copyright
+                notices, or related links.</li>
+        </ul>
+        <p>Together, these semantic tags create a clearly defined,
             accessible document structure that improves SEO, screen reader compatibility, and code maintainability
             compared to generic &lt;div&gt; containers.
         </p>
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;section class="main-content"&gt;</span>
-<span>  &lt;header&gt;</span>
-<span>    &lt;h1&gt;My Awesome Blog&lt;/h1&gt;</span>
-<span>    &lt;nav&gt;</span>
-<span>      &lt;a href="#home"&gt;Home&lt;/a&gt;</span>
-<span>      &lt;a href="#about"&gt;About&lt;/a&gt;</span>
-<span>      &lt;a href="#contact"&gt;Contact&lt;/a&gt;</span>
-<span>    &lt;/nav&gt;</span>
-<span>  &lt;/header&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;HTML 5 Structure Elements&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- A section groups content that belongs together. --&gt;</span>
+<span>  &lt;section class="main-content"&gt;</span>
+<span>    &lt;!-- The header holds the title and the navigation. --&gt;</span>
+<span>    &lt;header&gt;</span>
+<span>      &lt;h1&gt;My Awesome Blog&lt;/h1&gt;</span>
+<span>      &lt;!-- nav wraps the main links. --&gt;</span>
+<span>      &lt;nav&gt;</span>
+<span>        &lt;a href="#home"&gt;Home&lt;/a&gt;</span>
+<span>        &lt;a href="#about"&gt;About&lt;/a&gt;</span>
+<span>        &lt;a href="#contact"&gt;Contact&lt;/a&gt;</span>
+<span>      &lt;/nav&gt;</span>
+<span>    &lt;/header&gt;</span>
 <span></span>
-<span>  &lt;article&gt;</span>
-<span>    &lt;h2&gt;Understanding Semantic HTML&lt;/h2&gt;</span>
-<span>    &lt;p&gt;Semantic elements clearly describe their meaning...&lt;/p&gt;</span>
-<span>    </span>
-<span>    &lt;figure&gt;</span>
-<span>      &lt;img src="semantic-html.png" alt="Semantic HTML structure"&gt;</span>
-<span>      &lt;figcaption&gt;Figure 1: HTML5 Semantic Layout&lt;/figcaption&gt;</span>
-<span>    &lt;/figure&gt;</span>
-<span>    </span>
-<span>    &lt;aside&gt;</span>
-<span>      &lt;h3&gt;Did You Know?&lt;/h3&gt;</span>
-<span>      &lt;p&gt;HTML5 was published in 2014!&lt;/p&gt;</span>
-<span>    &lt;/aside&gt;</span>
-<span>    </span>
-<span>    &lt;dialog id="commentDialog"&gt;</span>
-<span>      &lt;form method="dialog"&gt;</span>
-<span>        &lt;p&gt;Add your comment below:&lt;/p&gt;</span>
-<span>        &lt;textarea&gt;&lt;/textarea&gt;</span>
-<span>        &lt;button&gt;Submit&lt;/button&gt;</span>
-<span>      &lt;/form&gt;</span>
-<span>    &lt;/dialog&gt;</span>
-<span>  &lt;/article&gt;</span>
+<span>    &lt;!-- An article is content that still makes sense on its own, such as one blog post. --&gt;</span>
+<span>    &lt;article&gt;</span>
+<span>      &lt;h2&gt;Understanding Semantic HTML&lt;/h2&gt;</span>
+<span>      &lt;p&gt;Semantic elements clearly describe their meaning...&lt;/p&gt;</span>
+<span>      </span>
+<span>      &lt;!-- A figure ties an image to its caption. --&gt;</span>
+<span>      &lt;figure&gt;</span>
+<span>        &lt;img src="semantic-html.png" alt="Semantic HTML structure"&gt;</span>
+<span>        &lt;figcaption&gt;Figure 1: HTML5 Semantic Layout&lt;/figcaption&gt;</span>
+<span>      &lt;/figure&gt;</span>
+<span>      </span>
+<span>      &lt;!-- An aside is extra content next to the main content. --&gt;</span>
+<span>      &lt;aside&gt;</span>
+<span>        &lt;h3&gt;Did You Know?&lt;/h3&gt;</span>
+<span>        &lt;p&gt;HTML5 was published in 2014!&lt;/p&gt;</span>
+<span>      &lt;/aside&gt;</span>
+<span>      </span>
+<span>      &lt;!-- A dialog stays hidden until showModal() opens it. --&gt;</span>
+<span>      &lt;button onclick="document.getElementById('commentDialog').showModal()"&gt;Add a comment&lt;/button&gt;</span>
 <span></span>
-<span>  &lt;footer&gt;</span>
-<span>    &lt;p&gt;© 2023 My Awesome Blog. All rights reserved.&lt;/p&gt;</span>
-<span>    &lt;p&gt;Author: Jane Smith&lt;/p&gt;</span>
-<span>  &lt;/footer&gt;</span>
-<span>&lt;/section&gt;</span>
+<span>      &lt;dialog id="commentDialog"&gt;</span>
+<span>        &lt;!-- method="dialog" means a button in this form closes the dialog. --&gt;</span>
+<span>        &lt;form method="dialog"&gt;</span>
+<span>          &lt;p&gt;Add your comment below:&lt;/p&gt;</span>
+<span>          &lt;textarea&gt;&lt;/textarea&gt;</span>
+<span>          &lt;button&gt;Submit&lt;/button&gt;</span>
+<span>        &lt;/form&gt;</span>
+<span>      &lt;/dialog&gt;</span>
+<span>    &lt;/article&gt;</span>
+<span></span>
+<span>    &lt;!-- The footer ends the section. --&gt;</span>
+<span>    &lt;footer&gt;</span>
+<span>      &lt;p&gt;&amp;copy; 2023 My Awesome Blog. All rights reserved.&lt;/p&gt;</span>
+<span>      &lt;p&gt;Author: Jane Smith&lt;/p&gt;</span>
+<span>    &lt;/footer&gt;</span>
+<span>  &lt;/section&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
-    <h2>Advanced Features</h2>
+    <h2 id="advanced-features">Advanced Features</h2>
 
     <h3>Nested Lists</h3>
     <div class="div_p">
@@ -644,14 +1107,24 @@
         </p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;ul&gt;</span>
-<span>  &lt;li&gt;Category</span>
-<span>    &lt;ul&gt;</span>
-<span>      &lt;li&gt;Sub-item 1&lt;/li&gt;</span>
-<span>      &lt;li&gt;Sub-item 2&lt;/li&gt;</span>
-<span>    &lt;/ul&gt;</span>
-<span>  &lt;/li&gt;</span>
-<span>&lt;/ul&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Nested Lists&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;ul&gt;</span>
+<span>    &lt;li&gt;Category</span>
+<span>      &lt;!-- The inner list goes inside the &lt;li&gt;, before its closing &lt;/li&gt;. --&gt;</span>
+<span>      &lt;ul&gt;</span>
+<span>        &lt;li&gt;Sub-item 1&lt;/li&gt;</span>
+<span>        &lt;li&gt;Sub-item 2&lt;/li&gt;</span>
+<span>      &lt;/ul&gt;</span>
+<span>    &lt;/li&gt;</span>
+<span>  &lt;/ul&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>List Types</h3>
@@ -661,12 +1134,38 @@
             square bullets (though CSS list-style-type is now preferred for styling flexibility).</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;ol type="A"&gt; &lt;A, B, C&gt;</span>
-<span>&lt;ol type="I"&gt; &lt;I, II, III&gt;</span>
-<span>&lt;ul type="square"&gt; &lt;square bullets&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;List Types&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- Shows A, B, C. --&gt;</span>
+<span>  &lt;ol type="A"&gt;</span>
+<span>    &lt;li&gt;First&lt;/li&gt;</span>
+<span>    &lt;li&gt;Second&lt;/li&gt;</span>
+<span>    &lt;li&gt;Third&lt;/li&gt;</span>
+<span>  &lt;/ol&gt;</span>
+<span></span>
+<span>  &lt;!-- Shows I, II, III. --&gt;</span>
+<span>  &lt;ol type="I"&gt;</span>
+<span>    &lt;li&gt;First&lt;/li&gt;</span>
+<span>    &lt;li&gt;Second&lt;/li&gt;</span>
+<span>    &lt;li&gt;Third&lt;/li&gt;</span>
+<span>  &lt;/ol&gt;</span>
+<span></span>
+<span>  &lt;!-- Shows square bullets. --&gt;</span>
+<span>  &lt;ul type="square"&gt;</span>
+<span>    &lt;li&gt;First&lt;/li&gt;</span>
+<span>    &lt;li&gt;Second&lt;/li&gt;</span>
+<span>    &lt;li&gt;Third&lt;/li&gt;</span>
+<span>  &lt;/ul&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
-    <h2>Tables</h2>
+    <h2 id="tables">Tables</h2>
 
     <h3>Regular tables</h3>
 
@@ -677,22 +1176,34 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;table&gt;</span>
-<span>  &lt;tr&gt;</span>
-<span>      &lt;td&gt;1&lt;/td&gt;</span> 
-<span>      &lt;td&gt;2&lt;/td&gt;</span> 
-<span>      &lt;td&gt;3&lt;/td&gt;</span> 
-<span>      &lt;td&gt;4&lt;/td&gt;</span> 
-<span>      &lt;td&gt;5&lt;/td&gt;</span> 
-<span>      &lt;/tr&gt;</span> 
-<span>  &lt;tr&gt;</span> 
-<span>      &lt;td&gt;6&lt;/td&gt;</span> 
-<span>      &lt;td&gt;7&lt;/td&gt;</span> 
-<span>      &lt;td&gt;8&lt;/td&gt;</span> 
-<span>      &lt;td&gt;9&lt;/td&gt;</span> 
-<span>      &lt;td&gt;10&lt;/td&gt;</span> 
-<span>  &lt;/tr&gt;</span> 
-<span>&lt;/table&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Regular Table&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- With no border the table has no lines. Only the layout shows. --&gt;</span>
+<span>  &lt;table&gt;</span>
+<span>    &lt;!-- Each &lt;tr&gt; is one row. --&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>      &lt;!-- Each &lt;td&gt; is one cell in that row. --&gt;</span>
+<span>      &lt;td&gt;1&lt;/td&gt;</span>
+<span>      &lt;td&gt;2&lt;/td&gt;</span>
+<span>      &lt;td&gt;3&lt;/td&gt;</span>
+<span>      &lt;td&gt;4&lt;/td&gt;</span>
+<span>      &lt;td&gt;5&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>      &lt;td&gt;6&lt;/td&gt;</span>
+<span>      &lt;td&gt;7&lt;/td&gt;</span>
+<span>      &lt;td&gt;8&lt;/td&gt;</span>
+<span>      &lt;td&gt;9&lt;/td&gt;</span>
+<span>      &lt;td&gt;10&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>  &lt;/table&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
@@ -705,22 +1216,32 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;table border="1"&gt;</span>
-<span>  &lt;tr&gt;</span>
-<span>      &lt;td&gt;1&lt;/td&gt;</span> 
-<span>      &lt;td&gt;2&lt;/td&gt;</span> 
-<span>      &lt;td&gt;3&lt;/td&gt;</span> 
-<span>      &lt;td&gt;4&lt;/td&gt;</span> 
-<span>      &lt;td&gt;5&lt;/td&gt;</span> 
-<span>  &lt;/tr&gt;</span> 
-<span>  &lt;tr&gt;</span> 
-<span>      &lt;td&gt;6&lt;/td&gt;</span> 
-<span>      &lt;td&gt;7&lt;/td&gt;</span> 
-<span>      &lt;td&gt;8&lt;/td&gt;</span> 
-<span>      &lt;td&gt;9&lt;/td&gt;</span> 
-<span>      &lt;td&gt;10&lt;/td&gt;</span> 
-<span>  &lt;/tr&gt;</span> 
-<span>&lt;/table&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Table With Borders&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- border="1" draws a line around the table and around every cell. --&gt;</span>
+<span>  &lt;table border="1"&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>      &lt;td&gt;1&lt;/td&gt;</span>
+<span>      &lt;td&gt;2&lt;/td&gt;</span>
+<span>      &lt;td&gt;3&lt;/td&gt;</span>
+<span>      &lt;td&gt;4&lt;/td&gt;</span>
+<span>      &lt;td&gt;5&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>      &lt;td&gt;6&lt;/td&gt;</span>
+<span>      &lt;td&gt;7&lt;/td&gt;</span>
+<span>      &lt;td&gt;8&lt;/td&gt;</span>
+<span>      &lt;td&gt;9&lt;/td&gt;</span>
+<span>      &lt;td&gt;10&lt;/td&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>  &lt;/table&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Table with caption</h3>
@@ -730,23 +1251,33 @@
             inline elements, including &lt;strong&gt; for emphasis, to clearly identify the table's content.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;table border="1"&gt;</span>
-<span>  &lt;caption&gt;&lt;strong&gt;This is a caption with a strong font&lt;/strong&gt;&lt;/caption&gt;</span>
-<span>  &lt;tr&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Table With Caption&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;table border="1"&gt;</span>
+<span>    &lt;!-- The caption goes right after &lt;table&gt;. It is the title of the table. --&gt;</span>
+<span>    &lt;caption&gt;&lt;strong&gt;This is a caption with a strong font&lt;/strong&gt;&lt;/caption&gt;</span>
+<span>    &lt;tr&gt;</span>
 <span>      &lt;td&gt;1&lt;/td&gt;</span>
 <span>      &lt;td&gt;2&lt;/td&gt;</span>
 <span>      &lt;td&gt;3&lt;/td&gt;</span>
 <span>      &lt;td&gt;4&lt;/td&gt;</span>
 <span>      &lt;td&gt;5&lt;/td&gt;</span>
-<span>  &lt;/tr&gt;</span>
-<span>  &lt;tr&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
 <span>      &lt;td&gt;6&lt;/td&gt;</span>
 <span>      &lt;td&gt;7&lt;/td&gt;</span>
 <span>      &lt;td&gt;8&lt;/td&gt;</span>
 <span>      &lt;td&gt;9&lt;/td&gt;</span>
 <span>      &lt;td&gt;10&lt;/td&gt;</span>
-<span>  &lt;/tr&gt;</span>
-<span>&lt;/table&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>  &lt;/table&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
@@ -758,23 +1289,33 @@
             instead for more flexible spacing control.</p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;table cellpadding="15" border="1"&gt;</span>
-<span>  &lt;caption&gt;&lt;strong&gt;This is a caption with a strong font&lt;/strong&gt;&lt;/caption&gt;</span>
-<span>  &lt;tr&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Table With Cellpadding&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- cellpadding is the space inside each cell, between the text and the border. --&gt;</span>
+<span>  &lt;table cellpadding="15" border="1"&gt;</span>
+<span>    &lt;caption&gt;&lt;strong&gt;This is a caption with a strong font&lt;/strong&gt;&lt;/caption&gt;</span>
+<span>    &lt;tr&gt;</span>
 <span>      &lt;td&gt;1&lt;/td&gt;</span>
 <span>      &lt;td&gt;2&lt;/td&gt;</span>
 <span>      &lt;td&gt;3&lt;/td&gt;</span>
 <span>      &lt;td&gt;4&lt;/td&gt;</span>
 <span>      &lt;td&gt;5&lt;/td&gt;</span>
-<span>  &lt;/tr&gt;</span>
-<span>  &lt;tr&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
 <span>      &lt;td&gt;6&lt;/td&gt;</span>
 <span>      &lt;td&gt;7&lt;/td&gt;</span>
 <span>      &lt;td&gt;8&lt;/td&gt;</span>
 <span>      &lt;td&gt;9&lt;/td&gt;</span>
 <span>      &lt;td&gt;10&lt;/td&gt;</span>
-<span>  &lt;/tr&gt;</span>
-<span>&lt;/table&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>  &lt;/table&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Table with cellspacing</h3>
@@ -787,23 +1328,33 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;table cellspacing="15" border="1"&gt;</span>
-<span>  &lt;caption&gt;&lt;strong&gt;This is a caption with a strong font&lt;/strong&gt;&lt;/caption&gt;</span>
-<span>  &lt;tr&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Table With Cellspacing&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- cellspacing is the space between one cell and the next. --&gt;</span>
+<span>  &lt;table cellspacing="15" border="1"&gt;</span>
+<span>    &lt;caption&gt;&lt;strong&gt;This is a caption with a strong font&lt;/strong&gt;&lt;/caption&gt;</span>
+<span>    &lt;tr&gt;</span>
 <span>      &lt;td&gt;1&lt;/td&gt;</span>
 <span>      &lt;td&gt;2&lt;/td&gt;</span>
 <span>      &lt;td&gt;3&lt;/td&gt;</span>
 <span>      &lt;td&gt;4&lt;/td&gt;</span>
 <span>      &lt;td&gt;5&lt;/td&gt;</span>
-<span>      &lt;/tr&gt;</span>
-<span>  &lt;tr&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
 <span>      &lt;td&gt;6&lt;/td&gt;</span>
 <span>      &lt;td&gt;7&lt;/td&gt;</span>
 <span>      &lt;td&gt;8&lt;/td&gt;</span>
 <span>      &lt;td&gt;9&lt;/td&gt;</span>
 <span>      &lt;td&gt;10&lt;/td&gt;</span>
-<span>  &lt;/tr&gt;</span>
-<span>&lt;/table&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>  &lt;/table&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
@@ -816,24 +1367,38 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;table cellspacing="15" border="1" width="60%"&gt;</span>
-<span>  &lt;caption&gt;&lt;strong&gt;This is a caption with a strong font&lt;/strong&gt;&lt;/caption&gt;</span>
-<span>  &lt;tr&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Table With Width&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- width="60%" makes the table 60% as wide as the page. --&gt;</span>
+<span>  &lt;table cellspacing="15" border="1" width="60%"&gt;</span>
+<span>    &lt;caption&gt;&lt;strong&gt;This is a caption with a strong font&lt;/strong&gt;&lt;/caption&gt;</span>
+<span>    &lt;tr&gt;</span>
 <span>      &lt;td&gt;1&lt;/td&gt;</span>
 <span>      &lt;td&gt;2&lt;/td&gt;</span>
 <span>      &lt;td&gt;3&lt;/td&gt;</span>
 <span>      &lt;td&gt;4&lt;/td&gt;</span>
 <span>      &lt;td&gt;5&lt;/td&gt;</span>
-<span>  &lt;/tr&gt;</span>
-<span>  &lt;tr&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
 <span>      &lt;td&gt;6&lt;/td&gt;</span>
 <span>      &lt;td&gt;7&lt;/td&gt;</span>
 <span>      &lt;td&gt;8&lt;/td&gt;</span>
 <span>      &lt;td&gt;9&lt;/td&gt;</span>
 <span>      &lt;td&gt;10&lt;/td&gt;</span>
-<span>  &lt;/tr&gt;</span>
-<span>&lt;/table&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>  &lt;/table&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> border, cellpadding, cellspacing and width still work, but they are deprecated. In a real project set them in CSS with border, padding, border-spacing and width.</p>
+  </div>
 
 
     <h3>Table with Images</h3>
@@ -845,23 +1410,33 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;table cellspacing="15" border="1" width="60%"&gt;</span>
-<span>  &lt;caption&gt;&lt;strong&gt;This is a caption with a strong font&lt;/strong&gt;&lt;/caption&gt;</span>
-<span>  &lt;tr&gt;</span>
-<span>      &lt;td&gt;&lt;img src="../Images/giraffe.jpeg" width="107" height="148" alt="3 giraffes" /&gt;&lt;/td&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Table With Images&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;table cellspacing="15" border="1" width="60%"&gt;</span>
+<span>    &lt;caption&gt;&lt;strong&gt;This is a caption with a strong font&lt;/strong&gt;&lt;/caption&gt;</span>
+<span>    &lt;tr&gt;</span>
+<span>      &lt;!-- An image goes inside a cell like any other content. The file has to exist at this path. --&gt;</span>
+<span>      &lt;td&gt;&lt;img src="../Images/giraffe.jpeg" width="107" height="148" alt="3 giraffes"&gt;&lt;/td&gt;</span>
 <span>      &lt;td&gt;2&lt;/td&gt;</span>
 <span>      &lt;td&gt;3&lt;/td&gt;</span>
 <span>      &lt;td&gt;4&lt;/td&gt;</span>
 <span>      &lt;td&gt;5&lt;/td&gt;</span>
-<span>  &lt;/tr&gt;</span>
-<span>  &lt;tr&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>    &lt;tr&gt;</span>
 <span>      &lt;td&gt;6&lt;/td&gt;</span>
 <span>      &lt;td&gt;7&lt;/td&gt;</span>
 <span>      &lt;td&gt;8&lt;/td&gt;</span>
 <span>      &lt;td&gt;9&lt;/td&gt;</span>
 <span>      &lt;td&gt;10&lt;/td&gt;</span>
-<span> &lt;/tr&gt;</span>
-<span>&lt;/table&gt;</span>
+<span>    &lt;/tr&gt;</span>
+<span>  &lt;/table&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
@@ -875,40 +1450,54 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;table cellpadding="10" width="500" border="1"&gt;</span>
-<span>    &lt;caption align="bottom"&gt;&lt;strong&gt; Table 2-4:&lt;/strong&gt;&lt;br /&gt;Demonstrating the use of colspan</span>
-<span>    and rowspan attributes &lt;/caption&gt;</span>
-<span>    &lt;tr&gt;</span>
-<span>        &lt;td colspan="3"&gt;1 colspan="3"&lt;/td&gt;</span>
-<span>        &lt;td&gt;4&lt;/td&gt;</span>
-<span>        &lt;td&gt;5&lt;/td&gt;</span>
-<span>    &lt;/tr&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Rowspan And Colspan&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;table cellpadding="10" width="500" border="1"&gt;</span>
+<span>      &lt;!-- align="bottom" puts the caption under the table. --&gt;</span>
+<span>      &lt;caption align="bottom"&gt;&lt;strong&gt; Table 2-4:&lt;/strong&gt;&lt;br /&gt;Demonstrating the use of colspan</span>
+<span>      and rowspan attributes &lt;/caption&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>          &lt;!-- colspan="3" makes this cell three columns wide. --&gt;</span>
+<span>          &lt;td colspan="3"&gt;1 colspan="3"&lt;/td&gt;</span>
+<span>          &lt;td&gt;4&lt;/td&gt;</span>
+<span>          &lt;td&gt;5&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
 <span></span>
-<span>    &lt;tr&gt;</span>
-<span>        &lt;td rowspan="4"&gt;6 &lt;br&gt;rowspan="4"&lt;/td&gt;</span>
-<span>        &lt;td&gt;7&lt;/td&gt;</span>
-<span>        &lt;td&gt;8&lt;/td&gt;</span>
-<span>        &lt;td colspan="2" rowspan="3"&gt;9 &lt;br&gt;colspan=2 and rowspan="3" together&lt;br&gt;</span>
-<span>        merge cells in 2 directions.&lt;/td&gt;</span>
-<span>    &lt;/tr&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>          &lt;!-- rowspan="4" makes this cell four rows tall. --&gt;</span>
+<span>          &lt;td rowspan="4"&gt;6 &lt;br&gt;rowspan="4"&lt;/td&gt;</span>
+<span>          &lt;td&gt;7&lt;/td&gt;</span>
+<span>          &lt;td&gt;8&lt;/td&gt;</span>
+<span>          &lt;!-- Both together make the cell two columns wide and three rows tall. --&gt;</span>
+<span>          &lt;td colspan="2" rowspan="3"&gt;9 &lt;br&gt;colspan=2 and rowspan="3" together&lt;br&gt;</span>
+<span>          merge cells in 2 directions.&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
 <span></span>
-<span>    &lt;tr&gt;</span>
-<span>        &lt;td&gt;12&lt;/td&gt;</span>
-<span>        &lt;td&gt;13&lt;/td&gt;</span>
-<span>    &lt;/tr&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>          &lt;!-- This row only needs two cells. The other spaces are taken by cells 6 and 9. --&gt;</span>
+<span>          &lt;td&gt;12&lt;/td&gt;</span>
+<span>          &lt;td&gt;13&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
 <span></span>
-<span>    &lt;tr&gt;</span>
-<span>        &lt;td&gt;17&lt;/td&gt;</span>
-<span>        &lt;td&gt;18&lt;/td&gt;</span>
-<span>    &lt;/tr&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>          &lt;td&gt;17&lt;/td&gt;</span>
+<span>          &lt;td&gt;18&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
 <span></span>
-<span>    &lt;tr&gt;</span>
-<span>        &lt;td&gt;22&lt;/td&gt;</span>
-<span>        &lt;td&gt;23&lt;/td&gt;</span>
-<span>        &lt;td&gt;24&lt;/td&gt;</span>
-<span>        &lt;td&gt;25&lt;/td&gt;</span>
-<span>    &lt;/tr&gt;</span>
-<span>&lt;/table&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>          &lt;td&gt;22&lt;/td&gt;</span>
+<span>          &lt;td&gt;23&lt;/td&gt;</span>
+<span>          &lt;td&gt;24&lt;/td&gt;</span>
+<span>          &lt;td&gt;25&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
+<span>  &lt;/table&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Complex Table</h3>
@@ -921,49 +1510,70 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;table&gt;</span>
-<span>    &lt;caption&gt;A complex table&lt;/caption&gt;</span>
-<span>    &lt;tr&gt;</span>
-<span>        &lt;th colspan="3"&gt; Invoice #ABC123XYZ99 &lt;/th&gt;</span>
-<span>        &lt;th colspan="2"&gt; September 17, 2017&lt;/th&gt;</span>
-<span>    &lt;/tr&gt;</span>
-<span>    &lt;tr&gt;</span>
-<span>        &lt;td colspan="2"&gt; &lt;strong&gt;Pay to:&lt;/strong&gt; &lt;br&gt;</span>
-<span>        Acme billing Co. &lt;br&gt;199 Chambers St. &lt;br&gt; Brookyln, NY 12345&lt;/td&gt;</span>
-<span>        &lt;td colspan="2"&gt;&lt;strong&gt;Customer:&lt;/strong&gt;&lt;br&gt; Anna Reksik&lt;br&gt;321 willow Way&lt;br&gt;Somewhere, MA5431&lt;/td&gt;</span>
-<span>    &lt;/tr&gt;</span>
-<span>    &lt;tr&gt;</span>
-<span>        &lt;td class="highlight_blue" style="width: 150px;"&gt;Name / Description&lt;/td&gt;</span>
-<span>        &lt;td class="highlight_blue" style="width: 30px;"&gt;Qty.&lt;/td&gt;</span>
-<span>        &lt;td class="highlight_blue" style="width:100px"&gt;Unit Price&lt;/td&gt;</span>
-<span>        &lt;td class="highlight_blue" style="width:200px"&gt;Cost&lt;/td&gt;</span>
-<span>    &lt;/tr&gt;</span>
-<span>    &lt;tr&gt;</span>
-<span>        &lt;td class="name"&gt;Paperclips&lt;/td&gt;</span>
-<span>        &lt;td class="qty"&gt;1000&lt;/td&gt;</span>
-<span>        &lt;td class="unit_price"&gt;0.01&lt;/td&gt;</span>
-<span>        &lt;td class="cost"&gt;10.00&lt;/td&gt;</span>
-<span>    &lt;/tr&gt;</span>
-<span>    &lt;tr&gt;</span>
-<span>        &lt;td class="name"&gt;Staples (box)&lt;/td&gt;</span>
-<span>        &lt;td class="qty"&gt;100&lt;/td&gt;</span>
-<span>        &lt;td class="unit_price"&gt;1.00&lt;/td&gt;</span>
-<span>        &lt;td class="cost"&gt;100.00&lt;/td&gt;</span>
-<span>    &lt;/tr&gt;</span>
-<span>    &lt;tr&gt;</span>
-<span>        &lt;td colspan="3" class="highlight_blue" style="width: 300px"&gt;Subtotal&lt;/td&gt;</span>
-<span>        &lt;td class="cost"&gt;110.00&lt;/td&gt;</span>
-<span>    &lt;/tr&gt;</span>
-<span>    &lt;tr&gt;</span>
-<span>        &lt;td colspan="2" class="highlight_blue" style="width: 200px"&gt;Tax&lt;/td&gt;</span>
-<span>        &lt;td class="unit_price"&gt;8%&lt;/td&gt;</span>
-<span>        &lt;td class="cost"&gt;8.80&lt;/td&gt;</span>
-<span>    &lt;/tr&gt;</span>
-<span>    &lt;tr&gt;</span>
-<span>        &lt;td colspan="3" class="highlight_blue"&gt;Grand Total&lt;/td&gt;</span>
-<span>        &lt;td class="cost"&gt; $ 118.80&lt;/td&gt;</span>
-<span>    &lt;/tr&gt;</span>
-<span>&lt;/table&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Complex Table&lt;/title&gt;</span>
+<span>  &lt;style&gt;</span>
+<span>    /* One line between cells instead of two. */</span>
+<span>    table { border-collapse: collapse; }</span>
+<span>    th, td { border: 1px solid #333; padding: 6px; }</span>
+<span>    /* The classes used on the cells below. */</span>
+<span>    .highlight_blue { background-color: lightblue; }</span>
+<span>    .qty, .unit_price, .cost { text-align: right; }</span>
+<span>  &lt;/style&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;table&gt;</span>
+<span>      &lt;caption&gt;A complex table&lt;/caption&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>          &lt;!-- &lt;th&gt; is a header cell. Browsers show it bold and centered. --&gt;</span>
+<span>          &lt;th colspan="3"&gt; Invoice #ABC123XYZ99 &lt;/th&gt;</span>
+<span>          &lt;th colspan="2"&gt; September 17, 2017&lt;/th&gt;</span>
+<span>      &lt;/tr&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>          &lt;td colspan="2"&gt; &lt;strong&gt;Pay to:&lt;/strong&gt; &lt;br&gt;</span>
+<span>          Acme billing Co. &lt;br&gt;199 Chambers St. &lt;br&gt; Brooklyn, NY 12345&lt;/td&gt;</span>
+<span>          &lt;td colspan="2"&gt;&lt;strong&gt;Customer:&lt;/strong&gt;&lt;br&gt; Anna Reksik&lt;br&gt;321 Willow Way&lt;br&gt;Somewhere, MA 05431&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>          &lt;!-- style="width: ..." sets how wide the column is. --&gt;</span>
+<span>          &lt;td class="highlight_blue" style="width: 150px;"&gt;Name / Description&lt;/td&gt;</span>
+<span>          &lt;td class="highlight_blue" style="width: 30px;"&gt;Qty.&lt;/td&gt;</span>
+<span>          &lt;td class="highlight_blue" style="width:100px"&gt;Unit Price&lt;/td&gt;</span>
+<span>          &lt;td class="highlight_blue" style="width:200px"&gt;Cost&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>          &lt;!-- One row for each item on the invoice. --&gt;</span>
+<span>          &lt;td class="name"&gt;Paperclips&lt;/td&gt;</span>
+<span>          &lt;td class="qty"&gt;1000&lt;/td&gt;</span>
+<span>          &lt;td class="unit_price"&gt;0.01&lt;/td&gt;</span>
+<span>          &lt;td class="cost"&gt;10.00&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>          &lt;td class="name"&gt;Staples (box)&lt;/td&gt;</span>
+<span>          &lt;td class="qty"&gt;100&lt;/td&gt;</span>
+<span>          &lt;td class="unit_price"&gt;1.00&lt;/td&gt;</span>
+<span>          &lt;td class="cost"&gt;100.00&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>          &lt;!-- colspan="3" stretches the label across three columns, so the amount lands under Cost. --&gt;</span>
+<span>          &lt;td colspan="3" class="highlight_blue" style="width: 300px"&gt;Subtotal&lt;/td&gt;</span>
+<span>          &lt;td class="cost"&gt;110.00&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>          &lt;td colspan="2" class="highlight_blue" style="width: 200px"&gt;Tax&lt;/td&gt;</span>
+<span>          &lt;td class="unit_price"&gt;8%&lt;/td&gt;</span>
+<span>          &lt;td class="cost"&gt;8.80&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>          &lt;td colspan="3" class="highlight_blue"&gt;Grand Total&lt;/td&gt;</span>
+<span>          &lt;td class="cost"&gt; $ 118.80&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
+<span>  &lt;/table&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Table headers and Table body and Table foot</h3>
@@ -971,43 +1581,58 @@
     <div class="div_p">
         <p>The &lt;thead&gt; and &lt;tbody&gt; elements semantically structure tables into logical sections. The
             &lt;thead&gt; contains header rows with &lt;th&gt; cells defining column titles, while &lt;tbody&gt; holds
-            the main data rows with &lt;td&gt; cells. Also we use &lt;tfoot&gt; This element groups the footer content
-            of a table. It typically contains summary information, totals, or notes related to the data in the table
-            body.This separation improves accessibility, styling control, and table
+            the main data rows with &lt;td&gt; cells. The &lt;tfoot&gt; element groups the footer content of a table. It typically contains summary information, totals, or notes related to the data in the table body. This separation improves accessibility, styling control, and table
             organization.</p>
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;table border="1"&gt;</span>
-<span>  &lt;thead&gt;</span>
-<span>    &lt;tr&gt;</span>
-<span>      &lt;th&gt;Name&lt;/th&gt;</span>
-<span>      &lt;th&gt;Age&lt;/th&gt;</span>
-<span>      &lt;th&gt;City&lt;/th&gt;</span>
-<span>    &lt;/tr&gt;</span>
-<span>  &lt;/thead&gt;</span>
-<span>  &lt;tbody&gt;</span>
-<span>    &lt;tr&gt;</span>
-<span>      &lt;td&gt;Alice&lt;/td&gt;</span>
-<span>      &lt;td&gt;25&lt;/td&gt;</span>
-<span>      &lt;td&gt;New York&lt;/td&gt;</span>
-<span>    &lt;/tr&gt;</span>
-<span>    &lt;tr&gt;</span>
-<span>      &lt;td&gt;Bob&lt;/td&gt;</span>
-<span>      &lt;td&gt;30&lt;/td&gt;</span>
-<span>      &lt;td&gt;Los Angeles&lt;/td&gt;</span>
-<span>    &lt;/tr&gt;</span>
-<span>    &lt;tr&gt;</span>
-<span>      &lt;td&gt;Charlie&lt;/td&gt;</span>
-<span>      &lt;td&gt;28&lt;/td&gt;</span>
-<span>      &lt;td&gt;Chicago&lt;/td&gt;</span>
-<span>    &lt;/tr&gt;</span>
-<span>  &lt;/tbody&gt;</span>
-<span>  &lt;tfoot&gt;This is a Table footer&lt;/tfoot&gt;</span>
-<span>&lt;/table&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Table Head, Body And Foot&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;table border="1"&gt;</span>
+<span>    &lt;!-- The header rows. --&gt;</span>
+<span>    &lt;thead&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>        &lt;!-- &lt;th&gt; cells are the column titles. --&gt;</span>
+<span>        &lt;th&gt;Name&lt;/th&gt;</span>
+<span>        &lt;th&gt;Age&lt;/th&gt;</span>
+<span>        &lt;th&gt;City&lt;/th&gt;</span>
+<span>      &lt;/tr&gt;</span>
+<span>    &lt;/thead&gt;</span>
+<span>    &lt;!-- The data rows. --&gt;</span>
+<span>    &lt;tbody&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>        &lt;td&gt;Alice&lt;/td&gt;</span>
+<span>        &lt;td&gt;25&lt;/td&gt;</span>
+<span>        &lt;td&gt;New York&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>        &lt;td&gt;Bob&lt;/td&gt;</span>
+<span>        &lt;td&gt;30&lt;/td&gt;</span>
+<span>        &lt;td&gt;Los Angeles&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>        &lt;td&gt;Charlie&lt;/td&gt;</span>
+<span>        &lt;td&gt;28&lt;/td&gt;</span>
+<span>        &lt;td&gt;Chicago&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
+<span>    &lt;/tbody&gt;</span>
+<span>    &lt;!-- The footer rows. Text in a tfoot still has to sit inside a &lt;tr&gt; and a &lt;td&gt;. --&gt;</span>
+<span>    &lt;tfoot&gt;</span>
+<span>      &lt;tr&gt;</span>
+<span>        &lt;td colspan="3"&gt;This is a table footer&lt;/td&gt;</span>
+<span>      &lt;/tr&gt;</span>
+<span>    &lt;/tfoot&gt;</span>
+<span>  &lt;/table&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
-    <h2>Forms</h2>
+    <h2 id="forms">Forms</h2>
 
     <div class="div_p">
         <p>HTML Forms enable user interaction by collecting data through elements like text fields, buttons, checkboxes,
@@ -1030,9 +1655,19 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;form action="my-handling-form-page" method="post"&gt;</span>
-<span>  &lt;!-- form elements --&gt;</span>
-<span>&lt;/form&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Form Element&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- action is where the data is sent. method is how it is sent. --&gt;</span>
+<span>  &lt;form action="my-handling-form-page" method="post"&gt;</span>
+<span>    &lt;!-- form elements --&gt;</span>
+<span>  &lt;/form&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Form element Attributes</h3>
@@ -1040,19 +1675,40 @@
     <div class="div_p">
         <p>Form attributes control submission behavior: action specifies where data is sent, target determines where the
             response opens (new tab/window), and method defines the HTTP method (GET for visible parameters or POST for
-            secure submission). GET: Data appears in URL, limited length, good for bookmarks, never for sensitive data.
-            POST: Data hidden, no length limits, cannot bookmark, use for sensitive information.</p>
+            secure submission). </p>
+        <ul>
+            <li><strong>GET:</strong> Data appears in the URL, limited length, good for bookmarks, never for sensitive
+                data.</li>
+            <li><strong>POST:</strong> Data is kept out of the URL, no length limits, cannot bookmark, use for
+                sensitive information.</li>
+        </ul>
+        <p></p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;form action="action_page.php" target="_blank" method="get"&gt;</span>
-<span>  &lt;input type="text" name="search"&gt;</span>
-<span>  &lt;button type="submit"&gt;Search&lt;/button&gt;</span>
-<span>&lt;/form&gt;</span>
-<span>&lt;form action="action_page.php" target="_blank" method="post"&gt;</span>
-<span>  &lt;input type="text" name="search"&gt;</span>
-<span>  &lt;button type="submit"&gt;Search&lt;/button&gt;</span>
-<span>&lt;/form&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Form Attributes&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- GET: the search text shows in the address bar, as ?search=... --&gt;</span>
+<span>  &lt;form action="action_page.php" target="_blank" method="get"&gt;</span>
+<span>    &lt;input type="text" name="search"&gt;</span>
+<span>    &lt;button type="submit"&gt;Search&lt;/button&gt;</span>
+<span>  &lt;/form&gt;</span>
+<span>  &lt;!-- POST: the search text is sent in the body of the request, not in the address. --&gt;</span>
+<span>  &lt;form action="action_page.php" target="_blank" method="post"&gt;</span>
+<span>    &lt;input type="text" name="search"&gt;</span>
+<span>    &lt;button type="submit"&gt;Search&lt;/button&gt;</span>
+<span>  &lt;/form&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
 </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> POST keeps the data out of the address bar, but it is not encrypted. A password is only safe when the page is on https.</p>
+  </div>
 
     <h3>Name attribute of input elements</h3>
 
@@ -1062,14 +1718,25 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;form action="/action_page.php"&gt;</span>
-<span>First name:&lt;br&gt;</span>
-<span>  &lt;input type="text" value="Mickey"&gt;&lt;br&gt;</span>
-<span>Last name:&lt;br&gt;</span>
-<span>  &lt;input type="text" name="lastname" value="Mouse"&gt;</span>
-<span>&lt;br&gt;</span>
-<span>  &lt;input type="submit" value="Submit"&gt;</span>
-<span>&lt;/form&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Name Attribute&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;form action="/action_page.php"&gt;</span>
+<span>  First name:&lt;br&gt;</span>
+<span>    &lt;!-- There is no name on this one, so its value is not sent. --&gt;</span>
+<span>    &lt;input type="text" value="Mickey"&gt;&lt;br&gt;</span>
+<span>  Last name:&lt;br&gt;</span>
+<span>    &lt;!-- This one is sent, as lastname=Mouse. --&gt;</span>
+<span>    &lt;input type="text" name="lastname" value="Mouse"&gt;</span>
+<span>  &lt;br&gt;</span>
+<span>    &lt;input type="submit" value="Submit"&gt;</span>
+<span>  &lt;/form&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Fieldset and Legend</h3>
@@ -1079,19 +1746,30 @@
         </p>
     </div>
     <pre class="mycodehtml">
-<span>&lt;form action="action_page.php"&gt;</span>
-<span>  &lt;fieldset&gt;</span>
-<span>    &lt;legend&gt;Personal information:&lt;/legend&gt;</span>
-<span>    First name:&lt;br&gt;</span>
-<span>    &lt;input type="text" name="firstname" value="Mickey"&gt;&lt;br&gt;</span>
-<span>    Last name:&lt;br&gt;</span>
-<span>    &lt;input type="text" name="lastname" value="Mouse"&gt;&lt;br&gt;&lt;br&gt;</span>
-<span>    &lt;input type="submit" value="Submit"&gt;</span>
-<span>  &lt;/fieldset&gt;</span>
-<span>&lt;/form&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Fieldset And Legend&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;form action="action_page.php"&gt;</span>
+<span>    &lt;!-- The fieldset draws a box around the fields that belong together. --&gt;</span>
+<span>    &lt;fieldset&gt;</span>
+<span>      &lt;!-- The legend is the title on that box. --&gt;</span>
+<span>      &lt;legend&gt;Personal information:&lt;/legend&gt;</span>
+<span>      First name:&lt;br&gt;</span>
+<span>      &lt;input type="text" name="firstname" value="Mickey"&gt;&lt;br&gt;</span>
+<span>      Last name:&lt;br&gt;</span>
+<span>      &lt;input type="text" name="lastname" value="Mouse"&gt;&lt;br&gt;&lt;br&gt;</span>
+<span>      &lt;input type="submit" value="Submit"&gt;</span>
+<span>    &lt;/fieldset&gt;</span>
+<span>  &lt;/form&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
-    <h3>Input Form Html Elements</h3>
+    <h3>Input Form HTML Elements</h3>
 
     <div class="div_p">
         <p>The input element is the primary form control, with its behavior determined by the type attribute: text for
@@ -1105,13 +1783,27 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;form&gt;</span>
-<span>  First Name:&lt;br&gt;</span>
-<span>  &lt;input type="text" name="firstname"&gt;&lt;br&gt;</span>
-<span>  Last Name:&lt;br&gt;</span>
-<span>  &lt;input type="text" name="lastname"&gt;&lt;br&gt;</span>
-<span>&lt;/form&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Text Input&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;form&gt;</span>
+<span>    First Name:&lt;br&gt;</span>
+<span>    &lt;!-- type="text" is a box for one line of text. --&gt;</span>
+<span>    &lt;input type="text" name="firstname"&gt;&lt;br&gt;</span>
+<span>    Last Name:&lt;br&gt;</span>
+<span>    &lt;input type="text" name="lastname"&gt;&lt;br&gt;</span>
+<span>  &lt;/form&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> Give every field a &lt;label&gt;. Write &lt;label for="firstname"&gt;First Name&lt;/label&gt; and add id="firstname" to the input. A click on the label then puts the cursor in the field, and screen readers read the label out.</p>
+  </div>
 
     <h3>Input Radio Button Input</h3>
 
@@ -1120,11 +1812,21 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;form&gt;</span>
-<span>  &lt;input type="radio" name="gender" value="male" checked&gt; Male&lt;br&gt;</span>
-<span>  &lt;input type="radio" name="gender" value="female"&gt; Female&lt;br&gt;</span>
-<span>  &lt;input type="radio" name="gender" value="other"&gt; Other&lt;br&gt;</span>
-<span>&lt;/form&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Radio Buttons&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;form&gt;</span>
+<span>    &lt;!-- All three share the same name, so only one can be picked. checked picks this one at the start. --&gt;</span>
+<span>    &lt;input type="radio" name="gender" value="male" checked&gt; Male&lt;br&gt;</span>
+<span>    &lt;input type="radio" name="gender" value="female"&gt; Female&lt;br&gt;</span>
+<span>    &lt;input type="radio" name="gender" value="other"&gt; Other&lt;br&gt;</span>
+<span>  &lt;/form&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Input Type Submit</h3>
@@ -1135,11 +1837,21 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;form&gt;</span>
-<span>  First Name: &lt;input type="text" name="firstname"&gt;&lt;br&gt;</span>
-<span>  Last Name: &lt;input type="text" name="lastname"&gt;&lt;br&gt;</span>
-<span>  &lt;input type="submit" value="Submit"&gt;</span>
-<span>&lt;/form&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Submit Button&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;form&gt;</span>
+<span>    First Name: &lt;input type="text" name="firstname"&gt;&lt;br&gt;</span>
+<span>    Last Name: &lt;input type="text" name="lastname"&gt;&lt;br&gt;</span>
+<span>    &lt;!-- Sends the form. value is the text on the button. --&gt;</span>
+<span>    &lt;input type="submit" value="Submit"&gt;</span>
+<span>  &lt;/form&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Input Type Password</h3>
@@ -1150,12 +1862,22 @@
 
 
     <pre class="mycodehtml">
-<span>&lt;form&gt;</span>
-<span>  User Name:&lt;br&gt;</span>
-<span>  &lt;input type="text" name="username"&gt;&lt;br&gt;</span>
-<span>  User Password:&lt;br&gt;</span>
-<span>  &lt;input type="password" name="psw"&gt;&lt;br&gt;</span>
-<span>&lt;/form&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Password Input&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;form&gt;</span>
+<span>    User Name:&lt;br&gt;</span>
+<span>    &lt;input type="text" name="username"&gt;&lt;br&gt;</span>
+<span>    User Password:&lt;br&gt;</span>
+<span>    &lt;!-- The characters show as dots while you type. --&gt;</span>
+<span>    &lt;input type="password" name="psw"&gt;&lt;br&gt;</span>
+<span>  &lt;/form&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Input Type Reset</h3>
@@ -1166,12 +1888,22 @@
 
     `
     <pre class="mycodehtml">
-<span>&lt;form&gt;</span>
-<span>  First Name: &lt;input type="text" name="firstname"&gt;&lt;br&gt;</span>
-<span>  Last Name: &lt;input type="text" name="lastname"&gt;&lt;br&gt;</span>
-<span>  &lt;input type="submit" value="Submit"&gt;</span>
-<span>  &lt;input type="reset" value="Reset"&gt;</span>
-<span>&lt;/form&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Reset Button&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;form&gt;</span>
+<span>    First Name: &lt;input type="text" name="firstname"&gt;&lt;br&gt;</span>
+<span>    Last Name: &lt;input type="text" name="lastname"&gt;&lt;br&gt;</span>
+<span>    &lt;input type="submit" value="Submit"&gt;</span>
+<span>    &lt;!-- Puts every field in the form back to how it started. --&gt;</span>
+<span>    &lt;input type="reset" value="Reset"&gt;</span>
+<span>  &lt;/form&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Input Type Checkbox</h3>
@@ -1181,11 +1913,21 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;form&gt;</span>
-<span>  &lt;input type="checkbox" name="vehicle0" value="Walk"&gt; I like to walk&lt;br&gt;</span>
-<span>  &lt;input type="checkbox" name="vehicle1" value="Bike"&gt; I have a bike&lt;br&gt;</span>
-<span>  &lt;input type="checkbox" name="vehicle2" value="Car"&gt; I have a car&lt;br&gt;</span>
-<span>&lt;/form&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Checkboxes&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;form&gt;</span>
+<span>    &lt;!-- Each checkbox has its own name, so any number of them can be ticked. --&gt;</span>
+<span>    &lt;input type="checkbox" name="vehicle0" value="Walk"&gt; I like to walk&lt;br&gt;</span>
+<span>    &lt;input type="checkbox" name="vehicle1" value="Bike"&gt; I have a bike&lt;br&gt;</span>
+<span>    &lt;input type="checkbox" name="vehicle2" value="Car"&gt; I have a car&lt;br&gt;</span>
+<span>  &lt;/form&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Input Type Button</h3>
@@ -1195,26 +1937,65 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;input type="button" value="Click Me!" onclick="alert('Hello World!')"&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Input Type Button&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- This button does nothing on its own. onclick runs the JavaScript in the quotes. --&gt;</span>
+<span>  &lt;input type="button" value="Click Me!" onclick="alert('Hello World!')"&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>HTML 5 Input Types</h3>
+    <div class="div_p">
+        <p>HTML5 added input types that check what is typed and show a helper, such as a color picker or a calendar.
+            A browser that does not know a type shows a plain text field instead.</p>
+    </div>
 
     <div class="div_p">
         <p></p>
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;input type="color" name="favcolor"&gt;</span>
-<span>&lt;input type="date" name="bday"&gt;</span>
-<span>&lt;input type="datetime-local"&gt;</span>
-<span>&lt;input type="month"&gt;</span>
-<span>&lt;input type="email"&gt;</span>
-<span>&lt;input type="number"&gt;</span>
-<span>&lt;input type="range"&gt;</span>
-<span>&lt;input type="tel"&gt;</span>
-<span>&lt;input type="time"&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;HTML 5 Input Types&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;form&gt;</span>
+<span>    &lt;!-- A color picker. --&gt;</span>
+<span>    &lt;input type="color" name="favcolor"&gt;&lt;br&gt;</span>
+<span>    &lt;!-- A calendar for a day. --&gt;</span>
+<span>    &lt;input type="date" name="bday"&gt;&lt;br&gt;</span>
+<span>    &lt;!-- A day and a time. --&gt;</span>
+<span>    &lt;input type="datetime-local" name="meeting"&gt;&lt;br&gt;</span>
+<span>    &lt;!-- A month and a year. --&gt;</span>
+<span>    &lt;input type="month" name="month"&gt;&lt;br&gt;</span>
+<span>    &lt;!-- The browser checks for an @ before it sends. --&gt;</span>
+<span>    &lt;input type="email" name="email"&gt;&lt;br&gt;</span>
+<span>    &lt;!-- Only numbers, with small up and down arrows. --&gt;</span>
+<span>    &lt;input type="number" name="quantity"&gt;&lt;br&gt;</span>
+<span>    &lt;!-- A slider. --&gt;</span>
+<span>    &lt;input type="range" name="volume"&gt;&lt;br&gt;</span>
+<span>    &lt;!-- A phone number. Phones show the number keypad. --&gt;</span>
+<span>    &lt;input type="tel" name="phone"&gt;&lt;br&gt;</span>
+<span>    &lt;!-- A time of day. --&gt;</span>
+<span>    &lt;input type="time" name="alarm"&gt;&lt;br&gt;</span>
+<span>    &lt;input type="submit" value="Submit"&gt;</span>
+<span>  &lt;/form&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> These browser checks only help the visitor. Anyone can send a request without using your form, so the server has to check every value again.</p>
+  </div>
 
     <h3>Select Element</h3>
 
@@ -1223,12 +2004,23 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;select name="cars"&gt;</span>
-<span>    &lt;option value="volvo"&gt;Volvo&lt;/option&gt;</span>
-<span>    &lt;option value="saab"&gt;Saab&lt;/option&gt;</span>
-<span>    &lt;option value="fiat"&gt;Fiat&lt;/option&gt;</span>
-<span>    &lt;option value="audi"&gt;Audi&lt;/option&gt;</span>
-<span>&lt;/select&gt;</span>     
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Select Element&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- The drop-down list. --&gt;</span>
+<span>  &lt;select name="cars"&gt;</span>
+<span>      &lt;!-- value is what gets sent. The text between the tags is what the visitor sees. --&gt;</span>
+<span>      &lt;option value="volvo"&gt;Volvo&lt;/option&gt;</span>
+<span>      &lt;option value="saab"&gt;Saab&lt;/option&gt;</span>
+<span>      &lt;option value="fiat"&gt;Fiat&lt;/option&gt;</span>
+<span>      &lt;option value="audi"&gt;Audi&lt;/option&gt;</span>
+<span>  &lt;/select&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Option element</h3>
@@ -1239,43 +2031,73 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;select name="cars"&gt;</span>
-<span>  &lt;option value="volvo"&gt;Volvo&lt;/option&gt;</span>
-<span>  &lt;option value="saab"&gt;Saab&lt;/option&gt;</span>
-<span>  &lt;option value="fiat" selected&gt;Fiat&lt;/option&gt;</span>
-<span>  &lt;option value="audi"&gt;Audi&lt;/option&gt;</span>
-<span>&lt;/select&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Option Element&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;select name="cars"&gt;</span>
+<span>    &lt;option value="volvo"&gt;Volvo&lt;/option&gt;</span>
+<span>    &lt;option value="saab"&gt;Saab&lt;/option&gt;</span>
+<span>    &lt;!-- selected makes this the option that shows first. --&gt;</span>
+<span>    &lt;option value="fiat" selected&gt;Fiat&lt;/option&gt;</span>
+<span>    &lt;option value="audi"&gt;Audi&lt;/option&gt;</span>
+<span>  &lt;/select&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Select 'size' (increasing visible values) </h3>
 
     <div class="div_p">
-        <p>Use the `size` attribute to specify the number of visible values:</p>
+        <p>Use the size attribute to specify the number of visible values:</p>
     </div>
 
 
     <pre class="mycodehtml">
-<span>&lt;select name="cars" size="2"&gt;</span>
-<span>    &lt;option value="volvo"&gt;Volvo&lt;/option&gt;</span>
-<span>    &lt;option value="saab"&gt;Saab&lt;/option&gt;</span>
-<span>    &lt;option value="fiat"&gt;Fiat&lt;/option&gt;</span>
-<span>    &lt;option value="audi"&gt;Audi&lt;/option&gt;</span>
-<span>&lt;/select&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Select Size&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- size="2" shows two options at once instead of a drop-down. --&gt;</span>
+<span>  &lt;select name="cars" size="2"&gt;</span>
+<span>      &lt;option value="volvo"&gt;Volvo&lt;/option&gt;</span>
+<span>      &lt;option value="saab"&gt;Saab&lt;/option&gt;</span>
+<span>      &lt;option value="fiat"&gt;Fiat&lt;/option&gt;</span>
+<span>      &lt;option value="audi"&gt;Audi&lt;/option&gt;</span>
+<span>  &lt;/select&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
     <h3>Textarea</h3>
 
     <div class="div_p">
-        <p>The &lt;textarea&gt; element defines a multi-line input field (a text area)<br><br>The rows attribute specifies
+        <p>The &lt;textarea&gt; element defines a multi-line input field (a text area). The rows attribute specifies
             the visible number of lines in a text area. The cols attribute specifies the visible width of a text area.
         </p>
     </div>
 
 
     <pre class="mycodehtml">
-<span>&lt;textarea name="message" rows="10" cols="30"&gt;</span>
-<span>The cat was playing in the garden.</span>
-<span>&lt;/textarea&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Textarea&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- rows is how many lines tall and cols is how many characters wide. --&gt;</span>
+<span>  &lt;textarea name="message" rows="10" cols="30"&gt;</span>
+<span>  The cat was playing in the garden.</span>
+<span>  &lt;/textarea&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
@@ -1286,13 +2108,23 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;button type="button" onclick="alert('Hello World!')"&gt;</span>
-<span>Click Me!</span>
-<span>&lt;/button&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Button Element&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- type="button" stops the button from sending a form. onclick runs the JavaScript in the quotes. --&gt;</span>
+<span>  &lt;button type="button" onclick="alert('Hello World!')"&gt;</span>
+<span>  Click Me!</span>
+<span>  &lt;/button&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
-    <h2>New Html 5 elements</h2>
+    <h2 id="new-html-5-elements">New HTML 5 Elements</h2>
 
     <div class="div_p">
         <p>HTML5 added datalist/output elements. Older browsers safely ignore unsupported tags.</p>
@@ -1306,16 +2138,27 @@
     </div>
 
     <pre class="mycodehtml">
-<span>&lt;form action="result.php"&gt;</span>
-<span>  &lt;input list="browsers"&gt;</span>
-<span>  &lt;datalist id="browsers"&gt;</span>
-<span>    &lt;option value="Internet Explorer"&gt;</span>
-<span>    &lt;option value="Firefox"&gt;</span>
-<span>    &lt;option value="Chrome"&gt;</span>
-<span>    &lt;option value="Opera"&gt;</span>
-<span>    &lt;option value="Safari"&gt;</span>
-<span>  &lt;/datalist&gt;</span>
-<span>&lt;/form&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Datalist Element&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;form action="result.php"&gt;</span>
+<span>    &lt;!-- list="browsers" matches the id on the datalist below. --&gt;</span>
+<span>    &lt;input list="browsers"&gt;</span>
+<span>    &lt;!-- The suggestions that show while the visitor types. --&gt;</span>
+<span>    &lt;datalist id="browsers"&gt;</span>
+<span>      &lt;option value="Internet Explorer"&gt;</span>
+<span>      &lt;option value="Firefox"&gt;</span>
+<span>      &lt;option value="Chrome"&gt;</span>
+<span>      &lt;option value="Opera"&gt;</span>
+<span>      &lt;option value="Safari"&gt;</span>
+<span>    &lt;/datalist&gt;</span>
+<span>  &lt;/form&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 
@@ -1328,16 +2171,27 @@
 
 
     <pre class="mycodehtml">
-<span>&lt;form action="/action_page.php" oninput="x.value=parseInt(a.value)+parseInt(b.value)"&gt;</span>
-<span>0</span>
-<span>&lt;input type="range" id="a" name="a" value="50"&gt;</span>
-<span>100 +</span>
-<span>&lt;input type="number" id="b" name="b" value="50"&gt;</span>
-<span>=</span>
-<span>&lt;output name="x" for="a b"&gt;&lt;/output&gt;</span>
-<span>&lt;br&gt;&lt;br&gt;</span>
-<span>&lt;input type="submit"&gt;</span>
-<span>&lt;/form&gt;</span>
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;Output Element&lt;/title&gt;</span>
+<span>&lt;/head&gt;</span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- oninput runs every time a value changes. It adds a and b and puts the answer in x. --&gt;</span>
+<span>  &lt;form action="/action_page.php" oninput="x.value=parseInt(a.value)+parseInt(b.value)"&gt;</span>
+<span>  0</span>
+<span>  &lt;input type="range" id="a" name="a" value="50"&gt;</span>
+<span>  100 +</span>
+<span>  &lt;input type="number" id="b" name="b" value="50"&gt;</span>
+<span>  =</span>
+<span>  &lt;!-- The answer shows here. for="a b" lists the ids it is worked out from. --&gt;</span>
+<span>  &lt;output name="x" for="a b"&gt;&lt;/output&gt;</span>
+<span>  &lt;br&gt;&lt;br&gt;</span>
+<span>  &lt;input type="submit"&gt;</span>
+<span>  &lt;/form&gt;</span>
+<span>&lt;/body&gt;</span>
+<span>&lt;/html&gt;</span>
     </pre>
 
 <br><br><br><br>

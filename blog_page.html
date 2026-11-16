@@ -1,0 +1,2000 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Jamar Brown">
+  <meta name="description" content="This is the page that shows how to build the blog template and keep old posts">
+  <title>Blog Template Page</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+
+<body class="wrap-code">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand">Final Companion</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="html_page.html">Html Code</a></li>
+        <li><a href="css_page.html">Css Code</a></li>
+        <li><a href="tailwind_page.html">Tailwind Code</a></li>
+        <li><a href="photo_effects_page.html">Photo Effects</a></li>
+        <li><a href="blog_page.html">Blog Template</a></li>
+        <li><a href="javaScript.html">JavaScript Code</a></li>
+        <li><a href="setup_page.html">Setup &amp; .env</a></li>
+        <li><a href="react_page.html">React Code</a></li>
+        <li><a href="dashboard_page.html">Dashboard Code</a></li>
+        <li><a href="node_page.html">Node Code</a></li>
+        <li><a href="mongodb_page.html">MongoDB Code</a></li>
+        <li><a href="postgres_page.html">Postgres Code</a></li>
+        <li><a href="security_page.html">Security Code</a></li>
+        <li><a href="migration_page.html">Switch Databases</a></li>
+        <li><a href="bugs_page.html">Common Bugs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <h2>On This Page</h2>
+
+  <div class="div_p">
+    <ul>
+      <li><a href="#how-this-blog-was-made">How This Blog Was Made</a></li>
+      <li><a href="#step-1-make-the-folders">Step 1 Make The Folders</a></li>
+      <li><a href="#step-2-the-stylesheet">Step 2 The Stylesheet</a></li>
+      <li><a href="#step-3-the-javascript">Step 3 The JavaScript</a></li>
+      <li><a href="#step-4-the-home-page">Step 4 The Home Page</a></li>
+      <li><a href="#step-5-a-post-page">Step 5 A Post Page</a></li>
+      <li><a href="#step-6-about-and-404-pages">Step 6 About And 404 Pages</a></li>
+      <li><a href="#add-a-new-post">Add A New Post</a></li>
+      <li><a href="#keep-the-old-posts">Keep The Old Posts</a></li>
+      <li><a href="#move-posts-from-a-client-s-old-site">Move Posts From A Client's Old Site</a></li>
+      <li><a href="#rebrand-for-a-client">Rebrand For A Client</a></li>
+      <li><a href="#connect-the-forms">Connect The Forms</a></li>
+      <li><a href="#before-handing-it-to-a-client">Before Handing It To A Client</a></li>
+    </ul>
+  </div>
+
+  <h2 id="how-this-blog-was-made">How This Blog Was Made</h2>
+
+  <div class="div_p">
+    <p>Nothing fancy. I planned the pages first, wrote one stylesheet built on CSS variables, and used a small script to stamp the same header and footer onto every page so I did not type them ten times. The finished site is plain HTML, CSS and a little JavaScript, so you can build it by hand with the steps below, or just copy the starters/blog-template folder.</p>
+  </div>
+
+  <div class="div_p">
+    <p><a href="starters/blog-template/index.html">Open the finished blog template</a></p>
+  </div>
+
+  <div class="div_p">
+    <ul>
+      <li>Plan the pages first: home, one page per post, about, and 404.</li>
+      <li>Put every color, font and size in one <code>:root</code> block, so a client rebrand is one edit.</li>
+      <li>Make each post its own HTML file, so Google and link previews can read it.</li>
+      <li>Use the same card for every post, so the home page always looks even.</li>
+      <li>Keep JavaScript small and optional. The site still works if it fails to load.</li>
+    </ul>
+  </div>
+
+  <h2 id="step-1-make-the-folders">Step 1 Make The Folders</h2>
+
+  <pre class="mycodecli">
+<span>mkdir my-blog</span>
+<span>cd my-blog</span>
+<span>mkdir css js images posts scripts</span>
+<span>touch index.html about.html 404.html css/style.css js/main.js scripts/list-posts.mjs</span>
+<span>code .</span>
+  </pre>
+
+  <h3>What goes where</h3>
+
+  <pre class="mycodefile">
+<span>my-blog/</span>
+<span>  index.html              Home page: featured post, post list, newsletter</span>
+<span>  about.html              About the author and the contact form</span>
+<span>  404.html                Page not found</span>
+<span>  posts/                  One HTML file per post</span>
+<span>  css/style.css           All the styles. Brand settings are at the top.</span>
+<span>  js/main.js              Phone menu and topic filter buttons</span>
+<span>  scripts/list-posts.mjs  Rebuilds the post list on the home page</span>
+<span>  images/                 Photos</span>
+  </pre>
+
+  <h2 id="step-2-the-stylesheet">Step 2 The Stylesheet</h2>
+
+  <div class="div_p">
+    <p>Paste this into css/style.css. The first block, <code>:root</code>, is the only part you change for a new client.</p>
+  </div>
+
+  <h3>css/style.css</h3>
+
+  <pre class="mycodecss">
+<span>/*</span>
+<span>  Blog Template</span>
+<span>  To rebrand for a client, change the variables in :root below.</span>
+<span>  Everything else on the site reads from them.</span>
+<span>*/</span>
+<span></span>
+<span>:root {</span>
+<span>  /* Brand */</span>
+<span>  --color-brand: #0f766e;</span>
+<span>  --color-brand-dark: #115e59;</span>
+<span>  --color-brand-soft: #ccfbf1;</span>
+<span>  --color-on-brand: #ffffff;</span>
+<span></span>
+<span>  /* Page */</span>
+<span>  --color-bg: #fafaf9;</span>
+<span>  --color-surface: #ffffff;</span>
+<span>  --color-photo-bg: #ffffff;  /* behind product photos, which usually have white backgrounds */</span>
+<span>  --color-text: #1c1917;</span>
+<span>  --color-muted: #57534e;</span>
+<span>  --color-border: #e7e5e4;</span>
+<span>  --color-focus: #2563eb;</span>
+<span></span>
+<span>  /* Type */</span>
+<span>  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;</span>
+<span>  --font-heading: Georgia, "Times New Roman", serif;</span>
+<span></span>
+<span>  /* Shape and spacing */</span>
+<span>  --radius: 12px;</span>
+<span>  --page-width: 1100px;</span>
+<span>  --text-width: 68ch;</span>
+<span>  --gap: 24px;</span>
+<span>}</span>
+<span></span>
+<span>/* Dark mode follows the visitor's device setting. */</span>
+<span>@media (prefers-color-scheme: dark) {</span>
+<span>  :root {</span>
+<span>    --color-brand: #2dd4bf;</span>
+<span>    --color-brand-dark: #5eead4;</span>
+<span>    --color-brand-soft: #134e4a;</span>
+<span>    --color-on-brand: #042f2e;</span>
+<span>    --color-bg: #0f1412;</span>
+<span>    --color-surface: #171d1b;</span>
+<span>    --color-photo-bg: #e7ecea;</span>
+<span>    --color-text: #f5f5f4;</span>
+<span>    --color-muted: #c4c0bc;</span>
+<span>    --color-border: #2c3431;</span>
+<span>    --color-focus: #93c5fd;</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>/* ---------- Base ---------- */</span>
+<span></span>
+<span>*,</span>
+<span>*::before,</span>
+<span>*::after {</span>
+<span>  box-sizing: border-box;</span>
+<span>}</span>
+<span></span>
+<span>html {</span>
+<span>  scroll-behavior: smooth;</span>
+<span>}</span>
+<span></span>
+<span>body {</span>
+<span>  margin: 0;</span>
+<span>  background: var(--color-bg);</span>
+<span>  color: var(--color-text);</span>
+<span>  font-family: var(--font-body);</span>
+<span>  font-size: 1.0625rem;</span>
+<span>  line-height: 1.65;</span>
+<span>  -webkit-font-smoothing: antialiased;</span>
+<span>}</span>
+<span></span>
+<span>img {</span>
+<span>  display: block;</span>
+<span>  max-width: 100%;</span>
+<span>  height: auto;</span>
+<span>}</span>
+<span></span>
+<span>h1,</span>
+<span>h2,</span>
+<span>h3 {</span>
+<span>  font-family: var(--font-heading);</span>
+<span>  line-height: 1.2;</span>
+<span>  margin: 0 0 0.5em;</span>
+<span>  text-wrap: balance;</span>
+<span>}</span>
+<span></span>
+<span>/* clamp(smallest, flexible, largest): the size grows with the screen, but stays between the two limits. */</span>
+<span>h1 { font-size: clamp(2rem, 4vw + 1rem, 3.25rem); }</span>
+<span>h2 { font-size: clamp(1.5rem, 2vw + 1rem, 2rem); }</span>
+<span>h3 { font-size: 1.25rem; }</span>
+<span></span>
+<span>p {</span>
+<span>  margin: 0 0 1em;</span>
+<span>}</span>
+<span></span>
+<span>a {</span>
+<span>  color: var(--color-brand-dark);</span>
+<span>  text-underline-offset: 3px;</span>
+<span>}</span>
+<span></span>
+<span>a:hover {</span>
+<span>  color: var(--color-brand);</span>
+<span>}</span>
+<span></span>
+<span>:focus-visible {</span>
+<span>  outline: 3px solid var(--color-focus);</span>
+<span>  outline-offset: 3px;</span>
+<span>  border-radius: 4px;</span>
+<span>}</span>
+<span></span>
+<span>/* As wide as the screen minus 16px on each side, but never wider than --page-width. */</span>
+<span>.container {</span>
+<span>  width: min(100% - 32px, var(--page-width));</span>
+<span>  margin-inline: auto;</span>
+<span>}</span>
+<span></span>
+<span>/* Hides text from view but keeps it for screen readers. */</span>
+<span>.visually-hidden {</span>
+<span>  position: absolute;</span>
+<span>  width: 1px;</span>
+<span>  height: 1px;</span>
+<span>  overflow: hidden;</span>
+<span>  clip-path: inset(50%);</span>
+<span>  white-space: nowrap;</span>
+<span>}</span>
+<span></span>
+<span>/* Keyboard users can jump past the menu. */</span>
+<span>.skip-link {</span>
+<span>  position: absolute;</span>
+<span>  left: 16px;</span>
+<span>  top: -100px;</span>
+<span>  z-index: 100;</span>
+<span>  padding: 10px 16px;</span>
+<span>  border-radius: 8px;</span>
+<span>  background: var(--color-surface);</span>
+<span>  color: var(--color-text);</span>
+<span>}</span>
+<span></span>
+<span>.skip-link:focus {</span>
+<span>  top: 12px;</span>
+<span>}</span>
+<span></span>
+<span>/* ---------- Buttons ---------- */</span>
+<span></span>
+<span>.button {</span>
+<span>  display: inline-block;</span>
+<span>  padding: 12px 22px;</span>
+<span>  border: 2px solid var(--color-brand);</span>
+<span>  border-radius: 999px;</span>
+<span>  background: var(--color-brand);</span>
+<span>  color: var(--color-on-brand);</span>
+<span>  font: inherit;</span>
+<span>  font-weight: 600;</span>
+<span>  text-decoration: none;</span>
+<span>  cursor: pointer;</span>
+<span>}</span>
+<span></span>
+<span>.button:hover {</span>
+<span>  background: var(--color-brand-dark);</span>
+<span>  border-color: var(--color-brand-dark);</span>
+<span>  color: var(--color-on-brand);</span>
+<span>}</span>
+<span></span>
+<span>.button--ghost {</span>
+<span>  background: transparent;</span>
+<span>  color: var(--color-brand-dark);</span>
+<span>}</span>
+<span></span>
+<span>.button--ghost:hover {</span>
+<span>  background: var(--color-brand-soft);</span>
+<span>  color: var(--color-text);</span>
+<span>}</span>
+<span></span>
+<span>/* ---------- Header and menu ---------- */</span>
+<span></span>
+<span>/* sticky keeps the header at the top of the screen while the page scrolls. */</span>
+<span>.site-header {</span>
+<span>  position: sticky;</span>
+<span>  top: 0;</span>
+<span>  z-index: 50;</span>
+<span>  background: color-mix(in srgb, var(--color-bg) 92%, transparent);</span>
+<span>  backdrop-filter: blur(8px);</span>
+<span>  border-bottom: 1px solid var(--color-border);</span>
+<span>}</span>
+<span></span>
+<span>.site-header__inner {</span>
+<span>  display: flex;</span>
+<span>  align-items: center;</span>
+<span>  justify-content: space-between;</span>
+<span>  gap: 16px;</span>
+<span>  min-height: 68px;</span>
+<span>}</span>
+<span></span>
+<span>.brand {</span>
+<span>  font-family: var(--font-heading);</span>
+<span>  font-size: 1.4rem;</span>
+<span>  font-weight: 700;</span>
+<span>  color: var(--color-text);</span>
+<span>  text-decoration: none;</span>
+<span>}</span>
+<span></span>
+<span>.brand span {</span>
+<span>  color: var(--color-brand);</span>
+<span>}</span>
+<span></span>
+<span>.site-nav ul {</span>
+<span>  display: flex;</span>
+<span>  gap: 4px;</span>
+<span>  margin: 0;</span>
+<span>  padding: 0;</span>
+<span>  list-style: none;</span>
+<span>}</span>
+<span></span>
+<span>.site-nav a {</span>
+<span>  display: block;</span>
+<span>  padding: 8px 14px;</span>
+<span>  border-radius: 999px;</span>
+<span>  color: var(--color-muted);</span>
+<span>  font-weight: 500;</span>
+<span>  text-decoration: none;</span>
+<span>}</span>
+<span></span>
+<span>.site-nav a:hover,</span>
+<span>.site-nav a[aria-current="page"] {</span>
+<span>  background: var(--color-brand-soft);</span>
+<span>  color: var(--color-text);</span>
+<span>}</span>
+<span></span>
+<span>.menu-button {</span>
+<span>  display: none;</span>
+<span>  padding: 8px 14px;</span>
+<span>  border: 1px solid var(--color-border);</span>
+<span>  border-radius: 999px;</span>
+<span>  background: var(--color-surface);</span>
+<span>  color: var(--color-text);</span>
+<span>  font: inherit;</span>
+<span>  cursor: pointer;</span>
+<span>}</span>
+<span></span>
+<span>/* On a phone the menu folds into a button. Without JavaScript the</span>
+<span>   links simply stay visible, so the menu always works. */</span>
+<span>@media (max-width: 720px) {</span>
+<span>  .js .menu-button {</span>
+<span>    display: block;</span>
+<span>  }</span>
+<span></span>
+<span>  .js .site-nav {</span>
+<span>    display: none;</span>
+<span>    position: absolute;</span>
+<span>    inset: 100% 0 auto 0;</span>
+<span>    padding: 12px 16px 16px;</span>
+<span>    background: var(--color-surface);</span>
+<span>    border-bottom: 1px solid var(--color-border);</span>
+<span>  }</span>
+<span></span>
+<span>  .js .site-nav.is-open {</span>
+<span>    display: block;</span>
+<span>  }</span>
+<span></span>
+<span>  .site-nav ul {</span>
+<span>    flex-direction: column;</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>/* ---------- Home: featured post ---------- */</span>
+<span></span>
+<span>.hero {</span>
+<span>  padding: 48px 0 32px;</span>
+<span>}</span>
+<span></span>
+<span>.hero__card {</span>
+<span>  display: grid;</span>
+<span>  grid-template-columns: 1.1fr 1fr;</span>
+<span>  gap: 40px;</span>
+<span>  align-items: center;</span>
+<span>}</span>
+<span></span>
+<span>.hero__image {</span>
+<span>  width: 100%;</span>
+<span>  aspect-ratio: 16 / 10;</span>
+<span>  object-fit: cover;</span>
+<span>  border-radius: var(--radius);</span>
+<span>}</span>
+<span></span>
+<span>.hero__label {</span>
+<span>  display: inline-block;</span>
+<span>  margin-bottom: 12px;</span>
+<span>  color: var(--color-brand-dark);</span>
+<span>  font-size: 0.85rem;</span>
+<span>  font-weight: 700;</span>
+<span>  letter-spacing: 0.08em;</span>
+<span>  text-transform: uppercase;</span>
+<span>}</span>
+<span></span>
+<span>.hero__excerpt {</span>
+<span>  color: var(--color-muted);</span>
+<span>  font-size: 1.15rem;</span>
+<span>}</span>
+<span></span>
+<span>@media (max-width: 820px) {</span>
+<span>  .hero__card {</span>
+<span>    grid-template-columns: 1fr;</span>
+<span>    gap: 24px;</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>/* ---------- Post list ---------- */</span>
+<span></span>
+<span>.section {</span>
+<span>  padding: 32px 0 56px;</span>
+<span>}</span>
+<span></span>
+<span>.section__head {</span>
+<span>  display: flex;</span>
+<span>  flex-wrap: wrap;</span>
+<span>  align-items: end;</span>
+<span>  justify-content: space-between;</span>
+<span>  gap: 16px;</span>
+<span>  margin-bottom: 24px;</span>
+<span>}</span>
+<span></span>
+<span>.section__head h2 {</span>
+<span>  margin: 0;</span>
+<span>}</span>
+<span></span>
+<span>.filters {</span>
+<span>  display: flex;</span>
+<span>  flex-wrap: wrap;</span>
+<span>  gap: 8px;</span>
+<span>}</span>
+<span></span>
+<span>.filter {</span>
+<span>  padding: 6px 14px;</span>
+<span>  border: 1px solid var(--color-border);</span>
+<span>  border-radius: 999px;</span>
+<span>  background: var(--color-surface);</span>
+<span>  color: var(--color-muted);</span>
+<span>  font: inherit;</span>
+<span>  font-size: 0.95rem;</span>
+<span>  cursor: pointer;</span>
+<span>}</span>
+<span></span>
+<span>.filter[aria-pressed="true"] {</span>
+<span>  border-color: var(--color-brand);</span>
+<span>  background: var(--color-brand);</span>
+<span>  color: var(--color-on-brand);</span>
+<span>}</span>
+<span></span>
+<span>.post-grid {</span>
+<span>  display: grid;</span>
+<span>  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));</span>
+<span>  gap: var(--gap);</span>
+<span>  margin: 0;</span>
+<span>  padding: 0;</span>
+<span>  list-style: none;</span>
+<span>}</span>
+<span></span>
+<span>.post-card {</span>
+<span>  position: relative;</span>
+<span>  display: flex;</span>
+<span>  flex-direction: column;</span>
+<span>  height: 100%;</span>
+<span>  overflow: hidden;</span>
+<span>  border: 1px solid var(--color-border);</span>
+<span>  border-radius: var(--radius);</span>
+<span>  background: var(--color-surface);</span>
+<span>  transition: transform 200ms ease, box-shadow 200ms ease;</span>
+<span>}</span>
+<span></span>
+<span>.post-card:hover,</span>
+<span>.post-card:focus-within {</span>
+<span>  transform: translateY(-3px);</span>
+<span>  box-shadow: 0 12px 28px rgb(0 0 0 / 0.08);</span>
+<span>}</span>
+<span></span>
+<span>/* Product photos on white look best shown whole, on a soft background. */</span>
+<span>.post-card__image {</span>
+<span>  width: 100%;</span>
+<span>  aspect-ratio: 16 / 10;</span>
+<span>  object-fit: contain;</span>
+<span>  padding: 16px;</span>
+<span>  background: var(--color-photo-bg);</span>
+<span>}</span>
+<span></span>
+<span>.post-card__body {</span>
+<span>  display: flex;</span>
+<span>  flex: 1;</span>
+<span>  flex-direction: column;</span>
+<span>  padding: 20px;</span>
+<span>}</span>
+<span></span>
+<span>.post-card__title {</span>
+<span>  font-size: 1.3rem;</span>
+<span>}</span>
+<span></span>
+<span>.post-card__title a {</span>
+<span>  color: var(--color-text);</span>
+<span>  text-decoration: none;</span>
+<span>}</span>
+<span></span>
+<span>/* The whole card is clickable, but only the title is a link. */</span>
+<span>.post-card__title a::after {</span>
+<span>  content: "";</span>
+<span>  position: absolute;</span>
+<span>  inset: 0;</span>
+<span>}</span>
+<span></span>
+<span>.post-card__title a:hover {</span>
+<span>  color: var(--color-brand-dark);</span>
+<span>}</span>
+<span></span>
+<span>.post-card__excerpt {</span>
+<span>  flex: 1;</span>
+<span>  color: var(--color-muted);</span>
+<span>}</span>
+<span></span>
+<span>.tag {</span>
+<span>  align-self: flex-start;</span>
+<span>  margin-bottom: 10px;</span>
+<span>  padding: 2px 10px;</span>
+<span>  border-radius: 999px;</span>
+<span>  background: var(--color-brand-soft);</span>
+<span>  color: var(--color-text);</span>
+<span>  font-size: 0.8rem;</span>
+<span>  font-weight: 600;</span>
+<span>}</span>
+<span></span>
+<span>.meta {</span>
+<span>  display: flex;</span>
+<span>  flex-wrap: wrap;</span>
+<span>  align-items: center;</span>
+<span>  gap: 6px 12px;</span>
+<span>  color: var(--color-muted);</span>
+<span>  font-size: 0.9rem;</span>
+<span>}</span>
+<span></span>
+<span>.meta img {</span>
+<span>  width: 32px;</span>
+<span>  height: 32px;</span>
+<span>  border-radius: 50%;</span>
+<span>  object-fit: cover;</span>
+<span>}</span>
+<span></span>
+<span>.empty-message {</span>
+<span>  margin-top: 16px;</span>
+<span>  color: var(--color-muted);</span>
+<span>}</span>
+<span></span>
+<span>/* ---------- Newsletter ---------- */</span>
+<span></span>
+<span>.newsletter {</span>
+<span>  padding: 48px 0;</span>
+<span>  background: var(--color-brand-soft);</span>
+<span>}</span>
+<span></span>
+<span>.newsletter__inner {</span>
+<span>  display: grid;</span>
+<span>  grid-template-columns: 1fr 1fr;</span>
+<span>  gap: 32px;</span>
+<span>  align-items: center;</span>
+<span>}</span>
+<span></span>
+<span>.inline-form {</span>
+<span>  display: flex;</span>
+<span>  flex-wrap: wrap;</span>
+<span>  gap: 10px;</span>
+<span>}</span>
+<span></span>
+<span>.inline-form input {</span>
+<span>  flex: 1 1 220px;</span>
+<span>}</span>
+<span></span>
+<span>@media (max-width: 820px) {</span>
+<span>  .newsletter__inner {</span>
+<span>    grid-template-columns: 1fr;</span>
+<span>    gap: 16px;</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>/* ---------- Forms ---------- */</span>
+<span></span>
+<span>label {</span>
+<span>  display: block;</span>
+<span>  margin-bottom: 6px;</span>
+<span>  font-weight: 600;</span>
+<span>}</span>
+<span></span>
+<span>input,</span>
+<span>textarea {</span>
+<span>  width: 100%;</span>
+<span>  padding: 12px 14px;</span>
+<span>  border: 1px solid var(--color-border);</span>
+<span>  border-radius: 10px;</span>
+<span>  background: var(--color-surface);</span>
+<span>  color: var(--color-text);</span>
+<span>  font: inherit;</span>
+<span>}</span>
+<span></span>
+<span>input:focus-visible,</span>
+<span>textarea:focus-visible {</span>
+<span>  border-color: var(--color-focus);</span>
+<span>}</span>
+<span></span>
+<span>.form-row {</span>
+<span>  margin-bottom: 18px;</span>
+<span>}</span>
+<span></span>
+<span>.form-note {</span>
+<span>  color: var(--color-muted);</span>
+<span>  font-size: 0.9rem;</span>
+<span>}</span>
+<span></span>
+<span>/* ---------- Single post ---------- */</span>
+<span></span>
+<span>.breadcrumbs {</span>
+<span>  padding-top: 32px;</span>
+<span>  font-size: 0.9rem;</span>
+<span>  color: var(--color-muted);</span>
+<span>}</span>
+<span></span>
+<span>.breadcrumbs ol {</span>
+<span>  display: flex;</span>
+<span>  flex-wrap: wrap;</span>
+<span>  gap: 8px;</span>
+<span>  margin: 0;</span>
+<span>  padding: 0;</span>
+<span>  list-style: none;</span>
+<span>}</span>
+<span></span>
+<span>.breadcrumbs li + li::before {</span>
+<span>  content: "/";</span>
+<span>  margin-right: 8px;</span>
+<span>}</span>
+<span></span>
+<span>.article-header {</span>
+<span>  max-width: var(--text-width);</span>
+<span>  margin: 24px auto 32px;</span>
+<span>  text-align: center;</span>
+<span>}</span>
+<span></span>
+<span>.article-header .meta {</span>
+<span>  justify-content: center;</span>
+<span>}</span>
+<span></span>
+<span>.article-header .tag {</span>
+<span>  display: inline-block;</span>
+<span>}</span>
+<span></span>
+<span>.article-hero {</span>
+<span>  margin: 0 auto 40px;</span>
+<span>  max-width: 900px;</span>
+<span>}</span>
+<span></span>
+<span>.article-hero img {</span>
+<span>  width: 100%;</span>
+<span>  aspect-ratio: 16 / 9;</span>
+<span>  object-fit: contain;</span>
+<span>  padding: 24px;</span>
+<span>  border-radius: var(--radius);</span>
+<span>  background: var(--color-photo-bg);</span>
+<span>}</span>
+<span></span>
+<span>.article-hero figcaption {</span>
+<span>  margin-top: 8px;</span>
+<span>  color: var(--color-muted);</span>
+<span>  font-size: 0.9rem;</span>
+<span>  text-align: center;</span>
+<span>}</span>
+<span></span>
+<span>/* Long text reads best at about 68 characters a line. */</span>
+<span>.prose {</span>
+<span>  max-width: var(--text-width);</span>
+<span>  margin-inline: auto;</span>
+<span>}</span>
+<span></span>
+<span>.prose h2 {</span>
+<span>  margin-top: 1.8em;</span>
+<span>  font-size: 1.6rem;</span>
+<span>}</span>
+<span></span>
+<span>.prose ul,</span>
+<span>.prose ol {</span>
+<span>  padding-left: 1.3em;</span>
+<span>}</span>
+<span></span>
+<span>.prose li {</span>
+<span>  margin-bottom: 0.4em;</span>
+<span>}</span>
+<span></span>
+<span>.prose blockquote {</span>
+<span>  margin: 1.6em 0;</span>
+<span>  padding: 4px 0 4px 20px;</span>
+<span>  border-left: 4px solid var(--color-brand);</span>
+<span>  font-family: var(--font-heading);</span>
+<span>  font-size: 1.25rem;</span>
+<span>}</span>
+<span></span>
+<span>.callout {</span>
+<span>  margin: 1.6em 0;</span>
+<span>  padding: 16px 20px;</span>
+<span>  border-radius: var(--radius);</span>
+<span>  background: var(--color-brand-soft);</span>
+<span>}</span>
+<span></span>
+<span>.callout strong {</span>
+<span>  display: block;</span>
+<span>}</span>
+<span></span>
+<span>.author-box {</span>
+<span>  display: flex;</span>
+<span>  gap: 20px;</span>
+<span>  align-items: center;</span>
+<span>  max-width: var(--text-width);</span>
+<span>  margin: 48px auto 0;</span>
+<span>  padding: 24px;</span>
+<span>  border: 1px solid var(--color-border);</span>
+<span>  border-radius: var(--radius);</span>
+<span>  background: var(--color-surface);</span>
+<span>}</span>
+<span></span>
+<span>.author-box p {</span>
+<span>  margin: 0;</span>
+<span>  color: var(--color-muted);</span>
+<span>}</span>
+<span></span>
+<span>.author-box h2 {</span>
+<span>  margin: 0 0 4px;</span>
+<span>  font-size: 1.2rem;</span>
+<span>}</span>
+<span></span>
+<span>/* Author photo with a soft light sweep every 15 seconds. */</span>
+<span>.avatar {</span>
+<span>  position: relative;</span>
+<span>  flex: none;</span>
+<span>  width: var(--avatar-size, 80px);</span>
+<span>  height: var(--avatar-size, 80px);</span>
+<span>  overflow: hidden;</span>
+<span>  border-radius: 50%;</span>
+<span>  box-shadow: 0 4px 10px rgb(0 0 0 / 0.15);</span>
+<span>}</span>
+<span></span>
+<span>.avatar img {</span>
+<span>  width: 100%;</span>
+<span>  height: 100%;</span>
+<span>  object-fit: cover;</span>
+<span>}</span>
+<span></span>
+<span>.avatar::after {</span>
+<span>  content: "";</span>
+<span>  position: absolute;</span>
+<span>  inset: 0;</span>
+<span>  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.4), transparent);</span>
+<span>  transform: translateX(-150%) skewX(-20deg);</span>
+<span>  animation: shine-sweep 15s ease-in-out infinite;</span>
+<span>  pointer-events: none;</span>
+<span>}</span>
+<span></span>
+<span>@keyframes shine-sweep {</span>
+<span>  0% { transform: translateX(-150%) skewX(-20deg); }</span>
+<span>  10%, 100% { transform: translateX(150%) skewX(-20deg); }</span>
+<span>}</span>
+<span></span>
+<span>.post-nav {</span>
+<span>  display: grid;</span>
+<span>  grid-template-columns: 1fr 1fr;</span>
+<span>  gap: var(--gap);</span>
+<span>  max-width: var(--text-width);</span>
+<span>  margin: 32px auto 0;</span>
+<span>}</span>
+<span></span>
+<span>.post-nav a {</span>
+<span>  display: block;</span>
+<span>  padding: 16px 20px;</span>
+<span>  border: 1px solid var(--color-border);</span>
+<span>  border-radius: var(--radius);</span>
+<span>  background: var(--color-surface);</span>
+<span>  text-decoration: none;</span>
+<span>}</span>
+<span></span>
+<span>.post-nav span {</span>
+<span>  display: block;</span>
+<span>  color: var(--color-muted);</span>
+<span>  font-size: 0.85rem;</span>
+<span>}</span>
+<span></span>
+<span>.post-nav a:last-child {</span>
+<span>  text-align: right;</span>
+<span>}</span>
+<span></span>
+<span>@media (max-width: 600px) {</span>
+<span>  .post-nav {</span>
+<span>    grid-template-columns: 1fr;</span>
+<span>  }</span>
+<span></span>
+<span>  .post-nav a:last-child {</span>
+<span>    text-align: left;</span>
+<span>  }</span>
+<span></span>
+<span>  .author-box {</span>
+<span>    flex-direction: column;</span>
+<span>    text-align: center;</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>/* ---------- About page ---------- */</span>
+<span></span>
+<span>.about {</span>
+<span>  display: grid;</span>
+<span>  grid-template-columns: 280px 1fr;</span>
+<span>  gap: 48px;</span>
+<span>  align-items: start;</span>
+<span>  padding: 48px 0;</span>
+<span>}</span>
+<span></span>
+<span>.about__photo {</span>
+<span>  width: 100%;</span>
+<span>  aspect-ratio: 1;</span>
+<span>  object-fit: cover;</span>
+<span>  border-radius: var(--radius);</span>
+<span>}</span>
+<span></span>
+<span>.contact-card {</span>
+<span>  max-width: 640px;</span>
+<span>  padding: 32px;</span>
+<span>  border: 1px solid var(--color-border);</span>
+<span>  border-radius: var(--radius);</span>
+<span>  background: var(--color-surface);</span>
+<span>}</span>
+<span></span>
+<span>@media (max-width: 760px) {</span>
+<span>  .about {</span>
+<span>    grid-template-columns: 1fr;</span>
+<span>    gap: 24px;</span>
+<span>  }</span>
+<span></span>
+<span>  .about__photo {</span>
+<span>    max-width: 240px;</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>/* ---------- Footer ---------- */</span>
+<span></span>
+<span>.site-footer {</span>
+<span>  padding: 48px 0 32px;</span>
+<span>  border-top: 1px solid var(--color-border);</span>
+<span>  color: var(--color-muted);</span>
+<span>  font-size: 0.95rem;</span>
+<span>}</span>
+<span></span>
+<span>.site-footer__grid {</span>
+<span>  display: grid;</span>
+<span>  grid-template-columns: 2fr 1fr 1fr;</span>
+<span>  gap: 32px;</span>
+<span>}</span>
+<span></span>
+<span>.site-footer h2 {</span>
+<span>  font-family: var(--font-body);</span>
+<span>  font-size: 0.85rem;</span>
+<span>  letter-spacing: 0.08em;</span>
+<span>  text-transform: uppercase;</span>
+<span>  color: var(--color-text);</span>
+<span>}</span>
+<span></span>
+<span>.site-footer ul {</span>
+<span>  margin: 0;</span>
+<span>  padding: 0;</span>
+<span>  list-style: none;</span>
+<span>}</span>
+<span></span>
+<span>.site-footer li {</span>
+<span>  margin-bottom: 6px;</span>
+<span>}</span>
+<span></span>
+<span>.site-footer a {</span>
+<span>  color: var(--color-muted);</span>
+<span>}</span>
+<span></span>
+<span>.site-footer__bottom {</span>
+<span>  margin-top: 32px;</span>
+<span>  padding-top: 20px;</span>
+<span>  border-top: 1px solid var(--color-border);</span>
+<span>}</span>
+<span></span>
+<span>@media (max-width: 720px) {</span>
+<span>  .site-footer__grid {</span>
+<span>    grid-template-columns: 1fr 1fr;</span>
+<span>  }</span>
+<span></span>
+<span>  .site-footer__about {</span>
+<span>    grid-column: 1 / -1;</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>/* ---------- Less motion ---------- */</span>
+<span></span>
+<span>@media (prefers-reduced-motion: reduce) {</span>
+<span>  html {</span>
+<span>    scroll-behavior: auto;</span>
+<span>  }</span>
+<span></span>
+<span>  .post-card {</span>
+<span>    transition: none;</span>
+<span>  }</span>
+<span></span>
+<span>  .post-card:hover,</span>
+<span>  .post-card:focus-within {</span>
+<span>    transform: none;</span>
+<span>  }</span>
+<span></span>
+<span>  .avatar::after {</span>
+<span>    display: none;</span>
+<span>  }</span>
+<span>}</span>
+<span></span>
+<span>/* ---------- Small extras ---------- */</span>
+<span></span>
+<span>.hero__title a {</span>
+<span>  color: inherit;</span>
+<span>  text-decoration: none;</span>
+<span>}</span>
+<span></span>
+<span>.hero__title a:hover {</span>
+<span>  color: var(--color-brand-dark);</span>
+<span>}</span>
+<span></span>
+<span>.about__text {</span>
+<span>  margin: 0;</span>
+<span>}</span>
+<span></span>
+<span>.not-found {</span>
+<span>  padding: 64px 0;</span>
+<span>  text-align: center;</span>
+<span>}</span>
+  </pre>
+
+  <h2 id="step-3-the-javascript">Step 3 The JavaScript</h2>
+
+  <div class="div_p">
+    <p>This runs the phone menu and the topic filter buttons. Every page also has one tiny script in the head that adds a js class, so the phone menu only folds away when JavaScript is on.</p>
+  </div>
+
+  <h3>js/main.js</h3>
+
+  <pre class="mycodejs">
+<span>// Small helpers for the blog. The site still works if this file fails to load.</span>
+<span></span>
+<span>// Phone menu: the button shows and hides the links.</span>
+<span>const menuButton = document.querySelector(".menu-button");</span>
+<span>const siteNav = document.getElementById("site-nav");</span>
+<span></span>
+<span>// Only when both exist on this page, so a page without a menu gives no error.</span>
+<span>if (menuButton &amp;&amp; siteNav) {</span>
+<span>  menuButton.addEventListener("click", () =&gt; {</span>
+<span>    // toggle adds the class when it is missing and removes it when it is there.</span>
+<span>    // It gives back true when the menu is now open.</span>
+<span>    const isOpen = siteNav.classList.toggle("is-open");</span>
+<span>    // Tells screen readers whether the menu is open.</span>
+<span>    menuButton.setAttribute("aria-expanded", String(isOpen));</span>
+<span>  });</span>
+<span>}</span>
+<span></span>
+<span>// Category buttons on the home page hide the posts that do not match.</span>
+<span>const filterButtons = document.querySelectorAll(".filter");</span>
+<span>const postCards = document.querySelectorAll("[data-category]");</span>
+<span>const resultMessage = document.getElementById("filter-result");</span>
+<span></span>
+<span>filterButtons.forEach((button) =&gt; {</span>
+<span>  button.addEventListener("click", () =&gt; {</span>
+<span>    // dataset.filter reads the data-filter attribute of the button that was clicked.</span>
+<span>    const category = button.dataset.filter;</span>
+<span>    let shown = 0;</span>
+<span></span>
+<span>    // Mark the clicked button as pressed and every other button as not pressed.</span>
+<span>    filterButtons.forEach((other) =&gt; other.setAttribute("aria-pressed", String(other === button)));</span>
+<span></span>
+<span>    postCards.forEach((card) =&gt; {</span>
+<span>      // A card matches when All was clicked, or when its data-category is the same as the button.</span>
+<span>      const matches = category === "all" || card.dataset.category === category;</span>
+<span>      // hidden takes the card off the page, also for screen readers.</span>
+<span>      card.hidden = !matches;</span>
+<span>      if (matches) shown += 1;</span>
+<span>    });</span>
+<span></span>
+<span>    // Says how many posts are showing, with "post" for one and "posts" for any other number.</span>
+<span>    resultMessage.textContent = `Showing ${shown} ${shown === 1 ? "post" : "posts"}.`;</span>
+<span>  });</span>
+<span>});</span>
+  </pre>
+
+  <h3>The one line in every head</h3>
+
+  <div class="div_p">
+    <p>The box is a small whole page, so you can see where the line goes. The line itself is the script tag in the head.</p>
+  </div>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span></span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Build Notes&lt;/title&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/style.css"&gt;</span>
+<span>  &lt;!-- Adds class="js" to the html tag right away, before the page is drawn.</span>
+<span>       The CSS only folds the phone menu away when that class is there. --&gt;</span>
+<span>  &lt;script&gt;document.documentElement.classList.add("js");&lt;/script&gt;</span>
+<span>&lt;/head&gt;</span>
+<span></span>
+<span>&lt;body&gt;</span>
+<span>  &lt;p&gt;With JavaScript on, the html tag of this page now has class="js".&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span></span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h2 id="step-4-the-home-page">Step 4 The Home Page</h2>
+
+  <div class="div_p">
+    <p>The featured post sits at the top. The list below it goes between the POSTS START and POSTS END comments, which the script in Keep The Old Posts fills in for you.</p>
+  </div>
+
+  <h3>index.html</h3>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span></span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;!-- Makes the page fit the width of a phone screen. --&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Build Notes | PC building guides&lt;/title&gt;</span>
+<span>  &lt;meta name="description" content="Plain-English guides for building and upgrading your own computer."&gt;</span>
+<span>  &lt;!-- The og: tags set the title, text and picture shown when the page is shared on social media. --&gt;</span>
+<span>  &lt;meta property="og:title" content="Build Notes | PC building guides"&gt;</span>
+<span>  &lt;meta property="og:description" content="Plain-English guides for building and upgrading your own computer."&gt;</span>
+<span>  &lt;meta property="og:type" content="website"&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/style.css"&gt;</span>
+<span>  &lt;!-- Lets the CSS know JavaScript is on, so the phone menu can fold away. --&gt;</span>
+<span>  &lt;script&gt;document.documentElement.classList.add("js");&lt;/script&gt;</span>
+<span>&lt;/head&gt;</span>
+<span></span>
+<span>&lt;body&gt;</span>
+<span>  &lt;a class="skip-link" href="#main"&gt;Skip to content&lt;/a&gt;</span>
+<span></span>
+<span>  &lt;!-- The same header is on every page. --&gt;</span>
+<span>  &lt;header class="site-header"&gt;</span>
+<span>    &lt;div class="container site-header__inner"&gt;</span>
+<span>      &lt;a class="brand" href="index.html"&gt;Build&lt;span&gt;Notes&lt;/span&gt;&lt;/a&gt;</span>
+<span>      &lt;!-- aria-expanded tells screen readers whether the menu is open. js/main.js switches it. --&gt;</span>
+<span>      &lt;button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav"&gt;Menu&lt;/button&gt;</span>
+<span>      &lt;nav id="site-nav" class="site-nav" aria-label="Main"&gt;</span>
+<span>        &lt;ul&gt;</span>
+<span>          &lt;li&gt;&lt;a href="index.html" aria-current="page"&gt;Home&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;li&gt;&lt;a href="index.html#latest"&gt;Articles&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;li&gt;&lt;a href="about.html"&gt;About&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;li&gt;&lt;a href="about.html#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;</span>
+<span>        &lt;/ul&gt;</span>
+<span>      &lt;/nav&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  &lt;/header&gt;</span>
+<span></span>
+<span>  &lt;main id="main"&gt;</span>
+<span>    &lt;!-- The featured post. Change the link in here to feature a different post. --&gt;</span>
+<span>    &lt;section class="hero" aria-labelledby="featured-title"&gt;</span>
+<span>      &lt;div class="container hero__card"&gt;</span>
+<span>        &lt;img class="hero__image" src="images/cpu4.jpg" alt="A desktop processor sitting in its motherboard socket" width="1280" height="720" fetchpriority="high"&gt;</span>
+<span>        &lt;div&gt;</span>
+<span>          &lt;span class="hero__label"&gt;Featured &amp;middot; Builds&lt;/span&gt;</span>
+<span>          &lt;h1 id="featured-title" class="hero__title"&gt;&lt;a href="posts/plan-your-first-pc-build.html"&gt;How to Plan Your First PC Build&lt;/a&gt;&lt;/h1&gt;</span>
+<span>          &lt;p class="hero__excerpt"&gt;Start with what you want the computer to do, set a budget, then pick parts in the right order so everything fits together.&lt;/p&gt;</span>
+<span>          &lt;p class="meta"&gt;&lt;span class="avatar" style="--avatar-size: 32px"&gt;&lt;img src="images/Jane_Doe.jpg" alt="" width="768" height="768"&gt;&lt;/span&gt;&lt;span&gt;By Jane Doe&lt;/span&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;time datetime="2026-11-02"&gt;November 2, 2026&lt;/time&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;span&gt;7 min read&lt;/span&gt;&lt;/p&gt;</span>
+<span>          &lt;p&gt;&lt;a class="button" href="posts/plan-your-first-pc-build.html"&gt;Read the guide&lt;/a&gt;&lt;/p&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>      &lt;/div&gt;</span>
+<span>    &lt;/section&gt;</span>
+<span></span>
+<span>    &lt;section class="section" id="latest" aria-labelledby="latest-title"&gt;</span>
+<span>      &lt;div class="container"&gt;</span>
+<span>        &lt;div class="section__head"&gt;</span>
+<span>          &lt;h2 id="latest-title"&gt;Latest articles&lt;/h2&gt;</span>
+<span>          &lt;div class="filters" role="group" aria-label="Filter by topic"&gt;</span>
+<span>          &lt;!-- data-filter is the category a button shows. aria-pressed marks the button that is on. --&gt;</span>
+<span>          &lt;button class="filter" type="button" data-filter="all" aria-pressed="true"&gt;All&lt;/button&gt;</span>
+<span>          &lt;button class="filter" type="button" data-filter="Builds" aria-pressed="false"&gt;Builds&lt;/button&gt;</span>
+<span>          &lt;button class="filter" type="button" data-filter="Guides" aria-pressed="false"&gt;Guides&lt;/button&gt;</span>
+<span>          &lt;button class="filter" type="button" data-filter="Reviews" aria-pressed="false"&gt;Reviews&lt;/button&gt;</span>
+<span>          &lt;button class="filter" type="button" data-filter="How To" aria-pressed="false"&gt;How To&lt;/button&gt;</span>
+<span>          &lt;/div&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>        &lt;p id="filter-result" class="visually-hidden" role="status"&gt;&lt;/p&gt;</span>
+<span>        &lt;ul class="post-grid"&gt;</span>
+<span>        &lt;!-- POSTS START: node scripts/list-posts.mjs rewrites everything down to POSTS END --&gt;</span>
+<span>        &lt;li data-category="Guides"&gt;</span>
+<span>          &lt;article class="post-card"&gt;</span>
+<span>            &lt;img class="post-card__image" src="images/1200W_Power_Supply.webp" alt="A black modular PC power supply" width="408" height="323" loading="lazy"&gt;</span>
+<span>            &lt;div class="post-card__body"&gt;</span>
+<span>              &lt;span class="tag"&gt;Guides&lt;/span&gt;</span>
+<span>              &lt;h3 class="post-card__title"&gt;&lt;a href="posts/how-to-choose-a-power-supply.html"&gt;How to Choose a Power Supply&lt;/a&gt;&lt;/h3&gt;</span>
+<span>              &lt;p class="post-card__excerpt"&gt;Wattage, efficiency ratings and cables explained, so you buy a power supply that is safe, quiet and the right size.&lt;/p&gt;</span>
+<span>              &lt;p class="meta"&gt;&lt;time datetime="2026-10-28"&gt;October 28, 2026&lt;/time&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;span&gt;5 min read&lt;/span&gt;&lt;/p&gt;</span>
+<span>            &lt;/div&gt;</span>
+<span>          &lt;/article&gt;</span>
+<span>        &lt;/li&gt;</span>
+<span>        &lt;li data-category="Reviews"&gt;</span>
+<span>          &lt;article class="post-card"&gt;</span>
+<span>            &lt;img class="post-card__image" src="images/5080_Graphics_Card.webp" alt="A large graphics card with three cooling fans" width="408" height="408" loading="lazy"&gt;</span>
+<span>            &lt;div class="post-card__body"&gt;</span>
+<span>              &lt;span class="tag"&gt;Reviews&lt;/span&gt;</span>
+<span>              &lt;h3 class="post-card__title"&gt;&lt;a href="posts/before-you-buy-a-graphics-card.html"&gt;What to Know Before You Buy a Graphics Card&lt;/a&gt;&lt;/h3&gt;</span>
+<span>              &lt;p class="post-card__excerpt"&gt;Screen resolution, memory, size and power all matter. Here is how to match a graphics card to the games you actually play.&lt;/p&gt;</span>
+<span>              &lt;p class="meta"&gt;&lt;time datetime="2026-10-21"&gt;October 21, 2026&lt;/time&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;span&gt;6 min read&lt;/span&gt;&lt;/p&gt;</span>
+<span>            &lt;/div&gt;</span>
+<span>          &lt;/article&gt;</span>
+<span>        &lt;/li&gt;</span>
+<span>        &lt;li data-category="Guides"&gt;</span>
+<span>          &lt;article class="post-card"&gt;</span>
+<span>            &lt;img class="post-card__image" src="images/Clear_Blue_Light_Case.webp" alt="A glass-sided PC case lit with blue lights" width="1000" height="1000" loading="lazy"&gt;</span>
+<span>            &lt;div class="post-card__body"&gt;</span>
+<span>              &lt;span class="tag"&gt;Guides&lt;/span&gt;</span>
+<span>              &lt;h3 class="post-card__title"&gt;&lt;a href="posts/picking-a-pc-case.html"&gt;Picking a PC Case That Fits Everything&lt;/a&gt;&lt;/h3&gt;</span>
+<span>              &lt;p class="post-card__excerpt"&gt;Size, airflow and cable space matter more than looks. A quick checklist for choosing a case you will not regret.&lt;/p&gt;</span>
+<span>              &lt;p class="meta"&gt;&lt;time datetime="2026-10-14"&gt;October 14, 2026&lt;/time&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;span&gt;4 min read&lt;/span&gt;&lt;/p&gt;</span>
+<span>            &lt;/div&gt;</span>
+<span>          &lt;/article&gt;</span>
+<span>        &lt;/li&gt;</span>
+<span>        &lt;li data-category="Guides"&gt;</span>
+<span>          &lt;article class="post-card"&gt;</span>
+<span>            &lt;img class="post-card__image" src="images/Water_cooler_360.webp" alt="An all-in-one liquid cooler with a 360 millimeter radiator" width="304" height="304" loading="lazy"&gt;</span>
+<span>            &lt;div class="post-card__body"&gt;</span>
+<span>              &lt;span class="tag"&gt;Guides&lt;/span&gt;</span>
+<span>              &lt;h3 class="post-card__title"&gt;&lt;a href="posts/air-vs-liquid-cooling.html"&gt;Air or Liquid Cooling: Which Is Right for You?&lt;/a&gt;&lt;/h3&gt;</span>
+<span>              &lt;p class="post-card__excerpt"&gt;Both keep your processor cool. The real differences are noise, looks, price and how much work you want to do.&lt;/p&gt;</span>
+<span>              &lt;p class="meta"&gt;&lt;time datetime="2026-10-07"&gt;October 7, 2026&lt;/time&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;span&gt;5 min read&lt;/span&gt;&lt;/p&gt;</span>
+<span>            &lt;/div&gt;</span>
+<span>          &lt;/article&gt;</span>
+<span>        &lt;/li&gt;</span>
+<span>        &lt;li data-category="How To"&gt;</span>
+<span>          &lt;article class="post-card"&gt;</span>
+<span>            &lt;img class="post-card__image" src="images/cmos_battery5.jpg" alt="A coin cell battery for a motherboard" width="1000" height="1000" loading="lazy"&gt;</span>
+<span>            &lt;div class="post-card__body"&gt;</span>
+<span>              &lt;span class="tag"&gt;How To&lt;/span&gt;</span>
+<span>              &lt;h3 class="post-card__title"&gt;&lt;a href="posts/replace-your-cmos-battery.html"&gt;How to Replace Your CMOS Battery&lt;/a&gt;&lt;/h3&gt;</span>
+<span>              &lt;p class="post-card__excerpt"&gt;If your computer forgets the date or its settings every time you unplug it, a small coin battery is probably the fix.&lt;/p&gt;</span>
+<span>              &lt;p class="meta"&gt;&lt;time datetime="2026-09-30"&gt;September 30, 2026&lt;/time&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;span&gt;3 min read&lt;/span&gt;&lt;/p&gt;</span>
+<span>            &lt;/div&gt;</span>
+<span>          &lt;/article&gt;</span>
+<span>        &lt;/li&gt;</span>
+<span>        &lt;li data-category="Builds"&gt;</span>
+<span>          &lt;article class="post-card"&gt;</span>
+<span>            &lt;img class="post-card__image" src="images/Asus_white_wifi_strix_motherboard.webp" alt="A white motherboard with silver heatsinks" width="304" height="304" loading="lazy"&gt;</span>
+<span>            &lt;div class="post-card__body"&gt;</span>
+<span>              &lt;span class="tag"&gt;Builds&lt;/span&gt;</span>
+<span>              &lt;h3 class="post-card__title"&gt;&lt;a href="posts/building-an-all-white-pc.html"&gt;Building an All-White PC&lt;/a&gt;&lt;/h3&gt;</span>
+<span>              &lt;p class="post-card__excerpt"&gt;Matching parts, cables and lighting so a white build looks clean instead of patchy.&lt;/p&gt;</span>
+<span>              &lt;p class="meta"&gt;&lt;time datetime="2026-09-23"&gt;September 23, 2026&lt;/time&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;span&gt;4 min read&lt;/span&gt;&lt;/p&gt;</span>
+<span>            &lt;/div&gt;</span>
+<span>          &lt;/article&gt;</span>
+<span>        &lt;/li&gt;</span>
+<span>        &lt;!-- POSTS END --&gt;</span>
+<span>        &lt;/ul&gt;</span>
+<span>      &lt;/div&gt;</span>
+<span>    &lt;/section&gt;</span>
+<span></span>
+<span>    &lt;section class="newsletter" id="newsletter" aria-labelledby="newsletter-title"&gt;</span>
+<span>      &lt;div class="container newsletter__inner"&gt;</span>
+<span>        &lt;div&gt;</span>
+<span>          &lt;h2 id="newsletter-title"&gt;Get new posts by email&lt;/h2&gt;</span>
+<span>          &lt;p&gt;One email when a new guide goes up. No spam, and you can leave any time.&lt;/p&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>        &lt;!-- Connect this to an email service. Replace the action with the</span>
+<span>             form address it gives you (Formspree, Mailchimp, Buttondown...). --&gt;</span>
+<span>        &lt;form class="inline-form" action="https://formspree.io/f/YOUR_FORM_ID" method="post"&gt;</span>
+<span>          &lt;!-- The label is hidden from view, but screen readers still read it out. --&gt;</span>
+<span>          &lt;label class="visually-hidden" for="newsletter-email"&gt;Email address&lt;/label&gt;</span>
+<span>          &lt;input id="newsletter-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required&gt;</span>
+<span>          &lt;button class="button" type="submit"&gt;Subscribe&lt;/button&gt;</span>
+<span>        &lt;/form&gt;</span>
+<span>      &lt;/div&gt;</span>
+<span>    &lt;/section&gt;</span>
+<span>  &lt;/main&gt;</span>
+<span></span>
+<span>  &lt;footer class="site-footer"&gt;</span>
+<span>    &lt;div class="container"&gt;</span>
+<span>      &lt;div class="site-footer__grid"&gt;</span>
+<span>        &lt;div class="site-footer__about"&gt;</span>
+<span>          &lt;h2&gt;Build Notes&lt;/h2&gt;</span>
+<span>          &lt;p&gt;Plain-English guides for people building and upgrading their own computers.&lt;/p&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>        &lt;nav aria-label="Topics"&gt;</span>
+<span>          &lt;h2&gt;Topics&lt;/h2&gt;</span>
+<span>          &lt;ul&gt;</span>
+<span>            &lt;li&gt;&lt;a href="index.html#latest"&gt;Builds&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="index.html#latest"&gt;Guides&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="index.html#latest"&gt;Reviews&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="index.html#latest"&gt;How To&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;/ul&gt;</span>
+<span>        &lt;/nav&gt;</span>
+<span>        &lt;nav aria-label="Site"&gt;</span>
+<span>          &lt;h2&gt;Site&lt;/h2&gt;</span>
+<span>          &lt;ul&gt;</span>
+<span>            &lt;li&gt;&lt;a href="about.html"&gt;About&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="about.html#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="index.html#newsletter"&gt;Newsletter&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;/ul&gt;</span>
+<span>        &lt;/nav&gt;</span>
+<span>      &lt;/div&gt;</span>
+<span>      &lt;p class="site-footer__bottom"&gt;&amp;copy; 2026 Build Notes. All rights reserved.&lt;/p&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  &lt;/footer&gt;</span>
+<span></span>
+<span>  &lt;!-- Last in the body, so the menu and the buttons exist before the script runs. --&gt;</span>
+<span>  &lt;script src="js/main.js"&gt;&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span></span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h2 id="step-5-a-post-page">Step 5 A Post Page</h2>
+
+  <div class="div_p">
+    <p>Every post is a copy of this file. Posts live in the posts folder, so their links to css, js and images start with ../ to go up one folder.</p>
+  </div>
+
+  <h3>posts/replace-your-cmos-battery.html</h3>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span></span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;!-- Makes the page fit the width of a phone screen. --&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;How to Replace Your CMOS Battery | Build Notes&lt;/title&gt;</span>
+<span>  &lt;meta name="description" content="If your computer forgets the date or its settings every time you unplug it, a small coin battery is probably the fix."&gt;</span>
+<span>  &lt;meta property="og:title" content="How to Replace Your CMOS Battery | Build Notes"&gt;</span>
+<span>  &lt;meta property="og:description" content="If your computer forgets the date or its settings every time you unplug it, a small coin battery is probably the fix."&gt;</span>
+<span>  &lt;meta property="og:type" content="article"&gt;</span>
+<span>  &lt;meta property="article:published_time" content="2026-09-30"&gt;</span>
+<span>  &lt;!-- ../ goes up one folder, because this page is inside posts. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="../css/style.css"&gt;</span>
+<span>  &lt;!-- Lets the CSS know JavaScript is on, so the phone menu can fold away. --&gt;</span>
+<span>  &lt;script&gt;document.documentElement.classList.add("js");&lt;/script&gt;</span>
+<span>&lt;/head&gt;</span>
+<span></span>
+<span>&lt;body&gt;</span>
+<span>  &lt;a class="skip-link" href="#main"&gt;Skip to content&lt;/a&gt;</span>
+<span></span>
+<span>  &lt;!-- The same header is on every page. --&gt;</span>
+<span>  &lt;header class="site-header"&gt;</span>
+<span>    &lt;div class="container site-header__inner"&gt;</span>
+<span>      &lt;a class="brand" href="../index.html"&gt;Build&lt;span&gt;Notes&lt;/span&gt;&lt;/a&gt;</span>
+<span>      &lt;!-- aria-expanded tells screen readers whether the menu is open. js/main.js switches it. --&gt;</span>
+<span>      &lt;button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav"&gt;Menu&lt;/button&gt;</span>
+<span>      &lt;nav id="site-nav" class="site-nav" aria-label="Main"&gt;</span>
+<span>        &lt;ul&gt;</span>
+<span>          &lt;li&gt;&lt;a href="../index.html"&gt;Home&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;li&gt;&lt;a href="../index.html#latest"&gt;Articles&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;li&gt;&lt;a href="../about.html"&gt;About&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;li&gt;&lt;a href="../about.html#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;</span>
+<span>        &lt;/ul&gt;</span>
+<span>      &lt;/nav&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  &lt;/header&gt;</span>
+<span></span>
+<span>  &lt;main id="main"&gt;</span>
+<span>    &lt;div class="container"&gt;</span>
+<span>      &lt;!-- Breadcrumbs show where this page sits in the site. --&gt;</span>
+<span>      &lt;nav class="breadcrumbs" aria-label="Breadcrumb"&gt;</span>
+<span>        &lt;ol&gt;</span>
+<span>          &lt;li&gt;&lt;a href="../index.html"&gt;Home&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;li&gt;&lt;a href="../index.html#latest"&gt;How To&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;li aria-current="page"&gt;How to Replace Your CMOS Battery&lt;/li&gt;</span>
+<span>        &lt;/ol&gt;</span>
+<span>      &lt;/nav&gt;</span>
+<span></span>
+<span>      &lt;article&gt;</span>
+<span>        &lt;header class="article-header"&gt;</span>
+<span>          &lt;span class="tag"&gt;How To&lt;/span&gt;</span>
+<span>          &lt;h1&gt;How to Replace Your CMOS Battery&lt;/h1&gt;</span>
+<span>          &lt;p class="meta"&gt;&lt;span class="avatar" style="--avatar-size: 36px"&gt;&lt;img src="../images/Jane_Doe.jpg" alt="" width="768" height="768"&gt;&lt;/span&gt;&lt;span&gt;By Jane Doe&lt;/span&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;time datetime="2026-09-30"&gt;September 30, 2026&lt;/time&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;span&gt;3 min read&lt;/span&gt;&lt;/p&gt;</span>
+<span>        &lt;/header&gt;</span>
+<span></span>
+<span>        &lt;!-- The main photo. The list script copies it onto the card on the home page. --&gt;</span>
+<span>        &lt;figure class="article-hero"&gt;</span>
+<span>          &lt;img src="../images/cmos_battery5.jpg" alt="A coin cell battery for a motherboard" width="1000" height="1000" fetchpriority="high"&gt;</span>
+<span>        &lt;/figure&gt;</span>
+<span></span>
+<span>        &lt;div class="prose"&gt;</span>
+<span>&lt;p&gt;A small coin battery on the motherboard keeps the clock running and remembers firmware settings while the computer is unplugged. After several years it can run out.&lt;/p&gt;</span>
+<span>&lt;h2&gt;Signs the battery is low&lt;/h2&gt;</span>
+<span>&lt;ul&gt;</span>
+<span>  &lt;li&gt;The date and time reset when the computer is unplugged.&lt;/li&gt;</span>
+<span>  &lt;li&gt;Firmware settings go back to defaults.&lt;/li&gt;</span>
+<span>  &lt;li&gt;The computer shows a battery warning when it starts.&lt;/li&gt;</span>
+<span>&lt;/ul&gt;</span>
+<span>&lt;h2&gt;Steps&lt;/h2&gt;</span>
+<span>&lt;ol&gt;</span>
+<span>  &lt;li&gt;Shut down, switch off the power supply and unplug the computer.&lt;/li&gt;</span>
+<span>  &lt;li&gt;Touch a metal part of the case to discharge static.&lt;/li&gt;</span>
+<span>  &lt;li&gt;Find the round battery on the motherboard. Most boards use a CR2032.&lt;/li&gt;</span>
+<span>  &lt;li&gt;Press the small clip and lift the old battery out.&lt;/li&gt;</span>
+<span>  &lt;li&gt;Put the new one in with the same side facing up.&lt;/li&gt;</span>
+<span>  &lt;li&gt;Plug in, start up and set the date and your settings again.&lt;/li&gt;</span>
+<span>&lt;/ol&gt;</span>
+<span>&lt;div class="callout"&gt;&lt;strong&gt;Check first&lt;/strong&gt; Your motherboard manual shows where the battery is and which type it takes.&lt;/div&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span></span>
+<span>        &lt;!-- A short note about the writer, after the post. --&gt;</span>
+<span>        &lt;aside class="author-box" aria-label="About the author"&gt;</span>
+<span>          &lt;span class="avatar"&gt;&lt;img src="../images/Jane_Doe.jpg" alt="Portrait of Jane Doe" width="768" height="768"&gt;&lt;/span&gt;</span>
+<span>          &lt;div&gt;</span>
+<span>            &lt;h2&gt;Written by Jane Doe&lt;/h2&gt;</span>
+<span>            &lt;p&gt;Jane builds custom PCs and writes plain-English guides for people putting together their first computer. &lt;a href="../about.html"&gt;More about Jane&lt;/a&gt;&lt;/p&gt;</span>
+<span>          &lt;/div&gt;</span>
+<span>        &lt;/aside&gt;</span>
+<span>      &lt;/article&gt;</span>
+<span></span>
+<span>      &lt;nav class="post-nav" aria-label="More posts"&gt;</span>
+<span>      &lt;a href="building-an-all-white-pc.html"&gt;&lt;span&gt;Older post&lt;/span&gt;Building an All-White PC&lt;/a&gt;</span>
+<span>      &lt;a href="air-vs-liquid-cooling.html"&gt;&lt;span&gt;Newer post&lt;/span&gt;Air or Liquid Cooling: Which Is Right for You?&lt;/a&gt;</span>
+<span>      &lt;/nav&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span></span>
+<span>    &lt;section class="section" aria-labelledby="related-title"&gt;</span>
+<span>      &lt;div class="container"&gt;</span>
+<span>        &lt;div class="section__head"&gt;&lt;h2 id="related-title"&gt;Keep reading&lt;/h2&gt;&lt;/div&gt;</span>
+<span>        &lt;ul class="post-grid"&gt;</span>
+<span>        &lt;li data-category="Builds"&gt;</span>
+<span>          &lt;article class="post-card"&gt;</span>
+<span>            &lt;img class="post-card__image" src="../images/cpu4.jpg" alt="A desktop processor sitting in its motherboard socket" width="1280" height="720" loading="lazy"&gt;</span>
+<span>            &lt;div class="post-card__body"&gt;</span>
+<span>              &lt;span class="tag"&gt;Builds&lt;/span&gt;</span>
+<span>              &lt;h3 class="post-card__title"&gt;&lt;a href="../posts/plan-your-first-pc-build.html"&gt;How to Plan Your First PC Build&lt;/a&gt;&lt;/h3&gt;</span>
+<span>              &lt;p class="post-card__excerpt"&gt;Start with what you want the computer to do, set a budget, then pick parts in the right order so everything fits together.&lt;/p&gt;</span>
+<span>              &lt;p class="meta"&gt;&lt;time datetime="2026-11-02"&gt;November 2, 2026&lt;/time&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;span&gt;7 min read&lt;/span&gt;&lt;/p&gt;</span>
+<span>            &lt;/div&gt;</span>
+<span>          &lt;/article&gt;</span>
+<span>        &lt;/li&gt;</span>
+<span>        &lt;li data-category="Guides"&gt;</span>
+<span>          &lt;article class="post-card"&gt;</span>
+<span>            &lt;img class="post-card__image" src="../images/1200W_Power_Supply.webp" alt="A black modular PC power supply" width="408" height="323" loading="lazy"&gt;</span>
+<span>            &lt;div class="post-card__body"&gt;</span>
+<span>              &lt;span class="tag"&gt;Guides&lt;/span&gt;</span>
+<span>              &lt;h3 class="post-card__title"&gt;&lt;a href="../posts/how-to-choose-a-power-supply.html"&gt;How to Choose a Power Supply&lt;/a&gt;&lt;/h3&gt;</span>
+<span>              &lt;p class="post-card__excerpt"&gt;Wattage, efficiency ratings and cables explained, so you buy a power supply that is safe, quiet and the right size.&lt;/p&gt;</span>
+<span>              &lt;p class="meta"&gt;&lt;time datetime="2026-10-28"&gt;October 28, 2026&lt;/time&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;span&gt;5 min read&lt;/span&gt;&lt;/p&gt;</span>
+<span>            &lt;/div&gt;</span>
+<span>          &lt;/article&gt;</span>
+<span>        &lt;/li&gt;</span>
+<span>        &lt;li data-category="Reviews"&gt;</span>
+<span>          &lt;article class="post-card"&gt;</span>
+<span>            &lt;img class="post-card__image" src="../images/5080_Graphics_Card.webp" alt="A large graphics card with three cooling fans" width="408" height="408" loading="lazy"&gt;</span>
+<span>            &lt;div class="post-card__body"&gt;</span>
+<span>              &lt;span class="tag"&gt;Reviews&lt;/span&gt;</span>
+<span>              &lt;h3 class="post-card__title"&gt;&lt;a href="../posts/before-you-buy-a-graphics-card.html"&gt;What to Know Before You Buy a Graphics Card&lt;/a&gt;&lt;/h3&gt;</span>
+<span>              &lt;p class="post-card__excerpt"&gt;Screen resolution, memory, size and power all matter. Here is how to match a graphics card to the games you actually play.&lt;/p&gt;</span>
+<span>              &lt;p class="meta"&gt;&lt;time datetime="2026-10-21"&gt;October 21, 2026&lt;/time&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;span&gt;6 min read&lt;/span&gt;&lt;/p&gt;</span>
+<span>            &lt;/div&gt;</span>
+<span>          &lt;/article&gt;</span>
+<span>        &lt;/li&gt;</span>
+<span>        &lt;/ul&gt;</span>
+<span>      &lt;/div&gt;</span>
+<span>    &lt;/section&gt;</span>
+<span></span>
+<span>    &lt;section class="newsletter" id="newsletter" aria-labelledby="newsletter-title"&gt;</span>
+<span>      &lt;div class="container newsletter__inner"&gt;</span>
+<span>        &lt;div&gt;</span>
+<span>          &lt;h2 id="newsletter-title"&gt;Get new posts by email&lt;/h2&gt;</span>
+<span>          &lt;p&gt;One email when a new guide goes up. No spam, and you can leave any time.&lt;/p&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>        &lt;!-- Connect this to an email service. Replace the action with the</span>
+<span>             form address it gives you (Formspree, Mailchimp, Buttondown...). --&gt;</span>
+<span>        &lt;form class="inline-form" action="https://formspree.io/f/YOUR_FORM_ID" method="post"&gt;</span>
+<span>          &lt;label class="visually-hidden" for="newsletter-email"&gt;Email address&lt;/label&gt;</span>
+<span>          &lt;input id="newsletter-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required&gt;</span>
+<span>          &lt;button class="button" type="submit"&gt;Subscribe&lt;/button&gt;</span>
+<span>        &lt;/form&gt;</span>
+<span>      &lt;/div&gt;</span>
+<span>    &lt;/section&gt;</span>
+<span>  &lt;/main&gt;</span>
+<span></span>
+<span>  &lt;footer class="site-footer"&gt;</span>
+<span>    &lt;div class="container"&gt;</span>
+<span>      &lt;div class="site-footer__grid"&gt;</span>
+<span>        &lt;div class="site-footer__about"&gt;</span>
+<span>          &lt;h2&gt;Build Notes&lt;/h2&gt;</span>
+<span>          &lt;p&gt;Plain-English guides for people building and upgrading their own computers.&lt;/p&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>        &lt;nav aria-label="Topics"&gt;</span>
+<span>          &lt;h2&gt;Topics&lt;/h2&gt;</span>
+<span>          &lt;ul&gt;</span>
+<span>            &lt;li&gt;&lt;a href="../index.html#latest"&gt;Builds&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="../index.html#latest"&gt;Guides&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="../index.html#latest"&gt;Reviews&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="../index.html#latest"&gt;How To&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;/ul&gt;</span>
+<span>        &lt;/nav&gt;</span>
+<span>        &lt;nav aria-label="Site"&gt;</span>
+<span>          &lt;h2&gt;Site&lt;/h2&gt;</span>
+<span>          &lt;ul&gt;</span>
+<span>            &lt;li&gt;&lt;a href="../about.html"&gt;About&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="../about.html#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="../index.html#newsletter"&gt;Newsletter&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;/ul&gt;</span>
+<span>        &lt;/nav&gt;</span>
+<span>      &lt;/div&gt;</span>
+<span>      &lt;p class="site-footer__bottom"&gt;&amp;copy; 2026 Build Notes. All rights reserved.&lt;/p&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  &lt;/footer&gt;</span>
+<span></span>
+<span>  &lt;!-- Last in the body, so the menu exists before the script runs. --&gt;</span>
+<span>  &lt;script src="../js/main.js"&gt;&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span></span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h2 id="step-6-about-and-404-pages">Step 6 About And 404 Pages</h2>
+
+  <h3>about.html</h3>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span></span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;!-- Makes the page fit the width of a phone screen. --&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;About | Build Notes&lt;/title&gt;</span>
+<span>  &lt;meta name="description" content="About Jane Doe and Build Notes."&gt;</span>
+<span>  &lt;!-- The og: tags set the title, text and picture shown when the page is shared on social media. --&gt;</span>
+<span>  &lt;meta property="og:title" content="About | Build Notes"&gt;</span>
+<span>  &lt;meta property="og:description" content="About Jane Doe and Build Notes."&gt;</span>
+<span>  &lt;meta property="og:type" content="website"&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/style.css"&gt;</span>
+<span>  &lt;!-- Lets the CSS know JavaScript is on, so the phone menu can fold away. --&gt;</span>
+<span>  &lt;script&gt;document.documentElement.classList.add("js");&lt;/script&gt;</span>
+<span>&lt;/head&gt;</span>
+<span></span>
+<span>&lt;body&gt;</span>
+<span>  &lt;a class="skip-link" href="#main"&gt;Skip to content&lt;/a&gt;</span>
+<span></span>
+<span>  &lt;!-- The same header is on every page. --&gt;</span>
+<span>  &lt;header class="site-header"&gt;</span>
+<span>    &lt;div class="container site-header__inner"&gt;</span>
+<span>      &lt;a class="brand" href="index.html"&gt;Build&lt;span&gt;Notes&lt;/span&gt;&lt;/a&gt;</span>
+<span>      &lt;!-- aria-expanded tells screen readers whether the menu is open. js/main.js switches it. --&gt;</span>
+<span>      &lt;button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav"&gt;Menu&lt;/button&gt;</span>
+<span>      &lt;nav id="site-nav" class="site-nav" aria-label="Main"&gt;</span>
+<span>        &lt;ul&gt;</span>
+<span>          &lt;li&gt;&lt;a href="index.html"&gt;Home&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;li&gt;&lt;a href="index.html#latest"&gt;Articles&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;li&gt;&lt;a href="about.html" aria-current="page"&gt;About&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;li&gt;&lt;a href="about.html#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;</span>
+<span>        &lt;/ul&gt;</span>
+<span>      &lt;/nav&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  &lt;/header&gt;</span>
+<span></span>
+<span>  &lt;main id="main"&gt;</span>
+<span>    &lt;div class="container"&gt;</span>
+<span>      &lt;section class="about" aria-labelledby="about-title"&gt;</span>
+<span>        &lt;img class="about__photo" src="images/Jane_Doe.jpg" alt="Portrait of Jane Doe" width="768" height="768"&gt;</span>
+<span>        &lt;div class="prose about__text"&gt;</span>
+<span>          &lt;h1 id="about-title"&gt;Hi, I'm Jane Doe&lt;/h1&gt;</span>
+<span>          &lt;p&gt;Jane builds custom PCs and writes plain-English guides for people putting together their first computer.&lt;/p&gt;</span>
+<span>          &lt;p&gt;Build Notes started as notes from my own builds. Now it is a place for clear, honest guides with no jargon, so anyone can build a computer they are proud of.&lt;/p&gt;</span>
+<span>          &lt;h2&gt;What you will find here&lt;/h2&gt;</span>
+<span>          &lt;ul&gt;</span>
+<span>            &lt;li&gt;Step-by-step build guides&lt;/li&gt;</span>
+<span>            &lt;li&gt;Buying advice for each part&lt;/li&gt;</span>
+<span>            &lt;li&gt;Simple fixes for common problems&lt;/li&gt;</span>
+<span>          &lt;/ul&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>      &lt;/section&gt;</span>
+<span></span>
+<span>      &lt;section class="section" id="contact" aria-labelledby="contact-title"&gt;</span>
+<span>        &lt;div class="contact-card"&gt;</span>
+<span>          &lt;h2 id="contact-title"&gt;Get in touch&lt;/h2&gt;</span>
+<span>          &lt;p&gt;Questions, ideas for a guide, or work together? Send a message.&lt;/p&gt;</span>
+<span>          &lt;!-- Connect this to a form service. Replace the action with the</span>
+<span>               address it gives you, or point it at your own server route. --&gt;</span>
+<span>          &lt;form action="https://formspree.io/f/YOUR_FORM_ID" method="post"&gt;</span>
+<span>            &lt;div class="form-row"&gt;</span>
+<span>              &lt;!-- for matches the id of the input, so a click on the label puts the cursor in the field. --&gt;</span>
+<span>              &lt;label for="contact-name"&gt;Name&lt;/label&gt;</span>
+<span>              &lt;!-- name is the label the form service uses for this value. An input with no name is not sent. --&gt;</span>
+<span>              &lt;input id="contact-name" name="name" type="text" autocomplete="name" required&gt;</span>
+<span>            &lt;/div&gt;</span>
+<span>            &lt;div class="form-row"&gt;</span>
+<span>              &lt;label for="contact-email"&gt;Email&lt;/label&gt;</span>
+<span>              &lt;input id="contact-email" name="email" type="email" autocomplete="email" required&gt;</span>
+<span>            &lt;/div&gt;</span>
+<span>            &lt;div class="form-row"&gt;</span>
+<span>              &lt;label for="contact-message"&gt;Message&lt;/label&gt;</span>
+<span>              &lt;textarea id="contact-message" name="message" rows="5" required&gt;&lt;/textarea&gt;</span>
+<span>            &lt;/div&gt;</span>
+<span>            &lt;button class="button" type="submit"&gt;Send message&lt;/button&gt;</span>
+<span>            &lt;p class="form-note"&gt;I usually reply within two business days.&lt;/p&gt;</span>
+<span>          &lt;/form&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>      &lt;/section&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  &lt;/main&gt;</span>
+<span></span>
+<span>  &lt;footer class="site-footer"&gt;</span>
+<span>    &lt;div class="container"&gt;</span>
+<span>      &lt;div class="site-footer__grid"&gt;</span>
+<span>        &lt;div class="site-footer__about"&gt;</span>
+<span>          &lt;h2&gt;Build Notes&lt;/h2&gt;</span>
+<span>          &lt;p&gt;Plain-English guides for people building and upgrading their own computers.&lt;/p&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>        &lt;nav aria-label="Topics"&gt;</span>
+<span>          &lt;h2&gt;Topics&lt;/h2&gt;</span>
+<span>          &lt;ul&gt;</span>
+<span>            &lt;li&gt;&lt;a href="index.html#latest"&gt;Builds&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="index.html#latest"&gt;Guides&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="index.html#latest"&gt;Reviews&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="index.html#latest"&gt;How To&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;/ul&gt;</span>
+<span>        &lt;/nav&gt;</span>
+<span>        &lt;nav aria-label="Site"&gt;</span>
+<span>          &lt;h2&gt;Site&lt;/h2&gt;</span>
+<span>          &lt;ul&gt;</span>
+<span>            &lt;li&gt;&lt;a href="about.html"&gt;About&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="about.html#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="index.html#newsletter"&gt;Newsletter&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;/ul&gt;</span>
+<span>        &lt;/nav&gt;</span>
+<span>      &lt;/div&gt;</span>
+<span>      &lt;p class="site-footer__bottom"&gt;&amp;copy; 2026 Build Notes. All rights reserved.&lt;/p&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  &lt;/footer&gt;</span>
+<span></span>
+<span>  &lt;!-- Last in the body, so the menu exists before the script runs. --&gt;</span>
+<span>  &lt;script src="js/main.js"&gt;&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span></span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>404.html</h3>
+
+  <div class="div_p">
+    <p>Most hosts show 404.html on their own when a page does not exist. It uses links without a folder in front, so keep it in the main folder.</p>
+  </div>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span></span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;!-- Makes the page fit the width of a phone screen. --&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Page not found | Build Notes&lt;/title&gt;</span>
+<span>  &lt;meta name="description" content="This page could not be found."&gt;</span>
+<span>  &lt;!-- The og: tags set the title, text and picture shown when the page is shared on social media. --&gt;</span>
+<span>  &lt;meta property="og:title" content="Page not found | Build Notes"&gt;</span>
+<span>  &lt;meta property="og:description" content="This page could not be found."&gt;</span>
+<span>  &lt;meta property="og:type" content="website"&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/style.css"&gt;</span>
+<span>  &lt;!-- Lets the CSS know JavaScript is on, so the phone menu can fold away. --&gt;</span>
+<span>  &lt;script&gt;document.documentElement.classList.add("js");&lt;/script&gt;</span>
+<span>&lt;/head&gt;</span>
+<span></span>
+<span>&lt;body&gt;</span>
+<span>  &lt;a class="skip-link" href="#main"&gt;Skip to content&lt;/a&gt;</span>
+<span></span>
+<span>  &lt;!-- The same header is on every page. --&gt;</span>
+<span>  &lt;header class="site-header"&gt;</span>
+<span>    &lt;div class="container site-header__inner"&gt;</span>
+<span>      &lt;a class="brand" href="index.html"&gt;Build&lt;span&gt;Notes&lt;/span&gt;&lt;/a&gt;</span>
+<span>      &lt;!-- aria-expanded tells screen readers whether the menu is open. js/main.js switches it. --&gt;</span>
+<span>      &lt;button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav"&gt;Menu&lt;/button&gt;</span>
+<span>      &lt;nav id="site-nav" class="site-nav" aria-label="Main"&gt;</span>
+<span>        &lt;ul&gt;</span>
+<span>          &lt;li&gt;&lt;a href="index.html"&gt;Home&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;li&gt;&lt;a href="index.html#latest"&gt;Articles&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;li&gt;&lt;a href="about.html"&gt;About&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;li&gt;&lt;a href="about.html#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;</span>
+<span>        &lt;/ul&gt;</span>
+<span>      &lt;/nav&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  &lt;/header&gt;</span>
+<span></span>
+<span>  &lt;main id="main"&gt;</span>
+<span>    &lt;section class="section"&gt;</span>
+<span>      &lt;div class="container not-found"&gt;</span>
+<span>        &lt;p class="hero__label"&gt;404&lt;/p&gt;</span>
+<span>        &lt;!-- Say plainly what happened, then give the visitor a way back. --&gt;</span>
+<span>        &lt;h1&gt;Page not found&lt;/h1&gt;</span>
+<span>        &lt;p&gt;The page you were looking for has moved or does not exist.&lt;/p&gt;</span>
+<span>        &lt;p&gt;&lt;a class="button" href="index.html"&gt;Back to the home page&lt;/a&gt;&lt;/p&gt;</span>
+<span>      &lt;/div&gt;</span>
+<span>    &lt;/section&gt;</span>
+<span>  &lt;/main&gt;</span>
+<span></span>
+<span>  &lt;footer class="site-footer"&gt;</span>
+<span>    &lt;div class="container"&gt;</span>
+<span>      &lt;div class="site-footer__grid"&gt;</span>
+<span>        &lt;div class="site-footer__about"&gt;</span>
+<span>          &lt;h2&gt;Build Notes&lt;/h2&gt;</span>
+<span>          &lt;p&gt;Plain-English guides for people building and upgrading their own computers.&lt;/p&gt;</span>
+<span>        &lt;/div&gt;</span>
+<span>        &lt;nav aria-label="Topics"&gt;</span>
+<span>          &lt;h2&gt;Topics&lt;/h2&gt;</span>
+<span>          &lt;ul&gt;</span>
+<span>            &lt;li&gt;&lt;a href="index.html#latest"&gt;Builds&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="index.html#latest"&gt;Guides&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="index.html#latest"&gt;Reviews&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="index.html#latest"&gt;How To&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;/ul&gt;</span>
+<span>        &lt;/nav&gt;</span>
+<span>        &lt;nav aria-label="Site"&gt;</span>
+<span>          &lt;h2&gt;Site&lt;/h2&gt;</span>
+<span>          &lt;ul&gt;</span>
+<span>            &lt;li&gt;&lt;a href="about.html"&gt;About&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="about.html#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;</span>
+<span>            &lt;li&gt;&lt;a href="index.html#newsletter"&gt;Newsletter&lt;/a&gt;&lt;/li&gt;</span>
+<span>          &lt;/ul&gt;</span>
+<span>        &lt;/nav&gt;</span>
+<span>      &lt;/div&gt;</span>
+<span>      &lt;p class="site-footer__bottom"&gt;&amp;copy; 2026 Build Notes. All rights reserved.&lt;/p&gt;</span>
+<span>    &lt;/div&gt;</span>
+<span>  &lt;/footer&gt;</span>
+<span></span>
+<span>  &lt;script src="js/main.js"&gt;&lt;/script&gt;</span>
+<span>&lt;/body&gt;</span>
+<span></span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> When the missing page is inside a folder, such as /posts/old-post.html, the host shows 404.html at that address. The browser then looks for css/style.css inside posts and the page comes up unstyled. On a site that sits at the top of its own domain, start the links in 404.html with a slash, such as /css/style.css, and they work from any address.</p>
+  </div>
+
+  <h2 id="add-a-new-post">Add A New Post</h2>
+
+  <div class="div_p">
+    <ol>
+      <li>Copy any post in the posts folder and give it a new name. Use lowercase words with dashes, such as <code>posts/best-budget-build.html</code>. That name becomes the web address, so pick it carefully.</li>
+      <li>In the new file, change the <code>&lt;title&gt;</code>, the three description and title <code>&lt;meta&gt;</code> tags, the <code>&lt;h1&gt;</code>, the tag, the date in both <code>datetime</code> and the text, the read time, the photo, and the text inside <code>&lt;div class="prose"&gt;</code>.</li>
+      <li>Put the photo in the images folder and set its <code>width</code> and <code>height</code> to the real size of the photo.</li>
+      <li>Run the list script. The new post shows up at the top of the home page, and every older post stays.</li>
+      <li>Update the Older post and Newer post links at the bottom of the new post and the post before it.</li>
+    </ol>
+  </div>
+
+  <h3>Copy a post to start a new one</h3>
+
+  <pre class="mycodecli">
+<span>cp posts/replace-your-cmos-battery.html posts/best-budget-build.html</span>
+  </pre>
+
+  <h3>The part of the post to change</h3>
+
+  <div class="div_p">
+    <p>This box is a small whole page that only holds this part, so you can open it on its own. In a real post it sits inside the full page from Step 5.</p>
+  </div>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span></span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Your Post Title | Build Notes&lt;/title&gt;</span>
+<span>  &lt;!-- ../ goes up one folder, because posts live in the posts folder. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="../css/style.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span></span>
+<span>&lt;body&gt;</span>
+<span>  &lt;main id="main"&gt;</span>
+<span>    &lt;!-- Change the tag, the h1, the meta line and the photo. The list script reads all four. --&gt;</span>
+<span>    &lt;header class="article-header"&gt;</span>
+<span>      &lt;span class="tag"&gt;Guides&lt;/span&gt;</span>
+<span>      &lt;h1&gt;Your Post Title&lt;/h1&gt;</span>
+<span>      &lt;p class="meta"&gt;&lt;span class="avatar" style="--avatar-size: 36px"&gt;&lt;img src="../images/Jane_Doe.jpg" alt="" width="768" height="768"&gt;&lt;/span&gt;&lt;span&gt;By Jane Doe&lt;/span&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;time datetime="2026-11-07"&gt;November 7, 2026&lt;/time&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;span&gt;4 min read&lt;/span&gt;&lt;/p&gt;</span>
+<span>    &lt;/header&gt;</span>
+<span></span>
+<span>    &lt;figure class="article-hero"&gt;</span>
+<span>      &lt;img src="../images/your-photo.webp" alt="Describe the photo" width="1200" height="800" fetchpriority="high"&gt;</span>
+<span>    &lt;/figure&gt;</span>
+<span>  &lt;/main&gt;</span>
+<span>&lt;/body&gt;</span>
+<span></span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h3>Older and newer links at the bottom of a post</h3>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span></span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Older And Newer Links&lt;/title&gt;</span>
+<span>  &lt;!-- ../ goes up one folder, because posts live in the posts folder. --&gt;</span>
+<span>  &lt;link rel="stylesheet" href="../css/style.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span></span>
+<span>&lt;body&gt;</span>
+<span>  &lt;main id="main"&gt;</span>
+<span>    &lt;!-- Both links are file names in the posts folder, so they need no folder in front. --&gt;</span>
+<span>    &lt;nav class="post-nav" aria-label="More posts"&gt;</span>
+<span>      &lt;a href="older-post-name.html"&gt;&lt;span&gt;Older post&lt;/span&gt;Older Post Title&lt;/a&gt;</span>
+<span>      &lt;a href="newer-post-name.html"&gt;&lt;span&gt;Newer post&lt;/span&gt;Newer Post Title&lt;/a&gt;</span>
+<span>    &lt;/nav&gt;</span>
+<span>  &lt;/main&gt;</span>
+<span>&lt;/body&gt;</span>
+<span></span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h2 id="keep-the-old-posts">Keep The Old Posts</h2>
+
+  <div class="div_p">
+    <p>Old posts get lost when someone edits the home page list by hand and forgets one. This script fixes that. It reads every file in the posts folder and rebuilds the list, newest first, so a post stays on the home page for as long as its file exists. It needs Node and nothing else.</p>
+  </div>
+
+  <h3>Run it after you add, edit or delete a post</h3>
+
+  <pre class="mycodecli">
+<span>node scripts/list-posts.mjs</span>
+  </pre>
+
+  <h3>scripts/list-posts.mjs</h3>
+
+  <pre class="mycodenode">
+<span>// Rebuilds the post list on the home page from the files in posts/.</span>
+<span>// Run it after you add, edit or delete a post:   node scripts/list-posts.mjs</span>
+<span>//</span>
+<span>// Every post file in posts/ gets a card, newest first, so an old post can</span>
+<span>// never be lost from the home page. The featured post at the top of</span>
+<span>// index.html is left out of the list, because it is already shown there.</span>
+<span>// Needs Node 20.11 or newer, because of import.meta.dirname. No packages to install.</span>
+<span></span>
+<span>import fs from "node:fs";</span>
+<span>import path from "node:path";</span>
+<span></span>
+<span>// import.meta.dirname is the folder this script is in. One step up from scripts is the main folder.</span>
+<span>const root = path.join(import.meta.dirname, "..");</span>
+<span>const indexFile = path.join(root, "index.html");</span>
+<span>const postsFolder = path.join(root, "posts");</span>
+<span></span>
+<span>// Pull one value out of a post file, or stop with a clear message.</span>
+<span>function find(html, pattern, what, file) {</span>
+<span>  const match = html.match(pattern);</span>
+<span>  if (!match) {</span>
+<span>    throw new Error(`${file} is missing ${what}.`);</span>
+<span>  }</span>
+<span>  return match[1].trim();</span>
+<span>}</span>
+<span></span>
+<span>// Reads one post file and pulls out everything a card needs.</span>
+<span>function readPost(file) {</span>
+<span>  const html = fs.readFileSync(path.join(postsFolder, file), "utf8");</span>
+<span>  const header = find(html, /&lt;header class="article-header"&gt;([\s\S]*?)&lt;\/header&gt;/, "the article header", file);</span>
+<span>  const hero = find(html, /&lt;figure class="article-hero"&gt;([\s\S]*?)&lt;\/figure&gt;/, "the article photo", file);</span>
+<span>  const image = find(hero, /(&lt;img [^&gt;]*&gt;)/, "an &lt;img&gt; in the article photo", file);</span>
+<span></span>
+<span>  return {</span>
+<span>    // The file name without .html. It becomes the link to the post.</span>
+<span>    slug: file.replace(/\.html$/, ""),</span>
+<span>    title: find(header, /&lt;h1&gt;([\s\S]*?)&lt;\/h1&gt;/, "an &lt;h1&gt;", file),</span>
+<span>    category: find(header, /&lt;span class="tag"&gt;([\s\S]*?)&lt;\/span&gt;/, "a tag", file),</span>
+<span>    date: find(header, /&lt;time datetime="([^"]+)"/, "a date", file),</span>
+<span>    readTime: find(header, /&lt;span&gt;(\d+) min read&lt;\/span&gt;/, "a read time", file),</span>
+<span>    excerpt: find(html, /&lt;meta name="description" content="([^"]*)"/, "a description", file),</span>
+<span>    src: find(image, /src="\.\.\/([^"]+)"/, "a photo src", file),</span>
+<span>    alt: find(image, /alt="([^"]*)"/, "photo alt text", file),</span>
+<span>    width: find(image, /width="(\d+)"/, "a photo width", file),</span>
+<span>    height: find(image, /height="(\d+)"/, "a photo height", file),</span>
+<span>  };</span>
+<span>}</span>
+<span></span>
+<span>// Turns 2026-01-15 into January 15, 2026. UTC stops the day from shifting with the time zone.</span>
+<span>function niceDate(iso) {</span>
+<span>  return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", {</span>
+<span>    month: "long",</span>
+<span>    day: "numeric",</span>
+<span>    year: "numeric",</span>
+<span>    timeZone: "UTC",</span>
+<span>  });</span>
+<span>}</span>
+<span></span>
+<span>// Builds the HTML for one card. The spaces at the start match the indent in index.html.</span>
+<span>function card(post) {</span>
+<span>  return `        &lt;li data-category="${post.category}"&gt;</span>
+<span>          &lt;article class="post-card"&gt;</span>
+<span>            &lt;img class="post-card__image" src="${post.src}" alt="${post.alt}" width="${post.width}" height="${post.height}" loading="lazy"&gt;</span>
+<span>            &lt;div class="post-card__body"&gt;</span>
+<span>              &lt;span class="tag"&gt;${post.category}&lt;/span&gt;</span>
+<span>              &lt;h3 class="post-card__title"&gt;&lt;a href="posts/${post.slug}.html"&gt;${post.title}&lt;/a&gt;&lt;/h3&gt;</span>
+<span>              &lt;p class="post-card__excerpt"&gt;${post.excerpt}&lt;/p&gt;</span>
+<span>              &lt;p class="meta"&gt;&lt;time datetime="${post.date}"&gt;${niceDate(post.date)}&lt;/time&gt;&lt;span aria-hidden="true"&gt;&amp;middot;&lt;/span&gt;&lt;span&gt;${post.readTime} min read&lt;/span&gt;&lt;/p&gt;</span>
+<span>            &lt;/div&gt;</span>
+<span>          &lt;/article&gt;</span>
+<span>        &lt;/li&gt;`;</span>
+<span>}</span>
+<span></span>
+<span>const index = fs.readFileSync(indexFile, "utf8");</span>
+<span>// Find the two marker comments in index.html. indexOf gives -1 when the text is not there.</span>
+<span>const start = index.indexOf("&lt;!-- POSTS START");</span>
+<span>const end = index.indexOf("&lt;!-- POSTS END --&gt;");</span>
+<span>if (start === -1 || end === -1) {</span>
+<span>  throw new Error("index.html needs the POSTS START and POSTS END comments around the post list.");</span>
+<span>}</span>
+<span></span>
+<span>// The post in the hero at the top. ?.[1] gives undefined instead of an error when there is none.</span>
+<span>const featured = index.match(/class="hero__title"&gt;&lt;a href="posts\/([^"]+)\.html"/)?.[1];</span>
+<span>// Every .html file in posts is read, the featured one is taken out, and the rest are sorted newest first.</span>
+<span>const posts = fs</span>
+<span>  .readdirSync(postsFolder)</span>
+<span>  .filter((file) =&gt; file.endsWith(".html"))</span>
+<span>  .map(readPost)</span>
+<span>  .filter((post) =&gt; post.slug !== featured)</span>
+<span>  .sort((a, b) =&gt; b.date.localeCompare(a.date));</span>
+<span></span>
+<span>// Keep everything up to the end of the POSTS START line, put the new cards in,</span>
+<span>// then keep everything from POSTS END on.</span>
+<span>const startLineEnd = index.indexOf("\n", start) + 1;</span>
+<span>const updated = index.slice(0, startLineEnd) + posts.map(card).join("\n") + "\n        " + index.slice(end);</span>
+<span>fs.writeFileSync(indexFile, updated);</span>
+<span></span>
+<span>console.log(`Listed ${posts.length} posts on the home page${featured ? `, plus ${featured} as the featured post` : ""}.`);</span>
+  </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> The script copies the title, the description and the alt text of each post straight into the home page. A plain &lt; or &amp; in one of them can break the list, so write &amp;lt; and &amp;amp; in the post file.</p>
+  </div>
+
+  <h3>Rules for old posts</h3>
+
+  <div class="div_p">
+    <ul>
+      <li>Never rename a post file. The file name is its web address, and old links from Google and social media will break.</li>
+      <li>Never change the date of an old post. Fix a typo, but keep the original date so the order stays right.</li>
+      <li>To take a post down, delete its file and run the script. Any link to it then shows the 404 page.</li>
+      <li>If a post fails to show up, the script names the file and what is missing, such as an <code>&lt;h1&gt;</code> or a date, and does not touch the home page.</li>
+      <li>To feature a different post, change the link in the hero at the top of index.html, then run the script so the old featured post goes back into the list.</li>
+    </ul>
+  </div>
+
+  <h2 id="move-posts-from-a-client-s-old-site">Move Posts From A Client's Old Site</h2>
+
+  <div class="div_p">
+    <ol>
+      <li>Make a post file for each old post, using the steps in Add A New Post.</li>
+      <li>Use the same file name as the old web address when you can. For example, <code>example.com/blog/spring-sale</code> becomes <code>posts/spring-sale.html</code>.</li>
+      <li>Use the post's original date, not today's date.</li>
+      <li>Copy the text into <code>&lt;div class="prose"&gt;</code>. Use <code>&lt;h2&gt;</code> for section titles, <code>&lt;p&gt;</code> for paragraphs and <code>&lt;ul&gt;</code> for lists. Paste as plain text so the old site's styles do not come with it.</li>
+      <li>Download the old photos into the images folder, and write real alt text for each one.</li>
+      <li>Run the list script, then send each old web address to its new one with a redirect, so old links keep working.</li>
+    </ol>
+  </div>
+
+  <h3>Redirects on Netlify: a file named _redirects in the main folder</h3>
+
+  <div class="div_p">
+    <p>Each line is the old address, the new address, and 301, which tells Google the move is permanent.</p>
+  </div>
+
+  <pre class="mycodefile">
+<span>/blog/spring-sale       /posts/spring-sale.html       301</span>
+<span>/blog/how-we-started    /posts/how-we-started.html    301</span>
+  </pre>
+
+  <h3>Redirect on GitHub Pages: a page saved at the old address</h3>
+
+  <div class="div_p">
+    <p>GitHub Pages cannot do real redirects. Save this as the old address, for example blog/spring-sale/index.html, and it sends visitors to the new page.</p>
+  </div>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span></span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;title&gt;This post has moved&lt;/title&gt;</span>
+<span>  &lt;!-- Tells Google which address is the real one. --&gt;</span>
+<span>  &lt;link rel="canonical" href="https://example.com/posts/spring-sale.html"&gt;</span>
+<span>  &lt;!-- 0 means: go to the new address right away. --&gt;</span>
+<span>  &lt;meta http-equiv="refresh" content="0; url=/posts/spring-sale.html"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span></span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- A link for the rare browser that does not follow the line above. --&gt;</span>
+<span>  &lt;p&gt;This post has moved. &lt;a href="/posts/spring-sale.html"&gt;Read it here&lt;/a&gt;.&lt;/p&gt;</span>
+<span>&lt;/body&gt;</span>
+<span></span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <h2 id="rebrand-for-a-client">Rebrand For A Client</h2>
+
+  <div class="div_p">
+    <p>Change these at the top of css/style.css. Then use Find and Replace across the folder for the site name, Build Notes, and the author, Jane Doe.</p>
+  </div>
+
+  <pre class="mycodecss">
+<span>:root {</span>
+<span>  --color-brand: #0f766e;       /* buttons, links, tags */</span>
+<span>  --color-brand-dark: #115e59;  /* hover color */</span>
+<span>  --color-brand-soft: #ccfbf1;  /* tag and newsletter background */</span>
+<span>  --font-heading: Georgia, "Times New Roman", serif;</span>
+<span>  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;</span>
+<span>  --radius: 12px;               /* corner roundness */</span>
+<span>  --page-width: 1100px;</span>
+<span>}</span>
+  </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> The dark mode block right under :root in css/style.css has its own copy of the color variables. Change the brand colors there too, or the client gets the old colors on every phone that is set to dark mode. Then check that text is still easy to read on the new colors.</p>
+  </div>
+
+  <h2 id="connect-the-forms">Connect The Forms</h2>
+
+  <div class="div_p">
+    <p>The newsletter and contact forms send nothing until you connect them. Make a free form at a service such as Formspree, then paste the address it gives you into the action on both forms. To use your own Express server instead, point the action at your route, such as /api/contact.</p>
+  </div>
+
+  <pre class="mycodehtml">
+<span>&lt;!DOCTYPE html&gt;</span>
+<span>&lt;html lang="en"&gt;</span>
+<span></span>
+<span>&lt;head&gt;</span>
+<span>  &lt;meta charset="UTF-8"&gt;</span>
+<span>  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span>
+<span>  &lt;title&gt;Newsletter Form&lt;/title&gt;</span>
+<span>  &lt;link rel="stylesheet" href="css/style.css"&gt;</span>
+<span>&lt;/head&gt;</span>
+<span></span>
+<span>&lt;body&gt;</span>
+<span>  &lt;!-- Replace YOUR_FORM_ID with the address the form service gives you. --&gt;</span>
+<span>  &lt;form class="inline-form" action="https://formspree.io/f/YOUR_FORM_ID" method="post"&gt;</span>
+<span>    &lt;label class="visually-hidden" for="newsletter-email"&gt;Email address&lt;/label&gt;</span>
+<span>    &lt;!-- name="email" is the label the form service uses for the value. --&gt;</span>
+<span>    &lt;input id="newsletter-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required&gt;</span>
+<span>    &lt;button class="button" type="submit"&gt;Subscribe&lt;/button&gt;</span>
+<span>  &lt;/form&gt;</span>
+<span>&lt;/body&gt;</span>
+<span></span>
+<span>&lt;/html&gt;</span>
+  </pre>
+
+  <div class="div_p pro-tip">
+    <p><strong>Pro-Tip:</strong> A public form attracts spam bots within days. Turn on the spam protection your form service offers before the site goes live, and send yourself a test message from the live site, not from a file opened on your computer.</p>
+  </div>
+
+  <h2 id="before-handing-it-to-a-client">Before Handing It To A Client</h2>
+
+  <div class="div_p">
+    <ul>
+      <li>Every placeholder name, photo and <code>#</code> link is replaced.</li>
+      <li>Both forms are connected and tested on the live site.</li>
+      <li>Every photo has real alt text and the right width and height.</li>
+      <li>The list script has been run, and every post shows on the home page.</li>
+      <li>The site looks right on a phone, in light mode and in dark mode.</li>
+      <li>You can reach every link and button with the Tab key.</li>
+      <li>Old web addresses from the client's previous site redirect to the new posts.</li>
+    </ul>
+  </div>
+
+  <br><br><br><br>
+
+  <footer class="footer"> &copy; By Jamar Brown
+
+    <div class="container">
+      <div id='clock'></div>
+    </div>
+  </footer>
+
+  <script src="js/clock.js"></script>
+  <script src="js/copy.js"></script>
+</body>
+
+</html>

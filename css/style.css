@@ -315,3 +315,30 @@ h2{
 
 
 
+
+/* Pro-Tip notes: things to watch out for that the code does not show.
+   Used together with div_p, so it stays the same width as the other text. */
+.pro-tip {
+    margin: 10px auto 20px;
+    padding: .75em 1em;
+    border-left: .5em solid #feda6a;
+    background-color: #fff8dc;
+    text-align: left;
+}
+
+.pro-tip p {
+    margin: 0;
+}
+
+/* A long "On This Page" list flows into three columns instead of one tall one. */
+.toc ul {
+    columns: 3;
+    column-gap: 2em;
+    text-align: left;
+}
+
+@media (max-width: 900px) {
+    .toc ul {
+        columns: 1;
+    }
+}

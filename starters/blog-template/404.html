@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page not found | Build Notes</title>
+  <meta name="description" content="This page could not be found.">
+  <meta property="og:title" content="Page not found | Build Notes">
+  <meta property="og:description" content="This page could not be found.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Lets the CSS know JavaScript is on, so the phone menu can fold away. -->
+  <script>document.documentElement.classList.add("js");</script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="index.html">Build<span>Notes</span></a>
+      <button class="menu-button" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <nav id="site-nav" class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html#latest">Articles</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="about.html#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section">
+      <div class="container not-found">
+        <p class="hero__label">404</p>
+        <h1>Page not found</h1>
+        <p>The page you were looking for has moved or does not exist.</p>
+        <p><a class="button" href="index.html">Back to the home page</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__grid">
+        <div class="site-footer__about">
+          <h2>Build Notes</h2>
+          <p>Plain-English guides for people building and upgrading their own computers.</p>
+        </div>
+        <nav aria-label="Topics">
+          <h2>Topics</h2>
+          <ul>
+            <li><a href="index.html#latest">Builds</a></li>
+            <li><a href="index.html#latest">Guides</a></li>
+            <li><a href="index.html#latest">Reviews</a></li>
+            <li><a href="index.html#latest">How To</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Site">
+          <h2>Site</h2>
+          <ul>
+            <li><a href="about.html">About</a></li>
+            <li><a href="about.html#contact">Contact</a></li>
+            <li><a href="index.html#newsletter">Newsletter</a></li>
+          </ul>
+        </nav>
+      </div>
+      <p class="site-footer__bottom">&copy; 2026 Build Notes. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+
+</html>

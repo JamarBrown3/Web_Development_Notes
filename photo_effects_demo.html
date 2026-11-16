@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Jamar Brown">
+  <meta name="description" content="Ten accessible photo and avatar effects on a dark and a light background">
+  <title>Photo Effects Demo</title>
+  <style>
+/* Shared base for every photo effect. Paste this once. */
+.fx {
+  --fx-size: 120px;       /* width of the photo: works from 40px to 400px */
+  --fx-ratio: 1;          /* 1 = square or circle, 4 / 3 = landscape */
+  --fx-radius: 50%;       /* 50% = circle, 16px = rounded rectangle */
+  --fx-color: #5b8cff;    /* accent color for rings, lines and glows */
+  --fx-speed: 12s;        /* one idle loop: about 1.7s of motion, then rest */
+  --fx-loops: infinite;   /* how many times an idle effect plays */
+  --fx-hover-speed: 300ms; /* how fast hover and focus effects react */
+  --fx-focus: #2563eb;    /* focus ring: 3:1 on white and on #101826 */
+  position: relative;
+  display: inline-block;
+  width: var(--fx-size);
+  max-width: 100%;        /* shrinks to fit on a phone */
+  aspect-ratio: var(--fx-ratio);
+  border-radius: var(--fx-radius);
+  vertical-align: middle;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* The inner wrapper clips the photo. The outer box does not clip,
+   so an effect can draw a frame or halo outside the photo. */
+.fx__clip {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.fx__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Effects are decoration only: they never catch clicks. */
+.fx::before,
+.fx::after,
+.fx__clip::before,
+.fx__clip::after {
+  pointer-events: none;
+}
+
+/* A photo that is a link gets a clear focus ring for keyboard users. */
+a.fx:focus-visible {
+  outline: 3px solid var(--fx-focus);
+  outline-offset: 6px;
+}
+
+/* Less motion: idle effects stop after three loops. */
+.fx--limited {
+  --fx-loops: 3;
+}
+
+/* The pause button adds this class to body. It stops every idle effect
+   and puts it back in its resting look. */
+.fx-paused .fx,
+.fx-paused .fx *,
+.fx-paused .fx::before,
+.fx-paused .fx::after,
+.fx-paused .fx *::before,
+.fx-paused .fx *::after {
+  animation: none !important;
+}
+
+/* 1. Breathing Glow Ring */
+.fx-glow::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--fx-size) * -0.05);
+  border-radius: inherit;
+  /* The glow is drawn once. Only its opacity and size animate. */
+  box-shadow:
+    0 0 0 2px var(--fx-color),
+    0 0 calc(var(--fx-size) * 0.12) var(--fx-color);
+  opacity: 0.35;
+  animation: fx-glow var(--fx-speed) ease-in-out var(--fx-loops);
+}
+
+/* Moves for the first 14% of the loop (1.7s of 12s), then rests. */
+@keyframes fx-glow {
+  0%, 14%, 100% { opacity: 0.35; transform: scale(1); }
+  7%            { opacity: 0.9;  transform: scale(1.03); }
+}
+
+/* Still version: a steady ring with no breathing. */
+@media (prefers-reduced-motion: reduce) {
+  .fx-glow::before {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+/* 2. Rotating Gradient Border */
+.fx-spin {
+  --fx-border: max(2px, calc(var(--fx-size) * 0.03));
+  --fx-color-2: #ff7ad9;
+  padding: var(--fx-border);
+  overflow: hidden;       /* clips the spinning square into a ring */
+  isolation: isolate;     /* keeps the gradient behind the photo */
+}
+
+/* A big square of gradient spins behind the photo. Only the strip
+   showing through the padding is visible. */
+.fx-spin::before {
+  content: "";
+  position: absolute;
+  inset: -100%;
+  z-index: -1;
+  background: conic-gradient(
+    var(--fx-color),
+    transparent 30%,
+    var(--fx-color-2) 55%,
+    transparent 80%,
+    var(--fx-color)
+  );
+  animation: fx-spin var(--fx-speed) ease-in-out var(--fx-loops);
+}
+
+/* One turn in the first 14% of the loop, then rest. */
+@keyframes fx-spin {
+  0%         { transform: rotate(0deg); }
+  14%, 100%  { transform: rotate(360deg); }
+}
+
+/* Still version: the gradient border stays, it just does not turn. */
+@media (prefers-reduced-motion: reduce) {
+  .fx-spin::before {
+    animation: none;
+  }
+}
+
+/* 3. Soft Pulse Halo */
+/* Leave about 15% of the photo size as free space around it,
+   because the halo grows outside the photo. */
+.fx-halo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: max(1px, calc(var(--fx-size) * 0.015)) solid var(--fx-color);
+  opacity: 0;
+  animation: fx-halo var(--fx-speed) ease-out var(--fx-loops);
+}
+
+/* One ring grows and fades in the first 15% of the loop. */
+@keyframes fx-halo {
+  0%         { opacity: 0.7; transform: scale(1); }
+  15%, 100%  { opacity: 0;   transform: scale(1.25); }
+}
+
+/* Still version: a faint steady ring, no movement. */
+@media (prefers-reduced-motion: reduce) {
+  .fx-halo::after {
+    animation: none;
+    opacity: 0.5;
+    transform: scale(1.08);
+  }
+}
+
+/* 4. Corner Glint */
+.fx-glint {
+  --fx-glint-size: 22%;  /* sparkle size, as a share of the photo */
+  --fx-glint-spot: 10%;  /* distance from the top right corner. Use 2% on a rectangle. */
+}
+
+.fx-glint::after {
+  content: "";
+  position: absolute;
+  top: var(--fx-glint-spot);
+  right: var(--fx-glint-spot);
+  width: var(--fx-glint-size);
+  aspect-ratio: 1;
+  background: radial-gradient(circle, #ffffff 0 25%, #fff4c2 60%);
+  /* A four-point star */
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+  opacity: 0;
+  transform: scale(0) rotate(0deg);
+  animation: fx-glint var(--fx-speed) ease-in-out var(--fx-loops);
+}
+
+/* Grows, turns and fades in the first 8% of the loop (about 1s). */
+@keyframes fx-glint {
+  0%, 8%, 100% { opacity: 0;   transform: scale(0) rotate(0deg); }
+  4%           { opacity: 0.9; transform: scale(1) rotate(45deg); }
+}
+
+/* Reduced motion: no sparkle at all. */
+@media (prefers-reduced-motion: reduce) {
+  .fx-glint::after {
+    display: none;
+  }
+}
+
+/* 5. Scan Line */
+/* The band lives inside the clip wrapper, so it never leaves the photo. */
+.fx-scan .fx__clip::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 30%;
+  background: linear-gradient(
+    transparent,
+    color-mix(in srgb, var(--fx-color) 35%, transparent),
+    transparent
+  );
+  transform: translateY(-100%);
+  animation: fx-scan var(--fx-speed) ease-in-out var(--fx-loops);
+}
+
+/* Top to bottom in the first 14% of the loop, then rest out of sight. */
+@keyframes fx-scan {
+  0%         { transform: translateY(-100%); }
+  14%, 100%  { transform: translateY(340%); }
+}
+
+/* Reduced motion: no band at all. */
+@media (prefers-reduced-motion: reduce) {
+  .fx-scan .fx__clip::after {
+    display: none;
+  }
+}
+
+/* 6. Tilt And Lift */
+.fx-tilt {
+  --fx-tilt: 6deg;
+  transform: perspective(600px) rotateX(0deg) rotateY(0deg);
+  transition: transform var(--fx-hover-speed) ease-out;
+}
+
+/* The shadow is drawn once and only fades, which is cheaper than
+   animating box-shadow. */
+.fx-tilt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transition: opacity var(--fx-hover-speed) ease-out;
+}
+
+.fx-tilt:is(:hover, :focus-visible, :focus-within) {
+  transform: perspective(600px) rotateX(var(--fx-tilt)) rotateY(calc(var(--fx-tilt) * -1)) translateY(-4px);
+}
+
+.fx-tilt:is(:hover, :focus-visible, :focus-within)::after {
+  opacity: 1;
+}
+
+/* Reduced motion: no tilt. The shadow still fades in, which is not motion. */
+@media (prefers-reduced-motion: reduce) {
+  .fx-tilt,
+  .fx-tilt:is(:hover, :focus-visible, :focus-within) {
+    transform: none;
+  }
+}
+
+/* 7. Zoom In Frame */
+.fx-zoom .fx__img {
+  transition: transform var(--fx-hover-speed) ease-out;
+}
+
+/* The clip wrapper hides the edges, so the frame keeps its size. */
+.fx-zoom:is(:hover, :focus-visible, :focus-within) .fx__img {
+  transform: scale(var(--fx-zoom, 1.08));
+}
+
+/* Reduced motion: no zoom. */
+@media (prefers-reduced-motion: reduce) {
+  .fx-zoom:is(:hover, :focus-visible, :focus-within) .fx__img {
+    transform: none;
+  }
+}
+
+/* 8. Grayscale To Color */
+/* A gray layer with mix-blend-mode: saturation removes the color.
+   Fading that layer out brings the color back. Only opacity animates,
+   which is much cheaper than animating filter: grayscale(). */
+.fx-color .fx__clip {
+  isolation: isolate;  /* blend with the photo only */
+}
+
+.fx-color .fx__clip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #808080;
+  mix-blend-mode: saturation;
+  opacity: 1;
+  transition: opacity var(--fx-hover-speed) ease-out;
+}
+
+.fx-color:is(:hover, :focus-visible, :focus-within) .fx__clip::after {
+  opacity: 0;
+}
+
+/* 9. Corner Frame Draw-In */
+.fx-corners {
+  --fx-gap: max(4px, calc(var(--fx-size) * 0.05));   /* space between photo and frame */
+  --fx-line: max(2px, calc(var(--fx-size) * 0.012)); /* line thickness */
+}
+
+.fx-corners::before,
+.fx-corners::after {
+  content: "";
+  position: absolute;
+  width: 35%;
+  height: 35%;
+  border: 0 solid var(--fx-color);
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    transform var(--fx-hover-speed) ease-out,
+    opacity var(--fx-hover-speed) ease-out;
+}
+
+/* Top left bracket */
+.fx-corners::before {
+  top: calc(var(--fx-gap) * -1);
+  left: calc(var(--fx-gap) * -1);
+  border-top-width: var(--fx-line);
+  border-left-width: var(--fx-line);
+  transform-origin: top left;
+}
+
+/* Bottom right bracket */
+.fx-corners::after {
+  bottom: calc(var(--fx-gap) * -1);
+  right: calc(var(--fx-gap) * -1);
+  border-bottom-width: var(--fx-line);
+  border-right-width: var(--fx-line);
+  transform-origin: bottom right;
+}
+
+.fx-corners:is(:hover, :focus-visible, :focus-within)::before,
+.fx-corners:is(:hover, :focus-visible, :focus-within)::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Reduced motion: the brackets appear right away instead of growing. */
+@media (prefers-reduced-motion: reduce) {
+  .fx-corners::before,
+  .fx-corners::after {
+    transition: none;
+  }
+}
+
+/* 10. Offset Frame Slide */
+.fx-offset {
+  --fx-offset: max(6px, calc(var(--fx-size) * 0.05));
+  isolation: isolate;  /* keeps the frame behind the photo */
+}
+
+/* The frame is drawn by the outer box, which does not clip,
+   so it can sit outside the photo. */
+.fx-offset::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border: max(2px, calc(var(--fx-size) * 0.012)) solid var(--fx-color);
+  border-radius: inherit;
+  transform: translate(var(--fx-offset), var(--fx-offset));
+  transition: transform var(--fx-hover-speed) ease-out;
+}
+
+.fx-offset .fx__clip {
+  transition: transform var(--fx-hover-speed) ease-out;
+}
+
+.fx-offset:is(:hover, :focus-visible, :focus-within)::before {
+  transform: translate(calc(var(--fx-offset) * 1.6), calc(var(--fx-offset) * 1.6));
+}
+
+.fx-offset:is(:hover, :focus-visible, :focus-within) .fx__clip {
+  transform: translate(calc(var(--fx-offset) * -0.4), calc(var(--fx-offset) * -0.4));
+}
+
+/* Reduced motion: the frame stays where it is and nothing slides. */
+@media (prefers-reduced-motion: reduce) {
+  .fx-offset:is(:hover, :focus-visible, :focus-within)::before {
+    transform: translate(var(--fx-offset), var(--fx-offset));
+  }
+
+  .fx-offset:is(:hover, :focus-visible, :focus-within) .fx__clip {
+    transform: none;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.5; color: #111827; background: #ffffff; }
+.demo-header { max-width: 1100px; margin: 0 auto; padding: 32px 20px 8px; }
+.demo-header h1 { margin: 0 0 8px; font-size: 2rem; }
+.demo-header a { color: #1d4ed8; }
+.pause-button { margin: 12px 0; padding: 10px 18px; border: 2px solid #1d4ed8; border-radius: 8px; background: #ffffff; color: #1d4ed8; font: inherit; font-weight: 600; cursor: pointer; }
+.pause-button[aria-pressed="true"] { background: #1d4ed8; color: #ffffff; }
+.pause-button:focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
+.theme { padding: 32px 20px 48px; }
+.theme > * { max-width: 1100px; margin-left: auto; margin-right: auto; }
+.theme h2 { margin-top: 0; }
+.dark { background: #101826; color: #e5e7eb; }
+.light { background: #ffffff; color: #111827; border-top: 1px solid #e5e7eb; }
+.dark .tag { color: #cbd5e1; }
+.light .tag { color: #4b5563; }
+.grid { list-style: none; padding: 0; display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); }
+.card { border-radius: 12px; padding: 16px; }
+.dark .card { background: #182235; }
+.light .card { background: #f8fafc; border: 1px solid #e5e7eb; }
+.card h3 { margin: 12px 0 4px; font-size: 1.05rem; }
+.card p { margin: 0 0 6px; font-size: 0.95rem; }
+.tag { font-size: 0.85rem; }
+.stage { display: grid; place-items: center; min-height: 220px; padding: 32px; }
+.sizes { display: flex; flex-wrap: wrap; align-items: center; gap: 36px; padding: 24px 12px; }
+.big { display: flex; flex-wrap: wrap; gap: 64px; padding: 40px 12px; }
+.big > li { min-width: 0; max-width: 100%; }
+.sizes, .big { list-style: none; margin: 0; }
+
+  </style>
+</head>
+
+<body>
+  <header class="demo-header">
+    <h1>Photo Effects Demo</h1>
+    <p>Ten small effects for avatars and photos. Effects 1 to 5 play on their own for under 2 seconds, then rest for about 10 seconds. Effects 6 to 10 react when you hover over the photo or reach it with the Tab key. Every effect stops or stays still if your device is set to reduce motion.</p>
+    <button id="pause-button" class="pause-button" type="button" aria-pressed="false">
+  Pause all animations
+</button>
+    <p><a href="photo_effects_page.html">See the code for every effect</a></p>
+  </header>
+
+  <main>
+    <section class="theme dark" aria-labelledby="dark-title">
+      <h2 id="dark-title">On a dark background</h2>
+      <ul class="grid">
+      <li class="card">
+        <div class="stage"><span class="fx fx-glow"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20200%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f97316%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23db2777%27/%3E%3C/linearGradient%3E%20%3ClinearGradient%20id%3D%27s%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%231e3a8a%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%230f766e%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27200%27%20height%3D%27200%27%20fill%3D%27url%28%23b%29%27/%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2780%27%20r%3D%2738%27%20fill%3D%27%23fde7c8%27/%3E%20%3Cpath%20d%3D%27M30%20200c4-48%2034-72%2070-72s66%2024%2070%2072z%27%20fill%3D%27url%28%23s%29%27/%3E%3C/svg%3E" alt="Placeholder portrait photo"></span></span></div>
+        <h3>1. Breathing Glow Ring</h3>
+        <p class="tag">Plays on its own &middot; Circle</p>
+        <p>A soft ring around the photo brightens and grows a little, then rests.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><span class="fx fx-spin"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20200%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f97316%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23db2777%27/%3E%3C/linearGradient%3E%20%3ClinearGradient%20id%3D%27s%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%231e3a8a%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%230f766e%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27200%27%20height%3D%27200%27%20fill%3D%27url%28%23b%29%27/%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2780%27%20r%3D%2738%27%20fill%3D%27%23fde7c8%27/%3E%20%3Cpath%20d%3D%27M30%20200c4-48%2034-72%2070-72s66%2024%2070%2072z%27%20fill%3D%27url%28%23s%29%27/%3E%3C/svg%3E" alt="Placeholder portrait photo"></span></span></div>
+        <h3>2. Rotating Gradient Border</h3>
+        <p class="tag">Plays on its own &middot; Circle</p>
+        <p>A colored gradient border makes one full turn, then holds still.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><span class="fx fx-halo"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20200%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f97316%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23db2777%27/%3E%3C/linearGradient%3E%20%3ClinearGradient%20id%3D%27s%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%231e3a8a%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%230f766e%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27200%27%20height%3D%27200%27%20fill%3D%27url%28%23b%29%27/%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2780%27%20r%3D%2738%27%20fill%3D%27%23fde7c8%27/%3E%20%3Cpath%20d%3D%27M30%20200c4-48%2034-72%2070-72s66%2024%2070%2072z%27%20fill%3D%27url%28%23s%29%27/%3E%3C/svg%3E" alt="Placeholder portrait photo"></span></span></div>
+        <h3>3. Soft Pulse Halo</h3>
+        <p class="tag">Plays on its own &middot; Circle</p>
+        <p>One thin ring drifts out from the photo and fades away. It is drawn outside the photo without being cut off.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><span class="fx fx-glint"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20200%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f97316%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23db2777%27/%3E%3C/linearGradient%3E%20%3ClinearGradient%20id%3D%27s%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%231e3a8a%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%230f766e%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27200%27%20height%3D%27200%27%20fill%3D%27url%28%23b%29%27/%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2780%27%20r%3D%2738%27%20fill%3D%27%23fde7c8%27/%3E%20%3Cpath%20d%3D%27M30%20200c4-48%2034-72%2070-72s66%2024%2070%2072z%27%20fill%3D%27url%28%23s%29%27/%3E%3C/svg%3E" alt="Placeholder portrait photo"></span></span></div>
+        <h3>4. Corner Glint</h3>
+        <p class="tag">Plays on its own &middot; Circle</p>
+        <p>A small four-point sparkle grows and turns on the edge of the photo, then disappears.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><span class="fx fx-scan" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 200px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Placeholder landscape photo"></span></span></div>
+        <h3>5. Scan Line</h3>
+        <p class="tag">Plays on its own &middot; Rounded rectangle</p>
+        <p>A soft band of light slides down over the photo once, then rests.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><a class="fx fx-tilt" href="photo_effects_page.html#effect-tilt" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 200px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Open the Tilt And Lift code"></span></a></div>
+        <h3>6. Tilt And Lift</h3>
+        <p class="tag">Hover over it or press Tab to reach it &middot; Rounded rectangle</p>
+        <p>The photo tips toward you and rises, and a shadow fades in under it.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><a class="fx fx-zoom" href="photo_effects_page.html#effect-zoom" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 200px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Open the Zoom In Frame code"></span></a></div>
+        <h3>7. Zoom In Frame</h3>
+        <p class="tag">Hover over it or press Tab to reach it &middot; Rounded rectangle</p>
+        <p>The photo grows a little inside its frame, so the frame stays still.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><a class="fx fx-color" href="photo_effects_page.html#effect-color"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20200%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f97316%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23db2777%27/%3E%3C/linearGradient%3E%20%3ClinearGradient%20id%3D%27s%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%231e3a8a%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%230f766e%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27200%27%20height%3D%27200%27%20fill%3D%27url%28%23b%29%27/%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2780%27%20r%3D%2738%27%20fill%3D%27%23fde7c8%27/%3E%20%3Cpath%20d%3D%27M30%20200c4-48%2034-72%2070-72s66%2024%2070%2072z%27%20fill%3D%27url%28%23s%29%27/%3E%3C/svg%3E" alt="Open the Grayscale To Color code"></span></a></div>
+        <h3>8. Grayscale To Color</h3>
+        <p class="tag">Hover over it or press Tab to reach it &middot; Circle</p>
+        <p>The photo starts in black and white and fades to full color.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><a class="fx fx-corners" href="photo_effects_page.html#effect-corners" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 200px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Open the Corner Frame Draw-In code"></span></a></div>
+        <h3>9. Corner Frame Draw-In</h3>
+        <p class="tag">Hover over it or press Tab to reach it &middot; Rounded rectangle</p>
+        <p>Two corner brackets grow in from the corners, outside the photo.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><a class="fx fx-offset" href="photo_effects_page.html#effect-offset" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 200px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Open the Offset Frame Slide code"></span></a></div>
+        <h3>10. Offset Frame Slide</h3>
+        <p class="tag">Hover over it or press Tab to reach it &middot; Rounded rectangle</p>
+        <p>An outline frame sits behind the photo, a little to the side. On hover the photo and frame slide apart.</p>
+      </li>
+      </ul>
+    </section>
+
+    <section class="theme light" aria-labelledby="light-title">
+      <h2 id="light-title">On a light background</h2>
+      <ul class="grid">
+      <li class="card">
+        <div class="stage"><span class="fx fx-glow"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20200%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f97316%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23db2777%27/%3E%3C/linearGradient%3E%20%3ClinearGradient%20id%3D%27s%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%231e3a8a%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%230f766e%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27200%27%20height%3D%27200%27%20fill%3D%27url%28%23b%29%27/%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2780%27%20r%3D%2738%27%20fill%3D%27%23fde7c8%27/%3E%20%3Cpath%20d%3D%27M30%20200c4-48%2034-72%2070-72s66%2024%2070%2072z%27%20fill%3D%27url%28%23s%29%27/%3E%3C/svg%3E" alt="Placeholder portrait photo"></span></span></div>
+        <h3>1. Breathing Glow Ring</h3>
+        <p class="tag">Plays on its own &middot; Circle</p>
+        <p>A soft ring around the photo brightens and grows a little, then rests.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><span class="fx fx-spin" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 200px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Placeholder landscape photo"></span></span></div>
+        <h3>2. Rotating Gradient Border</h3>
+        <p class="tag">Plays on its own &middot; Rounded rectangle</p>
+        <p>A colored gradient border makes one full turn, then holds still.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><span class="fx fx-halo"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20200%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f97316%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23db2777%27/%3E%3C/linearGradient%3E%20%3ClinearGradient%20id%3D%27s%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%231e3a8a%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%230f766e%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27200%27%20height%3D%27200%27%20fill%3D%27url%28%23b%29%27/%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2780%27%20r%3D%2738%27%20fill%3D%27%23fde7c8%27/%3E%20%3Cpath%20d%3D%27M30%20200c4-48%2034-72%2070-72s66%2024%2070%2072z%27%20fill%3D%27url%28%23s%29%27/%3E%3C/svg%3E" alt="Placeholder portrait photo"></span></span></div>
+        <h3>3. Soft Pulse Halo</h3>
+        <p class="tag">Plays on its own &middot; Circle</p>
+        <p>One thin ring drifts out from the photo and fades away. It is drawn outside the photo without being cut off.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><span class="fx fx-glint"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20200%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f97316%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23db2777%27/%3E%3C/linearGradient%3E%20%3ClinearGradient%20id%3D%27s%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%231e3a8a%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%230f766e%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27200%27%20height%3D%27200%27%20fill%3D%27url%28%23b%29%27/%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2780%27%20r%3D%2738%27%20fill%3D%27%23fde7c8%27/%3E%20%3Cpath%20d%3D%27M30%20200c4-48%2034-72%2070-72s66%2024%2070%2072z%27%20fill%3D%27url%28%23s%29%27/%3E%3C/svg%3E" alt="Placeholder portrait photo"></span></span></div>
+        <h3>4. Corner Glint</h3>
+        <p class="tag">Plays on its own &middot; Circle</p>
+        <p>A small four-point sparkle grows and turns on the edge of the photo, then disappears.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><span class="fx fx-scan" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 200px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Placeholder landscape photo"></span></span></div>
+        <h3>5. Scan Line</h3>
+        <p class="tag">Plays on its own &middot; Rounded rectangle</p>
+        <p>A soft band of light slides down over the photo once, then rests.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><a class="fx fx-tilt" href="photo_effects_page.html#effect-tilt" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 200px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Open the Tilt And Lift code"></span></a></div>
+        <h3>6. Tilt And Lift</h3>
+        <p class="tag">Hover over it or press Tab to reach it &middot; Rounded rectangle</p>
+        <p>The photo tips toward you and rises, and a shadow fades in under it.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><a class="fx fx-zoom" href="photo_effects_page.html#effect-zoom" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 200px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Open the Zoom In Frame code"></span></a></div>
+        <h3>7. Zoom In Frame</h3>
+        <p class="tag">Hover over it or press Tab to reach it &middot; Rounded rectangle</p>
+        <p>The photo grows a little inside its frame, so the frame stays still.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><a class="fx fx-color" href="photo_effects_page.html#effect-color" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 200px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Open the Grayscale To Color code"></span></a></div>
+        <h3>8. Grayscale To Color</h3>
+        <p class="tag">Hover over it or press Tab to reach it &middot; Rounded rectangle</p>
+        <p>The photo starts in black and white and fades to full color.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><a class="fx fx-corners" href="photo_effects_page.html#effect-corners" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 200px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Open the Corner Frame Draw-In code"></span></a></div>
+        <h3>9. Corner Frame Draw-In</h3>
+        <p class="tag">Hover over it or press Tab to reach it &middot; Rounded rectangle</p>
+        <p>Two corner brackets grow in from the corners, outside the photo.</p>
+      </li>
+      <li class="card">
+        <div class="stage"><a class="fx fx-offset" href="photo_effects_page.html#effect-offset" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 200px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Open the Offset Frame Slide code"></span></a></div>
+        <h3>10. Offset Frame Slide</h3>
+        <p class="tag">Hover over it or press Tab to reach it &middot; Rounded rectangle</p>
+        <p>An outline frame sits behind the photo, a little to the side. On hover the photo and frame slide apart.</p>
+      </li>
+      </ul>
+
+      <h2 id="small-title">All ten at 40px</h2>
+      <ul class="sizes" aria-labelledby="small-title">
+        <li><span class="fx fx-glow" style="--fx-size: 40px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20200%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f97316%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23db2777%27/%3E%3C/linearGradient%3E%20%3ClinearGradient%20id%3D%27s%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%231e3a8a%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%230f766e%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27200%27%20height%3D%27200%27%20fill%3D%27url%28%23b%29%27/%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2780%27%20r%3D%2738%27%20fill%3D%27%23fde7c8%27/%3E%20%3Cpath%20d%3D%27M30%20200c4-48%2034-72%2070-72s66%2024%2070%2072z%27%20fill%3D%27url%28%23s%29%27/%3E%3C/svg%3E" alt="Placeholder portrait photo"></span></span></li>
+        <li><span class="fx fx-spin" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 40px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Placeholder landscape photo"></span></span></li>
+        <li><span class="fx fx-halo" style="--fx-size: 40px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20200%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f97316%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23db2777%27/%3E%3C/linearGradient%3E%20%3ClinearGradient%20id%3D%27s%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%231e3a8a%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%230f766e%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27200%27%20height%3D%27200%27%20fill%3D%27url%28%23b%29%27/%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2780%27%20r%3D%2738%27%20fill%3D%27%23fde7c8%27/%3E%20%3Cpath%20d%3D%27M30%20200c4-48%2034-72%2070-72s66%2024%2070%2072z%27%20fill%3D%27url%28%23s%29%27/%3E%3C/svg%3E" alt="Placeholder portrait photo"></span></span></li>
+        <li><span class="fx fx-glint" style="--fx-size: 40px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20200%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f97316%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23db2777%27/%3E%3C/linearGradient%3E%20%3ClinearGradient%20id%3D%27s%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%231e3a8a%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%230f766e%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27200%27%20height%3D%27200%27%20fill%3D%27url%28%23b%29%27/%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2780%27%20r%3D%2738%27%20fill%3D%27%23fde7c8%27/%3E%20%3Cpath%20d%3D%27M30%20200c4-48%2034-72%2070-72s66%2024%2070%2072z%27%20fill%3D%27url%28%23s%29%27/%3E%3C/svg%3E" alt="Placeholder portrait photo"></span></span></li>
+        <li><span class="fx fx-scan" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 40px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Placeholder landscape photo"></span></span></li>
+        <li><a class="fx fx-tilt" href="photo_effects_page.html#effect-tilt" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 40px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Open the Tilt And Lift code"></span></a></li>
+        <li><a class="fx fx-zoom" href="photo_effects_page.html#effect-zoom" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 40px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Open the Zoom In Frame code"></span></a></li>
+        <li><a class="fx fx-color" href="photo_effects_page.html#effect-color" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 40px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Open the Grayscale To Color code"></span></a></li>
+        <li><a class="fx fx-corners" href="photo_effects_page.html#effect-corners" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 40px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Open the Corner Frame Draw-In code"></span></a></li>
+        <li><a class="fx fx-offset" href="photo_effects_page.html#effect-offset" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 40px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Open the Offset Frame Slide code"></span></a></li>
+      </ul>
+
+      <h2 id="big-title">Three of them at 400px</h2>
+      <ul class="big" aria-labelledby="big-title">
+        <li><span class="fx fx-spin" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 400px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Placeholder landscape photo"></span></span></li>
+        <li><span class="fx fx-halo" style="--fx-size: 400px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20200%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27b%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23f97316%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23db2777%27/%3E%3C/linearGradient%3E%20%3ClinearGradient%20id%3D%27s%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%231e3a8a%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%230f766e%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27200%27%20height%3D%27200%27%20fill%3D%27url%28%23b%29%27/%3E%3Ccircle%20cx%3D%27100%27%20cy%3D%2780%27%20r%3D%2738%27%20fill%3D%27%23fde7c8%27/%3E%20%3Cpath%20d%3D%27M30%20200c4-48%2034-72%2070-72s66%2024%2070%2072z%27%20fill%3D%27url%28%23s%29%27/%3E%3C/svg%3E" alt="Placeholder portrait photo"></span></span></li>
+        <li><a class="fx fx-corners" href="photo_effects_page.html#effect-corners" style="--fx-ratio: 4 / 3; --fx-radius: 16px; --fx-size: 400px"><span class="fx__clip"><img class="fx__img" src="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20400%20300%27%3E%20%3Cdefs%3E%3ClinearGradient%20id%3D%27sky%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%2338bdf8%27/%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23fde68a%27/%3E%3C/linearGradient%3E%3C/defs%3E%20%3Crect%20width%3D%27400%27%20height%3D%27300%27%20fill%3D%27url%28%23sky%29%27/%3E%3Ccircle%20cx%3D%27300%27%20cy%3D%2790%27%20r%3D%2736%27%20fill%3D%27%23facc15%27/%3E%20%3Cpath%20d%3D%27M0%20300%20120%20130%20210%20230%20290%20150%20400%20300z%27%20fill%3D%27%2315803d%27/%3E%3Cpath%20d%3D%27M0%20300%2070%20220%20160%20300z%27%20fill%3D%27%23166534%27/%3E%3C/svg%3E" alt="Open the Corner Frame Draw-In code"></span></a></li>
+      </ul>
+    </section>
+  </main>
+
+  <script>
+// Stops every idle effect on the page. aria-pressed tells screen
+// readers whether the button is on.
+const pauseButton = document.getElementById("pause-button");
+
+pauseButton.addEventListener("click", () => {
+  const paused = document.body.classList.toggle("fx-paused");
+  pauseButton.setAttribute("aria-pressed", String(paused));
+});
+  </script>
+</body>
+
+</html>
